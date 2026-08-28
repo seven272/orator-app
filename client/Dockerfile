@@ -13,7 +13,7 @@ RUN npm ci
 COPY . .
 
 # Выделяем Node.js 1.5 ГБ RAM под сборку, чтобы процесс не упал
-ENV NODE_OPTIONS="--max-old-space-size=1536"
+ENV NODE_OPTIONS="--max-old-space-size=3072"
 
 # Запускаем компиляцию статики React
 RUN npm run build
