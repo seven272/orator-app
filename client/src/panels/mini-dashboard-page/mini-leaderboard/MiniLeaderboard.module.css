@@ -1,0 +1,166 @@
+/* Изменили под полноценную карточку-блок */
+.card {
+  background-color: var(--color-white, #ffffff);
+  padding: 12px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); 
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leaderboard_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leaderboard_title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary, #262626);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon_crown {
+  color: #faad14;
+  font-size: 14px;
+}
+
+.leaderboard_mini_list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.leaderboard_row {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  background-color: #fafafa;
+  border: 1px solid #f0f0f0;
+  gap: 8px;
+}
+
+.row_current {
+  background-color: #fffbe6;
+  border-color: #ffe58f;
+  font-weight: 700;
+}
+
+.row_premium {
+  border-color: #d3adf7;
+}
+
+.user_rank {
+  font-weight: 700;
+  color: var(--color-text-secondary, #8c8c8c);
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.row_current .user_rank {
+  color: #d48806;
+}
+
+.avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatar_fallback {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #e8e8e8;
+  color: #595959;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.name_container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.user_name {
+  color: var(--color-text-primary, #262626);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.premium_badge {
+  background-color: #722ed1;
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 1px 3px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.user_points {
+  color: var(--color-text-secondary, #595959);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.row_current .user_points {
+  color: var(--color-text-primary, #262626);
+}
+
+/* Новая нижняя кнопка «Смотреть весь рейтинг» */
+.more_btn {
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 10px;
+  height: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  color: #1890ff;
+  background: transparent;
+  border: 1px solid #e8e8e8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  margin-top: 2px;
+}
+
+.more_btn:hover {
+  color: #40a9ff;
+  border-color: #40a9ff;
+  background-color: rgba(24, 144, 255, 0.02);
+}
+
+.icon_arrow {
+  font-size: 10px;
+}
+
+.inner_loading {
+  font-size: 11px;
+  color: var(--color-text-secondary, #8c8c8c);
+  text-align: center;
+  padding: 12px 0;
+}

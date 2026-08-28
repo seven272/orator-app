@@ -1,0 +1,343 @@
+/* --- Базовая раскладка и контейнеры --- */
+.ai_room_container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
+}
+
+.info_header {
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-secondary);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topic_info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 75%;
+}
+
+.info_badge {
+  font: var(--font-submenu);
+  color: var(--color-blue-vk);
+  text-transform: uppercase;
+}
+
+.topic_title_short {
+  font: var(--font-subtitle);
+  color: var(--color-black);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.turn_badge {
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-light);
+  padding: 6px 12px;
+  border-radius: 12px;
+}
+
+.turn_count {
+  font: var(--font-ml);
+  color: var(--color-text-primary);
+}
+
+.error_banner {
+  background-color: #ffeaea;
+  color: #d93838;
+  padding: 8px 16px;
+  font: var(--font-m);
+  text-align: center;
+  border-bottom: 1px solid rgba(217, 56, 56, 0.2);
+}
+
+/* --- Окно чата и сообщения --- */
+.chat_window {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--color-bg-light);
+}
+
+.message_user,
+.message_ai {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+}
+
+.message_user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.message_ai {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.message_bubble {
+  padding: 12px 16px;
+  border-radius: 16px;
+  font: var(--font-m);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.message_user .message_bubble {
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  border-bottom-right-radius: 4px;
+}
+
+.message_ai .message_bubble {
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  border-bottom-left-radius: 4px;
+  border: 1px solid var(--color-secondary);
+}
+
+.message_time {
+  font: var(--font-xs);
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+  padding: 0 4px;
+}
+
+/* --- Новый аудио-футер (Адаптирован из Дебатов) --- */
+.debate_footer {
+  background-color: var(--color-white);
+  border-top: 1px solid var(--color-secondary);
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80px;
+  box-sizing: border-box;
+}
+
+/* Кнопка: Готов к записи */
+.record_full_btn {
+  width: 100%;
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  font: var(--font-ml);
+  border: none;
+  padding: 14px;
+  border-radius: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.record_full_btn:active {
+  opacity: 0.9;
+}
+
+/* Стейт: Идет запись аудио */
+.recording_wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.timer_text {
+  font: var(--font-title);
+  color: #d93838;
+  font-weight: bold;
+  min-width: 70px;
+}
+
+.stop_btn {
+  background: none;
+  border: none;
+  color: #d93838;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: transform 0.1s;
+}
+
+.stop_btn:active {
+  transform: scale(0.9);
+}
+
+/* Эффект пульсации микрофона */
+.pulse_circle {
+  width: 12px;
+  height: 12px;
+  background-color: #d93838;
+  border-radius: 50%;
+  position: relative;
+}
+
+.pulse_circle::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #d93838;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite ease-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* Стейт: ИИ Думает / Обработка звука */
+.status_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status_text {
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+}
+
+/* Анимация прыгающих точек прыжка */
+.typing_dots {
+  display: flex;
+  gap: 4px;
+}
+
+.typing_dots span {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-blue-vk);
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.typing_dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+.typing_dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Кнопка: Завершить дуэль и вызвать судью */
+.debate_finish_btn {
+  width: 100%;
+  background-color: var(--color-green);
+  color: var(--color-white);
+  font: var(--font-ml);
+  border: none;
+  padding: 14px;
+  border-radius: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+/* --- Стили карточки оценки ИИ --- */
+.evaluation_card {
+  margin: 20px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eval_title {
+  font: var(--font-title);
+  color: var(--color-black);
+  text-align: center;
+  margin: 0;
+}
+
+.eval_feedback {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  background-color: var(--color-bg-light);
+  padding: 14px;
+  border-radius: 10px;
+  margin: 0;
+}
+
+.metrics_grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.metric_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.metric_name {
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+}
+
+.metric_val {
+  font: var(--font-ml);
+  color: var(--color-green);
+}
+
+.finish_btn {
+  background-color: var(--color-green);
+  color: var(--color-white);
+  font: var(--font-ml);
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+}

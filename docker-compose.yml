@@ -1,0 +1,96 @@
+services:
+  orator-mongo:
+    image: mongo:8.0
+    container_name: orator_mongo_container
+    networks:
+      - orator-app-net
+    restart: always
+    volumes:
+      - orator_mongo_db:/data/db
+    command: --wiredTigerCacheSizeGB 0.5 # Ограничиваем аппетит базы на VPS
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  orator-server:
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+    container_name: orator_server_container
+    networks:
+      - traefik-net
+      - orator-app-net
+    environment:
+      - MONGO_URI=${MONGO_URI}
+    volumes:
+      - uploads_orator_data:/app/src/uploads
+    restart: always
+    depends_on:
+      orator-mongo:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      # --- РОУТЕР ДЛЯ API ---
+      # Замените oratorapp.ru на ваш реальный домен
+      - 'traefik.http.routers.orator-api.rule=Host(`govorix.ru`) && PathPrefix(`/api`)'
+      - 'traefik.http.routers.orator-api.entrypoints=websecure'
+      - 'traefik.http.routers.orator-api.tls.certresolver=myresolver'
+      - 'traefik.http.routers.orator-api.priority=100'
+      - 'traefik.http.routers.orator-api.service=orator-backend'
+
+      # --- МИДЛВАР ДЛЯ УВЕЛИЧЕНИЯ РАЗМЕРА АУДИОФАЙЛОВ ---
+      # По умолчанию Traefik и Nginx могут блокировать файлы больше 1-2МБ.
+      # Для 90-секундных аудиозаписей снимаем ограничения:
+      - 'traefik.http.middlewares.orator-buffering.buffering.maxRequestBodyBytes=104857600' # 100 MB
+      - 'traefik.http.routers.orator-api.middlewares=orator-buffering'
+
+      # --- ОБЩИЙ СЕРВИС (Node.js порт вашего приложения) ---
+      - 'traefik.http.services.orator-backend.loadbalancer.server.port=${SERVER_DOCKER_PORT}'
+
+  orator-client:
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    container_name: orator_client_container
+    networks:
+      - traefik-net
+      - orator-app-net
+    environment:
+      - VITE_HMR_PORT=443
+    restart: always
+    depends_on:
+      - orator-server
+    labels:
+      - 'traefik.enable=true'
+      # Основной домен сайта (замените на ваш)
+      - 'traefik.http.routers.orator-front.rule=Host(`govorix.ru`)'
+      - 'traefik.http.routers.orator-front.entrypoints=websecure'
+      - 'traefik.http.routers.orator-front.tls.certresolver=myresolver'
+      - 'traefik.http.services.orator-front.loadbalancer.server.port=${CLIENT_NGINX_PORT}' # Порт Nginx/Vite
+      - 'traefik.http.routers.orator-front.priority=10'
+
+  orator-mongo-express:
+    image: mongo-express:1.0
+    container_name: orator_mongo_express_container
+    networks:
+      - orator-app-net
+    ports:
+      - '${ME_OUTSIDE_PORT}:${ME_DOCKER_PORT}' # Прямой порт для админки базы (можете изменить)
+    environment:
+      ME_CONFIG_MONGODB_URL: ${ME_CONFIG_MONGODB_URL}
+      ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD}
+    restart: always
+
+volumes:
+  orator_mongo_db:
+  uploads_orator_data:
+
+networks:
+  traefik-net:
+    external: true
+  orator-app-net:
+    driver: bridge

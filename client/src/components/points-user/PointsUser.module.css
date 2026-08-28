@@ -1,0 +1,100 @@
+.main_points_user {
+  width: max-content;
+  height: 88px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 3px;
+  border-radius: 16px; /* Современное увеличенное скругление */
+  cursor: pointer;
+
+  /* 🤖 ЭФФЕКТ МАТОВОГО СТЕКЛА (Glassmorphism) */
+  background: rgba(255, 255, 255, 0.65); /* Полупрозрачный белый фон */
+  backdrop-filter: blur(14px);           /* Размытие фона за виджетом */
+  -webkit-backdrop-filter: blur(14px);
+  
+  /* Ультратонкая мягкая рамка, имитирующая грань стекла */
+  border: 1px solid rgba(255, 255, 255, 0.5); 
+  
+  /* Мягкая, едва заметная тень для создания глубины и объема */
+  box-shadow: 
+    0 4px 24px rgba(38, 136, 235, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.02);
+  
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+/* Эффект легкого отклика при нажатии на мобилке */
+.main_points_user:active {
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(0.98);
+}
+
+/* Контейнер для строк */
+.row {
+  display: flex;
+  width: 100%;
+  height: 34px;
+  align-items: center;
+}
+
+/* 🤖 Тонкий аккуратный горизонтальный разделитель */
+.row:first-child {
+  border-bottom: 1px solid rgba(38, 136, 235, 0.15);
+}
+
+.box {
+  width: 94px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 1px;
+}
+
+/* 🤖 Тонкий аккуратный вертикальный разделитель */
+.row .box:first-child {
+  border-right: 1px solid rgba(38, 136, 235, 0.15);
+}
+
+.title {
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px; /* Увеличили разрядку букв для технологичного стиля */
+  color: var(--color-grey); /* Серый приглушенный цвет для подписей */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Разноцветные акценты для иконок, оживляющие интерфейс */
+.icon_level {
+  margin-right: 4px;
+  color: var(--color-yellow); /* Звезда — золотая */
+}
+
+.icon_xp {
+  margin-right: 4px;
+  color: #a855f7; /* Награда/Опыт — благородный фиолетовый */
+}
+
+.icon_streak {
+  margin-right: 4px;
+  color: #ff4a4a; /* Огонь/Стрик — пламенный красный */
+}
+
+.icon_coins {
+  margin-right: 4px;
+  color: #eab308; /* Монеты — янтарно-желтый */
+}
+
+.value {
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary); /* Глубокий фирменный синий для четкой читаемости цифр */
+}

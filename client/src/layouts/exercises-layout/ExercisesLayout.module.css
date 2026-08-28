@@ -1,0 +1,11 @@
+.exercises_theme_bg {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  /* min-height: 100%; */
+  width: 100%;
+  background-color: var(--color-bg-layout); /* Или ваш специфичный цвет */
+  /* 📌 Отступ сверху и снизу для контента внутри тренажеров, чтобы текст не прилипал к шапке */
+  padding:0 0;
+  box-sizing: border-box;
+}

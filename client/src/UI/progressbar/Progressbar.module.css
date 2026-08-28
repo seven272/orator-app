@@ -1,0 +1,32 @@
+.progressbar {
+  width: 70%;
+  margin: 10px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.container {
+  height: 20px;
+  width: 100%;
+  background-color: #dadac0;
+  border-radius: 50px;
+  margin: 10px 0;
+  border: var(--border-main);
+}
+
+.title {
+  font-size: 12px;
+}
+
+.filler {
+  height: 100%;
+  background-color: #1e1e27;
+  border-radius: inherit;
+  text-align: right;
+}
+.label {
+  padding: 5px;
+  color: white;
+  font-weight: bold;
+}

@@ -1,0 +1,207 @@
+.intro_zone {
+  text-align: left;
+}
+
+.title {
+  font: var(--font-l);
+  color: var(--color-black);
+  margin: 0 0 6px 0;
+}
+
+.subtitle {
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.score_progress_card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  margin-bottom: 20px; /* Добавили отступ до списка карточек */
+}
+
+.score_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.score_label {
+  font: var(--font-s);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.score_values {
+  font: var(--font-m);
+  color: var(--color-black);
+}
+
+.progress_track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress_fill {
+  height: 100%;
+  background-color: #2ecc71;
+  border-radius: 4px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.score_footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+}
+
+.success_text {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.grid_list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.workout_card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.workout_card:hover {
+  border-color: var(--color-primary);
+  background-color: rgba(0, 63, 192, 0.01);
+}
+
+.card_active {
+  border-color: var(--color-blue-vk);
+  box-shadow: 0 4px 16px rgba(0, 63, 192, 0.08);
+  background-color: var(--color-white) !important;
+}
+
+.card_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.card_title {
+  font: var(--font-ml);
+  font-weight: 600;
+  color: var(--color-black);
+  margin: 0;
+}
+
+/* 👑 ОБНОВЛЕНО: Сделали бейдж формата нейтральным и аккуратным, убрав кричащий зеленый */
+.badge {
+  background-color: rgba(0, 63, 192, 0.05); /* Легкий VK-blue оттенок подложки */
+  color: var(--color-blue-vk, #003fc0);
+  border: 1px solid rgba(0, 63, 192, 0.1);
+  font: var(--font-s);
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 8px; /* Сделали форму чуть строже (как в UI VK) вместо круглых 20px */
+  white-space: nowrap;
+}
+
+.card_description {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.action_zone {
+  margin-top: 18px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.simulate_button {
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  font: var(--font-m);
+  font-weight: 500;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s ease;
+}
+
+.simulate_button:active {
+  background-color: var(--color-blue-dark);
+}
+
+/* 👑 ОБНОВЛЕНО: Стилизовали выделенную зону под кнопкой карточек */
+.theory_action_zone {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  width: 100%;
+}
+
+.refresh_theory_btn {
+  background-color: var(--color-bg, #e8f3ff);
+  color: var(--color-primary, #007aff);
+  font: var(--font-m); 
+  border: none;
+  padding: 14px 24px; /* Выровняли высоту с simulate_button для баланса интерфейса */
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.refresh_theory_btn:hover {
+  background-color: var(--color-secondary, #b2d7ff);
+}
+
+.refresh_theory_btn:active {
+  transform: scale(0.98);
+}
+
+.simulate_button:disabled {
+  background-color: var(--color-grey-light);
+  color: var(--color-grey);
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

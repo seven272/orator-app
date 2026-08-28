@@ -1,0 +1,79 @@
+.heading {
+  color: var(--color-bg-dark);
+  font: var(--font-menu);
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.btn {
+  background-color: var(--color-primary);
+  font: var(--font-m);
+  height: 40px;
+  border-radius: 6px;
+}
+
+.link {
+  color: var(--color-text-secondary);
+  font: var(--font-m);
+  margin-top: 10px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.link:hover {
+  color: var(--color-primary) !important;
+}
+
+/* Разделитель */
+.divider {
+  width: 100%;
+  text-align: center;
+  position: relative;
+  margin: 10px 0;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-bg-light);
+  z-index: 1;
+}
+
+.divider_text {
+  background-color: var(--color-white);
+  padding: 0 10px;
+  position: relative;
+  z-index: 2;
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+}
+
+/* Нативная кнопка ВКонтакте в змеином регистре */
+.vk_login_btn {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  font: var(--font-m);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.3s ease;
+}
+
+.vk_login_btn:hover {
+  opacity: 0.9;
+}
+
+.vk_icon {
+  font-size: 16px;
+}

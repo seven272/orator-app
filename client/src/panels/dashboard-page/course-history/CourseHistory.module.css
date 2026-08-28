@@ -1,0 +1,107 @@
+/* Общая карточка в едином стиле дашборда */
+.card {
+  background-color: var(--color-white, #ffffff);
+  padding: 14px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.card_title {
+  margin-top: 0;
+  margin-bottom: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-primary, #262626);
+}
+
+.icon_history {
+  color: #722ed1;
+}
+
+.box_nav_list {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.text_nav_list {
+  font: var(--font-m);
+  color: var(--color-text-secondary, #8c8c8c);
+}
+
+.icon_nav_list {
+  font-size: 10px;
+  color: var(--color-text-secondary, #8c8c8c);
+  display: flex;
+  align-items: center;
+}
+
+/* Оформление пустого состояния */
+.empty_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0 10px 0;
+  text-align: center;
+  gap: 14px;
+}
+
+.empty_text {
+  font-size: 13px;
+  color: var(--color-text-secondary, #8c8c8c);
+  margin: 0;
+}
+
+.route_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font: var(--font-m);
+  padding: 10px 15px;
+  outline: none;
+  background-color: var(--color-blue);
+  color: var(--color-white);
+  border-color: var(--color-blue);
+  font-weight: 600;
+  border-radius: 20px; /* Соответствует стилю .growth_btn вашего дашборда */
+  cursor: pointer;
+}
+
+.route_btn:hover {
+  background: var(--color-blue-dark);
+  border-color: var(--color-blue-dark);
+}
+
+/* 📱 Оптимизация под узкие экраны смартфонов (до 420px) */
+@media (max-width: 420px) {
+  .summary_panel {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .item_header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .score_zone {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px dashed #e8e8e8;
+    padding-top: 6px;
+  }
+}

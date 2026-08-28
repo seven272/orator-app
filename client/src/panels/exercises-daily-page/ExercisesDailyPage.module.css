@@ -1,0 +1,8 @@
+.screen_container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-top: 15px;
+}

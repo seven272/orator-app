@@ -1,0 +1,37 @@
+.instructions_card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.badge_irl {
+  align-self: flex-start;
+  font: var(--font-s);
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background-color: rgba(155, 89, 182, 0.12);
+  color: #9b59b6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.title {
+  font: var(--font-l);
+  color: var(--color-black);
+  margin: 0 0 14px 0;
+}
+
+.text_content {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  white-space: pre-line; /* Важно, чтобы сохранялись абзацы и списки */
+  margin: 0;
+}

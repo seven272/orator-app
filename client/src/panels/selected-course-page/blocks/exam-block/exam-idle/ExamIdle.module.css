@@ -1,0 +1,185 @@
+/* frontend/src/components/ExamBlock/exam-idle/ExamIdle.module.css */
+
+.results_container {
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.meta_zone {
+  margin-bottom: 16px;
+}
+
+/* Бейджи статусов на базе системной типографики и палитры */
+.badge_neutral,
+.badge_success,
+.badge_danger {
+  font: var(--font-s); /* 'Rubik-Blond', 10px, line-height 10px */
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.badge_neutral {
+  background-color: var(--color-bg, #e8f3ff);
+  color: var(--color-text-secondary, #818c99);
+}
+
+.badge_success {
+  background-color: rgba(52, 199, 89, 0.08); /* На базе --color-green */
+  color: var(--color-green, #34c759);
+}
+
+.badge_danger {
+  background-color: rgba(243, 4, 4, 0.08); /* На базе --color-red */
+  color: var(--color-red, #f30404);
+}
+
+.title {
+  font: var(--font-title); /* 'ElMessiri-Bold', 20px, line-height 20px */
+  color: var(--color-black, #000000);
+  margin: 0 0 10px 0;
+  letter-spacing: -0.3px;
+}
+
+.description {
+  width: 100%;
+  max-width: 100%;
+  font: var(--font-m); /* 'Rubik-Regular', 14px, line-height 15px */
+  color: var(--color-text-primary, #2e3138);
+  line-height: 1.5;
+  margin: 0 0 32px 0;
+  white-space: pre-line;
+  text-align: left;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Двухколоночная структура карточек метрик */
+.stats_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.stat_card {
+  background-color: var(--color-bg, #e8f3ff);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat_label {
+  font: var(--font-s); /* 'Rubik-Blond', 10px, line-height 10px */
+  color: var(--color-grey, #8e9bae);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.stat_value {
+  font: var(--font-l); /* 'Rubik-Medium', 20px, line-height 20px */
+  color: var(--color-black, #000000);
+}
+
+.stat_max {
+  font: var(--font-m-light); /* 'Rubik-Light', 14px, line-height 15px */
+  color: var(--color-grey, #8e9bae);
+}
+
+.text_success {
+  color: var(--color-green, #34c759);
+}
+
+.action_zone {
+  width: 100%;
+}
+
+/* Акцентная главная кнопка сдачи в синих тонах VK */
+.start_button {
+  background-color: var(--color-blue-vk, #2688eb);
+  color: var(--color-white, #ffffff);
+  font: var(--font-ml); /* 'Rubik-Medium', 16px, line-height 18px */
+  border: none;
+  padding: 14px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    opacity 0.15s ease,
+    transform 0.1s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.start_button:hover {
+  opacity: 0.9;
+}
+
+.start_button:active {
+  transform: scale(0.98);
+}
+
+/* Второстепенная кнопка теории, интегрированная в дизайн-систему */
+.refresh_theory_btn {
+  background-color: var(--color-bg, #e8f3ff);
+  color: var(--color-primary, #007aff);
+  font: var(--font-m); /* 'Rubik-Medium', 16px, line-height 18px */
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.refresh_theory_btn:hover {
+  background-color: var(--color-secondary, #b2d7ff);
+}
+
+.refresh_theory_btn:active {
+  transform: scale(0.98);
+}
+
+/* Благородные баннеры статусов (успех/провал) */
+.finished_banner {
+  background-color: rgba(52, 199, 89, 0.05); /* На базе --color-green */
+  border-left: 3px solid var(--color-green, #34c759);
+  color: var(--color-green, #34c759);
+  padding: 14px 16px;
+  border-radius: 0 8px 8px 0;
+  text-align: left;
+  font: var(--font-m); /* 'Rubik-Regular', 14px, line-height 15px */
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.danger_banner {
+  background-color: rgba(243, 4, 4, 0.05); /* На базе --color-red */
+  border-left: 3px solid var(--color-red, #f30404);
+  color: var(--color-red, #f30404);
+  padding: 14px 16px;
+  border-radius: 0 8px 8px 0;
+  text-align: left;
+  font: var(--font-m); /* 'Rubik-Regular', 14px, line-height 15px */
+  font-weight: 500;
+  line-height: 1.4;
+}

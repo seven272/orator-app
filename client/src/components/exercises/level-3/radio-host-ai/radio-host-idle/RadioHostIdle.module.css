@@ -1,0 +1,196 @@
+.screen_idle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 15px;
+  width: 100%;
+}
+
+.screen_idle_title {
+  color: var(--color-blue);
+  font: var(--font-title);
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+}
+
+/* Выполнение Правила №4: display: block и text-align: center с ограничением max-width */
+/* Заменили белый фон на фирменный полупрозрачный синий из Трибуны */
+.idle_box {
+  width: 100%;
+  max-width: 480px; /* Защита от некрасивых длинных переносов текста */
+  display: block;
+  text-align: center;
+  background: rgba(0, 123, 255, 0.1);
+  padding: 15px 15px;
+  border-radius: 12px; /* Для аккуратности скруглений на прозрачном фоне */
+  box-sizing: border-box;
+}
+
+/* Контейнер фокусных звуков, встроенный внутрь idle_box */
+.focus_sounds_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 6px;
+  margin-bottom: 12px;
+}
+
+.focus_label {
+  font: var(--font-subtitle);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.badges_list {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* Яркие бейджи для выделения звуков-мишеней */
+.sound_badge {
+  background: var(--color-blue);
+  color: white;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
+}
+
+/* Стилизация текста скороговорки на основе .idle_text из Трибуны */
+.tongue_text_block {
+  width: 100%;
+  text-align: center;
+  color: var(--color-text-primary);
+  font: var(--font-m);
+  line-height: 1.5;
+  margin: 0;
+  font-style: italic;
+}
+
+.change_topic_icon {
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.idle_footer {
+  width: 100%;
+  min-height: 80px;
+  display: flex;
+  background: rgba(255, 255, 255, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  align-items: center;
+  justify-content: center;
+}
+
+.btn_start {
+  width: 80%;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  font: var(--font-title);
+  transition:
+    transform 0.2s,
+    background 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+}
+
+.btn_start:disabled {
+  width: 80%;
+  padding: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--color-white);
+  color: var(--color-grey);
+  font: var(--font-title);
+  border-radius: 12px;
+  border: 1px solid var(--color-grey);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* Кнопка теории в точности по вашему коду */
+.btn_theory {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--vkui--color_separator_primary);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px auto;
+  padding: 8px 16px;
+  color: var(--vkui--color_text_secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s active;
+}
+
+/* Новые стили для внутренней структуры карточки Радиоведущего */
+.radio_task_container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 14px;
+  text-align: left; /* Текст новостей ровняем по левому краю для читаемости */
+  margin-top: 15px;
+}
+
+.radio_task_item {
+  border-bottom: 1px dashed rgba(0, 123, 255, 0.15);
+  padding-bottom: 10px;
+}
+
+.radio_task_item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.radio_task_label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-blue);
+  margin-bottom: 4px;
+}
+
+.radio_task_text {
+  color: var(--color-text-primary);
+  font: var(--font-m);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.song_highlight {
+  font-weight: 600;
+  color: var(--color-blue);
+  font-style: italic;
+}
+
+@media (hover: hover) {
+  .btn_theory:hover {
+    background-color: var(--vkui--color_background_secondary);
+  }
+}
+
+.btn_theory:active {
+  transform: scale(0.97);
+  background-color: var(--vkui--color_background_secondary);
+}
+
+.theory_icon {
+  color: var(--vkui--color_icon_medium);
+}

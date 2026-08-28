@@ -1,0 +1,27 @@
+.base_interface_wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.base_content_zone {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  
+  /* 📌 Переносим ограничение и центрирование строго на контентную зону страниц */
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  
+  /* 📌 Боковые отступы для страниц */
+  padding: 0 8px; 
+  box-sizing: border-box;
+  
+  /* 📌 Чтобы контент страниц не сливался со сверхсветлым фоном десктопа, */
+  /* задаем страницам белый фон и мягкую тень */
+  background-color: var(--color-bg-layout);
+  box-shadow: 0 0 32px rgba(0, 0, 0, 0.02);
+}

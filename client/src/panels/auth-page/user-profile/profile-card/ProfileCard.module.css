@@ -1,0 +1,38 @@
+.gamification_card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: var(--color-bg-light);
+  border-radius: 8px;
+}
+
+.avatar_wrapper {
+  width: 56px;
+  height: 56px;
+}
+
+.avatar_img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-primary);
+}
+
+.gamer_info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.display_name {
+  margin: 0;
+  font: var(--font-subtitle);
+  color: var(--color-bg-dark);
+}
+
+.level_badge {
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+}

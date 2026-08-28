@@ -1,0 +1,9 @@
+.app.dark {
+    --font-color: #ffffff;
+    --bg-color: #121212;
+    --border-main: 1px solid #ffffff;
+    --font-invert-color: #000000;
+    --bg-invert-color: #ffffff;
+    --border-invert-main: 1px solid #000000;
+    --color-shadow: rgba(247, 243, 243, 0.3);
+}

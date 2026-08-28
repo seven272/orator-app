@@ -1,0 +1,342 @@
+.screen_running {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Верхняя панель сессии тренажера (Инфо и Прогресс-бар) */
+.session_header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.session_header_text {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  color: var(--color-text-secondary);
+  font: var(--font-m-light);
+  font-size: 12px;
+  text-align: center;
+}
+
+.progress_container {
+  width: 100%;
+  padding: 0 10px;
+}
+
+.progress_text {
+  font: var(--font-m-light);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.progress_bar_bg {
+  width: 100%;
+  height: 6px;
+  background: #e6f0ff;
+  border-radius: 10px;
+}
+
+.progress_bar_fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font: var(--font-m);
+  color: var(--color-text-dark);
+  font-weight: 600;
+}
+
+/* Модифицированная карточка подсказки с круговой обводкой */
+.prompt_card {
+  background: rgba(0, 123, 255, 0.05); /* Легкий фирменный полупрозрачный тон */
+  border: 2px solid var(--color-blue); /* Круговая обводка вместо левой границы */
+  border-radius: 12px;
+  padding: 16px;
+  margin: 15px 20px 5px 20px; /* Выравнивание по бокам в соответствии с шапкой */
+  box-sizing: border-box;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.05);
+}
+
+.prompt_label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.prompt_text {
+  color: var(--color-text-primary);
+  font: var(--font-m);
+  font-weight: 600; /* Жирный акцент на тексте для удобства чтения с листа */
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+  text-align: center; /* Центрирование скороговорки для визуального баланса */
+}
+
+.mini_badges {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.mini_badge {
+  font-size: 13px;
+  background: var(--color-blue);
+  color: white;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.15);
+}
+
+/* Нижняя панель сессии тренажера */
+.session_footer {
+  display: flex;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  min-height: 80px; /* Фиксированная высота, чтобы чат не прыгал при смене статусов */
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+/* Анимация печати */
+.typing_dots {
+  display: flex;
+  gap: 4px;
+  padding: 5px 0;
+}
+
+.typing_dots span {
+  width: 6px;
+  height: 6px;
+  background: #8e9bae;
+  border-radius: 50%;
+  animation: blink 1.4s infinite both;
+}
+
+.typing_dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing_dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 80%, 100% {
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+.text_start {
+  font: var(--font-decor);
+  font-size: 32px;
+  color: var(--color-primary);
+  letter-spacing: 2px;
+}
+
+.btns_wrap {
+  width: 80%;
+  height: auto;
+  min-height: 50px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.session_finish_btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 5px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  font: var(--font-m);
+  font-weight: 600;
+  transition:
+    transform 0.2s,
+    background 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+}
+
+/* Кнопка "Начать говорить" */
+.record_full_btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 5px;
+  padding: 14px;
+  border-radius: 25px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  font: var(--font-m);
+  font-weight: 600;
+  transition:
+    transform 0.2s,
+    background 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+}
+
+.record_full_btn:hover {
+  background: #0066d6;
+  transform: translateY(-1px);
+}
+
+/* Обертка для процесса записи */
+.recording_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Пульсирующий красный индикатор */
+.pulse_circle {
+  width: 14px;
+  height: 14px;
+  background: #ff4d4d;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 77, 77, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0);
+  }
+}
+
+/* Текст таймера */
+.timer_text {
+  font-family: monospace; /* Чтобы цифры не "прыгали" при смене */
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--color-text-secondary);
+  min-width: 60px;
+}
+
+/* Кнопка СТОП */
+.stop_btn {
+  background: none;
+  color: var(--color-primary);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stop_btn:hover {
+  color: var(--color-blue-dark);
+}
+
+/* Состояния обработки и ожидания ИИ */
+.status_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.status_text {
+  font: var(--font-s);
+  color: #8e9bae;
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* Контейнер финальных кнопок в актерском тренажере */
+.finished_actions_group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 440px;
+  box-sizing: border-box;
+}
+
+/* Корректируем кнопку анализа, чтобы она гармонично делила ряд с плеером */
+.finished_actions_group .session_finish_btn {
+  flex: 2;
+  margin: 0;
+  padding: 14px 16px;
+  font-size: 14px;
+  width: 100%;
+}
+
+/* Кнопка "Слушать дубль" */
+.listen_btn {
+  flex: 1.2;
+  padding: 14px 12px;
+  border-radius: 25px;
+  border: 2px solid var(--color-blue);
+  background: var(--color-white);
+  color: var(--color-blue);
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Стили плеера во время воспроизведения звука */
+.listen_active {
+  background: var(--color-blue);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

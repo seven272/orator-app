@@ -1,0 +1,40 @@
+{
+  "name": "oratory-server",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "dev": "nodemon ./src/server.js",
+    "seed:tasks": "node ./src/scripts/seedTasks.js",
+    "seed:users": "node ./src/scripts/seedUsers.js",
+    "seed:shop": "node ./src/scripts/seedShop.js",
+    "test:salut": "node ./src/scripts/testSalutSpeech.js",
+    "test:live-room": "node ./src/scripts/testLiveRoutes.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1090.0",
+    "axios": "^1.15.2",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.21",
+    "dotenv": "^17.2.3",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.2",
+    "multer": "^2.1.1",
+    "node-cron": "^4.2.1",
+    "nodemon": "^3.1.11",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.2.1",
+    "globals": "^17.5.0",
+    "supertest": "^7.2.2"
+  }
+}

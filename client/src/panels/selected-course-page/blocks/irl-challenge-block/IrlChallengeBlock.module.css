@@ -1,0 +1,46 @@
+.challenge_container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Второстепенная кнопка теории, интегрированная в дизайн-систему */
+.refresh_theory_btn {
+  background-color: var(--color-bg, #e8f3ff);
+  color: var(--color-primary, #007aff);
+  font: var(--font-m); /* 'Rubik-Medium', 16px, line-height 18px */
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.refresh_theory_btn:hover {
+  background-color: var(--color-secondary, #b2d7ff);
+}
+
+.refresh_theory_btn:active {
+  transform: scale(0.98);
+}
+
+.error_alert {
+  background-color: rgba(243, 4, 4, 0.1);
+  border: 1px solid var(--color-red);
+  color: var(--color-red);
+  font: var(--font-s);
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  box-sizing: border-box;
+  margin-top: 16px;
+}

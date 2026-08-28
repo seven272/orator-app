@@ -1,0 +1,11 @@
+.secondary_theme_bg {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  /* min-height: 100%; */
+  width: 100%;
+  background-color: var(--color-bg-layout);
+  /* 📌 Отступы для страниц статистики, курсов и магазина */
+  padding: 10px 0;
+  box-sizing: border-box;
+}

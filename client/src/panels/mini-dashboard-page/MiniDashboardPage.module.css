@@ -1,0 +1,11 @@
+.mini_dashboard_page {
+  width: 100%;
+  max-width: 600px;
+  min-height: calc(100vh - 120px);
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

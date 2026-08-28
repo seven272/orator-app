@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="/holiday/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta property="og:image" content="/holiday/og.png"/>
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:description" content="" />
+  <meta property="og:title" content="" />
+  <title>Сбер</title>
+  <script type="text/javascript" src="/fs2/ruxitagentjs_ICANVfqrx_10293240704151944.js" data-dtconfig="app=ee3e1aa41015f9a2|cuc=gf6asyr4|mel=100000|expw=1|featureHash=ICANVfqrx|dpvc=1|lastModification=1773721067161|tp=500,50,0|rdnt=1|agentUri=/fs2/ruxitagentjs_ICANVfqrx_10293240704151944.js|reportUrl=/fs2/rb_504ba65b-8aea-4fa7-b5a8-c8ebc6afacc6|rid=RID_824106976|rpid=678110600|domain=sber.ru"></script><script type="text/javascript" src="/fs2/ruxitagentjs_ICANVfqrx_10283240308130508.js" data-dtconfig="app=ee3e1aa41015f9a2|cuc=gf6asyr4|mel=100000|expw=1|featureHash=ICANVfqrx|dpvc=1|ssv=4|lastModification=1763457358109|tp=500,50,0|rdnt=1|bp=3|agentUri=/fs2/ruxitagentjs_ICANVfqrx_10283240308130508.js|reportUrl=/fs2/rb_504ba65b-8aea-4fa7-b5a8-c8ebc6afacc6|rid=RID_2143147310|rpid=-964080428|domain=sber.ru"></script><script type="text/javascript" src="/ruxitagentjs_ICA27NVfjqrux_10279231130031246.js" data-dtconfig="app=3a54b054038fd521|featureHash=ICA27NVfjqrux|vcv=2|rdnt=1|uxrgce=1|bp=3|cuc=lubmxjmp|mel=100000|expw=1|dpvc=1|ssv=4|lastModification=1732985331384|tp=500,50,0,1|agentUri=/ruxitagentjs_ICA27NVfjqrux_10279231130031246.js|reportUrl=/rb_fe91584f-5549-42d7-b66a-01ae7a9f89d0|rid=RID_1850685210|rpid=-1558642045|domain=sberbank.ru"></script>
+  <script>
+    // Получаем текущие параметры URL (включая UTM метки)
+    const currentParams = window.location.search;
+    
+    // Базовый URL для редиректа
+    const baseUrl = 'https://www.sberbank.ru/promo/clientsday';
+    
+    // Добавляем параметры к целевому URL
+    window.location.href = baseUrl + currentParams;
+  </script>
+</head>
+<body>
+
+<script id='boomr' type='text/javascript' src='../../../monitoring?resource=boomerang.min.js' async='true' data-beacon-url='../../../monitoring?part=rum' data-request-name="/secure/attachment/7403233/index.html GET" data-server-time='27'></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+.vkui__root,
+.vkuiAppRoot,
+.vkuiRoot__view,
+.vkuiRoot {
+  --vkui--color_background: var(--color-bg-layout) !important;
+  --vkui--color_background: var(--color-bg-layout) !important;
+  --vkui--color_background_page: var(--color-bg-layout) !important;
+  background-color: var(--color-bg-layout) !important;
+}
+ 
+.vkui {
+  background-color: var(--color-bg-layout) !important;
+  margin: 0 auto;
+}
+.vkuiAppRoot {
+  background-color: var(--color-bg-layout) !important;
+  height: auto;
+}
+.vkuiPanel__in {
+  background-color: var(--color-bg-layout) !important;
+}
+.vkuiCustomSelectInput__container {
+  color: var(--color-blue-vk);
+}
+.vkuiCustomSelectInput__container:hover {
+}
+
+.vkuiCustomSelectInput__container option:hover {
+}
+.vkuiCustomSelectInput__el {
+  color: var(--color-black);
+}
+
+.vkuiDateInput__input {
+  color: var(--color-black);
+}

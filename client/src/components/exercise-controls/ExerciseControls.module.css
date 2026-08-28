@@ -1,0 +1,164 @@
+.btns_wrap {
+  width: 100%; /* Расширили до полной ширины контентной зоны */
+  max-width: 400px; /* Но ограничили максимум, чтобы кнопки на десктопе не были гигантскими */
+  height: auto;
+  min-height: 50px;
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* 🤖 ОБНОВЛЕНО: Главная кнопка "Начать" в стиле пилюли */
+.btn_start {
+  width: 100%;
+  padding: 12px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  
+  border-radius: 14px; /* Увеличили скругление */
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.2);
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.btn_start:active {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+/* 🤖 ОБНОВЛЕНО: Лёгкая кнопка "Остановить" без тяжелых темных теней */
+.btn_stop {
+  width: 100%;
+  padding: 12px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-white);
+  color: #ff4a4a; /* Сменили цвет текста на красный (стоп-сигнал) */
+  
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  
+  border: 1.5px solid rgba(255, 74, 74, 0.2); /* Тонкий красный контур */
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn_stop:active {
+  background-color: #fff5f5;
+  transform: scale(0.98);
+}
+
+.btns_finished_wrap {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: space-between; /* Распределяем кнопки равномерно */
+  align-items: center;
+  column-gap: 12px; /* Оптимизировали зазор для мобильных */
+}
+
+/* 🤖 ОБНОВЛЕНО: Аккуратные, современные кнопки самооценки (Плохо / Нормально / Уверенно) */
+.btn_rate {
+  flex: 1; /* Кнопки будут идеально равны по ширине */
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column; /* Текст и XP теперь один под другим для аккуратности */
+  justify-content: center;
+  align-items: center;
+  row-gap: 2px;
+  
+  background-color: var(--color-white);
+  color: var(--color-text-dark);
+  border: 1px solid rgba(0, 0, 0, 0.08); /* Мягкая нейтральная граница */
+  border-radius: 12px;
+  
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+  transition: background-color 0.2s ease, transform 0.1s ease, border-color 0.2s ease;
+}
+
+/* Подсвечиваем XP внутри кнопки фирменным синим цветом */
+.btn_rate span:last-child {
+  font-size: 11px;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.btn_rate:active {
+  background-color: #f1f5f9;
+  border-color: rgba(38, 136, 235, 0.3);
+  transform: scale(0.96);
+}
+
+/* 🤖 ОБНОВЛЕНО: Кнопка "Закончить" (Вторичное действие, делаем более спокойной) */
+.btn_end {
+  flex: 1;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 6px;
+  
+  background-color: #f1f5f9; /* Нейтральный легкий фон */
+  color: #475569;
+  
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn_end:active {
+  background-color: #e2e8f0;
+  transform: scale(0.98);
+}
+
+/* 🤖 ОБНОВЛЕНО: Кнопка "Продолжить" (Главное действие, яркое и акцентное) */
+.btn_next {
+  flex: 1;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 6px;
+  
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.15);
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.btn_next:active {
+  opacity: 0.9;
+  transform: scale(0.98);
+}

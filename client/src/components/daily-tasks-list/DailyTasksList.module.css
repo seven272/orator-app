@@ -1,0 +1,26 @@
+.container {
+  max-width: 600px;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: var(--color-bg);
+  border-radius: 24px;
+}
+
+
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Расстояние между карточками */
+}
+
+.loader, .error {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-secondary);
+  background: var(--color-white);
+  border-radius: 20px;
+  max-width: 600px;
+  margin: 20px auto;
+}

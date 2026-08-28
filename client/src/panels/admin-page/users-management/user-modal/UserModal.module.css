@@ -1,0 +1,143 @@
+/* --- МОДАЛЬНОЕ ОКНО (Затемнение заднего фона) --- */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(
+    2px
+  ); /* легкое размытие заднего фона для фокуса */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+
+/* Контентная часть карточки пользователя */
+.modal_content {
+  background: #ffffff;
+  width: 100%;
+  max-width: 450px; /* Идеально для встраивания в мобильный экран */
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  position: relative;
+  box-sizing: border-box;
+  animation: slide_up 0.2s ease-out; /* плавная анимация появления */
+}
+
+.modal_title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #111111;
+  padding-right: 24px;
+}
+
+/* Кнопка закрытия (крестик) */
+.modal_close_btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaaaaa;
+  line-height: 1;
+  padding: 0;
+}
+
+.modal_close_btn:hover {
+  color: #333333;
+}
+
+/* Строки с параметрами внутри карточки */
+.detail_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  font-size: 14px;
+  border-bottom: 1px dashed #e9ecef;
+}
+
+.detail_row:last-of-type {
+  border-bottom: none;
+  margin-bottom: 12px;
+}
+
+.row_meta_text {
+  color: #666666;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* красивое обрезание длинных email */
+}
+
+/* Базовые стили для кнопки изменения премиума */
+.premium_action_btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 16px;
+  transition:
+    transform 0.1s ease,
+    opacity 0.2s ease;
+}
+
+.premium_action_btn:active {
+  transform: scale(0.98);
+}
+
+/* Кнопка активации статуса */
+.btn_grant {
+  background-color: #4caf50;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+/* Кнопка деактивации статуса */
+.btn_revoke {
+  background-color: #e53935;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.2);
+}
+
+/* Анимация плавного выезда модалки снизу вверх */
+@keyframes slide_up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Кнопка опасного удаления */
+.delete_action_btn {
+  width: 100%;
+  padding: 12px;
+  background: none;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+
+.delete_action_btn:hover {
+  background: #fdf2f2;
+}

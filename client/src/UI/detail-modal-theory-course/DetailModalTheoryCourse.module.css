@@ -1,0 +1,78 @@
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Мобильный стиль — выезжает снизу */
+  z-index: 1000;
+  padding: 0;
+}
+
+.modal_content {
+  background-color: var(--color-bg);
+  width: 100%;
+  max-width: 600px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding: 24px 20px;
+  box-sizing: border-box;
+  animation: slideUp 0.25s ease-out;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modal_title {
+  font: var(--font-l);
+  color: var(--color-black);
+  margin: 0;
+}
+
+.modal_close_button {
+  background: none;
+  border: none;
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modal_body {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* На десктопе центрируем модалку */
+@media (min-width: 601px) {
+  .modal_overlay {
+    align-items: center;
+    padding: 20px;
+  }
+  .modal_content {
+    border-radius: 16px;
+    animation: fadeIn 0.2s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

@@ -1,0 +1,219 @@
+/* Главный внешний контейнер-карточка дуэлей */
+.card {
+  background-color: var(--color-white, #ffffff);
+  padding: 14px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); 
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Главный заголовок секции */
+.card_title {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-primary, #262626);
+}
+
+.icon_main {
+  color: #1890ff; /* Фирменный синий цвет для дуэлей */
+}
+
+/* Сетка внутренних подкарточек */
+.stats_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+/* Внутренние карточки для показателей (без теней и внешних бордеров) */
+.sub_card {
+  background-color: #fafafa;
+  border: 1px solid #f0f0f0;
+  padding: 12px;
+  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.stat_header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.stat_title {
+  color: var(--color-text-secondary, #8c8c8c);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.stat_value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-text-primary, #262626);
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.star_mini {
+  font-size: 14px;
+  color: #fadb14;
+  display: flex;
+  align-items: center;
+}
+
+.stat_sub {
+  font-size: 11px;
+  color: var(--color-text-secondary, #bfbfbf);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Цвета мини-иконок */
+.icon_duels_count {
+  color: #1890ff;
+}
+
+.icon_rating {
+  color: #faad14;
+}
+
+/* Внутренние контентные разделы */
+.inner_section {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 14px;
+  margin-bottom: 16px;
+}
+
+.inner_section_last {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 14px;
+}
+
+.sub_section_title {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-primary, #262626);
+}
+
+/* Список распределения оценок */
+.distribution_list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.distribution_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dist_label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary, #595959);
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.dist_progress {
+  flex: 1;
+}
+
+.dist_count {
+  font-size: 12px;
+  color: var(--color-text-secondary, #8c8c8c);
+  min-width: 16px;
+  text-align: right;
+}
+
+/* Список истории активности */
+.activity_list {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.activity_item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.activity_info {
+  min-width: 0;
+  flex: 1;
+}
+
+.activity_name {
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text-primary, #262626);
+}
+
+.activity_score {
+  font-size: 11px;
+  color: var(--color-text-secondary, #8c8c8c);
+}
+
+.activity_count {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary, #262626);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.no_rating {
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--color-text-secondary, #bfbfbf);
+}
+
+.empty_text {
+  text-align: center;
+  color: var(--color-text-secondary, #8c8c8c);
+  font-size: 13px;
+  padding: 12px 0;
+}
+
+/* 📱 Оптимизация под мобильные устройства (до 420px) */
+@media (max-width: 420px) {
+  .stats_grid {
+    grid-template-columns: 1fr; /* На очень узких экранах выстраиваем карточки в ряд */
+    gap: 8px;
+  }
+}

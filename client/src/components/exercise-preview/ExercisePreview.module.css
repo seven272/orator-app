@@ -1,0 +1,198 @@
+.execise_container {
+  width: 100%;
+  height: 240px; 
+  min-width: 240px; 
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-light);
+  position: relative; 
+  border-radius: 12px; 
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+}
+.execise_container:hover {
+  transform: translateY(-5px); /* Подъем вместо простого скейла */
+  box-shadow: 0 8px 24px rgba(0, 0, 100, 0.1);
+}
+.inner_content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+.execise_header {
+  width: 100%;
+  display: flex;
+  flex-direction: row; /* В ряд */
+  align-items: flex-start;
+  justify-content: space-between; /* Иконка слева, тег справа */
+  padding: 20px 15px 10px;
+}
+
+.icon_wrap {
+  width: 64px; /* Увеличил для 3D иконок */
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Чтобы иконка не обрезалась */
+}
+
+.skill_tag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--color-text-dark);
+  opacity: 0.7;
+}
+
+.execise_text_wrap {
+  flex-grow: 1; 
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0 15px 12px; /* Чуть уменьшили нижний отступ, чтобы не поджимать награду */
+  overflow: hidden; /* Обрезает избыточный текст, защищая верстку */
+}
+
+.execise_title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.execise_descr {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #666;
+  /* Ограничиваем описание 3 строками, чтобы не ломать сетку */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.execise_reward {
+  margin-top: 15px;
+  align-self: flex-start;
+  padding: 5px 12px;
+  background-color: #e6f4ff; /* Светло-голубой под цвет карточки */
+  color: #1677ff;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 1px solid rgba(22, 119, 255, 0.2);
+}
+
+.text_main {
+  overflow: hidden;
+}
+
+.exercise_footer {
+  width: 100%;
+  height: 24px; 
+  background-image: url('../../assets/images/design/card_footer.png');
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0; 
+  margin-top: auto; /* Выталкивает элемент в самый низ .inner_content */
+}
+
+.locked {
+  cursor: not-allowed;
+}
+
+/* Эффект при наведении на закрытую карточку */
+.locked:hover {
+  transform: translateY(0); /* Не поднимаем закрытую карточку */
+}
+
+
+
+/* Блюр контента */
+.content_blur {
+  filter: blur(0.1px) saturate(0.3); /* Немного обесцвечиваем */
+  opacity: 0.3;
+  transition: all 0.3s ease;
+  user-select: none;
+  pointer-events: none; /* Чтобы нельзя было кликнуть на элементы внутри */
+}
+
+/* Слой с замочком */
+.lock_overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон */
+  backdrop-filter: blur(0.5px); /* Дополнительный мягкий блюр */
+}
+
+.lock_icon {
+  color: #4a90e2; /* Красивый холодный синий */
+  margin-bottom: 12px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  margin-bottom: 25px;
+}
+
+.lock_text {
+  background: #ebf8ff;
+  color: #2b6cb0;
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid #4299e1; 
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+  margin-bottom: 30px;
+}
+.premium_lock .lock_text {
+  background: #ebf8ff; /* Очень светлый голубой */
+  border-color: #4299e1;
+  color: #2b6cb0;
+}
+
+.premium_lock .lock_icon {
+  color: #3182ce;
+}
+
+.theory_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 7px;
+  background: #ebf8ff;
+  color: #2b6cb0;
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid #4299e1; 
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  z-index: 11; /* Выше всех */
+}
+
+.theory_btn:hover {
+  background: #4a90e2;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
+}

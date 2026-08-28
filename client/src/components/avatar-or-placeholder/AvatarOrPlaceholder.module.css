@@ -1,0 +1,58 @@
+.avatar_base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-sizing: border-box;
+  user-select: none;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: var(--color-bg);
+}
+
+/* Классы размеров подстроены под змеиный регистр */
+.size_s {
+  width: 32px;
+  height: 32px;
+}
+
+.size_m {
+  width: 64px;
+  height: 64px;
+}
+
+.size_l {
+  width: 90px;
+  height: 90px;
+}
+
+.img_style {
+  object-fit: cover;
+  border: none;
+}
+
+.unauth_bg {
+  background-color: var(--color-bg-light);
+  border: 1px solid var(--color-grey-light);
+}
+
+.svg_icon {
+  width: 65%;
+  height: 65%;
+  fill: var(--color-text-secondary);
+}
+
+.placeholder_bg {
+  color: var(--font-color-light);
+  border: 2px solid var(--color-white);
+  box-shadow: 0 0 0 2px var(--color-bg-light);
+}
+
+.initials_text {
+  font: var(--font-ml);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.size_s .initials_text { font: var(--font-xs); font-weight: bold; }
+.size_l .initials_text { font: var(--font-l); font-weight: bold; }

@@ -1,0 +1,173 @@
+/* Затемнение фона в концепции чистых подложек */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* Белая карточка модалки, повторяющая логику feedback_block и topic_card */
+.modal_content {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  box-sizing: border-box;
+  animation: scaleIn 0.2s ease-out;
+}
+
+.modal_header h2 {
+  font: var(--font-title);
+  color: var(--color-black);
+  margin: 0 0 4px 0;
+}
+
+.modal_subtitle {
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+  margin: 0 0 20px 0;
+}
+
+/* Список наград в стиле my_position_box */
+.rewards_list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.reward_item {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-bg-light);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font: var(--font-ml);
+  color: var(--color-text-primary);
+  text-align: left;
+}
+
+.reward_icon {
+  font-size: 20px;
+  margin-right: 12px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.reward_text small {
+  font: var(--font-xs);
+  color: var(--color-text-secondary);
+  margin-left: 6px;
+}
+
+/* Блок повышения уровня в стиле turn_indicator с акцентом */
+.level_up_badge {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 189, 18, 0.1);
+  border: 1px solid rgba(255, 189, 18, 0.2);
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.level_icon {
+  font-size: 24px;
+  margin-right: 12px;
+}
+
+.level_up_badge h4 {
+  margin: 0;
+  font: var(--font-s);
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.level_up_badge p {
+  margin: 2px 0 0 0;
+  font: var(--font-m);
+  color: var(--color-black);
+}
+
+/* Блок новых ачивок (светлая плашка в стиле вашей разметки) */
+.achievements_block {
+  margin-top: 16px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.achievements_block h3 {
+  font: var(--font-submenu);
+  color: var(--color-text-secondary);
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.achievement_badge {
+  display: flex;
+  align-items: center;
+  background-color: rgba(52, 199, 89, 0.08);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+  padding: 12px 16px;
+  border-radius: 12px;
+}
+
+.ach_star {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.ach_title {
+  font: var(--font-ml);
+  color: var(--color-green);
+  font-weight: 600;
+}
+
+/* Главная кнопка закрытия модалки, повторяющая логику vk_call_btn */
+.modal_close_btn {
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  font: var(--font-l);
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  font-weight: bold;
+  box-shadow: 0 4px 14px rgba(38, 136, 235, 0.2);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.modal_close_btn:active {
+  transform: scale(0.98);
+}
+
+/* Легкая плавная анимация появления без пружин */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

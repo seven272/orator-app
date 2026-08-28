@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.server_error {
+  color: var(--color-red);
+  background-color: #f8d7da;
+  padding: 10px;
+  border-radius: 6px;
+  font: var(--font-m);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.logout_block {
+  margin-top: 8px;
+}
+
+.logout_btn {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-grey-light);
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font: var(--font-m);
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.logout_btn:hover {
+  background-color: #fff0f0;
+  color: var(--color-red);
+  border-color: var(--color-red);
+}

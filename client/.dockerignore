@@ -1,0 +1,26 @@
+# Зависимости (категорически запрещено передавать, контейнер ставит свои через npm ci)
+node_modules/
+.npm/
+
+# Локальные сборки и кэш компиляторов (чтобы сервер не путал статику)
+dist/
+.cache/
+.vite/
+
+# Логи ошибок npm и системные дампы
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# Конфигурации Docker (их Docker считывает сам, внутрь контейнера им лететь не нужно)
+Dockerfile
+nginx.conf
+docker-compose*
+.env*
+
+# Мусор операционных систем и редакторов кода
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

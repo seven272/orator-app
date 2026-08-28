@@ -1,0 +1,128 @@
+.avatar_edit_section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed var(--color-bg-light);
+}
+
+.preview_box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input_label_mini {
+  font: var(--font-xs);
+  color: var(--color-text-secondary);
+}
+
+.avatar_preview_img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px; /* Делаем превью слегка квадратным с закруглениями для отличия */
+  object-fit: cover;
+  border: 1px solid var(--color-grey-light);
+}
+
+.avatar_icon {
+color: var(--color-text-secondary);
+}
+.avatar_actions_box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.upload_btn_inline {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font: var(--font-m-light);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.upload_btn_inline:hover {
+  background-color: var(--color-bg-light);
+}
+
+.reset_avatar_link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font: var(--font-xs);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+/* Заголовки блоков */
+.sub_heading {
+  margin: 0 0 12px 0;
+  font: var(--font-submenu);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-secondary);
+}
+
+/* Формы и инпуты */
+.form_profile, .connections_block {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-bg-light);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.input_group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.input_group label {
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+}
+
+.input_group input {
+  padding: 10px 12px;
+  border: 1px solid var(--color-grey-light);
+  border-radius: 6px;
+  font: var(--font-m);
+  color: var(--color-text-dark);
+  outline: none;
+  background-color: var(--color-white);
+}
+
+.input_group input:focus {
+  border-color: var(--color-primary);
+}
+
+/* Кнопки */
+.primary_btn, .secondary_btn, .vk_btn, .success_btn, .cancel_btn, .logout_btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font: var(--font-m);
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.3s;
+}
+
+.primary_btn:hover, .secondary_btn:hover, .vk_btn:hover, .logout_btn:hover {
+  opacity: 0.8;
+}
+
+.primary_btn {
+  background-color: var(--color-primary);
+  color: var(--font-color-light);
+}

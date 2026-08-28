@@ -1,0 +1,257 @@
+/* Разделы отдельных курсов */
+.courses_loop {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.course_section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.course_meta_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2px;
+}
+
+.course_code_title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-text-primary, #262626);
+}
+
+.course_status_badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Список попыток (Timeline) */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history_item {
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  background-color: #fafafa;
+}
+
+.item_active {
+  border-color: #d9d9d9;
+  background-color: var(--color-white, #ffffff);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.item_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  cursor: pointer;
+  user-select: none;
+  gap: 8px;
+}
+
+.item_header:hover {
+  background-color: #f5f5f5;
+}
+
+.meta_info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.attempt_number {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-text-primary, #262626);
+}
+
+.finish_date {
+  font-size: 11px;
+  color: var(--color-text-secondary, #8c8c8c);
+}
+
+.score_zone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.status_text {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status_success {
+  color: #52c41a;
+}
+
+.status_error {
+  color: #ff4d4f;
+}
+
+.score_value {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-text-primary, #262626);
+}
+
+.score_max {
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--color-text-secondary, #bfbfbf);
+}
+
+.arrow_icon {
+  font-size: 10px;
+  color: var(--color-text-secondary, #8c8c8c);
+  display: flex;
+  align-items: center;
+}
+
+/* Развернутый блок деталей */
+.item_details {
+  padding: 12px;
+  border-top: 1px solid #f0f0f0;
+  background-color: var(--color-white, #ffffff);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.detail_label {
+  color: var(--color-text-secondary, #595959);
+}
+
+.detail_value {
+  color: var(--color-text-primary, #262626);
+}
+
+/* Фидбек ИИ */
+.ai_feedback_block {
+  background: linear-gradient(135deg, #f9f0ff 0%, #ffffff 100%);
+  border: 1px solid #d3adf7;
+  border-radius: 8px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.feedback_header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.icon_ai {
+  color: #722ed1;
+  font-size: 13px;
+}
+
+.feedback_label {
+  font-weight: 700;
+  font-size: 12px;
+  color: #531dab;
+}
+
+.feedback_text {
+  margin: 0;
+  font-size: 12px;
+  color: #262626;
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
+.no_history_text {
+  font-size: 12px;
+  color: var(--color-text-secondary, #bfbfbf);
+  padding-left: 2px;
+}
+
+.summary_icon_success {
+  color: #52c41a;
+  font-size: 18px;
+}
+
+.summary_icon_failed {
+  color: #ff4d4f;
+  font-size: 18px;
+}
+
+/* Оформление пустого состояния */
+.empty_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0 10px 0;
+  text-align: center;
+  gap: 14px;
+}
+
+.empty_text {
+  font-size: 13px;
+  color: var(--color-text-secondary, #8c8c8c);
+  margin: 0;
+}
+
+.route_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font: var(--font-m);
+  padding: 10px 15px;
+  outline: none;
+  background-color: var(--color-blue);
+  color: var(--color-white);
+  border-color: var(--color-blue);
+  font-weight: 600;
+  border-radius: 20px; /* Соответствует стилю .growth_btn вашего дашборда */
+  cursor: pointer;
+}
+
+.route_btn:hover {
+  background: var(--color-blue-dark);
+  border-color: var(--color-blue-dark);
+}
+
+/* 📱 Оптимизация под узкие экраны смартфонов (до 420px) */
+@media (max-width: 420px) {
+
+  .item_header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .score_zone {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px dashed #e8e8e8;
+    padding-top: 6px;
+  }
+}

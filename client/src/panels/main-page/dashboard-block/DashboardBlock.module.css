@@ -1,0 +1,112 @@
+/* components/Dashboard/DashboardPrev.module.css */
+
+.banner {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--color-bg);
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent; /* Отключение стандартного выделения на iOS */
+}
+
+.banner_header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.banner_title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(
+    --color-text-secondary
+  ); /* Серый цвет заголовков по дизайн-системе */
+  padding-left: 4px;
+}
+
+/* Улучшено: Добавлены мягкие тени и убрана жесткая рамка */
+.banner_wrapper {
+  width: 100%;
+  background-color: var(--color-bg-light);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow:
+    0 8px 24px rgba(0, 122, 255, 0.06),
+    0 2px 6px rgba(0, 0, 0, 0.02);
+  transition:
+    transform 0.1s ease,
+    background-color 0.1s ease;
+}
+
+/* Улучшено: Эффект нажатия перенесен на внутреннюю карточку */
+.banner_wrapper:active {
+  transform: scale(0.98);
+  background-color: var(--color-bg-light);
+}
+
+.banner_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.text_main {
+  font-size: 15px;
+  color: var(--color-text-dark);
+  font-weight: 500;
+}
+
+.badge_coins {
+  background-color: var(--color-bg);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(0, 122, 255, 0.15);
+}
+
+/* Улучшено: Стили для нового линейного прогресс-бара */
+.progress_container {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-bg);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: -4px;
+}
+
+.progress_bar {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.banner_footer {
+  width: 100%;
+  font-size: 12px;
+  color: var(--color-primary);
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.chevron_icon {
+  font-size: 16px;
+  color: var(--color-primary);
+  font-weight: 700;
+}

@@ -1,0 +1,67 @@
+.container {
+  padding: 16px;
+  font-family: -apple-system, system-ui, Helvetica, Arial, sans-serif;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--vkui--color_text_primary);
+}
+
+.section {
+  margin-bottom: 16px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--vkui--color_text_primary);
+}
+
+.text {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--vkui--color_text_primary);
+}
+
+.text_secondary {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--vkui--color_text_secondary);
+}
+
+.example_box {
+  padding: 12px;
+  background-color: var(--vkui--color_background_secondary);
+  border-radius: 12px;
+  margin-top: 20px;
+  margin-bottom: 24px;
+}
+
+.example_text {
+  font-size: 15px;
+  font-style: italic;
+  white-space: pre-line;
+  color: var(--vkui--color_text_primary);
+}
+
+.close_button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 10px;
+  border: none;
+  background-color: var(--vkui--color_background_secondary_alpha); /* или ваш основной цвет */
+  color: var(--vkui--color_text_accent);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.close_button:active {
+  opacity: 0.7;
+}

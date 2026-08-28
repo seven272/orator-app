@@ -1,0 +1,262 @@
+.screen_running {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Верхняя панель дебатов (Инфо и Таймер) */
+.debate_header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.debate_header_text {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  color: var(--color-text-secondary);
+  font: var(--font-m-light);
+  font-size: 12px;
+  text-align: center;
+}
+
+.progress_container {
+  width: 100%;
+  padding: 0 10px;
+}
+
+.progress_text {
+  font: var(--font-m-light);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.progress_bar_bg {
+  width: 100%;
+  height: 6px;
+  background: #e6f0ff;
+  border-radius: 10px;
+}
+
+.progress_bar_fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.warmth_bar_fill {
+  height: 100%;
+  border-radius: 10px;
+   background: var(--color-primary);
+  /* Плавный переход и для ширины, и для цвета */
+  transition:
+    width 0.8s ease,
+    background 0.8s ease;
+  /* Фиксируем размер градиента, чтобы он не сжимался при малом проценте */
+  background-size: 100vw 100%;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font: var(--font-m);
+  color: var(--color-text-dark);
+  font-weight: 600;
+}
+
+.debate_footer {
+  display: flex;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  min-height: 80px; /* Фиксированная высота, чтобы чат не прыгал при смене статусов */
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+/* Анимация печати */
+.typing_dots {
+  display: flex;
+  gap: 4px;
+  padding: 5px 0;
+}
+
+.typing_dots span {
+  width: 6px;
+  height: 6px;
+  background: #8e9bae;
+  border-radius: 50%;
+  animation: blink 1.4s infinite both;
+}
+
+.typing_dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing_dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+.text_start {
+  font: var(--font-decor);
+  font-size: 32px;
+  color: var(--color-primary);
+  letter-spacing: 2px;
+}
+
+.btns_wrap {
+  width: 80%;
+  height: auto;
+  min-height: 50px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.debate_finish_btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 5px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  font: var(--font-m);
+  font-weight: 600;
+  transition:
+    transform 0.2s,
+    background 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+}
+
+/* Кнопка "Начать говорить" */
+.record_full_btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 5px;
+  padding: 14px;
+  border-radius: 25px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  font: var(--font-m);
+  font-weight: 600;
+  transition:
+    transform 0.2s,
+    background 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+}
+
+.record_full_btn:hover {
+  background: #0066d6;
+  transform: translateY(-1px);
+}
+
+/* Обертка для процесса записи */
+.recording_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Пульсирующий красный индикатор */
+.pulse_circle {
+  width: 14px;
+  height: 14px;
+  background: #ff4d4d;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 77, 77, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0);
+  }
+}
+
+/* Текст таймера */
+.timer_text {
+  font-family: monospace; /* Чтобы цифры не "прыгали" при смене */
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--color-text-secondary);
+  min-width: 60px;
+}
+
+/* Кнопка СТОП */
+.stop_btn {
+  background: none;
+  color: var(--color-primary);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stop_btn:hover {
+  color: var(--color-blue-dark);
+}
+
+/* Состояния обработки и ожидания ИИ */
+.status_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.status_text {
+  font: var(--font-s);
+  color: #8e9bae;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

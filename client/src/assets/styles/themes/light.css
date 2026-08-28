@@ -1,0 +1,9 @@
+.app.light {
+    --font-color: #000000; 
+    --bg-color: #ffffff;
+    --border-main: 1px solid #000000;
+    --font-invert-color: #ffffff;
+    --bg-invert-color: #121212;
+    --border-invert-main: 1px solid #ffffff;
+    --color-shadow: rgba(0, 0, 0, 0.3);
+}  

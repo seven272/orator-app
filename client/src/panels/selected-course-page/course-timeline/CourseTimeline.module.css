@@ -1,0 +1,299 @@
+/* Базовые контейнеры с ограничением по ширине */
+.timeline_container,
+.welcome_wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.welcome_wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.welcome_icon_container {
+  width: 96px; /* Немного увеличили, чтобы компенсировать отступы */
+  height: 96px;
+  border-radius: 50%;
+  /* Мягкий градиент на фоне */
+  background: linear-gradient(135deg, #ffffff, var(--color-light-blue));
+  
+  /* ДОБАВИЛИ РАМКУ: сине-голубой контур в цвет вашей вторичной переменной */
+  border: 3px solid var(--color-secondary); 
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  position: relative;
+  box-sizing: border-box;
+  
+  /* Сложная тень: первая дает объем самой карточке, вторая — легкое свечение контура */
+  box-shadow: 
+    0 10px 24px rgba(0, 122, 255, 0.05),
+    inset 0 0 12px rgba(0, 122, 255, 0.03); 
+}
+
+/* ИИ-картинка внутри рамки */
+.welcome_ai_image {
+  width: 76px;  /* Уменьшили базовый размер, чтобы внутри круга появился "воздух" */
+  height: 76px;
+  object-fit: contain;
+  
+  /* Эффект легкого 3D: картинка визуально приподнимается над подложкой, отбрасывая мягкую тень вниз */
+  filter: drop-shadow(0 6px 10px rgba(0, 122, 255, 0.15));
+  
+  position: relative;
+  z-index: 2;
+}
+/* Сделали заголовок менее крупным и аккуратным */
+.course_title {
+  font: var(
+    --font-l
+  ); /* Переключили с var(--font-xl) на ваш стандартный var(--font-l) */
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-black);
+  margin: 0 0 10px 0;
+  line-height: 1.25;
+}
+
+.course_description {
+  font: var(--font-m-light);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+  margin: 0 0 32px 0;
+  max-width: 440px;
+}
+
+/* --- КНОПКИ ДЕЙСТВИЯ --- */
+.primary_button {
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  font: var(--font-ml);
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  padding: 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition:
+    transform 0.1s ease,
+    background-color 0.1s ease;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.primary_button:active {
+  transform: scale(0.98);
+  background-color: var(--color-blue-dark);
+}
+
+.secondary_back_button {
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  font: var(--font-m);
+  font-weight: 600;
+  border: 1px solid var(--color-secondary);
+  padding: 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 12px;
+  transition:
+    transform 0.1s ease,
+    background-color 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.secondary_back_button:active {
+  transform: scale(0.98);
+  background-color: var(--color-bg-light);
+}
+
+/* ==========================================================================
+   Новая улучшенная шапка (Двухуровневая структура)
+   ========================================================================== */
+
+.timeline_header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+/* Верхний ряд: Кнопка назад | Текст | Заглушка для центровки */
+.top_bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.inline_back_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  font: var(
+    --font-xl
+  ); /* Используем крупный шрифт для красивой стрелочки ‹ */
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  line-height: 1;
+}
+
+.header_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.step_counter {
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.current_step_title {
+  font: var(--font-m);
+  font-weight: 600;
+  color: var(--color-black);
+  margin: 4px 0 0 0;
+}
+
+/* Фантомный блок справа равен по ширине кнопке назад. 
+   Гарантирует, что заголовок будет идеально по центру экрана */
+.right_spacer {
+  width: 32px;
+}
+
+/* Нижний ряд: Прогресс-бар в стиле сторис */
+.stepper_container {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.step_indicator {
+  flex: 1;
+  height: 4px;
+  background-color: var(
+    --color-secondary
+  ); /* Неактивный серый трек */
+  border-radius: 2px;
+  transition: background-color 0.3s ease;
+}
+
+/* Пройденные шаги окрашиваются в основной цвет темы */
+.step_completed {
+  background-color: var(--color-primary);
+}
+
+/* Текущий активный шаг выделяется цветом VK */
+.step_current {
+  background-color: var(--color-blue-vk);
+}
+
+/* ==========================================================================
+   Остальные системные элементы
+   ========================================================================== */
+
+.error_alert {
+  background-color: rgba(243, 4, 4, 0.1);
+  border: 1px solid var(--color-red);
+  color: var(--color-red);
+  font: var(--font-s);
+  padding: 12px;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.block_content_area {
+  width: 100%;
+}
+
+.loader_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+}
+
+/* ... ваши существующие стили остаются без изменений ... */
+
+/* Полноэкранный контейнер для пустого состояния */
+.empty_course_wrapper {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Круглый контейнер под иконку (в стиле ваших ИИ-генераций) */
+.empty_icon_container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    #e0f2fe,
+    var(--color-secondary)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 24px rgba(0, 122, 255, 0.06);
+}
+
+.empty_title {
+  font: var(--font-xl);
+  font-size: 24px;
+  color: var(--color-black);
+  margin: 0 0 10px 0;
+}
+
+.empty_description {
+  font: var(--font-m-light);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin: 0 0 32px 0;
+  max-width: 400px; /* Ограничиваем ширину текста для красивого переноса на планшетах */
+}

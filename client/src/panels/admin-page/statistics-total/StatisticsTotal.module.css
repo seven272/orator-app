@@ -1,0 +1,241 @@
+.admin_container {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px;
+  font-family: system-ui, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.stats_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat_card {
+  background: #ffffff;
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat_label {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.stat_value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #111;
+}
+
+.section_card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+}
+
+.section_title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 6px;
+}
+
+.data_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+  border-bottom: 1px dashed #f0f0f0;
+}
+
+.data_row:last-child {
+  border-bottom: none;
+}
+
+.row_name {
+  font-weight: 500;
+}
+
+.row_meta {
+  color: #666;
+  font-size: 13px;
+}
+
+/* ... Ваши существующие стили остаются без изменений ... */
+
+.block_main_title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #555;
+  text-transform: uppercase;
+  margin: 0 0 10px 4px;
+  letter-spacing: 0.5px;
+}
+
+/* Карточка сводки по курсам */
+.courses_summary_card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+}
+
+/* Трехколоночная сетка метрик */
+.courses_summary_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.summary_item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary_value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.1;
+}
+
+.summary_label {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* Цвета иконок */
+.icon_purchased {
+  color: var(--color-primary);
+}
+.icon_success {
+  color: #2e7d32;
+}
+.icon_failed {
+  color: #c2185b;
+}
+
+/* Переключатель детализации */
+.box_nav_list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Контейнер списка курсов */
+.courses_detail_list {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Строка отдельного курса */
+.course_row_detail {
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-left: 3px solid var(--color-primary);
+}
+
+.course_name_title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Панель бейджей со статистикой внутри курса */
+.course_metrics_wrap {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.metric_badge_info,
+.metric_badge_success,
+.metric_badge_error {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.metric_badge_info {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.metric_badge_success {
+  background: #dcfce7;
+  color: #15803d;
+}
+.metric_badge_error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Служебные стили */
+.centered_msg {
+  text-align: center;
+  padding: 40px;
+  font-size: 14px;
+  color: #666;
+}
+.error_msg {
+  color: red;
+  text-align: center;
+  padding: 40px;
+  font-size: 14px;
+}
+.empty_courses_msg {
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+  padding: 10px;
+}

@@ -1,0 +1,244 @@
+.screen_running {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Верхняя панель (Инфо и прогресс-бар) */
+.historical_header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+}
+
+.progress_container {
+  width: 100%;
+}
+
+.progress_text {
+  display: flex;
+  justify-content: center; /* Центрируем надпись раунда над баром */
+  align-items: center;
+  font: var(--font-m-light);
+  font-size: 13px;
+  font-weight: 600; /* Сделали надпись чуть плотнее */
+  color: var(--color-text-secondary);
+  margin-bottom: 10px;
+}
+
+.progress_bar_bg {
+  width: 100%;
+  height: 6px;
+  background: #e6f0ff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress_bar_fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 10px;
+  transition: width 0.4s ease-out;
+}
+
+/* Нижняя панель управления */
+.historical_footer {
+  display: flex;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.85);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  min-height: 85px;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+  box-sizing: border-box;
+  z-index: 10;
+  margin-top: auto;
+}
+
+/* Контейнер для двух кнопок в финале */
+.finished_actions_group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 420px; /* Ограничиваем общую ширину группы */
+  box-sizing: border-box;
+}
+
+/* Переопределяем ширину кнопки финала, чтобы она делила место с плеером */
+.finished_actions_group .historical_finish_btn {
+  flex: 2; /* Занимает больше пространства */
+  max-width: none;
+  padding: 14px 16px;
+  font-size: 14px;
+}
+
+/* Стиль для кнопки прослушивания аудио */
+.listen_btn {
+  flex: 1.2; /* Чуть уже кнопки финала */
+  padding: 14px 12px;
+  border-radius: 25px;
+  border: 2px solid var(--color-blue);
+  background: var(--color-white);
+  color: var(--color-blue);
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Активное состояние во время проигрывания */
+.listen_active {
+  background: var(--color-blue);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+}
+
+
+/* Базовый класс для больших кнопок */
+.historical_finish_btn,
+.record_full_btn {
+  width: 100%;
+  max-width: 320px; /* Защита от чрезмерного растягивания */
+  padding: 14px 24px;
+  border-radius: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  font: var(--font-m);
+  font-weight: 600;
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.25);
+}
+
+.record_full_btn:hover,
+.historical_finish_btn:hover {
+  background: #0066d6;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 122, 255, 0.35);
+}
+
+.record_full_btn:active,
+.historical_finish_btn:active {
+  transform: translateY(1px);
+}
+
+/* Обертка для процесса записи */
+.recording_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Пульсирующий красный индикатор записи */
+.pulse_circle {
+  width: 12px;
+  height: 12px;
+  background: #ff4d4d;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.6);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 12px rgba(255, 77, 77, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0);
+  }
+}
+
+/* Текст таймера */
+.timer_text {
+  font-family: monospace;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Кнопка СТОП (Сделали полноценной круглой кнопкой) */
+.stop_btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #ff4d4d;
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background 0.2s;
+  box-shadow: 0 4px 12px rgba(255, 77, 77, 0.2);
+}
+
+.stop_btn:hover {
+  background: #e63939;
+  transform: scale(1.05);
+}
+
+.stop_btn:active {
+  transform: scale(0.95);
+}
+
+/* Состояния обработки и ожидания ИИ */
+.status_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status_text {
+  font: var(--font-s);
+  font-weight: 500;
+  color: #8e9bae;
+}
+
+/* Анимация точек */
+.typing_dots {
+  display: flex;
+  gap: 5px;
+}
+
+.typing_dots span {
+  width: 6px;
+  height: 6px;
+  background: #8e9bae;
+  border-radius: 50%;
+  animation: blink 1.4s infinite both;
+}
+
+.typing_dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing_dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.3; }
+  40% { opacity: 1; }
+}

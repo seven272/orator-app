@@ -1,0 +1,92 @@
+.activity_block {
+  width: 100%;
+  background-color: var(--color-bg);
+  padding: 16px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.block_title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+.block_grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.block_item {
+   background-color: var(--color-bg-light);
+  border: none;
+  border-radius: 16px;
+  padding: 16px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow:
+    0 8px 24px rgba(0, 122, 255, 0.04),
+    0 2px 6px rgba(0, 0, 0, 0.02);
+  transition:
+    transform 0.1s ease,
+    background-color 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.block_item:active {
+  transform: scale(0.95);
+  background-color: var(--color-bg-light);
+}
+
+.badge_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.item_icon {
+  width: 30px;
+  height: 30px;
+}
+
+.badge_text {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.item_subtitle {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* Тематические цвета под типы карточек */
+.type_shop .badge_text {
+  color: #2e7d32;
+}
+
+.type_challenges .badge_text {
+  color: #e65100;
+}
+
+.type_duels .badge_text {
+  color: #c2185b;
+}

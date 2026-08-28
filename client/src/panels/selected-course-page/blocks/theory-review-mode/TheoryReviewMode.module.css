@@ -1,0 +1,71 @@
+/* frontend/src/components/ExamBlock/TheoryReviewMode.module.css */
+
+.review_mode_wrapper {
+  background-color: var(--color-white, #ffffff);
+  padding: 20px 16px;
+  border-radius: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Верхняя навигационная панель */
+.review_header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--color-grey-light, #e2dcdc);
+  padding-bottom: 16px;
+  width: 100%;
+}
+
+/* Кнопка возврата «Назад к ...» */
+.back_to_exam_btn {
+  background-color: var(--color-bg, #e8f3ff);
+  color: var(--color-primary, #007aff);
+  font: var(--font-m); /* 'Rubik-Regular', 14px, line-height 15px */
+  font-weight: 600;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.back_to_exam_btn:hover {
+  background-color: var(--color-secondary, #b2d7ff);
+}
+
+.back_to_exam_btn:active {
+  transform: scale(0.97);
+}
+
+/* Текстовый заголовок шапки повторения */
+.review_title {
+  font: var(--font-subtitle); /* 'ElMessiri-SemiBold', 16px, line-height 18px */
+  color: var(--color-text-dark, #2e3138);
+  letter-spacing: -0.2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 400px) {
+  .review_header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .back_to_exam_btn {
+    width: 100%;
+    text-align: center;
+  }
+}

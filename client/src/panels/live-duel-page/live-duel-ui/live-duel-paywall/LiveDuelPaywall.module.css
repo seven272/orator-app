@@ -1,0 +1,100 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  background-color: var(--color-bg);
+  min-height: 80vh;
+  justify-content: center;
+}
+
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 440px;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.title {
+  font: var(--font-xl);
+  color: var(--color-black);
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.hint {
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 1.5;
+  max-width: 85%;
+  margin: 0 auto 30px auto;
+}
+
+.crown {
+  font-size: 48px;
+  margin-bottom: 20px;
+  animation: crownFloat 3s ease-in-out infinite;
+}
+
+.action_buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.action_btn {
+  font: var(--font-submenu);
+  font-weight: 600;
+  padding: 14px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.action_btn:active {
+  transform: scale(0.99);
+}
+
+.btn_gold {
+  background: linear-gradient(135deg, #ffb300, #e28e00);
+  color: var(--color-white);
+  box-shadow: 0 4px 15px rgba(226, 142, 0, 0.3);
+}
+
+.btn_gold:hover {
+  box-shadow: 0 6px 20px rgba(226, 142, 0, 0.45);
+}
+
+.btn_text {
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: var(--font-s);
+  padding: 8px;
+}
+
+.btn_text:hover {
+  color: var(--color-text-primary);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes crownFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.05); }
+}

@@ -1,0 +1,112 @@
+.radio__wrapper {
+  background-color: none;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
+}
+/* Определяем размещение по горизонтали элементов обернутых в label */
+.radio__label {
+  height: auto;
+  width: 100%;
+  font: var(--font-m);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  align-items: center;
+  margin-left: 15px;
+  color: var(--color-white);
+}
+/* Скрываем штатные радио-кнопки */
+.radio__input {
+  position: absolute;
+  opacity: 0;
+  display: block;
+  height: 0;
+  width: 0;
+}
+/* Устанавливаем параметры элементов, заменяющих штатные радио-кнопки */
+.radio__custom {
+  /* сбрасываем стили с формы с помощью appearance:none, чтобы задать свой стиль  */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  display: block;
+  position: relative;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  border: 1px solid #999999;
+  background-color: #ffffff;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+  transition: 0.5s all;
+  margin-right: 15px;
+}
+/* Устанавливаем параметры элементов, заменяющих штатные радио-кнопки при наведении */
+.radio__label:hover .radio__custom {
+  background-color: #f9f9f9;
+  box-shadow: inset 1px 2px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.radio__text {
+  color: var(--color-white);
+  font: var(--font-m);
+  width: max-content;
+  height: auto;
+}
+
+/* Устанавливаем параметры элементов, заменяющих штатные выбранные радио-кнопки */
+.radio__label input:checked + .radio__custom {
+  border-color: #555;
+  background-color: #f9f9f9;
+  box-shadow: inset 1px 2px 3px 0 rgba(0, 0, 0, 0.1);
+  cursor: default;
+}
+
+/* Добавляем декор */
+.radio__label:hover .radio__custom::before,
+.radio__label input:checked + .radio__custom::before {
+  content: '';
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #ddd;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.radio__label input:checked + .radio__custom::before {
+  background-color: #555;
+  box-shadow: 1px 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Устанавливаем параметры подписей радио-кнопок */
+.radio__label input + .radio__custom + .radio__text {
+  color: var(--color-white);
+  cursor: pointer;
+  font: var(--font-m);
+  margin-right: 10px;
+  align-self: center;
+}
+
+/* Устанавливаем параметры подписей выбранных радио-кнопок */
+.radio__label input:checked + .radio__custom + .radio__text {
+  color: var(--color-white);
+  font-weight: 700;
+  cursor: default;
+}
+
+
+@media screen and (max-width: 750px) {
+  .quiz__section {
+    width: 100%;
+  }
+}

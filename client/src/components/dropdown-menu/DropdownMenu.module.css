@@ -1,0 +1,14 @@
+.icon {
+    font-size: 35px;
+    cursor: pointer;
+    color: var(--color-primary);
+}
+
+.menu {
+    margin-left: 12px;
+} 
+
+.menu .item {
+    width: 200px;
+    color: red;
+}

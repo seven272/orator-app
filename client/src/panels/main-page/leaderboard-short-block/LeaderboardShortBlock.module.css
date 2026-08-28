@@ -1,0 +1,114 @@
+/* components/Dashboard/LeaderboardShortBlock.module.css */
+
+.leaderboard_section {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  background-color: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.section_title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+.leaderboard_wrapper {
+   background-color: var(--color-bg-light);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow:
+    0 8px 24px rgba(0, 122, 255, 0.04),
+    0 2px 6px rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+}
+
+.leaderboard_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leaderboard_item {
+  display: flex;
+  align-items: center;
+  height: 30px;
+}
+
+.rank_cell {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  min-width: 36px;
+}
+
+.player_name {
+  font-size: 14px;
+  color: var(--color-text-dark);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Динамический заполнитель точками */
+.dot_filler {
+  flex: 1;
+  border-bottom: 2px dotted var(--color-secondary);
+  height: 14px;
+  margin: 0 8px;
+  opacity: 0.4;
+}
+
+.xp_value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  white-space: nowrap;
+}
+
+.dashed_divider {
+  border-top: 1px dashed var(--color-secondary);
+  margin: 12px 0;
+  opacity: 0.6;
+}
+
+/* Улучшено: Строка юзера получила легкий пастельный фон без жестких границ */
+.user_row {
+  display: flex;
+  align-items: center;
+  height: 34px;
+  background-color: var(--color-bg-light);
+  margin: 0 -6px;
+  padding: 0 6px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.user_row .player_name {
+  font-weight: 600;
+}
+
+.banner_footer {
+  width: 100%;
+  font-size: 12px;
+  color: var(--color-primary);
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.chevron_icon {
+  font-size: 16px;
+  color: var(--color-primary);
+  font-weight: 700;
+}

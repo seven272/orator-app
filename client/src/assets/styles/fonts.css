@@ -1,0 +1,203 @@
+/* Шрифты семейства Unbounded */
+@font-face {
+  font-family: 'Unbounded-Black';
+  src: url('../fonts/Unbounded-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Unbounded-Bold';
+  src: url('../fonts/Unbounded-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Unbounded-Medium';
+  src: url('../fonts/Unbounded-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Unbounded-Regular';
+  src: url('../fonts/Unbounded-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Unbounded-Blond';
+  src: url('../fonts/Unbounded-Blond.woff2') format('woff2');
+  font-weight: 250;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Unbounded-Light';
+  src: url('../fonts/Unbounded-Light.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+}
+
+/* Шрифты семейства Onest */
+@font-face {
+  font-family: 'Onest-ExtraBold';
+  src: url('../fonts/Onest-ExtraBold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Onest-Bold';
+  src: url('../fonts/Onest-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Onest-Black';
+  src: url('../fonts/Onest-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Onest-SemiBold';
+  src: url('../fonts/Onest-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Onest-Medium';
+  src: url('../fonts/Onest-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Onest-Regular';
+  src: url('../fonts/Onest-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Onest-Light';
+  src: url('../fonts/Onest-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Onest-ExtraLight';
+  src: url('../fonts/Onest-ExtraLight.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Onest-Thin';
+  src: url('Onest-Thin.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Шрифты семейства Rubik */
+
+@font-face {
+  font-family: 'Rubik-Black';
+  src: url('../fonts/Rubik-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Rubik-Bold';
+  src: url('../fonts/Rubik-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Rubik-Medium';
+  src: url('../fonts/Rubik-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Rubik-Regular';
+  src: url('../fonts/Rubik-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Rubik-Light';
+  src: url('../fonts/Rubik-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Rubik-Italic';
+  src: url('../fonts/Rubik-Italic.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* заголовки */
+@font-face {
+  font-family: 'ElMessiri-Bold';
+  src: url('../fonts/ElMessiri-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ElMessiri-SemiBold';
+  src: url('../fonts/ElMessiri-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ElMessiri-Medium';
+  src: url('../fonts/ElMessiri-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ElMessiri-Regular';
+  src: url('../fonts/ElMessiri-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DS-Greece';
+  src: url('../fonts/DS-Greece.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Paragraph-Medium';
+  src: local('Paragraph Medium'), local('Paragraph-Medium');
+  src: url('../fonts/Paragraph-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}

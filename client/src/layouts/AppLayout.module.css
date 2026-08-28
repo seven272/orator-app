@@ -1,0 +1,14 @@
+.app_global_container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--color-bg-layout); /* Используем вашу переменную фона */
+  display: flex;
+  flex-direction: column;
+}
+
+.app_main_viewport {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}

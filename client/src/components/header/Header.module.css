@@ -1,0 +1,173 @@
+.header {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-secondary);
+}
+
+.header_wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  padding: 10px 16px;
+  display: flex;
+  /* 📌 Распределяем левый блок (меню + лого) и правый блок (профиль) по краям */
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  height: 56px;
+}
+
+.left_block {
+  display: flex;
+  align-items: center;
+  /* 📌 Задаем комфортный отступ между гамбургер-меню и логотипом */
+  gap: 12px;
+  z-index: 2;
+}
+
+.right_block {
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+/* 🤖 ОБНОВЛЕНО: Отменяем абсолютное центрирование для всех экранов */
+.logo_wrap {
+  width: max-content;
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start; /* Выравнивание по левому краю */
+  align-items: center;
+  border-radius: 16px;
+  cursor: pointer;
+
+  /* 📌 Переводим в обычный поток, убирая наезды на виджет профиля */
+  position: static;
+  transform: none;
+  gap: 6px; /* Отступ между иконкой пульса и текстом */
+  z-index: 1;
+}
+.logo_img_wrap {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.logo_img {
+  width: 100%;
+}
+
+
+
+.logo_title {
+  font-family: var(--font-family-decor);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-bg); /* Ваша светло-голубая подсветка текста */
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  
+  /* 📌 ДОБАВЛЯЕМ: Помогает идеально выровнять встроенную картинку по вертикали */
+  display: flex;
+  align-items: center; 
+}
+
+/* 🎯 НОВЫЙ СТИЛЬ: Логотип-птица вместо буквы Х */
+.logo_x_img {
+  /* Автоматически подстраиваем высоту картинки под размер шрифта (20px) */
+  height: 1.2em; 
+  width: auto;
+  
+  /* Делаем небольшой отступ от буквы 'i' для воздуха */
+  margin-left: 2px; 
+  
+  /* Выравниваем по центру текстовой строки */
+  display: inline-block;
+  vertical-align: middle;
+  
+  /* Плавная анимация для интерактива */
+  transition: transform 0.2s ease;
+}
+
+/* Элегантный микро-эффект: при наведении на весь логотип птица оживает */
+.logo_wrap:hover .logo_x_img {
+  transform: scale(1.1) rotate(-3deg); /* Птица чуть увеличивается и кокетливо наклоняется */
+}
+
+/* Виджет профиля */
+.profile_widget {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* Капсула статуса */
+.status_badge {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-bg);
+  border-radius: 20px;
+  padding: 4px 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  height: 26px;
+  box-sizing: border-box;
+}
+
+.status_text {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.level_short {
+  display: none;
+}
+
+.divider {
+  font-size: 10px;
+  color: var(--color-primary);
+  opacity: 0.25;
+  margin: 0 5px;
+  user-select: none;
+}
+
+/* 📌 Убираем дублирующие медиа-запросы для max-width: 480px, */
+/* так как логотип теперь изначально ведет себя правильно и послушно */
+
+@media screen and (max-width: 380px) {
+  .level_full {
+    display: none;
+  }
+  .level_short {
+    display: inline;
+  }
+
+  .header_wrapper {
+    padding: 10px 8px;
+  }
+
+  .status_badge {
+    padding: 4px 6px;
+  }
+
+  /* На узких экранах делаем шрифт капельку компактнее */
+  .logo_title {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 340px) {
+  .logo_title {
+    display: none;
+  }
+}

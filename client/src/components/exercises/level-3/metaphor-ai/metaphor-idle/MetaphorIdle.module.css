@@ -1,0 +1,142 @@
+.screen_idle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 15px;
+}
+
+.screen_idle_title {
+  color: var(--color-blue);
+  font: var(--font-title);
+}
+.idle_box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+  row-gap: 12px;
+  background: rgba(0, 123, 255, 0.08);
+  padding: 20px 15px;
+  box-sizing: border-box;
+}
+
+.idle_text {
+  width: 100%;
+  max-width: 500px;   
+  display: block;      
+  text-align: center;  
+  color: var(--color-text-primary);
+  font: var(--font-m);
+  line-height: 1.4; 
+}
+
+.idle_text strong {
+  margin-right: 4px;
+}
+
+.change_topic_icon {
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.pos_btns {
+  display: flex;
+  gap: 15px;
+}
+
+.pos_btn {
+  padding: 10px 30px;
+  border: 2px solid var(--color-blue);
+  background: transparent;
+  border-radius: 12px;
+  color: var(--color-blue);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pos_btn.active {
+  background: var(--color-blue);
+  color: white;
+}
+
+.idle_footer {
+  width: 100%;
+  min-height: 80px;
+  display: flex;
+  background: rgba(255, 255, 255, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  align-items: center;
+  justify-content: center;
+}
+.btn_start {
+  width: 80%;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  font: var(--font-title);
+  transition:
+    transform 0.2s,
+    background 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+}
+
+.btn_start:disabled {
+  width: 80%;
+  padding: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--color-white);
+  color: var(--color-grey);
+  font: var(--font-title);
+  border-radius: 12px;
+  border: 1px solid var(--color-grey);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.btn_theory {
+  /* Сбрасываем дефолтные стили кнопки */
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--vkui--color_separator_primary);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px auto; /* Центрируем */
+  padding: 8px 16px;
+  color: var(--vkui--color_text_secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s active;
+}
+
+/* Эффект при наведении (для десктопа) */
+@media (hover: hover) {
+  .btn_theory:hover {
+    background-color: var(--vkui--color_background_secondary);
+  }
+}
+
+/* Эффект при нажатии */
+.btn_theory:active {
+  transform: scale(0.97);
+  background-color: var(--vkui--color_background_secondary);
+}
+
+.theory_icon {
+  color: var(--vkui--color_icon_medium);
+}

@@ -1,0 +1,71 @@
+/* Верхняя панель со сводной статистикой */
+.summary_panel {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.summary_item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.summary_icon_completed {
+  color: #faad14;
+}
+
+
+.summary_icon_success {
+  color: var(--color-green);
+}
+
+.summary_icon_failed {
+  color: var(--color-red);
+}
+
+
+.summary_info {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary_value {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text-primary, #262626);
+  line-height: 1.2;
+}
+
+.summary_label {
+  font-size: 11px;
+  color: var(--color-text-secondary, #8c8c8c);
+}
+
+
+/* 📱 Оптимизация под узкие экраны смартфонов (до 420px) */
+@media (max-width: 420px) {
+  .summary_panel {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .item_header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .score_zone {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px dashed #e8e8e8;
+    padding-top: 6px;
+  }
+}

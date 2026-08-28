@@ -1,0 +1,234 @@
+/* src/components/Course/AiWorkoutBlock/ai-workout-chat/AiWorkoutChat.module.css */
+
+.session_card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.session_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.session_label {
+  font: var(--font-s);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.exit_button {
+  background-color: rgba(243, 4, 4, 0.08);
+  border: 1px solid var(--color-red);
+  color: var(--color-red);
+  font: var(--font-s);
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.exit_button:hover {
+  background-color: rgba(243, 4, 4, 0.15);
+}
+
+.context_subtitle {
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.chat_window {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat_history {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-gutter: stable;
+}
+
+.msg_user {
+  align-self: flex-end;
+  background-color: rgba(0, 63, 192, 0.06);
+  padding: 12px 16px;
+  border-radius: 14px 14px 2px 14px;
+  max-width: 80%;
+  font: var(--font-m);
+  color: var(--color-black);
+}
+
+.msg_ai {
+  align-self: flex-start;
+  background-color: var(--color-bg);
+  padding: 12px 16px;
+  border-radius: 14px 14px 14px 2px;
+  max-width: 80%;
+  font: var(--font-m);
+  color: var(--color-black);
+}
+
+/* Блок управления аудиозаписью */
+.audio_zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.input_zone {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Стилизация новой кнопки управления микрофоном */
+.record_button {
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  font: var(--font-m);
+  font-weight: 600;
+  border: 1px solid var(--color-blue-vk);
+  background-color: rgba(0, 63, 192, 0.04);
+  color: var(--color-blue-vk);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+}
+
+.record_button:hover:not(:disabled) {
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(0, 63, 192, 0.15);
+}
+
+.record_button:disabled {
+  background-color: var(--color-bg);
+  border-color: var(--color-secondary);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+
+/* Пульсирующее состояние при активной записи звука */
+.recording_active {
+  background-color: rgba(243, 4, 4, 0.08);
+  border-color: var(--color-red);
+  color: var(--color-red);
+  animation: pulseRecording 1.5s infinite ease-in-out;
+}
+
+.recording_active:hover {
+  background-color: var(--color-red) !important;
+  color: var(--color-white) !important;
+  box-shadow: 0 4px 12px rgba(243, 4, 4, 0.2);
+}
+
+/* Визуальные плашки таймера оставшегося времени */
+.timer_badge {
+  font: var(--font-s);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.timer_normal {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: #27ae60;
+  border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+.timer_warning {
+  background-color: rgba(241, 196, 15, 0.1);
+  color: #d35400;
+  border: 1px solid rgba(241, 196, 15, 0.2);
+}
+
+.timer_critical {
+  background-color: rgba(243, 4, 4, 0.1);
+  color: var(--color-red);
+  border: 1px solid rgba(243, 4, 4, 0.2);
+}
+
+/* Зона завершения и финализации сессии */
+.finish_zone {
+  margin-top: 10px;
+  text-align: center;
+  animation: fadeIn 0.2s ease-out;
+  width: 100%;
+}
+
+.finish_text {
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.finish_button {
+  background-color: #2ecc71;
+  color: var(--color-white);
+  font: var(--font-m);
+  font-weight: 500;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s ease;
+}
+
+.finish_button:hover {
+  background-color: #27ae60;
+}
+
+/* Ключевые кадры для эффектов анимации */
+@keyframes pulseRecording {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.98);
+    background-color: rgba(243, 4, 4, 0.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

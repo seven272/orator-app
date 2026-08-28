@@ -1,0 +1,227 @@
+.slot_card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 14px;
+  box-sizing: border-box;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+  width: 100%;
+}
+
+.slot_card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+}
+
+.slot_info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0; /* Важно для работы text-overflow внутри флексов */
+}
+
+/* --- Мощная фиксация шапки --- */
+.meta_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Центрируем бейджи и аватарки по одной линии */
+  width: 100%;
+  gap: 16px;
+}
+
+/* Контейнер участников */
+.participants_container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1; /* Занимает все свободное место, прижимая бейджи вправо */
+}
+
+/* Профиль одного юзера */
+.user_profile_meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0; /* Предотвращает распирание флекса длинным текстом */
+}
+
+.avatar_mini {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-secondary);
+  flex-shrink: 0; /* Аватар никогда не сожмется */
+}
+
+/* Фиксация имени оппонента (строго в одну строку с троеточием) */
+.slot_user {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Бейджи (Выровненные и компактные) --- */
+.badge_container {
+  display: flex;
+  flex-direction: column; /* Если бейджей два (Мой слот + Принят), они встанут аккуратно друг под друга */
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0; /* Бейджи никогда не сожмутся и не уедут */
+}
+
+.badge_own {
+  background-color: var(--color-green);
+  color: var(--color-white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+
+.badge_accepted {
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+
+/* --- Время и темы --- */
+.slot_time {
+  font: var(--font-s);
+  color: var(--color-blue-vk);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.slot_topic {
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  word-break: break-word; /* Длинные слова в теме будут переноситься корректно */
+}
+
+/* --- Блок действий (Кнопки и Статусы) --- */
+.action_block {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.book_slot_btn {
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  font: var(--font-s);
+  font-weight: 500;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.book_slot_btn:active {
+  background-color: var(--color-blue-dark);
+}
+
+.status_text_pending {
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+  font-style: italic;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Красивая анимация трех точек для статуса ожидания */
+.status_text_pending::after {
+  content: '...';
+  display: inline-block;
+  width: 12px;
+  text-align: left;
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0% {
+    content: '';
+  }
+  33% {
+    content: '.';
+  }
+  66% {
+    content: '..';
+  }
+  100% {
+    content: '...';
+  }
+}
+
+.status_text_accepted {
+  font: var(--font-s);
+  color: var(--color-blue-vk);
+  font-weight: 500;
+  background: rgba(81, 129, 184, 0.06);
+  border: 1px solid rgba(81, 129, 184, 0.15);
+  padding: 10px 12px;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1.4;
+}
+
+/* --- Модификаторы карточек --- */
+.slot_card_own {
+  border: 1px solid rgba(0, 128, 0, 0.15) !important;
+  background: linear-gradient(135deg, #fafffa 0%, #ffffff 100%);
+}
+
+.slot_card_own:hover {
+  border-color: rgba(0, 128, 0, 0.25) !important;
+}
+
+.slot_card_accepted {
+  border: 1px solid var(--color-secondary) !important;
+  background-color: var(--color-bg);
+}
+
+/* --- Медиа-запрос для десктопов --- */
+@media (min-width: 540px) {
+  .slot_card {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .action_block {
+    width: auto;
+    min-width: 200px;
+    max-width: 280px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}

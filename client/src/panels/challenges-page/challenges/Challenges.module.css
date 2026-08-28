@@ -1,0 +1,177 @@
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px 8px;
+  box-sizing: border-box;
+}
+
+.title {
+  color: var(--color-text-primary);
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background-color: var(--color-white);
+  border-radius: 20px;
+  padding: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.03),
+    0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s ease;
+}
+
+.card_completed {
+  background-color: var(--color-bg-light);
+  border-color: rgba(0, 0, 0, 0.05);
+  box-shadow: none;
+  opacity: 0.8;
+}
+
+.card_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.skill_badge {
+  background-color: rgba(0, 122, 255, 0.08);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.reward_badge {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fa8c16;
+}
+
+.card_title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 8px 0;
+}
+
+.card_description {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+
+.action_button {
+  width: 100%;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  padding: 12px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.action_button:active {
+  transform: scale(0.98);
+}
+
+.completed_label {
+  font-weight: 700;
+  color: #52c41a;
+  font-size: 0.9rem;
+  padding: 4px 0;
+}
+
+/* Форма отчета */
+.divider {
+  border-top: 1px dashed var(--color-secondary);
+  margin: 16px 0;
+  opacity: 0.3;
+}
+
+.instruction {
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+  margin-bottom: 10px;
+}
+
+.textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--color-secondary);
+  padding: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  outline: none;
+  resize: vertical;
+  margin-bottom: 12px;
+}
+
+.textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.btn_group {
+  display: flex;
+  gap: 8px;
+}
+
+.submit_btn {
+  flex: 2;
+  background-color: #52c41a;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit_btn:disabled {
+  background-color: var(--color-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.cancel_btn {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--color-secondary);
+  color: var(--color-text-secondary);
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.loader {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 40px 0;
+  font-weight: 600;
+}

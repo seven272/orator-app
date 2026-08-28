@@ -1,0 +1,47 @@
+.admin_page {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.dashboard_title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.tabs_navigation {
+  display: flex;
+  max-width: 600px;
+  width: 90%;
+  background: #eee;
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+
+/* Кнопки переключения вкладок */
+.tab_button {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+/* Активная вкладка */
+.tab_button_active {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}

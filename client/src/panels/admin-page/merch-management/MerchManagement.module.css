@@ -1,0 +1,149 @@
+.merch_wrapper {
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+}
+
+.merch_section {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.section_title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #111111;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 8px;
+}
+
+.empty_message {
+  text-align: center;
+  color: #888;
+  padding: 24px 0;
+  font-size: 14px;
+}
+
+.order_item {
+  display: flex;
+  flex-direction: column; /* на мобилках до 600px карточка выстраивается вертикально */
+  gap: 12px;
+  padding: 16px 8px;
+  border-bottom: 1px solid #f1f3f5;
+  background: #fff;
+  transition: opacity 0.2s;
+}
+.order_item:last-child {
+  border-bottom: none;
+}
+
+.order_main_info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item_title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #111111;
+}
+
+.user_buyer {
+  font-size: 13px;
+  color: #444444;
+}
+
+.order_date {
+  font-size: 11px;
+  color: #888888;
+  margin-top: 2px;
+}
+
+.order_badge_quantity {
+  background: #e1f5fe;
+  color: #0288d1;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #b3e5fc;
+}
+/* Стилизация выполненного заказа (приглушаем цвета) */
+.order_done {
+  background: #fafafa;
+  opacity: 0.75;
+}
+
+.order_main_info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.item_title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #111;
+}
+.meta_text {
+  font-size: 13px;
+  color: #555;
+}
+.selectable_id {
+  font-family: monospace;
+  background: #eee;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+/* Красивое поле для вывода адреса */
+.address_box {
+  background: #f8f9fa;
+  border-left: 3px solid #007bff;
+  padding: 8px 12px;
+  border-radius: 0 8px 8px 0;
+  margin-top: 6px;
+}
+
+.address_paragraph {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #333;
+  line-height: 1.4;
+  white-space: pre-wrap; /* сохраняет переносы строк адреса */
+}
+
+/* Кнопки статусов */
+.status_btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.status_pending {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.status_pending:hover {
+  background-color: #ffeeba;
+}
+
+.status_shipped {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.status_shipped:hover {
+  background-color: #c3e6cb;
+}

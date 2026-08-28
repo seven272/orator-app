@@ -1,0 +1,106 @@
+/* Затемняющий задний фон (оверлей) */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px); /* Легкое размытие интерфейса сзади */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Перекрывает шапку и карточки магазина */
+  padding: 16px;
+}
+
+/* Белое контентное окно модалки */
+.modal_content {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 450px; /* Идеальный капсульный размер под мобильный экран */
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+  position: relative;
+  /* Плавный выезд карточки снизу вверх */
+  animation: slide_up 0.25s ease-out;
+}
+
+/* Главный заголовок модального окна */
+.modal_title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #111111;
+}
+
+/* Подсказка с техническим названием товара */
+.modal_hint {
+  font-size: 13px;
+  color: #666666;
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+}
+
+/* Анимация появления для мобильных экранов */
+@keyframes slide_up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.address_textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  resize: none;
+  margin-bottom: 16px;
+  outline: none;
+}
+
+.address_textarea:focus {
+  border-color: #007bff;
+}
+
+.modal_hint {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.modal_actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn_cancel {
+  background: #f0f0f0;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn_confirm {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}

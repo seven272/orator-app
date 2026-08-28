@@ -1,0 +1,45 @@
+/* Основной контейнер всего тренажера */
+.main_historical {
+  width: 100%;
+  max-width: 600px; /* Ограничение ширины для аккуратного десктопного вида */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Заголовок тренажера */
+.title {
+  font: var(--font-decor);
+  color: var(--color-text-dark);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+/* Описание под заголовком */
+.descr {
+  font: var(--font-decor);
+  font-size: 13px;
+  color: var(--color-text-dark);
+  margin-bottom: 24px;
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* Экран-карточка (стейт-машина переключает компоненты внутри нее) */
+/* Экран-карточка */
+.screen {
+  width: 100%;
+  min-height: 480px; /* Адаптированная высота под длинные тексты батла */
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg);
+  /* ОРНАМЕНТЫ УБРАНЫ: фон теперь чистый */
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  position: relative;
+}

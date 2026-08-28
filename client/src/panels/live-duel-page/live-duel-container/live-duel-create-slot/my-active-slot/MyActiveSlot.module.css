@@ -1,0 +1,169 @@
+/* Карточка личного слота (модифицированная база) */
+.slot_card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  box-sizing: border-box;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.slot_card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.slot_info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.slot_time {
+  font: var(--font-s);
+  color: var(--color-blue-vk);
+  font-weight: 500;
+}
+
+.slot_topic {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Блок кнопок управления внутри личной карточки */
+.slot_actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Кнопка "Редактировать" */
+.edit_btn {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-secondary);
+  color: var(--color-text-primary);
+  font: var(--font-s);
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+  transition: background-color 0.15s ease;
+}
+
+.edit_btn:hover {
+  background-color: var(--color-secondary);
+}
+
+/* Кнопка "Удалить" */
+.delete_btn {
+  background-color: #fff2f2; /* Легкий красный фон для деструктивных действий */
+  border: 1px solid #ffcccc;
+  color: #e64646;
+  font: var(--font-s);
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+  transition: background-color 0.15s ease;
+}
+
+.delete_btn:hover {
+  background-color: #ffe6e6;
+}
+
+/* --- ИНЛАЙН РЕЖИМ РЕДАКТИРОВАНИЯ ДАТЫ --- */
+.edit_mode_group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  width: 100%;
+}
+
+.calendar_input_small {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-secondary);
+  color: var(--color-text-primary);
+  font: var(--font-s);
+  padding: 8px;
+  border-radius: 6px;
+  outline: none;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+/* Компактные кнопки-иконки сохранения и отмены */
+.save_btn,
+.cancel_btn {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+
+.save_btn:hover {
+  background-color: #e8f5e9; /* Светло-зеленый при наведении на сохранение */
+  border-color: var(--color-green);
+}
+
+.cancel_btn:hover {
+  background-color: var(--color-bg);
+}
+
+/* --- МЕДИА-ЗАПРОСЫ (АДАПТИВНОСТЬ ПОД ДЕСКТОП) --- */
+@media (min-width: 480px) {
+  .input_group {
+    flex-direction: row;
+  }
+
+  .calendar_submit_btn {
+    width: auto;
+    white-space: nowrap;
+  }
+
+  /* На десктопе выстраиваем личную карточку в ряд, а кнопки прижимаем вправо */
+  .slot_card {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .slot_info {
+    flex: 1;
+  }
+
+  .slot_actions {
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  .edit_btn,
+  .delete_btn {
+    flex: none;
+    width: auto;
+  }
+
+  .edit_mode_group {
+    width: auto;
+    max-width: 320px;
+  }
+}

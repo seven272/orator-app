@@ -1,0 +1,32 @@
+.available_slots_section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.slots_title {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  margin: 0;
+  padding-left: 4px;
+}
+
+.no_slots_text {
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 20px;
+  background-color: var(--color-white);
+  border: 1px dashed var(--color-secondary);
+  border-radius: 12px;
+  margin: 0;
+}
+
+.slots_list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}

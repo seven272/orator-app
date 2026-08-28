@@ -1,0 +1,31 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  height: auto;
+  margin-top: 30px;
+}
+
+.title {
+  font: var(--font-m);
+  color: var(--color-text-grey);
+  margin-bottom: 20px;
+}
+
+.btn {
+  font: var(--font-m);
+  color: var(--color-white);
+  background-color: var(--color-primary);
+  border: none;
+  padding: 10px 35px;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 1;
+   transition: opacity 0.5s;
+}
+.btn:hover {
+  opacity: 0.7;
+  background-color: var(--color-primary) !important;
+}

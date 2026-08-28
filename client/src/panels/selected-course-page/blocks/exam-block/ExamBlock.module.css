@@ -1,0 +1,80 @@
+.exam_container {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.locked_card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.locked_title {
+  font: var(--font-xl);
+  color: var(--color-black);
+  margin: 0 0 12px 0;
+}
+
+.locked_text {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0 0 20px 0;
+}
+
+.time_badge {
+  background-color: rgba(231, 76, 60, 0.08);
+  color: #c0392b;
+  font: var(--font-m);
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.buy_button {
+  background-color: #9b59b6; /* Фиолетовый премиальный цвет для покупок */
+  color: var(--color-white);
+  font: var(--font-m);
+  font-weight: 600;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 320px;
+  transition: background-color 0.2s;
+}
+
+.buy_button:hover:not(:disabled) {
+  background-color: #8e44ad;
+}
+
+.buy_button:disabled {
+  background-color: var(--color-grey-light);
+  color: var(--color-grey);
+  cursor: not-allowed;
+}
+
+.error_alert {
+  background-color: rgba(231, 76, 60, 0.1);
+  border: 1px solid var(--color-red);
+  color: var(--color-red);
+  font: var(--font-s);
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+  margin-top: 16px;
+}

@@ -1,0 +1,95 @@
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px 8px; /* Уменьшили боковые отступы, чтобы список не казался узким */
+  box-sizing: border-box;
+  background-color: transparent; /* Позволяет фону страницы бесшовно перетекать */
+}
+
+.title {
+  color: var(--color-text-primary);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+/* Стили вкладок переключения (iOS / VK стиль капсулы) */
+.tabs {
+  display: flex;
+  background-color: var(--color-bg); /* Используем светлый фон вместо --color-bg-dark */
+  padding: 4px;
+  border-radius: 20px; /* Более округлые углы */
+  margin-bottom: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.tabButton {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px;
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 16px;
+  transition: all 0.25s ease;
+}
+
+.activeTab {
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Эффект приподнятой активной вкладки */
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.loader {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 40px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Красивый текстовый разделитель для текущего юзера вне ТОП-10 */
+.user_divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 24px 0 14px 0;
+  opacity: 0.7;
+}
+
+.user_divider::before,
+.user_divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px dashed var(--color-secondary);
+}
+
+.user_divider::before {
+  margin-right: 12px;
+}
+
+.user_divider::after {
+  margin-left: 12px;
+}
+
+.currentUserStickyWrapper {
+  width: 100%;
+  box-sizing: border-box;
+}

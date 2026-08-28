@@ -1,0 +1,245 @@
+.verdict_container {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.title {
+  font: var(--font-title);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 24px 0;
+  text-align: center;
+  letter-spacing: -0.3px;
+}
+
+/* 📊 НОВАЯ СЕТКА: Расположение текущей и лучшей попытки рядом */
+.stats_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.stat_card {
+  background-color: var(--vkui--color_background_cards, #f9fafb);
+  border: 1px solid var(--color-grey-light);
+  border-radius: 10px;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.stat_label {
+  font: var(--font-s);
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.score_value {
+  font: var(--font-xl);
+  font-size: 32px; /* Сбалансированный размер, чтобы не наезжать в сетке */
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.score_max {
+  font: var(--font-l);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-grey);
+}
+
+/* 🏆 ЗОНА ДЛЯ БАДЖА С ТЕКУЩИМ СТАТУСОМ ПОПЫТКИ */
+.status_badge_zone {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.score_status {
+  font: var(--font-m);
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.badge_success {
+  background-color: rgba(
+    52,
+    199,
+    89,
+    0.08
+  ); /* Мягкий фон на базе --color-green */
+  color: var(--color-green);
+}
+
+.badge_danger {
+  background-color: rgba(
+    243,
+    4,
+    4,
+    0.08
+  ); /* Мягкий фон на базе --color-red */
+  color: var(--color-red);
+}
+
+.text_success {
+  color: var(--color-green);
+}
+
+.text_danger {
+  color: var(--color-red);
+}
+
+/* Карточка отзыва от ИИ */
+.feedback_card {
+  background-color: var(--vkui--color_background_cards, #f9fafb);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 0 12px 12px 0;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.feedback_title {
+  font: var(--font-submenu);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.feedback_text {
+  font: var(--font-m-light);
+  color: var(--color-text-primary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.meta_info {
+  font: var(--font-m);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.action_zone {
+  width: 100%;
+}
+
+/* Системные кнопки */
+.next_attempt_btn,
+.restart_btn {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font: var(--font-ml);
+  border: none;
+  padding: 14px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    opacity 0.15s ease,
+    transform 0.1s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.next_attempt_btn:hover,
+.restart_btn:hover {
+  opacity: 0.9;
+}
+
+.next_attempt_btn:active,
+.restart_btn:active {
+  transform: scale(0.98);
+}
+
+/* Аккуратные баннеры */
+.finish_banner {
+  background-color: rgba(52, 199, 89, 0.05);
+  border-left: 3px solid var(--color-green);
+  color: var(--color-green);
+  padding: 14px 16px;
+  border-radius: 0 8px 8px 0;
+  text-align: left;
+  font: var(--font-m);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.finish_banner strong {
+  font-size: 16px;
+}
+
+.fail_banner {
+  background-color: rgba(243, 4, 4, 0.05);
+  border-left: 3px solid var(--color-red);
+  color: var(--color-red);
+  padding: 14px 16px;
+  border-radius: 0 8px 8px 0;
+  text-align: left;
+  font: var(--font-m);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.end_flow_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Аккуратная контурная кнопка перезапуска (для сценария "Сдал успешно") */
+.secondary_restart_btn {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-grey-light);
+  font: var(--font-m);
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.secondary_restart_btn:hover {
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  border-color: var(--color-secondary);
+}
+
+.secondary_restart_btn:active {
+  transform: scale(0.99);
+}
+
+.next_attempt_btn:disabled,
+.restart_btn:disabled,
+.secondary_restart_btn:disabled {
+  background-color: var(--color-grey-light);
+  color: var(--color-grey);
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.7;
+}

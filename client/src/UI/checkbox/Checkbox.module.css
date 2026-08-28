@@ -1,0 +1,63 @@
+.checkbox_wrapper {
+    width: max-content;
+    height: auto;
+    box-sizing: border-box;
+}
+
+.checkbox_wrapper input[type='checkbox'] {
+  /* сбрасываем стили с формы с помощью appearance:none, чтобы задать свой стиль  */
+  -webkit-appearance: none;
+  appearance: none;
+  /* задаем кастомное оформления для чекбокса */
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  border: 3px solid var(--color-white);
+  outline: none;
+  cursor: pointer;
+  margin-right: 15px;
+  margin-left: 15px;
+}
+
+.checkbox_label { 
+  display: flex;
+  align-items: center;
+  font: var(--font-m);
+  color: #fff;
+}
+
+.checked {
+  background-color: var(--color-gray-light);
+  position: relative;
+  
+}
+
+.checked::before {
+  content: '\2714';
+  font:  var(--font-m);
+  color: var(--color-black);
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.checkbox_wrapper input[type='checkbox']:checked +.checkbox_label +span {
+  color: #fff;
+  border: 1px solid red;
+}
+
+.checkbox_wrapper input[type='checkbox']:disabled {
+  border-color: #c0c0c0;
+  background-color: #c0c0c0;
+}
+
+.checkbox_wrapper input[type='checkbox']:disabled + span {
+  color: #c0c0c0;
+}
+
+.checkbox_wrapper input[type='checkbox']:focus {
+  box-shadow: 0 0 20px #c0c0c0;
+}

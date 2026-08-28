@@ -1,0 +1,83 @@
+.header_wrapper {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header_top_line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  color: var(--color-text-primary);
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.date_badge {
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  background-color: var(--color-bg);
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* Контентная часть под заголовком */
+.header_content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  background-color: var(--color-white);
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--color-secondary);
+}
+
+.header_text_block {
+  flex: 1;
+}
+
+.description {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  margin: 0 0 12px 0;
+}
+
+.bonus_badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.header_visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.main_icon {
+  font-size: 24px;
+}

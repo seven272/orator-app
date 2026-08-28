@@ -1,0 +1,160 @@
+.result_card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 16px;
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.result_title {
+  font: var(--font-l);
+  font-weight: 700;
+  color: var(--color-green);
+  text-align: center;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+/* ==========================================================================
+   📌 Системные баннеры статуса попытки (Quality Gate)
+   ========================================================================== */
+.status_banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: left;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.status_banner strong {
+  display: block;
+  font: var(--font-m);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.status_banner p {
+  margin: 0;
+  font: var(--font-s);
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+.banner_icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Стиль для успешного зачисления (зеленый) */
+.banner_success {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-green);
+  color: var(--color-green);
+}
+
+/* Стиль для незачтенной сессии (мягкий серый/темный предупреждающий) */
+.banner_warning {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-secondary);
+  color: var(--color-black);
+}
+
+/* ==========================================================================
+   📊 Метрики и аналитика шкал
+   ========================================================================== */
+.metrics_row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: var(--color-bg);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--color-secondary);
+}
+
+.metric_item {
+  text-align: center;
+}
+
+.score_main {
+  font: var(--font-xl);
+  font-weight: 800;
+  color: var(--color-blue-vk);
+}
+
+.score_sub {
+  font: var(--font-l);
+  font-weight: 700;
+  color: var(--color-black);
+}
+
+.metric_label {
+  font: var(--font-s);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   💬 Разбор и кнопка действия
+   ========================================================================== */
+.feedback_box {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  background-color: var(--color-bg);
+  border: 1px dashed var(--color-secondary);
+  padding: 16px;
+  border-radius: 12px;
+  margin: 0;
+}
+
+.back_button {
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  font: var(--font-m);
+  font-weight: 500;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.back_button:hover {
+  background-color: var(--color-blue-dark);
+}
+
+/* ==========================================================================
+   🎬 Анимации появления
+   ========================================================================== */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,254 @@
+.exam_container {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  gap: 16px;
+}
+
+.exam_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.live_badge, .live_badge_active {
+  font: var(--font-submenu);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.live_badge {
+  background-color: var(--vkui--color_background_secondary, #f5f5f5);
+  color: var(--color-text-secondary);
+}
+
+.live_badge_active {
+  background-color: rgba(243, 4, 4, 0.08); /* Мягкий фон на базе --color-red */
+  color: var(--color-red);
+}
+
+.cancel_btn {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  border: none;
+  font: var(--font-m);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s ease;
+}
+
+.cancel_btn:hover:not(:disabled) {
+  color: var(--color-text-primary);
+}
+
+/* Карточка кейса */
+.case_card {
+  background-color: var(--vkui--color_background_cards, #f9fafb);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 18px;
+  text-align: left;
+}
+
+.case_title {
+  font: var(--font-subtitle);
+  color: var(--color-text-primary);
+  margin: 0 0 6px 0;
+  letter-spacing: -0.2px;
+}
+
+.case_text {
+  font: var(--font-m-light);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Рабочая зона рекордера */
+.recorder_zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 8px 0;
+}
+
+.timer_display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px; /* Устраняем наезды надписей друг на друга */
+  margin-bottom: 16px;
+}
+
+.time {
+  font: var(--font-xl);
+  font-size: 32px; /* Уменьшили с 40px для компактности */
+  font-weight: 800;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.pulse {
+  animation: pulse_anim 1.5s infinite ease-in-out;
+}
+
+.time_limits {
+  font: var(--font-s);
+  font-size: 12px;
+  color: var(--color-grey);
+}
+
+/* Прогресс-бар */
+.progress_track {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-bg);
+  border-radius: 3px;
+  margin-bottom: 24px;
+}
+
+.progress_bar {
+  height: 100%;
+  background-color: var(--color-grey);
+  border-radius: 3px;
+  transition: width 0.3s linear;
+}
+
+.progress_valid {
+  background-color: var(--color-green);
+}
+
+.marker_60s {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background-color: var(--color-dark);
+  opacity: 0.15;
+}
+
+.controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Элементы управления записью */
+.record_btn, .stop_btn {
+  font: var(--font-ml);
+  border: none;
+  padding: 12px 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 280px;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.record_btn {
+  background-color: var(--color-red);
+  color: var(--color-white);
+}
+
+.stop_btn {
+  background-color: var(--color-dark); /* Вместо черного #000000 */
+  color: var(--color-white);
+}
+
+.record_btn:hover, .stop_btn:hover {
+  opacity: 0.9;
+}
+
+.record_btn:active, .stop_btn:active {
+  transform: scale(0.98);
+}
+
+/* Окно предпрослушивания */
+.review_container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+
+.audio_player {
+  width: 100%;
+  max-width: 320px;
+  height: 36px;
+}
+
+.retry_btn {
+  background-color: transparent;
+  color: var(--color-red);
+  border: none;
+  font: var(--font-m);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.retry_btn:hover {
+  opacity: 0.8;
+}
+
+.warning_text {
+  font: var(--font-m);
+  font-size: 13px;
+  color: var(--color-red);
+  text-align: center;
+  background-color: rgba(243, 4, 4, 0.05);
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+/* Основная кнопка отправки */
+.submit_btn {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font: var(--font-ml);
+  border: none;
+  padding: 14px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+}
+
+.submit_btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.submit_btn:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.submit_btn:disabled {
+  background-color: var(--color-grey-light);
+  color: var(--color-grey);
+  cursor: not-allowed;
+}
+
+@keyframes pulse_anim {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}

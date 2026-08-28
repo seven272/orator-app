@@ -1,0 +1,169 @@
+.screen_idle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 15px;
+  width: 100%;
+}
+
+.screen_idle_title {
+  color: var(--color-blue);
+  font: var(--font-title);
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+}
+
+/* Выполнение Правила №4: display: block и text-align: center с ограничением max-width */
+/* Использует полупрозрачный синий фон из Трибуны */
+.idle_box {
+  width: 100%;
+  display: block;
+  text-align: center;
+  background: rgba(0, 123, 255, 0.1);
+  padding: 20px 15px;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.tongue_text_block {
+  width: 100%;
+  text-align: center;
+  color: var(--color-text-primary);
+  font: var(--font-m);
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+/* Стилизация списков ограничений */
+.taboo_container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+
+.taboo_section {
+  display: flex;
+  flex-direction: column;
+  row-gap: 6px;
+  align-items: center;
+}
+
+.focus_label {
+  font: var(--font-subtitle);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badges_list {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Бейджи для слов-паразитов (серый сдержанный тон, так как это мусорные слова) */
+.parasite_badge {
+  background: #6b7280;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Бейджи для ключевых стоп-слов (красный строгий тон, так как это жесткое табу) */
+.theme_badge {
+  background: #ef4444;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.change_topic_icon {
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.idle_footer {
+  width: 100%;
+  min-height: 80px;
+  display: flex;
+  background: rgba(255, 255, 255, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  align-items: center;
+  justify-content: center;
+}
+
+.btn_start {
+  width: 80%;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  font: var(--font-title);
+  transition:
+    transform 0.2s,
+    background 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+}
+
+.btn_start:disabled {
+  width: 80%;
+  padding: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--color-white);
+  color: var(--color-grey);
+  font: var(--font-title);
+  border-radius: 12px;
+  border: 1px solid var(--color-grey);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.btn_theory {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--vkui--color_separator_primary);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px auto;
+  padding: 8px 16px;
+  color: var(--vkui--color_text_secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s active;
+}
+
+@media (hover: hover) {
+  .btn_theory:hover {
+    background-color: var(--vkui--color_background_secondary);
+  }
+}
+
+.btn_theory:active {
+  transform: scale(0.97);
+  background-color: var(--vkui--color_background_secondary);
+}
+
+.theory_icon {
+  color: var(--vkui--color_icon_medium);
+}
