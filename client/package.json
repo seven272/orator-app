@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "start": "vite",
+    "dev": "vite --host 0.0.0.0 --port 3020", 
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "tunnel": "vk-tunnel --http-protocol=http --host=localhost --port=5173",
+    "tunnel": "vk-tunnel --http-protocol=http --host=localhost --port=3020",
     "deploy": "vite build && vk-miniapps-deploy"
   },
   "dependencies": {

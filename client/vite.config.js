@@ -1,4 +1,4 @@
-import { defineConfig, transformWithEsbuild } from 'vite';
+import { defineConfig, loadEnv, transformWithEsbuild } from 'vite';
 import react from '@vitejs/plugin-react';
 import legacy from '@vitejs/plugin-legacy';
 
@@ -28,44 +28,45 @@ function threatJsFilesAsJsx() {
   };
 }
 
-/**
- * Some chunks may be large.
- * This will not affect the loading speed of the site.
- * We collect several versions of scripts that are applied depending on the browser version.
- * This is done so that your code runs equally well on the site and in the odr.
- * The details are here: https://dev.vk.com/mini-apps/development/on-demand-resources.
- */
-export default defineConfig({
-  base: './',
+export default defineConfig(({ mode }) => {
+  // Официальный способ Vite загрузить переменные из .env файлов
+  // Проверяет корень проекта и системное окружение Docker
+  const env = loadEnv(mode, process?.cwd ? process.cwd() : './', '');
 
-  plugins: [
-    react(),
-    threatJsFilesAsJsx(),
-    handleModuleDirectivesPlugin(),
-    legacy({
-      targets: ['defaults', 'not IE 11'],
-    }),
-  ],
+  return {
+    base: '/',
 
-  optimizeDeps: {
-    force: true,
-    esbuildOptions: {
-      loader: {
-        '.js': 'jsx',
+    plugins: [
+      react(),
+      threatJsFilesAsJsx(),
+      handleModuleDirectivesPlugin(),
+      legacy({
+        targets: ['defaults', 'not IE 11'],
+      }),
+    ],
+
+    optimizeDeps: {
+      force: true,
+      esbuildOptions: {
+        loader: {
+          '.js': 'jsx',
+        },
       },
     },
-  },
 
-  server: {
-    port: 3020,
-    host: 'localhost',
-    hmr: {
-      protocol: 'ws',
-      host: 'localhost',
+    server: {
+      // Считываем порты через объект env, полностью избавляясь от ошибок "process is not defined"
+      port: env.CLIENT_OUTSIDE_PORT ? Number(env.CLIENT_OUTSIDE_PORT) : 3020,
+      host: '0.0.0.0', 
+      hmr: {
+        protocol: env.VITE_HMR_PORT === '443' ? 'wss' : 'ws',
+        host: env.VITE_HMR_PORT === '443' ? 'govorix.ru' : 'localhost',
+        port: env.VITE_HMR_PORT ? Number(env.VITE_HMR_PORT) : 3020,
+      },
     },
-  },
 
-  build: {
-    outDir: 'dist',
-  },
+    build: {
+      outDir: 'dist',
+    },
+  };
 });
