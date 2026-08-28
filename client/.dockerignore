@@ -15,7 +15,6 @@ yarn-error.log*
 
 # Конфигурации Docker (их Docker считывает сам, внутрь контейнера им лететь не нужно)
 Dockerfile
-nginx.conf
 docker-compose*
 .env*
 
