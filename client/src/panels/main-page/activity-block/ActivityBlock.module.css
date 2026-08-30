@@ -20,7 +20,7 @@
 
 .block_grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 10px;
 }
 
@@ -42,6 +42,7 @@
     transform 0.1s ease,
     background-color 0.1s ease;
   -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box; 
 }
 
 .block_item:active {
@@ -59,6 +60,7 @@
 .item_icon {
   width: 30px;
   height: 30px;
+   flex-shrink: 0;
 }
 
 .badge_text {
@@ -89,4 +91,28 @@
 
 .type_duels .badge_text {
   color: #c2185b;
+}
+
+@media (max-width: 450px) {
+  .block_grid {
+    grid-template-columns: 1fr; /* Перестраиваем в одну колонку */
+    gap: 8px;
+  }
+
+  .block_item {
+    flex-direction: row; /* Элементы внутри карточки встают в ряд */
+    justify-content: space-between; /* Название слева, сабтитл справа */
+    align-items: center;
+    padding: 12px 16px;
+  }
+
+  .badge_wrapper {
+    justify-content: flex-start;
+  }
+
+  .item_subtitle {
+    width: auto;
+    text-align: right;
+    max-width: 50%; /* Защита, чтобы длинный текст не наехал на заголовок */
+  }
 }
