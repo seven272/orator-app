@@ -49,7 +49,7 @@ const corsOptions = {
     if (isAllowedString || isAllowedPattern) {
       callback(null, true)
     } else {
-      console.error(`CORS blocked for origin: ${origin}`) // Полезно для отладки
+      console.error(`CORS blocked for origin: ${origin}`) // для отладки
       callback(new Error('CORS policy violation'))
     }
   },
