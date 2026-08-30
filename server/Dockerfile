@@ -15,4 +15,4 @@ RUN npm ci --only=production
 COPY . ./
 
 # Запускаем Node.js напрямую
-CMD [ "node", "server.js" ]
+CMD [ "node", "src/server.js" ]

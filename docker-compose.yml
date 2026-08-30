@@ -1,6 +1,6 @@
 services:
   orator-mongo:
-    image: mongo:8.0
+    image: mongo:7.0
     container_name: orator_mongo_container
     networks:
       - orator-app-net
