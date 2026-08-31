@@ -5,9 +5,9 @@ const fetchLeaderboard = createAsyncThunk(
   'leaderboard/fetch',
   async (type = 'global', { rejectWithValue }) => {
     try {
-      // Передаем тип рейтинга в query-параметры: /leaderboard?type=weekly
       const res = await axiosInstance.get(`/leaderboard/get?type=${type}`)
-      return res.data
+      // Возвращаем вместе с типом, чтобы редьюсер знал, куда положить данные
+      return { data: res.data, type }
     } catch (err) {
       return rejectWithValue(err.response?.data || 'Ошибка сервера')
     }
@@ -17,16 +17,19 @@ const fetchLeaderboard = createAsyncThunk(
 const leaderboardSlice = createSlice({
   name: 'leaderboard',
   initialState: {
-    list: [],          // Список ТОП-10 пользователей
-    currentUser: null, // Статистика и место текущего юзера
-    status: 'idle',    // 'idle' | 'loading' | 'succeeded' | 'failed'
+    weeklyList: [],        // 📑 ТОП-10 за неделю
+    globalList: [],        // 📑 ТОП-10 за всё время
+    weeklyCurrentUser: null, // 👤 Юзер за неделю
+    globalCurrentUser: null, // 👤 Юзер за всё время
+    status: 'idle',    
     error: null,
   },
   reducers: {
-    // Редьюсер для очистки состояния при размонтировании экрана (опционально)
     resetLeaderboardState: (state) => {
-      state.list = []
-      state.currentUser = null
+      state.weeklyList = []
+      state.globalList = []
+      state.weeklyCurrentUser = null
+      state.globalCurrentUser = null
       state.status = 'idle'
       state.error = null
     }
@@ -39,8 +42,16 @@ const leaderboardSlice = createSlice({
       })
       .addCase(fetchLeaderboard.fulfilled, (state, action) => {
         state.status = 'succeeded'
-        state.list = action.payload.leaderboard
-        state.currentUser = action.payload.currentUser
+        const { data, type } = action.payload
+
+        // Распределяем данные в зависимости от того, какой тип запросили
+        if (type === 'weekly') {
+          state.weeklyList = data.leaderboard
+          state.weeklyCurrentUser = data.currentUser
+        } else {
+          state.globalList = data.leaderboard
+          state.globalCurrentUser = data.currentUser
+        }
       })
       .addCase(fetchLeaderboard.rejected, (state, action) => {
         state.status = 'failed'
@@ -50,5 +61,5 @@ const leaderboardSlice = createSlice({
 })
 
 export const { resetLeaderboardState } = leaderboardSlice.actions
-export {fetchLeaderboard}
+export { fetchLeaderboard }
 export default leaderboardSlice.reducer

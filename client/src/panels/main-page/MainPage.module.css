@@ -5,7 +5,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0 20px;
   font: var(--font-m);
   margin: 0 auto;
 }
@@ -17,174 +16,10 @@
   text-align: center;
 }
 
-.header {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
-  width: 100%;
-  height: 200px;
-  position: relative;
-  padding: 16px;
-  box-sizing: border-box;
-  background-image: url('../../assets/images/design/ai_banner.jpg');
-  background-position: left center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-.header_title {
-  display: flex;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  font: var(--font-title);
-  color: var(--color-primary);
-  margin: 0;
-}
-
 .title_block {
   font: var(--font-subtitle);
   color: var(--color-text-dark);
   margin: 10px 0;
-}
-
-.header_poins_wrap {
-  position: absolute;
-  top: 50%;
-  right: 16px;
-  transform: translateY(-50%);
-  z-index: 2;
-}
-
-.header_ava_wrap {
-  width: max-content;
-  height: auto;
-  position: absolute;
-  top: 20px;
-  right: 16px;
-}
-
-.header_ava {
-  cursor: pointer;
-  background-color: var(--color-grey);
-}
-
-/* 🤖 УЛУЧШЕНО: Высококлассный стеклянный виджет-карточка */
-.quick_action_widget {
-  width: 255px;
-  padding: 12px;
-  border-radius: 20px; /* Скругление совпадает с радиусом самого баннера */
-  
-  /* Максимально прозрачный матовый белый цвет */
-  background: rgba(255, 255, 255, 0.18); 
-  
-  /* Сильное размытие создаёт благородный премиальный эффект стекла */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  
-  /* Тончайшая неосязаемая грань стекла */
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  
-  /* Едва заметная тень для отделения от бэкграунда */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
-  
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.widget_tag {
-  font-family: 'Onest', 'Inter', sans-serif;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  /* Графитовый благородный оттенок, убираем ядовито-синий маркер */
-  color: var(--color-dark);
-  opacity: 0.6;
-  margin-bottom: 8px;
-}
-
-.widget_body {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-}
-
-/* Белая матовая глянцевая подложка под иконку */
-.widget_icon_wrap {
-  width: 42px;
-  height: 42px;
-  background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-}
-
-.widget_icon {
-  width: 26px;
-  height: 26px;
-  object-fit: contain;
-}
-
-.widget_info {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  overflow: hidden;
-}
-
-.widget_title {
-  font-family: 'Onest', 'Inter', sans-serif;
-  font-size: 15px; /* Чуть крупнее и увереннее */
-  font-weight: 700;
-  color: var(--color-text-dark);
-  margin: 0 0 1px 0;
-}
-
-.widget_desc {
-  font-family: 'Onest', 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  color: #3a4454; /* Высокая контрастность для удобного чтения с мобилки */
-  line-height: 14px;
-  margin: 0;
-}
-
-.widget_footer {
-  display: flex;
-  justify-content: flex-end; /* Смещаем кнопку строго в правый нижний угол карточки */
-  width: 100%;
-  margin-top: 4px;
-}
-
-/* 🤖 УЛУЧШЕНО: Компактная аккуратная кнопка-пилюля */
-.widget_pill_btn {
-  background-color: var(--color-secondary);
-  color: var(--color-white);
-  border: none;
-  padding: 6px 16px;
-  border-radius: 14px; /* Радиус пилюли */
-  font-family: 'Onest', 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.15);
-  transition: opacity 0.2s ease, transform 0.1s ease;
-}
-
-.widget_pill_btn:active {
-  opacity: 0.85;
-  transform: scale(0.96);
 }
 
 .line_border {
@@ -192,9 +27,9 @@
   height: 2px;
   margin-top: 12px;
   background: linear-gradient(
-    90deg, 
-    var(--color-primary) 0%, 
-    rgba(0, 122, 255, 0.3) 50%, 
+    90deg,
+    var(--color-primary) 0%,
+    rgba(0, 122, 255, 0.3) 50%,
     var(--color-primary) 100%
   );
   box-sizing: border-box;

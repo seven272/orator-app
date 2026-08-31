@@ -1,0 +1,179 @@
+.banner_card {
+  width: 100%;
+  height: 160px;
+  margin-top: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #e8f3ff 0%, #ffffff 100%);
+  border: 1px solid rgba(0, 122, 255, 0.12);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 122, 255, 0.03);
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.banner_card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 122, 255, 0.06);
+}
+
+.banner_card:active {
+  transform: scale(0.98);
+}
+
+/* Контент слева */
+.content_side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+  padding-right: 12px;
+}
+
+.tag_row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.tag {
+  font-family: 'Onest', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--color-primary);
+  line-height: 13px;
+  
+  /* Запрещаем ломать слова пополам, перенос только по целым словам */
+  word-break: keep-all; 
+  overflow-wrap: break-word;
+}
+
+/* Обертка для навыка — если не помещается, 
+   вся эта конструкция целиком уйдет на вторую строчку */
+.skill_highlight {
+  display: inline-block;
+  white-space: nowrap; /* Слово "ПРОКАЧКА" и сам навык не разделяются */
+}
+.exercise_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.exercise_icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.banner_card:hover .exercise_icon {
+  transform: scale(1.1) rotate(-4deg);
+}
+
+.title {
+  font-family: 'Onest', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.description {
+  font-family: 'Onest', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  line-height: 16px;
+  margin: 0 0 12px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Интерактивная стрелка */
+.action_link {
+  font-family: 'Onest', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.arrow {
+  transition: transform 0.2s ease;
+}
+
+.banner_card:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* Правая сторона с персонажем */
+.image_side {
+  position: relative;
+  height: 100%;
+  width: 120px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  align-self: stretch;
+}
+
+.mascot_img {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  margin-bottom: -15px;
+  margin-right: -10px;
+  flex-shrink: 0;
+}
+
+/* Мобильный адаптив под экраны смартфонов */
+@media (max-width: 480px) {
+  .banner_card {
+    height: auto;
+    min-height: 155px;
+    padding: 16px;
+  }
+  
+  .title {
+    font-size: 16px;
+  }
+  
+  .image_side {
+    width: 90px;
+  }
+  
+  .mascot_img {
+    width: 105px;
+    height: 105px;
+    margin-bottom: -12px;
+    margin-right: -5px;
+  }
+}
+
+@media (max-width: 414px) {
+  .tag {
+    font-size: 9px; 
+    letter-spacing: 0.3px;
+  }
+}
+
+@media (max-width: 360px) {
+  .skill_highlight {
+    display: inline; 
+    white-space: normal;
+  }
+}

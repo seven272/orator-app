@@ -59,4 +59,29 @@ const checkAdmin = (req, res, next) => {
   }
 } 
 
-export { checkAuth, checkAdmin }
+const optionalAuth = async (req, res, next) => {
+  // Пытаемся достать токен из куки
+  const token = req.cookies['jwt-oratory'];
+
+  // Если токена нет — не падаем с ошибкой 401, а просто идём дальше как гость
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    if (decoded && decoded.userId) {
+      // Если токен валидный — обогащаем запрос данными пользователя
+      req.userId = decoded.userId;
+      req.user = await User.findById(decoded.userId).select('-password');
+    }
+  } catch (error) {
+    // Если токен протух или сломан, логируем, но не блокируем запрос для гостя
+    console.log('Необязательная авторизация не прошла (токен невалиден), отдаем как гостю');
+  }
+
+  next();
+};
+
+export { checkAuth, checkAdmin , optionalAuth}

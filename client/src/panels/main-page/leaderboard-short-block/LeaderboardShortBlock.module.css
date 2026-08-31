@@ -112,3 +112,28 @@
   color: var(--color-primary);
   font-weight: 700;
 }
+
+.guest_register_btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: rgba(0, 122, 255, 0.06);
+  border: 1px dashed rgba(0, 122, 255, 0.3);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.guest_register_btn:hover {
+  background-color: rgba(0, 122, 255, 0.1);
+}
+.loader_text {
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  padding: 10px 0;
+}

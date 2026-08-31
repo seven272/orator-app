@@ -8,15 +8,26 @@ import LeaderboardList from './leaderboard-list/LeaderboardList'
 const Leaderboard = () => {
   const dispatch = useDispatch()
   const [activeTab, setActiveTab] = useState('global') // 'global' | 'weekly'
-  const { list, currentUser, status } = useSelector(
-    (state) => state.leaderboard,
-  )
+  const {
+    weeklyList,
+    globalList,
+    weeklyCurrentUser,
+    globalCurrentUser,
+    status,
+  } = useSelector((state) => state.leaderboard)
 
+  // Динамически определяем, какой массив и какого юзера рендерить прямо сейчас
+  const list = activeTab === 'weekly' ? weeklyList : globalList
+  const currentUser =
+    activeTab === 'weekly' ? weeklyCurrentUser : globalCurrentUser
+
+  const isUserInTopTen = currentUser?.id
+    ? list.some((u) => u.id === currentUser.id)
+    : true // Если юзер гость, скрываем нижнюю личную карточку автоматическим true
+    
   useEffect(() => {
     dispatch(fetchLeaderboard(activeTab))
   }, [dispatch, activeTab])
-
-  const isUserInTopTen = list.some((u) => u.id === currentUser?.id)
 
   return (
     <div className={styles.container}>

@@ -42,7 +42,7 @@ const All_EXERCISES = {
       reward: 30,
       icon: IconEx1,
       skill: 'Находчивость',
-      minLevel: 1,
+      minLevel: 0,
       premium: false,
     },
     {
@@ -53,7 +53,7 @@ const All_EXERCISES = {
       reward: 30,
       icon: IconEx2,
       skill: 'Коммуникация',
-      minLevel: 1,
+      minLevel: 0,
       premium: false,
     },
     {
@@ -64,7 +64,7 @@ const All_EXERCISES = {
       reward: 30,
       icon: IconEx3,
       skill: 'Техника речи',
-      minLevel: 1,
+      minLevel: 0,
       premium: false,
     },
     {
@@ -75,7 +75,7 @@ const All_EXERCISES = {
       reward: 30,
       icon: IconEx4,
       skill: 'Находчивость',
-      minLevel: 1,
+      minLevel: 0,
       premium: false,
     },
     {
@@ -86,7 +86,7 @@ const All_EXERCISES = {
       reward: 30,
       icon: IconEx5,
       skill: 'Харизма и Юмор',
-      minLevel: 1,
+      minLevel: 0,
       premium: false,
     },
     {
@@ -97,7 +97,7 @@ const All_EXERCISES = {
       reward: 30,
       icon: IconEx6,
       skill: 'Убедительность',
-      minLevel: 1,
+      minLevel: 0,
       premium: false,
     },
   ],
