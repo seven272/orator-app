@@ -1,8 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { FaCheckSquare } from 'react-icons/fa'
 
-import { All_EXERCISES } from '../../../assets/mocks/exercises'
+import { All_EXERCISES } from '../../../../assets/mocks/exercises'
 import styles from './DailyTaskCard.module.css'
 
 const DailyTaskCard = ({ task }) => {
@@ -16,9 +17,11 @@ const DailyTaskCard = ({ task }) => {
     isCompleted,
     locked,
   } = task
- const navigate = useNavigate()
+  const navigate = useNavigate()
 
-  // Находим иконку из статического конфига по alias
+  // 🚀 Проверяем демо-режим напрямую в карточке для стабильности клика
+  const { isDemo } = useSelector((state) => state.daily || {})
+
   const exerciseConfig = Object.values(All_EXERCISES)
     .flat()
     .find((ex) => ex.alias === alias)
@@ -26,6 +29,11 @@ const DailyTaskCard = ({ task }) => {
   const iconSrc = exerciseConfig?.icon
 
   const handleClick = () => {
+    // Если гость — бескомпромиссно отправляем на авторизацию
+    if (isDemo) {
+      navigate('/auth')
+      return
+    }
     if (locked) {
       console.log('Доступно только в Premium')
       return
@@ -35,11 +43,9 @@ const DailyTaskCard = ({ task }) => {
       return
     }
 
-  
     navigate(`/exercise/${alias}?daily=true`)
   }
 
-  // Динамические классы собраны через удобный массив в snake_case
   const cardClasses = [
     styles.card,
     locked ? styles.locked : '',
@@ -50,16 +56,17 @@ const DailyTaskCard = ({ task }) => {
 
   return (
     <div className={cardClasses} onClick={handleClick}>
-      {/* Бейдж для премиум-задач */}
       {locked && <div className={styles.premium_badge}>Premium</div>}
 
       <div className={styles.icon_wrapper}>
-        <img src={iconSrc} alt={title} className={styles.icon} />
+        {iconSrc && <img src={iconSrc} alt={title} className={styles.icon} />}
       </div>
 
       <div className={styles.content}>
         <span className={styles.task_title}>{title}</span>
-        <span className={styles.description}>{description}</span>
+        <span className={styles.description}>
+          {isDemo ? 'Войди в аккаунт, чтобы активировать этот квест' : description}
+        </span>
       </div>
 
       <div className={styles.side_info}>
@@ -72,7 +79,7 @@ const DailyTaskCard = ({ task }) => {
         ) : (
           !locked && (
             <span className={styles.progress_label}>
-              {currentValue}/{goal}
+              {isDemo ? '🔒' : `${currentValue}/${goal}`}
             </span>
           )
         )}

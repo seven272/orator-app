@@ -2,7 +2,7 @@ import React from 'react'
 
 import { useSelector } from 'react-redux'
 
-import DailyTasksList from '../../components/daily-tasks-list/DailyTasksList'
+import DailyTasksList from './daily-tasks-list/DailyTasksList'
 import DailyHeader from './daily-header/DailyHeader'
 import DailyCalendar from './daily-calendar/DailyCalendar'
 import styles from './ExercisesDailyPage.module.css'

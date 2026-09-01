@@ -1,8 +1,13 @@
 .screen_container {
-  width: 100%;
+   width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px 12px;
+  
+  /* 🚀 ФИКС ОБРЕЗАНИЯ: Добавляем отступ в 85 пикселей (высота футера 65px + 20px для воздуха). 
+     Теперь премиум-задание никогда не зайдет под навигацию! */
+  padding-bottom: 85px; 
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding-top: 15px;
 }

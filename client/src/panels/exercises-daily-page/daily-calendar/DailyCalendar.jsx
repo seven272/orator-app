@@ -1,18 +1,16 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import styles from './DailyCalendar.module.css'
 
 export const DailyCalendar = ({ activeDays = [] }) => {
-  console.log(activeDays)
-  // Получаем текущую дату для определения "сегодня"
+  // Смотрим, находится ли приложение в демо-режиме для гостей
+  const { isDemo } = useSelector((state) => state.daily || {})
+
   const today = new Date()
-  const currentDayOfWeek = today.getDay() // 0 - вс, 1 - пн, ... 6 - сб
-
-  // Корректируем индекс, чтобы неделя начиналась с понедельника (0 - пн, 6 - вс)
+  const currentDayOfWeek = today.getDay()
   const todayIndex = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1
-
   const daysOfWeek = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
 
-  // Вычисляем дату начала текущей недели (понедельника)
   const startOfWeek = new Date(today)
   startOfWeek.setDate(today.getDate() - todayIndex)
 
@@ -26,24 +24,25 @@ export const DailyCalendar = ({ activeDays = [] }) => {
     const dayOfMonthNum = String(dayDate.getDate()).padStart(2, '0')
     const dateString = `${year}-${month}-${dayOfMonthNum}`
 
-    // Проверяем выполнение и совпадение с сегодняшним днем
     const isCompleted = activeDays.includes(dateString)
     const isToday = index === todayIndex
 
-    return {
-      dayName,
-      dayOfMonth,
-      isCompleted,
-      isToday,
-    }
+    return { dayName, dayOfMonth, isCompleted, isToday }
   })
+
+  // 🎯 Динамический текст для стрика в зависимости от статуса юзера
+  const getStreakMessage = () => {
+    if (isDemo) return '✨ Войди, чтобы начать стрик!'
+    if (activeDays.length === 0) return '🚀 Сделай первое упражнение сегодня!'
+    return '🔥 Ваш стрик в порядке'
+  };
 
   return (
     <div className={styles.calendar_wrapper}>
       <div className={styles.calendar_title_block}>
         <span className={styles.calendar_title}>Прогресс недели</span>
         <span className={styles.streak_counter}>
-          🔥 Ваш стрик в порядке
+          {getStreakMessage()}
         </span>
       </div>
 

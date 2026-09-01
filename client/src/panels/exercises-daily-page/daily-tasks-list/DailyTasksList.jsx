@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { fetchDailyTasks } from '../../redux/slices/dailySlice' 
+import { fetchDailyTasks } from '../../../redux/slices/dailySlice' 
 import DailyTaskCard from './daily-task-card/DailyTaskCard'
 import styles from './DailyTasksList.module.css'
 
@@ -19,16 +19,6 @@ const DailyTasksList = () => {
     return <div className={styles.loader}>Загрузка ежедневных заданий...</div>
   }
 
-  // Если пользователь гость, мы перехватываем клик по всей сетке, 
-  // прерываем дефолтный переход в тренажер и отправляем его на /auth
-  const handleGridClickCapture = (e) => {
-    if (isDemo) {
-      e.stopPropagation()
-      e.preventDefault()
-      navigate('/auth')
-    }
-  }
-
   return (
     <section className={styles.container}>
       {isDemo && (
@@ -37,8 +27,7 @@ const DailyTasksList = () => {
         </div>
       )}
 
-      {/* onClickCapture сработает ДО того, как клик дойдет до внутренностей DailyTaskCard */}
-      <div className={styles.grid} onClickCapture={handleGridClickCapture}>
+      <div className={styles.grid}>
         {tasks && tasks.length > 0 ? (
           tasks.map((task) => (
             <DailyTaskCard key={task._id || task.alias} task={task} />

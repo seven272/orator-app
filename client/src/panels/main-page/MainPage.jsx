@@ -13,7 +13,7 @@ import ActivityBlock from './activity-block/ActivityBlock'
 import CoursesBannerBlock from './courses-banner-block/CoursesBannerBlock'
 
 const MainPage = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch() 
 
   useEffect(() => {
     dispatch(fetchDailyTasks())

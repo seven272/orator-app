@@ -1,62 +1,103 @@
-.footer {
+.footer_container {
   width: 100%;
-  height: 75px;
-  display: flex;
-  flex-direction: column; 
-  justify-content: center;
-  align-items: center;
+  padding: 14px 0 20px 0; /* Нижний отступ побольше для юридического блока */
   background-color: var(--color-secondary);
-}
-
-.text {
-  font: var(--font-m);
-  line-height: 20px;
-  letter-spacing: 0.5px;
-  color: var(--color-white);
-  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px; /* Зазор между иконками и офертой */
+  box-sizing: border-box;
+  margin-top: auto; /* Всегда прижимается к низу страницы, если контента мало */
 }
 
 .btns {
   list-style-type: none;
   margin: 0;
-  padding: 10px 0;
+  padding: 0 8px;
   width: 100%;
   max-width: 600px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .btn {
-  width: max-content;
+  /* 🚀 ИДЕАЛЬНАЯ СЕТКА: делим пространство на 5 абсолютно равных колонок */
+  flex: 1;
+  width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   color: var(--color-primary);
   cursor: pointer;
-  row-gap: 5px;
+  row-gap: 4px;
+  box-sizing: border-box;
+  text-align: center;
 }
 
-.btn:hover {
-  color: var(--color-white);
+.btn_icon {
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
 }
 
+.btn:active .btn_icon {
+  transform: scale(0.92);
+}
+
+.btn:hover,
 .btn.active {
   color: var(--color-white);
 }
 
 .btn_title {
-  font: var(--font-ms);
+  font-family: 'Onest', sans-serif;
+  font-size: 10px; /* Уменьшили до 10px, так как колонок стало 5 */
+  font-weight: 700;
+  line-height: 12px;
+  width: 100%;
+  padding: 0 1px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.icon {
+/* ⚖️ ЭЛЕГАНТНЫЙ ЮРИДИЧЕСКИЙ БЛОК */
+.legal_block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0.65; /* Делаем текст неброским, полупрозрачным */
+  font-family: var(--font-family-light);
+  font-size: 10px;
   color: var(--color-white);
-  cursor: pointer;
 }
 
-@media screen and (max-width: 650px) {
-  .text {
-    font-size: 12px;
+.legal_link {
+  cursor: pointer;
+  text-decoration: none;
+  /* font-weight: 600;  */
+  transition: opacity 0.2s;
+}
+
+.legal_link:hover {
+  text-decoration: underline;
+  opacity: 1; /* Подсвечивается при наведении */
+}
+
+.divider {
+  font-size: 10px;
+  font-weight: bold;
+  opacity: 1;
+}
+
+/* 📱 Адаптив под совсем маленькие смартфоны */
+@media screen and (max-width: 375px) {
+  .btn_title {
+    font-size: 9px;
+    letter-spacing: -0.3px;
   }
 }
