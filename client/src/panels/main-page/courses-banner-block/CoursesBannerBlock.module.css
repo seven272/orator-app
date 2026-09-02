@@ -41,16 +41,21 @@
 }
 
 .icon_wrapper {
-  width: 52px;
-  height: 52px;
+  width: 62px;
+  height: 62px;
   background-color: var(--color-bg);
   border-radius: 12px;
-  padding: 10px;
   margin-right: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+}
+
+.img_courses {
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .content {

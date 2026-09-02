@@ -3,12 +3,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchProfileData } from '../../redux/slices/profileSlice'
 import { fetchLiveDuelStats } from '../../redux/slices/liveDuelSlice'
 import { fetchGetArchiveCourses } from '../../redux/slices/courseSlice'
-import { Spin, Alert } from 'antd'
 
 import Dashboard from './dashboard/Dashboard'
+import DashboardGuestStub from './dashboard-guest-stub/DashboardGuestStub' // Импортируем заглушку
+import styles from './DashboardPage.module.css' // Предполагается наличие файла стилей лоадера
 
 const DashboardPage = () => {
   const dispatch = useDispatch()
+
+  // 🔐 Забираем данные авторизации из authSlice
+  const { user: authUser, isLoading: authLoading } = useSelector((state) => state.auth)
+
   const {
     user,
     skills,
@@ -28,26 +33,42 @@ const DashboardPage = () => {
   const { archives } = useSelector((state) => state.course)
 
   useEffect(() => {
-    dispatch(fetchProfileData())
-    dispatch(fetchLiveDuelStats())
-    dispatch(fetchGetArchiveCourses())
-  }, [dispatch])
+    // Делаем запросы только если пользователь авторизован
+    if (authUser) {
+      dispatch(fetchProfileData())
+      dispatch(fetchLiveDuelStats())
+      dispatch(fetchGetArchiveCourses())
+    }
+  }, [dispatch, authUser])
 
-  if (profileLoading || duelLoading)
-    return <Spin size="large" fullscreen />
-  // Выводим ошибку, если хоть один упал
-  const currentError = profileError || duelError
-  if (currentError)
+  // 1. Кастомный аккуратный лоадер во время проверки сессии или загрузки данных
+  if (authLoading || (authUser && (profileLoading || duelLoading))) {
     return (
-      <>
-        <Alert
-          message="Ошибка загрузки данных"
-          description={currentError}
-          type="error"
-          showIcon
-        />
-      </>
+      <div className={styles.page_loader}>
+        <div className={styles.spinner}></div>
+        <p>Загрузка профиля оратора...</p>
+      </div>
     )
+  }
+
+  // 2. 🚨 ПРОВЕРКА НА ГОСТЯ: Если сессия проверена и юзера нет — отдаем заглушку
+  if (!authUser) {
+    return <DashboardGuestStub />
+  }
+
+  // 3. Кастомный вынос ошибок без использования antd
+  const currentError = profileError || duelError
+  if (currentError) {
+    return (
+      <div className={styles.page_error_wrapper}>
+        <div className={styles.error_card}>
+          <span className={styles.error_icon}>⚠️</span>
+          <h3>Не удалось загрузить статистику</h3>
+          <p>{currentError}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Dashboard

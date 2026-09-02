@@ -1,10 +1,12 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { IoSchoolOutline, IoTrendingUpOutline } from 'react-icons/io5'
+import { IoTrendingUpOutline } from 'react-icons/io5'
+
+import coursesImg from '../../../assets/images/other/courses.png'
 import styles from './CoursesBannerBlock.module.css'
 
 const CoursesBannerBlock = () => {
-   const navigate = useNavigate()
+  const navigate = useNavigate()
 
   // Замените '/courses' на реальный путь к вашей панели или экрану с курсами
   const handleNavigation = () => {
@@ -17,19 +19,18 @@ const CoursesBannerBlock = () => {
 
       <div className={styles.card} onClick={handleNavigation}>
         <div className={styles.content_wrap}>
-     
-
-         
           <div className={styles.icon_wrapper}>
-            <IoSchoolOutline
-              size="100%"
-              color="var(--color-primary)"
+            <img
+              src={coursesImg}
+              alt="иконка курсов"
+              className={styles.img_courses}
             />
+          
           </div>
 
           <div className={styles.content}>
             <span className={styles.course_title}>
-              Развитие навыков риторики
+              Курсы по риторике
             </span>
             <span className={styles.description}>
               Пошаговые программы для прокачки голоса, дикции, жестов
@@ -37,12 +38,12 @@ const CoursesBannerBlock = () => {
             </span>
           </div>
 
-             {/* Правая иконка вместо текста «8 КУРСОВ» */}
+          {/* Правая иконка вместо текста «8 КУРСОВ» */}
           <div className={styles.side_info}>
             <div className={styles.side_icon_wrapper}>
-              <IoTrendingUpOutline 
-                size="24px" 
-                color="var(--color-primary)" 
+              <IoTrendingUpOutline
+                size="24px"
+                color="var(--color-primary)"
               />
             </div>
           </div>

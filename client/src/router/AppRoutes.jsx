@@ -23,6 +23,9 @@ import LiveDuelPage from '../panels/live-duel-page/LiveDuelPage'
 import LiveDuelJoinPage from '../panels/live-duel-join-page/LiveDuelJoinPage'
 import CoursesPage from '../panels/courses-page/CoursesPage'
 import SelectedCoursePage from '../panels/selected-course-page/SelectedCoursePage'
+import NotFoundPage from '../panels/not-found-page/NotFoundPage'
+import ForbiddenPage from '../panels/forbidden-page/ForbiddenPage'
+import ProtectedRoute from '../components/protected-route/ProtectedRoute'
 
 const router = createHashRouter([
   {
@@ -51,7 +54,6 @@ const router = createHashRouter([
             element: <SecondaryLayout />,
             children: [
               { path: 'auth', element: <AuthPage /> },
-              { path: 'admin', element: <AdminPage /> },
               {
                 path: 'exercises-daily',
                 element: <ExercisesDailyPage />,
@@ -82,7 +84,23 @@ const router = createHashRouter([
                 path: 'course/:courseCode',
                 element: <SelectedCoursePage />,
               },
+              // 🔒 ЗАЩИЩЕННАЯ АДМИНКА
+              // Оборачиваем AdminPage в ProtectedRoute с флагом onlyAdmin
+              {
+                element: <ProtectedRoute onlyAdmin={true} />,
+                children: [{ path: 'admin', element: <AdminPage /> }],
+              },
             ],
+          },
+          // 🔒 СТРАНИЦА ОШИБКИ 403: Явный роут
+          {
+            path: 'forbidden',
+            element: <ForbiddenPage />,
+          },
+          // 🎯 ТАКТИЧЕСКИЙ ПЕРЕХВАТ 404:
+          {
+            path: '*',
+            element: <NotFoundPage />,
           },
         ],
       },

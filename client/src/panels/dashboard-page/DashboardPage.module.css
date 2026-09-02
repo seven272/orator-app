@@ -1,0 +1,65 @@
+.page_loader {
+  width: 100%;
+  max-width: 600px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  font-family: 'Onest', sans-serif;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Нативный чистый CSS-спиннер */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3.5px solid var(--color-bg);
+  border-top: 3.5px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.page_error_wrapper {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.error_card {
+  width: 100%;
+  background-color: #fff1f0;
+  border: 1px solid #ffccc7;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.error_icon {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.error_card h3 {
+  margin: 0 0 6px 0;
+  color: #a8071a;
+  font-family: 'Onest', sans-serif;
+  font-size: 16px;
+}
+
+.error_card p {
+  margin: 0;
+  color: #cf1322;
+  font-size: 13px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

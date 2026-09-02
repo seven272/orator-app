@@ -51,9 +51,9 @@
 
 /* Контейнер для ИИ картинки с мягким цветным фоном-кругом */
 .image_container {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
+  width: 74px;
+  height: 74px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,8 +68,8 @@
 }
 
 .ai_image {
-  width: 56px; /* Картинка чуть больше контейнера, чтобы создавался 3D-эффект «выхода» за рамки */
-  height: 56px;
+  width: 66px; /* Картинка чуть больше контейнера, чтобы создавался 3D-эффект «выхода» за рамки */
+  height: 66px;
   object-fit: contain;
   transition: transform 0.15s ease;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12)); /* Тень для объема */

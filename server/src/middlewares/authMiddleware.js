@@ -26,9 +26,7 @@ const checkAuth = async (req, res, next) => {
     req.userId = decoded.userId
     // 2
     //если нужно еще будет проверять является ли пользователь админом, то находим его в БД
-    req.user = await User.findById(decoded.userId).select(
-        '-password'
-      )
+    req.user = await User.findById(decoded.userId).select('-password')
     //3
     // или еще токен можно скалдировать в хранилище locals, которое можно использовать для передачи данных в рамках одного запроса,
     //   res.locals.user = decoded.userId
@@ -55,33 +53,40 @@ const checkAdmin = (req, res, next) => {
   if (req.user && req.user.isAdmin) {
     next()
   } else {
-    res.status(401).send('Вы не являетесь администратором.')
+    res.status(403).json({
+      success: false,
+      message: 'Вы не являетесь администратором',
+    })
   }
-} 
+}
 
 const optionalAuth = async (req, res, next) => {
   // Пытаемся достать токен из куки
-  const token = req.cookies['jwt-oratory'];
+  const token = req.cookies['jwt-oratory']
 
   // Если токена нет — не падаем с ошибкой 401, а просто идём дальше как гость
   if (!token) {
-    return next();
+    return next()
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
     if (decoded && decoded.userId) {
       // Если токен валидный — обогащаем запрос данными пользователя
-      req.userId = decoded.userId;
-      req.user = await User.findById(decoded.userId).select('-password');
+      req.userId = decoded.userId
+      req.user = await User.findById(decoded.userId).select(
+        '-password',
+      )
     }
   } catch (error) {
     // Если токен протух или сломан, логируем, но не блокируем запрос для гостя
-    console.log('Необязательная авторизация не прошла (токен невалиден), отдаем как гостю');
+    console.log(
+      'Необязательная авторизация не прошла (токен невалиден), отдаем как гостю',
+    )
   }
 
-  next();
-};
+  next()
+}
 
-export { checkAuth, checkAdmin , optionalAuth}
+export { checkAuth, checkAdmin, optionalAuth }
