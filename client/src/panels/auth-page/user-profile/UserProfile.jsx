@@ -9,13 +9,15 @@ import {
   clearMergeConflict,
 } from '../../../redux/slices/authSlice'
 
+
+
 import Modal from '../../../UI/modal/Modal'
 import AccountMergeContent from './account-merge-content/AccountMergeContent'
 import axiosInstance from '../../../utils/axiosInstance'
 import usePreviewImg from '../../../utils/usePreviewImg'
 
 // Импорт всех декомпозированных компонентов
-import ProfileCard from './profile-card/ProfileCard'
+import ProfileCard from './profile-card/ProfileCard' 
 import ProfileForm from './profile-form/ProfileForm'
 import ProfileConnections from './profile-connections/ProfileConnections'
 

@@ -29,7 +29,7 @@ import { fetchFinishLiveDuelAiBot } from './liveDuelSlice'
 
 
 // Один универсальный запрос для получения всех данных профиля и дашборда
-const fetchProfileData = createAsyncThunk(
+const fetchProfileData = createAsyncThunk( 
   'profile/fetchProfileData',
   async (_, { rejectWithValue }) => {
     try {
@@ -45,7 +45,21 @@ const fetchProfileData = createAsyncThunk(
   },
 )
 
-const initialState = {
+const fetchActivateFakePremium = createAsyncThunk(
+  'profile/fetchActivateFakePremium',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post('/user/fake-buy')
+      return response.data // Ждем { isPremium: true, premiumExpiresAt: ... }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Ошибка активации Премиума',
+      )
+    }
+  },
+)
+
+const initialState = { 
   user: {
     displayName: '',
     level: 0,
@@ -58,6 +72,7 @@ const initialState = {
     levelProgressPercent: 0,
     completed_days: ['2000-01-15', '2000-01-16', '2000-01-17'],
     isPremium: true,
+    premiumExpiresAt: null,
   },
   skills: [
     { subject: 'коммуникация', A: 80, fullMark: 100 },
@@ -122,6 +137,13 @@ const profileSlice = createSlice({
       state.user.achievements =
         action.payload.progressData?.newAchievements
     },
+    // Вручную синхронизируем премиум, если данные пришли через другой триггер
+    setPremiumStatus: (state, action) => {
+      if (state.user) {
+        state.user.isPremium = action.payload.isPremium
+        state.user.premiumExpiresAt = action.payload.premiumExpiresAt
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -160,6 +182,19 @@ const profileSlice = createSlice({
       })
       .addCase(fetchProfileData.rejected, (state, action) => {
         state.loading = false
+        state.error = action.payload
+      })
+        // покупка премиум
+    .addCase(fetchActivateFakePremium.pending, (state) => {
+        state.error = null
+      })
+      .addCase(fetchActivateFakePremium.fulfilled, (state, action) => {
+        if (state.user) {
+          state.user.isPremium = action.payload.isPremium
+          state.user.premiumExpiresAt = action.payload.premiumExpiresAt
+        }
+      })
+      .addCase(fetchActivateFakePremium.rejected, (state, action) => {
         state.error = action.payload
       })
       // Глобальный слушатель для ЛЮБОГО успешно завершенного тренажера
@@ -226,6 +261,7 @@ export const {
   updateCoinsAndInventory,
   setTotalPoints,
   updateRewardAfterCourse,
+  setPremiumStatus
 } = profileSlice.actions
-export { fetchProfileData }
+export { fetchProfileData, fetchActivateFakePremium }
 export default profileSlice.reducer

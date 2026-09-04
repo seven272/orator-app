@@ -169,7 +169,6 @@ const updateProfile = async (req, res) => {
     if (lastName !== undefined) updateData.lastName = lastName.trim()
     if (avatar !== undefined) updateData.avatar = avatar.trim()
 
-
     // 2. Если пользователь хочет изменить никнейм (displayName)
     if (displayName) {
       const cleanDisplayName = displayName.trim()
@@ -189,7 +188,7 @@ const updateProfile = async (req, res) => {
       updateData.displayName = cleanDisplayName
     }
 
-      // 2. Если пользователь хочет изменить никнейм (displayName)
+    // 2. Если пользователь хочет изменить никнейм (displayName)
     if (email) {
       const cleanEmail = email.trim()
 
@@ -199,12 +198,13 @@ const updateProfile = async (req, res) => {
         _id: { $ne: userId }, // Исключаем самого себя из поиска
       })
 
-        if (isEmailTaken) {
+      if (isEmailTaken) {
         // Возвращаем 409 статус конфликта для активации модалки слияния
         return res.status(409).json({
           code: 'EMAIL_ALREADY_TAKEN',
-          message: 'Этот email уже занят другим оратором. Хотите объединить профили?',
-          vkOwnerId: isEmailTaken._id // Передаем ID аккаунта-дубликата для слияния
+          message:
+            'Этот email уже занят другим оратором. Хотите объединить профили?',
+          vkOwnerId: isEmailTaken._id, // Передаем ID аккаунта-дубликата для слияния
         })
       }
 
@@ -665,6 +665,43 @@ const getUserProfile = async (req, res) => {
   }
 }
 
+const fakeBuyPremium = async (req, res) => {
+  try {
+    const userId = req.user.id // Зависит от вашего middleware
+
+    // Выставляем премиум на 30 дней вперед
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 30)
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        isPremium: true,
+        premiumExpiresAt: expiresAt,
+      },
+      { new: true },
+    )
+
+    if (!updatedUser) {
+      return res
+        .status(404)
+        .json({ message: 'Пользователь не найден' })
+    }
+
+    res.json({
+      success: true,
+      message: 'Премиум статус успешно активирован на 30 дней!',
+      isPremium: updatedUser.isPremium,
+      premiumExpiresAt: updatedUser.premiumExpiresAt,
+    })
+  } catch (error) {
+    console.error(error)
+    res
+      .status(500)
+      .json({ message: 'Ошибка при активации премиум-статуса' })
+  }
+}
+
 export {
   register,
   login,
@@ -676,4 +713,5 @@ export {
   linkVkToEmailAccount,
   mergeAccounts,
   getUserProfile,
+  fakeBuyPremium
 }

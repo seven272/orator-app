@@ -50,6 +50,7 @@ const userSchema = new mongoose.Schema(
     // Роли
     isAdmin: { type: Boolean, default: false },
     isPremium: { type: Boolean, default: false },
+    premiumExpiresAt: { type: Date }, //для контроля подписки
     // --- ГЕЙМИФИКАЦИЯ (Прогресс) ---
     progression: {
       // уровень

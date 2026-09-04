@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { message } from 'antd'
 
 import axiosInstance from '../../utils/axiosInstance'
+import { fetchActivateFakePremium } from './profileSlice'
 
 const fetchRegisterUser = createAsyncThunk(
   'auth/fetchRegisterUser',
@@ -359,6 +360,12 @@ const authSlice = createSlice({
         state.isLoading = false
         state.error = action.payload
       })
+// проверяем премиум из profileSlice
+       .addCase(fetchActivateFakePremium.fulfilled, (state, action) => {
+    if (state.user) {
+      state.user.isPremium = action.payload.isPremium
+    }
+  })
   },
 })
 const checkIsAuth = (state) => Boolean(state.auth.user)

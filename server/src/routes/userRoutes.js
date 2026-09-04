@@ -9,7 +9,8 @@ import {
   vkAuth,
   linkEmailToVkAccount,
   linkVkToEmailAccount,
-  mergeAccounts
+  mergeAccounts,
+  fakeBuyPremium
 } from '../controllers/userController.js'
 import upload from '../middlewares/upload.js'
 import { checkAuth } from '../middlewares/authMiddleware.js'
@@ -17,10 +18,6 @@ import { checkAuth } from '../middlewares/authMiddleware.js'
 import vkLaunchParamsAuth from "../middlewares/vkLaunchParamsAuth.js"; 
 
 const router = new Router()
-
-
-
-// localhost:5020/api/user/register
 
 router.post(
   '/upload-avatar',
@@ -51,5 +48,7 @@ router.post('/vk-auth', vkLaunchParamsAuth, vkAuth)
 router.post('/link-email', checkAuth, linkEmailToVkAccount)
 router.post('/link-vk', checkAuth, vkLaunchParamsAuth, linkVkToEmailAccount);
 router.post('/merge-accounts', checkAuth, mergeAccounts);
+// Имитация успешной оплаты через ЮMoney
+router.post('/fake-buy', checkAuth, fakeBuyPremium)
 
 export default router
