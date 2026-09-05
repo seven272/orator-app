@@ -1,0 +1,162 @@
+.leaderboard_wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leaderboard_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leaderboard_title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon_crown {
+  color: var(--color-bg-orange);
+  font-size: 14px;
+}
+
+.leaderboard_mini_list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Строка пользователя */
+.leaderboard_row {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  background-color: var(--color-bg-layout);
+  border: 1px solid var(--color-grey-light);
+  gap: 8px;
+}
+
+/* Мягкая синяя подсветка — фокус на себе */
+.row_current {
+  background-color: var(--color-bg);
+  border-color: var(--color-secondary);
+  font-weight: 700;
+}
+
+/* Золотистый оттенок рамки, если текущий пользователь — премиум */
+.row_premium {
+  border-color: var(--color-border);
+  background-color: #fffdec;
+}
+
+/* Совмещение премиума и текущего фокуса */
+.row_current.row_premium {
+  background-color: #f1f8ff;
+  border-color: var(--color-primary);
+}
+
+.user_rank {
+  font-weight: 700;
+  color: var(--color-primary);
+  min-width: 32px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatar_fallback {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-grey-light);
+  color: var(--color-grey-dark);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.name_container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.user_name {
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.premium_badge {
+  background-color: var(--color-yellow);
+  color: var(--font-color-dark);
+  font-size: 8px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+}
+
+.user_points {
+  color: var(--color-text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Кнопка «Смотреть весь рейтинг» */
+.more_btn {
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  height: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-primary);
+  background: transparent;
+  border: 1px solid var(--color-grey-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.more_btn:hover {
+  color: var(--color-blue-dark);
+  border-color: var(--color-primary);
+  background-color: var(--color-bg);
+}
+
+.icon_arrow {
+  font-size: 10px;
+}
+
+.inner_loading {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 14px 0;
+}

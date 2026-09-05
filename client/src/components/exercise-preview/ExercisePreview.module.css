@@ -111,27 +111,26 @@
   margin-top: auto; /* Выталкивает элемент в самый низ .inner_content */
 }
 
+/* ... все ваши базовые стили карточки (.execise_container, .inner_content и т.д.) остаются без изменений */
+
 .locked {
   cursor: not-allowed;
 }
 
-/* Эффект при наведении на закрытую карточку */
 .locked:hover {
-  transform: translateY(0); /* Не поднимаем закрытую карточку */
+  transform: translateY(0);
 }
 
-
-
-/* Блюр контента */
+/* Блюр закрытого контента */
 .content_blur {
-  filter: blur(0.1px) saturate(0.3); /* Немного обесцвечиваем */
-  opacity: 0.3;
+  filter: blur(2px) saturate(0.2); /* Слегка усилили блюр для эффекта приватности */
+  opacity: 0.25;
   transition: all 0.3s ease;
   user-select: none;
-  pointer-events: none; /* Чтобы нельзя было кликнуть на элементы внутри */
+  pointer-events: none;
 }
 
-/* Слой с замочком */
+/* Слой оверлея */
 .lock_overlay {
   position: absolute;
   inset: 0;
@@ -140,13 +139,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон */
-  backdrop-filter: blur(0.5px); /* Дополнительный мягкий блюр */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(0.5px);
 }
 
+/* Дефолтный синий замок для ограничения по уровню */
 .lock_icon {
-  color: #4a90e2; /* Красивый холодный синий */
-  margin-bottom: 12px;
+  color: #4a90e2;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
   margin-bottom: 25px;
 }
@@ -162,16 +161,25 @@
   box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
   margin-bottom: 30px;
 }
-.premium_lock .lock_text {
-  background: #ebf8ff; /* Очень светлый голубой */
-  border-color: #4299e1;
-  color: #2b6cb0;
+
+/* --- СТИЛИЗАЦИЯ ПРЕМИУМ-ЗАМКА (ПОД ЗОЛОТО ИЗ :ROOT) --- */
+.premium_lock {
+  cursor: pointer; /* Для премиум карточек делаем указатель, так как клик по ним открывает модалку */
 }
 
 .premium_lock .lock_icon {
-  color: #3182ce;
+  color: var(--color-yellow, #ffbd12);
+  filter: drop-shadow(0 0 8px rgba(255, 189, 18, 0.4));
 }
 
+.premium_lock .lock_text {
+  background: var(--color-light-gray, #fff4cc);
+  border-color: var(--color-border, #ecd98c);
+  color: var(--color-text, #d86b14);
+  box-shadow: 0 4px 12px rgba(217, 192, 50, 0.2);
+}
+
+/* Кнопка теории на оверлее */
 .theory_btn {
   display: flex;
   justify-content: center;
@@ -188,7 +196,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
-  z-index: 11; /* Выше всех */
+  z-index: 11;
 }
 
 .theory_btn:hover {

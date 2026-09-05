@@ -1,0 +1,173 @@
+.premium_modal_content {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text-primary);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Элегантная аккуратная шапка */
+.header_zone {
+  text-align: center;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.big_crown {
+  font-size: 22px;
+  display: inline-block;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 4px 10px rgba(255, 189, 18, 0.3));
+  animation: gentleFloat 4s ease-in-out infinite;
+}
+
+.header_zone h2 {
+  font: var(--font-decor, var(--font-title));
+  font-size: 1.4rem;
+  color: var(--color-bg-dark, #303030);
+  margin: 0 0 6px 0;
+  letter-spacing: -0.3px;
+}
+
+.subtitle {
+  font: var(--font-m-light);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Список преимуществ с аккуратными тонкими линиями */
+.benefits_list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.benefit_item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px;
+  border-radius: 10px;
+  transition: background-color 0.2s;
+}
+
+.benefit_item:hover {
+  background-color: var(--color-bg-light, #f8fafc);
+}
+
+.benefit_icon {
+  font-size: 18px;
+  background-color: var(--color-bg, #e8f3ff);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.benefit_text strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  display: block;
+}
+
+.benefit_text p {
+  margin: 3px 0 0 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+}
+
+/* Минималистичный блок тарифа */
+.price_box {
+  background-color: var(--color-bg-light, #f8fafc);
+  border: 1px solid var(--color-grey-light, #e2dcdc);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.duration {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.price_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.old_price {
+  text-decoration: line-through;
+  color: var(--color-grey);
+  font-size: 12px;
+}
+
+.current_price {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text, #d86b14);
+}
+
+.current_price small {
+  font-size: 11px;
+  color: var(--color-green, #34c759);
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+/* Кнопка действия */
+.activate_btn {
+  background-color: var(--color-primary, #007aff);
+  color: var(--color-white, #ffffff);
+  border: none;
+  height: 46px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.15);
+}
+
+.activate_btn:hover {
+  background-color: var(--color-blue-dark, #005bc1);
+}
+
+.activate_btn:active {
+  transform: scale(0.98);
+}
+
+.activate_btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Очень мягкая плавная анимация покачивания короны */
+@keyframes gentleFloat {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+/* Адаптивность элементов внутри модалки */
+@media screen and (max-width: 400px) {
+  .price_box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .price_row {
+    align-self: flex-end;
+  }
+}

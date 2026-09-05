@@ -20,7 +20,7 @@ const ProfileForm = ({
 
   return (
     <form onSubmit={handleUpdateProfile} className={styles.form_profile}>
-      <h5 className={styles.sub_heading}>Личные данные</h5>
+      <h5 className={styles.sub_heading}>Редактировать личные данные</h5>
       
       {/* Секция инлайн-превью и изменения аватара через Multer */}
       <div className={styles.avatar_edit_section}>

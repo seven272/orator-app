@@ -10,7 +10,7 @@ const fetchLeaderboard = createAsyncThunk(
       return { data: res.data, type }
     } catch (err) {
       return rejectWithValue(err.response?.data || 'Ошибка сервера')
-    }
+    } 
   }
 )
 

@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { fetchProfileData } from '../../../redux/slices/profileSlice'
-
+import { FcStatistics } from "react-icons/fc";
 import {
   FaFire,
   FaCoins,
-  FaTrophy,
   FaChevronRight,
   FaCrosshairs,
   FaAward,
 } from 'react-icons/fa'
 
 import styles from './MiniDashboard.module.css'
+import { fetchProfileData } from '../../../../../redux/slices/profileSlice'
 
 const MiniDashboard = () => {
   const dispatch = useDispatch()
@@ -38,14 +37,13 @@ const MiniDashboard = () => {
     )
   }
 
-  const progressPercent = Math.min(
-    Math.max(user.levelProgressPercent || 0, 0),
-    100,
-  )
-
   return (
-    <div className={styles.micro_card}>
-      {/* 1. Верхняя строка: Стрик, Жетоны и Общий опыт */}
+    <div className={styles.dashboard_wrapper}>
+      {/* 1. Строка экспресс-метрики: Стрик, Жетоны и Общий опыт */}
+      <div className={styles.dashboard_title}>
+                <FcStatistics className={styles.icon_statistic} />
+                <span>Экспресс статистика</span>
+              </div>
       <div className={styles.top_row}>
         <div className={styles.metric}>
           <FaFire className={styles.icon_streak} />
@@ -77,34 +75,17 @@ const MiniDashboard = () => {
         </div>
       </div>
 
-      {/* 2. Середина: Уровень и прогресс-бар */}
-      <div className={styles.level_zone}>
-        <div className={styles.level_info}>
-          <span className={styles.level_text}>
-            <FaTrophy className={styles.icon_level} /> {user.level}{' '}
-            уровень
-          </span>
-          <span className={styles.xp_text}>{user.xp} XP</span>
-        </div>
-        <div className={styles.custom_progress_trail}>
-          <div
-            className={styles.custom_progress_bar}
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-      </div>
-
-      {/* 3 Ближайшая цель / Зона роста */}
+      {/* 2. Ближайшая цель / Зона роста */}
       {weakPoint && (
         <div className={styles.target_zone}>
           <FaCrosshairs className={styles.icon_target} />
           <span className={styles.target_text}>
-            Фокус: <strong>{weakPoint.skill}</strong>
+            Фокус тренировок: <strong>{weakPoint.skill}</strong>
           </span>
         </div>
       )}
 
-      {/* 5. Кнопка перехода на основной дашборд */}
+      {/* 3. Кнопка перехода на основной дашборд */}
       <button
         type="button"
         className={styles.more_btn}

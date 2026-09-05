@@ -89,4 +89,44 @@ const optionalAuth = async (req, res, next) => {
   next()
 }
 
-export { checkAuth, checkAdmin, optionalAuth }
+
+
+const checkPremium = async (req, res, next) => {
+  try {
+    // Данные уже лежат в req.user благодаря вашему checkAuth!
+    const user = req.user
+
+    if (!user) {
+      return res.status(404).json({ message: 'Пользователь не найден' })
+    }
+
+    // 1. Проверяем наличие премиума
+    if (!user.isPremium) {
+      return res.status(403).json({ 
+        code: 'PREMIUM_REQUIRED',
+        message: 'Для доступа к этому тренажеру необходим Премиум-статус' 
+      })
+    }
+
+    // 2. Проверяем срок действия подписки
+    if (user.premiumExpiresAt && new Date() > new Date(user.premiumExpiresAt)) {
+      // Так как подписка истекла, здесь НАМ НАДО обновить базу данных
+      user.isPremium = false
+      user.premiumExpiresAt = null
+      await user.save() // Сохраняем изменения в БД
+
+      return res.status(403).json({ 
+        code: 'PREMIUM_EXPIRED',
+        message: 'Срок действия вашего Премиум-статуса истек' 
+      })
+    }
+
+    // Если всё отлично, передаем управление ИИ-контроллеру
+    next()
+  } catch (error) {
+    console.error('Ошибка в checkPremium middleware:', error)
+    res.status(500).json({ message: 'Внутренняя ошибка сервера' })
+  }
+}
+
+export { checkAuth, checkAdmin, optionalAuth, checkPremium }

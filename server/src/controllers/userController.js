@@ -648,6 +648,7 @@ const getUserProfile = async (req, res) => {
         achievements: user.progression.achievements,
         streak: user.streak.current,
         isPremium: user.isPremium,
+        premiumExpiresAt: user.premiumExpiresAt,
         levelProgressPercent,
         nextThreshold,
         completed_days: completedDays,

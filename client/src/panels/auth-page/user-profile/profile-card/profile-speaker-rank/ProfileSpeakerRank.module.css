@@ -1,0 +1,165 @@
+.mic_progress_block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.mic_header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.mic_icon_box {
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-grey-light);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dynamic_mic {
+  font-size: 20px;
+}
+
+.rank_title {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  display: block;
+}
+
+.audience_text {
+  font: var(--font-m);
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-bg-dark);
+}
+
+.stage_desc {
+  font: var(--font-m-light);
+  color: var(--color-text-secondary);
+  margin: 4px 0 12px 0;
+}
+
+/* Шкала XP */
+.xp_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.xp_labels {
+  display: flex;
+  justify-content: space-between;
+  font: var(--font-xs);
+  color: var(--color-text-secondary);
+}
+
+.xp_track {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-grey-light);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.xp_fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  transition: width 0.4s ease-out;
+}
+
+/* --- КАРТА ПУТИ (ТАЙМЛАЙН БЛОК) --- */
+.timeline_container {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px dashed var(--color-grey-light);
+}
+
+.timeline_title {
+  margin: 0 0 12px 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-grey);
+}
+
+.stages_line {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  gap: 8px;
+}
+
+/* Контейнер отдельного ранга на карте */
+.stage_node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+  opacity: 0.4; /* Будущие ранги по дефолту полупрозрачные */
+  transition: all 0.3s ease;
+}
+
+/* Стиль для уже пройденных или текущего ранга */
+.node_reached {
+  opacity: 1;
+}
+
+.node_mic_box {
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-grey-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  transition: border-color 0.3s;
+}
+
+/* Стилизация конкретно текущего ранга пользователя */
+.node_current .node_mic_box {
+  border: 2px solid var(--color-primary);
+  background-color: var(--color-bg);
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.node_current .node_title {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.node_title {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.node_xp_hint {
+  font-size: 9px;
+  color: var(--color-text-secondary);
+}
+
+/* Адаптив для маленьких экранов — ужимаем текст, оставляя только микрофоны */
+@media (max-width: 480px) {
+  .node_title {
+    display: none; /* Прячем текст на мобилках, чтобы не кашевать интерфейс */
+  }
+  .node_current .node_title {
+    display: block; /* Показываем только текущий текстовый ранг */
+    font-size: 10px;
+  }
+}

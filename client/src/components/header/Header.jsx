@@ -36,7 +36,7 @@ const Header = () => {
             <div className={styles.profile_widget}>
               <div
                 className={styles.status_badge}
-                onClick={() => navigate('/mini-dashboard')}
+                onClick={() => navigate('/dashboard')}
               >
                 {user?.level && (
                   <>

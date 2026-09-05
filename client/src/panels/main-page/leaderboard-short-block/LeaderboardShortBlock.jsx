@@ -8,35 +8,35 @@ import styles from './LeaderboardShortBlock.module.css'
 const LeaderboardShortBlock = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  
+   
   // 🚀 Читаем строго недельные данные
-  const { weeklyList = [], weeklyCurrentUser, status } = useSelector(
+  const { globalList = [], globalCurrentUser, status } = useSelector(
     (state) => state.leaderboard || {},
   )
 
   // Всегда подтягиваем актуальный недельный топ при загрузке главной страницы
   useEffect(() => {
-    dispatch(fetchLeaderboard('weekly'))
+    dispatch(fetchLeaderboard('global'))
   }, [dispatch])
 
-  const isAuth = !!weeklyCurrentUser
-  const displayName = weeklyCurrentUser?.displayName || 'Вы'
+  const isAuth = !!globalCurrentUser
+  const displayName = globalCurrentUser?.displayName || 'Вы'
 
-  const weeklyTop3 = weeklyList.slice(0, 3) || []
+  const top3 = globalList.slice(0, 3) || []
   const medals = ['🥇', '🥈', '🥉']
 
   return (
     <section className={styles.leaderboard_section}>
       <h2 className={styles.section_title}>
-        🏆 ТОП ОРАТОРОВ (НЕДЕЛЯ)
+        🏆 ТОП ОРАТОРОВ
       </h2>
 
       <div className={styles.leaderboard_wrapper} onClick={() => navigate('/leaderboard')}>
         <ul className={styles.leaderboard_list}>
-          {status === 'loading' && weeklyList.length === 0 ? (
+          {status === 'loading' && globalList.length === 0 ? (
             <li className={styles.loader_text}>Загрузка лидеров...</li>
           ) : (
-            weeklyTop3.map((player, index) => (
+            top3.map((player, index) => (
               <li key={player.id || index} className={styles.leaderboard_item}>
                 <span className={styles.rank_cell}>
                   {medals[index] || `${index + 1}.`}
@@ -58,14 +58,14 @@ const LeaderboardShortBlock = () => {
         {isAuth ? (
           <div className={styles.user_row}>
             <span className={styles.rank_cell}>
-              {weeklyCurrentUser?.rank || '—'}. 👤
+              {globalCurrentUser?.rank || '—'}. 👤
             </span>
             <span className={styles.player_name}>
               {displayName}
             </span>
             <div className={styles.dot_filler}></div>
             <span className={styles.xp_value}>
-              {weeklyCurrentUser?.score || 0} XP
+              {globalCurrentUser?.score || 0} XP
             </span>
           </div>
         ) : (

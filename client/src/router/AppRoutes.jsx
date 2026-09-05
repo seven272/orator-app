@@ -14,7 +14,6 @@ import ExercisesAllPage from '../panels/exercises-all-page/ExercisesAllPage'
 import ExercisesLevelPage from '../panels/exercises-level-page/ExercisesLevelPage'
 import ExercisePage from '../panels/exercise-page/ExercisePage'
 import DashboardPage from '../panels/dashboard-page/DashboardPage'
-import MiniDashboardPage from '../panels/mini-dashboard-page/MiniDashboardPage'
 import LeaderboardPage from '../panels/leaderboard-page/LeaderboardPage'
 import ShopPage from '../panels/shop-page/ShopPage'
 import ChallengesPage from '../panels/challenges-page/ChallengesPage'
@@ -67,10 +66,6 @@ const router = createHashRouter([
                 element: <ExercisesLevelPage />,
               },
               { path: 'dashboard', element: <DashboardPage /> },
-              {
-                path: 'mini-dashboard',
-                element: <MiniDashboardPage />,
-              },
               { path: 'leaderboard', element: <LeaderboardPage /> },
               { path: 'shop', element: <ShopPage /> },
               { path: 'challenges', element: <ChallengesPage /> },

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Flex, Form, Input, message } from 'antd'
-import { useNavigate } from 'react-router-dom'
+
 
 import bridge from '@vkontakte/vk-bridge' // Подключаем мост VK
 
@@ -12,7 +12,7 @@ import styles from './Login.module.css'
 
 const Login = ({ showRegister }) => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
+
   const [loading, setLoading] = useState(false)
 
   // Хэндлер обычной авторизации по Email
@@ -21,11 +21,8 @@ const Login = ({ showRegister }) => {
     try {
       await dispatch(fetchLoginUser(values)).unwrap()
       message.success('Вы успешно авторизовались!')
-      setTimeout(() => {
-        navigate('/') // Редирект через VK-роутер
-      }, 1000)
     } catch (error) {
-      message.error(error?.message || 'Ошибка при авторизации')
+      console.error(error?.message || 'Ошибка при авторизации')
     } finally {
       setLoading(false)
     }
