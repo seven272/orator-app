@@ -7,7 +7,7 @@ import { checkAchievements } from '../utils/achievementService.js'
 const getChallenges = async (req, res) => {
   try {
     const userId = req.userId
-
+  
     // Берем все глобальные челленджи
     const allChallenges = await Challenge.find({})
 

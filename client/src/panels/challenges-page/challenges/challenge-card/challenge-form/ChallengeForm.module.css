@@ -1,0 +1,113 @@
+/* Форма отчета */
+.divider {
+  border-top: 1px dashed var(--color-secondary);
+  margin: 16px 0;
+  opacity: 0.3;
+}
+
+.instruction {
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+  margin-bottom: 10px;
+}
+
+.textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--color-secondary);
+  padding: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  outline: none;
+  resize: vertical;
+  margin-bottom: 12px;
+}
+
+.textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.btn_group {
+  display: flex;
+  gap: 8px;
+}
+
+.submit_btn {
+  flex: 2;
+  background-color: #52c41a;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit_btn:disabled {
+  background-color: var(--color-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.cancel_btn {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--color-secondary);
+  color: var(--color-text-secondary);
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.loader {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: 40px 0;
+  font-weight: 600;
+}
+
+.char_counter {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: -6px; /* Поджимаем ближе к textarea */
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: flex-end; /* Сдвигаем счетчик в правый угол под текстовое поле */
+  font-weight: 500;
+}
+
+.counter_red {
+  color: var(--color-red); /* Красный цвет ошибки (Ant Design Danger) */
+  font-weight: bold;
+}
+
+.counter_green {
+  color: var(--color-green); /* Зеленый цвет успеха (Ant Design Success) */
+  font-weight: bold;
+}
+
+/* Мобильная адаптивность для формы отчета */
+@media (max-width: 576px) {
+  .textarea {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .char_counter {
+    font-size: 0.75rem;
+    margin-bottom: 10px;
+  }
+
+  .btn_group {
+    gap: 6px; /* Чуть сужаем расстояние между кнопками */
+  }
+
+  .submit_btn,
+  .cancel_btn {
+    padding: 8px 6px; /* Уменьшаем высоту и боковые отступы */
+    font-size: 0.8rem; /* Делаем текст компактнее */
+    border-radius: 10px; /* Слегка уменьшаем радиус скругления под размер кнопки */
+  }
+}

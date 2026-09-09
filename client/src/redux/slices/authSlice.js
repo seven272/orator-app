@@ -163,7 +163,7 @@ const fetchMergeAccounts = createAsyncThunk(
 )
 
 const initialState = {
-  isLoading: true, 
+  isLoading: true,  
   isAdmin: false,
   user: null,
   error: null,

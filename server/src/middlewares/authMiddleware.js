@@ -90,7 +90,6 @@ const optionalAuth = async (req, res, next) => {
 }
 
 
-
 const checkPremium = async (req, res, next) => {
   try {
     // Данные уже лежат в req.user благодаря вашему checkAuth!
