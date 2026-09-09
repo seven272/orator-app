@@ -1,0 +1,108 @@
+/* Полностью кастомная подложка */
+.custom_backdrop {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.45);
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 16px;
+  box-sizing: border-box;
+  z-index: 2000;
+}
+
+.backdrop_active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Контентная часть окна */
+.custom_modal_body {
+  height: auto;
+  max-height: 85vh;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 32px 24px 24px;
+  border-radius: 16px;
+  background-color: var(--color-white);
+  transform: translateY(15px);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  isolation: isolate;
+  mask-image: linear-gradient(#fff, #fff);
+}
+
+.body_active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Кнопка закрытия */
+.custom_close_btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 26px;
+  font-weight: 300;
+  color: var(--color-grey-dark);
+  cursor: pointer;
+  opacity: 0.6;
+  line-height: 1;
+  transition: opacity 0.2s;
+  user-select: none;
+}
+
+.custom_close_btn:hover {
+  opacity: 1;
+}
+
+/* Текстовые стили наполнения */
+.modal_info_title {
+  font: var(--font-title);
+  color: var(--color-bg-dark);
+  margin: 0 0 12px 0;
+  font-size: 1.25rem;
+}
+
+.modal_info_text {
+  font: var(--font-m-light);
+  color: var(--color-text-dark);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Тонкий скроллбар */
+.custom_modal_body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom_modal_body::-webkit-scrollbar-thumb {
+  background-color: var(--color-grey-light, #e2dcdc);
+  border-radius: 10px;
+}
+
+/* Мобильный адаптив */
+@media screen and (max-width: 480px) {
+  .custom_modal_body {
+    padding: 28px 16px 20px;
+    border-radius: 14px;
+  }
+}

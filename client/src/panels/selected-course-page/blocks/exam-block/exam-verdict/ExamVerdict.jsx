@@ -1,11 +1,12 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Popconfirm } from 'antd'
+import { useNavigate } from 'react-router-dom'
 
 import { fetchRestartCourse } from '../../../../../redux/slices/courseSlice'
 import styles from './ExamVerdict.module.css'
 
-const ExamVerdict = ({
+const ExamVerdict = ({ 
   courseCode,
   currentScore, // 💡 Новое поле: балл за текущую попытку
   score, // Это лучший балл (bestScore)
@@ -16,6 +17,7 @@ const ExamVerdict = ({
   onStartNextAttempt,
 }) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { courseStatus } = useSelector((state) => state.course)
   const maxAttempts = 5
 
@@ -24,6 +26,7 @@ const ExamVerdict = ({
 
   const handleRestart = () => {
     dispatch(fetchRestartCourse(courseCode))
+    navigate('/courses')
   }
 
   return (
@@ -102,7 +105,7 @@ const ExamVerdict = ({
                 className={styles.secondary_restart_btn}
                 disabled={courseStatus === 'loading'}
               >
-                Пройти курс заново
+                Завершить курс
               </button>
             </Popconfirm>
           </div>
@@ -124,7 +127,7 @@ const ExamVerdict = ({
                 className={styles.restart_btn}
                 disabled={courseStatus === 'loading'}
               >
-                Попробовать еще раз (сбросить прогресс)
+                Завершить курс и попробовать еще раз 
               </button>
             </Popconfirm>
           </div>

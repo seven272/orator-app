@@ -59,7 +59,6 @@ const ExamBlock = ({ courseCode }) => {
       const result = await dispatch(
         fetchSubmitExam({ formData }),
       ).unwrap()
-      console.log(result)
       dispatch(updateRewardAfterCourse(result))
     } catch (err) {
       console.error('Ошибка при отправке экзамена:', err)

@@ -107,6 +107,10 @@ const KingFailure = ({ alias, isDaily }) => {
     setIsTaskInterrupted(true)
   }
 
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+  }
+
   const clickNext = () => {
     resetExerciseState()
   }
@@ -217,6 +221,7 @@ const KingFailure = ({ alias, isDaily }) => {
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
+        onComplete={handleCompleteReady} 
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}

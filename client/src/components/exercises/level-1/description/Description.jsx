@@ -99,6 +99,11 @@ const navigate = useNavigate()
     setIsTaskInterrupted(true)
   }
 
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+    handleAutoCheckResult(transcript)
+  }
+
   // Детектор пауз: если текст не меняется 3 секунды во время работы
   useEffect(() => {
     let silenceTimer
@@ -233,6 +238,7 @@ const navigate = useNavigate()
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
+         onComplete={handleCompleteReady}
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}

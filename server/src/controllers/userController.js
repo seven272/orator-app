@@ -649,6 +649,7 @@ const getUserProfile = async (req, res) => {
         streak: user.streak.current,
         isPremium: user.isPremium,
         premiumExpiresAt: user.premiumExpiresAt,
+        activePurchasedCourses: user.activePurchasedCourses,
         levelProgressPercent,
         nextThreshold,
         completed_days: completedDays,
@@ -714,5 +715,5 @@ export {
   linkVkToEmailAccount,
   mergeAccounts,
   getUserProfile,
-  fakeBuyPremium
+  fakeBuyPremium,
 }

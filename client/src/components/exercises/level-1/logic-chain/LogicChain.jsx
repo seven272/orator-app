@@ -97,6 +97,12 @@ const LogicChain = ({ alias, isDaily }) => {
     setStatus(STATUS.FINISHED)
     setIsTaskInterrupted(true)
   }
+
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+    handleAutoCheckResult(transcript)
+  }
+
   const clickNext = () => {
     setCurrentStart(chainGenerator())
     resetExerciseState()
@@ -219,6 +225,7 @@ const LogicChain = ({ alias, isDaily }) => {
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
+        onComplete={handleCompleteReady}
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}

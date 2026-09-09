@@ -3,10 +3,9 @@ import {
   IoMdArrowRoundBack,
   IoMdArrowRoundForward,
 } from 'react-icons/io'
+import { FaCheck } from 'react-icons/fa' // Импортируем аккуратную иконку галочки
 import styles from './ExerciseControls.module.css'
 
-// Константы лучше вынести в отдельный файл или передавать пропсом,
-// но для простоты оставим здесь
 const SCORING_DATA = {
   LEVEL_1: [
     { label: 'Плохо', value: 5 },
@@ -23,11 +22,12 @@ const SCORING_DATA = {
 const ExerciseControls = ({
   status,
   level = 'LEVEL_2',
-  STATUS, // Объект со статусами
+  STATUS, 
   xp,
   isTaskInterrupted,
   onStart,
   onStop,
+  onComplete,
   onRate,
   onFinish,
   onNext,
@@ -41,11 +41,17 @@ const ExerciseControls = ({
         </button>
       )}
 
-      {/* Кнопка Остановить */}
+      {/* 🔥 МОДИФИЦИРОВАНО: Две кнопки вместо одной во время выполнения */}
       {status === STATUS.RUNNING && (
-        <button className={styles.btn_stop} onClick={onStop}>
-          Остановить
-        </button>
+        <div className={styles.btns_finished_wrap}>
+          <button type="button" className={styles.btn_stop} onClick={onStop}>
+            Прервать
+          </button>
+          <button type="button" className={styles.btn_ready} onClick={onComplete}>
+            Готово
+            <FaCheck size={12} />
+          </button>
+        </div>
       )}
 
       {/* Блок оценки */}

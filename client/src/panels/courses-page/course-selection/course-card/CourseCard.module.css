@@ -1,0 +1,179 @@
+.course_card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-light);
+  position: relative;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.course_card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 100, 0.1);
+}
+
+/* Растягивание последней карточки, если в ряду нет пары */
+.course_card_fullwidth {
+  grid-column: 1 / -1;
+  max-width: 100%;
+}
+
+/* Состояние некупленной карточки (отключаем подъем) */
+.card_unbought {
+  cursor: default !important;
+}
+
+.card_unbought:hover {
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Шапка внутри карточки */
+.card_header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.course_tag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--color-text-dark);
+  opacity: 0.7;
+}
+
+/* Иконка и навесной замочек */
+.course_icon_container {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.course_png_image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.card_lock_badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-grey-light);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  z-index: 2;
+}
+
+/* Текстовое наполнение */
+.course_title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.course_text {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--color-grey-dark);
+  margin: 0 0 20px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-grow: 1; /* Выталкивает кнопку вниз */
+}
+
+/* --- КНОПКИ ДЕЙСТВИЯ КАРТОЧКИ --- */
+.card_action_button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  background-color: var(--color-green);
+  color: var(--color-white);
+}
+
+.card_action_button:hover {
+  background-color: var(--color-green);
+
+  opacity: 0.8;
+}
+
+.card_action_button:active {
+  transform: scale(0.98);
+}
+
+/* Кнопка покупки интенсива (Фирменный синий цвет из :root) */
+.buy_action_btn {
+  background-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
+  font-weight: 700 !important;
+}
+
+.buy_action_btn:hover {
+  background-color: var(--color-blue-dark) !important;
+}
+
+/* Кнопки повторного прохождения архива (Вторичный стиль) */
+.completed_action_btn,
+.failed_action_btn {
+  background-color: var(--color-white) !important;
+  border: 1px solid var(--color-secondary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.completed_action_btn:hover,
+.failed_action_btn:hover {
+  background-color: var(--color-bg-light) !important;
+}
+
+/* --- АРХИВНЫЕ ИСТОРИЧЕСКИЕ БЕЙДЖИ --- */
+.history_badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.badge_success {
+  background-color: var(--color-light-blue);
+  color: var(--color-green);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+}
+
+.badge_danger {
+  background-color: rgba(243, 4, 4, 0.06);
+  color: var(--color-red);
+  border: 1px solid rgba(243, 4, 4, 0.15);
+}

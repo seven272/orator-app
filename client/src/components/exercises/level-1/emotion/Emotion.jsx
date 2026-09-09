@@ -74,6 +74,13 @@ const Emotion = ({ alias, isDaily }) => {
     setIsTaskInterrupted(true)
   }
 
+
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+    handleAutoCheckResult(transcript)
+  }
+
+
   // Сброс состояния для нового круга
   const resetExerciseState = () => {
     setTimeLeft(TOTAL_TIME)
@@ -233,6 +240,7 @@ const Emotion = ({ alias, isDaily }) => {
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
+        onComplete={handleCompleteReady}
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}

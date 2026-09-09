@@ -1,0 +1,93 @@
+/* --- ИНФОРМАЦИОННАЯ ШАПКА --- */
+.info_header_block {
+  width: 100%;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-secondary);
+  border-radius: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.main_title {
+  font: var(--font-l);
+  color: var(--color-black);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.main_description {
+  font: var(--font-m);
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.structure_badge_container {
+  width: 100%;
+  border-top: 1px dashed var(--color-secondary);
+  padding-top: 16px;
+}
+
+.structure_title {
+  font: var(--font-s);
+  color: var(--color-text-dark);
+  font-weight: bold;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.badges_grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.badge_item {
+  font: var(--font-s);
+  background-color: var(--color-bg);
+  color: var(--color-black);
+  padding: 6px 12px;
+  border-radius: 30px;
+  border: 1px solid var(--color-secondary);
+  white-space: nowrap;
+}
+
+.badge_item_clickable {
+  font: var(--font-s);
+  background-color: var(--color-bg);
+  color: var(--color-black);
+  padding: 6px 12px;
+  border-radius: 30px;
+  border: 1px solid var(--color-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.badge_item_clickable:hover {
+  background-color: var(--color-light-blue);
+  border-color: var(--color-blue-vk);
+  color: var(--color-blue-dark);
+}
+
+.badge_item_clickable:active {
+  transform: scale(0.96);
+}
+
+/* 📱 Мобильная оптимизация для плотных плашек */
+@media screen and (max-width: 480px) {
+  .structure_badge_container {
+    padding: 12px 10px;
+  }
+  .badges_grid {
+    gap: 6px;
+  }
+  .badge_item_clickable {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+}

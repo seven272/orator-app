@@ -110,6 +110,13 @@ const TongueTwister = ({ alias, isDaily }) => {
     setIsTaskInterrupted(true)
   }
 
+
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+    handleAutoCheckResult(transcript)
+  }
+
+
   const clickNext = () => {
     setRandomWord(generator()) // Берем новую фразу
     resetExerciseState()
@@ -238,6 +245,7 @@ const TongueTwister = ({ alias, isDaily }) => {
         onStop={handleInterrupt}
         onRate={handleManualRate}
         onFinish={clickStop}
+        onComplete={handleCompleteReady}
         onNext={clickNext}
       />
       <Modal active={showModal} onClose={() => setShowModal(false)}>

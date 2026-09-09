@@ -9,6 +9,11 @@ import axiosInstance from '../../utils/axiosInstance'
 import { fetchSubmitChallengeReport } from './challengeSlice'
 // Импортируем Thunk обычного тренажера
 import { fetchCompleteExercise } from './exerciseSlice'
+// импорт покупки курса и рестарта
+import {
+  fetchActivateFakeCourse,
+  fetchRestartCourse,
+} from './courseSlice'
 // Импортируем Thunk-экшены завершения ИИ-тренажеров
 import { fetchFinishDebate } from './ai-exercises/debateSlice'
 import { fetchFinishIcebreaker } from './ai-exercises/icebreakerSlice'
@@ -27,9 +32,8 @@ import { fetchFinishHistorical } from './ai-exercises/historicalSlice'
 import { fetchSubmitLiveRating } from './liveDuelSlice'
 import { fetchFinishLiveDuelAiBot } from './liveDuelSlice'
 
-
 // Один универсальный запрос для получения всех данных профиля и дашборда
-const fetchProfileData = createAsyncThunk( 
+const fetchProfileData = createAsyncThunk(
   'profile/fetchProfileData',
   async (_, { rejectWithValue }) => {
     try {
@@ -59,7 +63,7 @@ const fetchActivateFakePremium = createAsyncThunk(
   },
 )
 
-const initialState = { 
+const initialState = {
   user: {
     displayName: '',
     level: 0,
@@ -73,6 +77,7 @@ const initialState = {
     completed_days: ['2000-01-15', '2000-01-16', '2000-01-17'],
     isPremium: true,
     premiumExpiresAt: null,
+    activePurchasedCourses: [],
   },
   skills: [
     { subject: 'коммуникация', A: 80, fullMark: 100 },
@@ -115,23 +120,20 @@ const profileSlice = createSlice({
       }
     },
     updateRewardAfterCourse: (state, action) => {
-      console.log(action.payload)
-      console.log(action.payload.progressData)
       // Извлекаем объект наград из пришедших данных
       const rewards = action.payload.progressData?.rewards
 
       // Если rewards или xp отсутствуют, прибавляем 0 (защита от NaN)
       state.user.xp = state.user.xp + (rewards?.xp ?? 0)
       state.user.coins = state.user.coins + (rewards?.coins ?? 0)
-      state.user.lifetimeXp = state.user.lifetimeXp + (rewards?.xp ?? 0)
+      state.user.lifetimeXp =
+        state.user.lifetimeXp + (rewards?.xp ?? 0)
 
-        // 🔥 Записываем новые ачивки в стейт профиля.
-            if (
-               action.payload.progressData?.newAchievements.length > 0
-            ) {
-              state.lastAwarded =
-                action.payload.progressData?.newAchievements[0]
-            }
+      // 🔥 Записываем новые ачивки в стейт профиля.
+      if (action.payload.progressData?.newAchievements.length > 0) {
+        state.lastAwarded =
+          action.payload.progressData?.newAchievements[0]
+      }
 
       // Обновляем массив ачивок (если новых нет, бэкенд пришлет пустой массив [])
       state.user.achievements =
@@ -168,6 +170,24 @@ const profileSlice = createSlice({
           }
         },
       )
+      // подписка на покупку курса
+      .addCase(fetchActivateFakeCourse.fulfilled, (state, action) => {
+        if (state.user) {
+          state.user.activePurchasedCourses =
+            action.payload.activePurchasedCourses
+        }
+      })
+      // Подписка на рестарт курса - удаляем из массива купленных курсов
+      .addCase(fetchRestartCourse.fulfilled, (state, action) => {
+        if (state.user?.activePurchasedCourses) {
+          // action.meta.arg содержит аргумент thunk'а — наш courseCode
+          state.user.activePurchasedCourses =
+            state.user.activePurchasedCourses.filter(
+              (code) => code !== action.meta.arg,
+            )
+        }
+      })
+      //Загрузка данных профиля
       .addCase(fetchProfileData.pending, (state) => {
         state.loading = true
         state.error = null
@@ -184,16 +204,20 @@ const profileSlice = createSlice({
         state.loading = false
         state.error = action.payload
       })
-        // покупка премиум
-    .addCase(fetchActivateFakePremium.pending, (state) => {
+      // покупка премиум
+      .addCase(fetchActivateFakePremium.pending, (state) => {
         state.error = null
       })
-      .addCase(fetchActivateFakePremium.fulfilled, (state, action) => {
-        if (state.user) {
-          state.user.isPremium = action.payload.isPremium
-          state.user.premiumExpiresAt = action.payload.premiumExpiresAt
-        }
-      })
+      .addCase(
+        fetchActivateFakePremium.fulfilled,
+        (state, action) => {
+          if (state.user) {
+            state.user.isPremium = action.payload.isPremium
+            state.user.premiumExpiresAt =
+              action.payload.premiumExpiresAt
+          }
+        },
+      )
       .addCase(fetchActivateFakePremium.rejected, (state, action) => {
         state.error = action.payload
       })
@@ -216,7 +240,7 @@ const profileSlice = createSlice({
           fetchFinishRandomWord.fulfilled,
           fetchSubmitLiveRating.fulfilled,
           fetchFinishLiveDuelAiBot.fulfilled,
-          fetchFinishHistorical.fulfilled
+          fetchFinishHistorical.fulfilled,
         ),
         (state, action) => {
           // Защита: если сессия завершилась без оценки, stats будет отсутствовать
@@ -261,7 +285,7 @@ export const {
   updateCoinsAndInventory,
   setTotalPoints,
   updateRewardAfterCourse,
-  setPremiumStatus
+  setPremiumStatus,
 } = profileSlice.actions
 export { fetchProfileData, fetchActivateFakePremium }
 export default profileSlice.reducer

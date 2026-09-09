@@ -41,7 +41,7 @@ const ArchiveRecordSchema = new mongoose.Schema(
       },
     },
   },
-  { _id: true },
+  { _id: true }, 
 )
 
 const UserCourseProgressSchema = new mongoose.Schema(

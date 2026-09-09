@@ -105,6 +105,47 @@ const initCronJobs = () => {
       )
     }
   })
+
+  // ==========================================
+  // 3. 🔥 РАЗ В ЧАС: Проверка и сброс Премиума
+  // ==========================================
+  cron.schedule('0 * * * *', async () => {
+    console.log(
+      '⏳ [Cron]: Запуск ежечасной проверки истекших премиум-подписок...',
+    )
+
+    try {
+      const now = new Date()
+
+      const premiumResult = await User.updateMany(
+        {
+          isPremium: true,
+          premiumExpiresAt: { $lt: now }, // дата окончания подписки уже прошла
+        },
+        {
+          $set: {
+            isPremium: false,
+            premiumExpiresAt: null,
+          },
+        },
+      )
+
+      if (premiumResult.modifiedCount > 0) {
+        console.log(
+          `✅ [Cron Log]: Ежечасная чистка: аннулировано подписок: ${premiumResult.modifiedCount}`,
+        )
+      } else {
+        console.log(
+          '[Cron Log]: Ежечасная чистка: просроченных подписок нет.',
+        )
+      }
+    } catch (error) {
+      console.error(
+        '❌ [Cron Error]: Ошибка при автоматическом сбросе премиума:',
+        error,
+      )
+    }
+  })
 }
 
 export { initCronJobs }

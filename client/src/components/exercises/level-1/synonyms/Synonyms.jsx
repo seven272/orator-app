@@ -119,6 +119,13 @@ const Synonyms = ({ alias, isDaily }) => {
     setIsTaskInterrupted(true)
   }
 
+
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+    handleAutoCheckResult(transcript)
+  }
+
+
   const clickNext = () => {
     // Генерируем новое слово и сбрасываем состояние раунда
     setRandomWord(wordGenerator())
@@ -258,6 +265,7 @@ const Synonyms = ({ alias, isDaily }) => {
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
         onRate={handleManualRate}
+        onComplete={handleCompleteReady}
         onFinish={clickStop}
         onNext={clickNext}
       />

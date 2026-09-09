@@ -110,6 +110,10 @@ const Taboo = ({ alias, isDaily }) => {
     resetExerciseState()
   }
 
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+  }
+
   const clickStop = () => {
    navigate(-1)
   }
@@ -224,6 +228,7 @@ const Taboo = ({ alias, isDaily }) => {
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
+        onComplete={handleCompleteReady} 
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}

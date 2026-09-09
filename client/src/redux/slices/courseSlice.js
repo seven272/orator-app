@@ -30,7 +30,7 @@ const fetchCourseProgress = createAsyncThunk(
     try {
       const res = await axiosInstance.get(
         `/courses/progress/${courseCode}`,
-      )
+      ) 
       return res.data // Возвращает { status: 'active'|'not_started', progress: {...} }
     } catch (error) {
       return rejectWithValue(error.response.data)
@@ -164,11 +164,24 @@ const fetchGetArchiveCourses = createAsyncThunk(
     }
   },
 )
+
+const fetchActivateFakeCourse = createAsyncThunk(
+  'course/fetchActivateFakeCourse',
+  async (courseCode, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post('/courses/fake-buy', { courseCode })
+      return res.data // Ждем { success: true, activePurchasedCourses: [...] }
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка при оплате интенсива')
+    }
+  }
+)
+
 const courseSlice = createSlice({
   name: 'course',
   initialState: {
     courseStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-    status: 'not_started', // 'not_started' | 'active' | 'completed'
+    status: 'not_purchased', // 'not_purchased' | 'purchased_not_started' | 'active'| 'completed'
     examSubmittingStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
     irlSubmittingStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
     currentBlockIndex: -1, // 0: теория, 1: ИИ, 2: IRL, 3: экзамен
@@ -236,10 +249,12 @@ const courseSlice = createSlice({
       .addCase(fetchCourseProgress.fulfilled, (state, action) => {
         state.courseStatus = 'succeeded'
         state.status = action.payload.status
-        if (action.payload.status === 'active') {
+       if (action.payload.status === 'active' && action.payload.progress) {
           state.progressData = action.payload.progress
-          state.currentBlockIndex =
-            action.payload.progress.currentBlockIndex
+          state.currentBlockIndex = action.payload.progress.currentBlockIndex
+        } else {
+          state.progressData = null
+          state.currentBlockIndex = -1
         }
       })
       .addCase(fetchCourseProgress.rejected, (state, action) => {
@@ -268,6 +283,19 @@ const courseSlice = createSlice({
           action.payload?.message || 'Не удалось начать курс'
       })
 
+      /* ==========================================
+         FETCH ACTIVATE FAKE COURSE (Покупка курса)
+         ========================================== */
+      .addCase(fetchActivateFakeCourse.pending, (state) => {
+        state.error = null
+      })
+      .addCase(fetchActivateFakeCourse.fulfilled, (state, action) => {
+        // Меняем статус на куплен, чтобы интерфейс разблокировал кнопку старта
+        state.status = 'purchased_not_started'
+      })
+      .addCase(fetchActivateFakeCourse.rejected, (state, action) => {
+        state.error = action.payload
+      })
       /* ==========================================
          3. FETCH SUBMIT THEORY QUIZ
          ========================================== */
@@ -364,10 +392,15 @@ const courseSlice = createSlice({
       })
       .addCase(fetchRestartCourse.fulfilled, (state, action) => {
         state.courseStatus = 'succeeded'
-        state.progressData = action.payload.progressData
-        state.status = action.payload.progressData.status // станет 'active'
-        state.currentBlockIndex =
-          action.payload.progressData.currentBlockIndex // станет 0
+        state.status = 'not_started' // Переводим курс в статус "не начат"
+        state.progressData = null    // Полностью очищаем стейт текущего прохождения
+        state.currentBlockIndex = -1
+        
+        // Локально закидываем свежую запись в архивы, чтобы карточка в каталоге 
+        // сразу перерисовала кнопку на «Пройти повторно» без перезагрузки всей страницы
+        if (action.payload.archiveRecord) {
+          state.archives.unshift(action.payload.archiveRecord)
+        }
         state.error = null
       })
       .addCase(fetchRestartCourse.rejected, (state, action) => {
@@ -380,8 +413,8 @@ const courseSlice = createSlice({
       })
       .addCase(fetchGetArchiveCourses.fulfilled, (state, action) => {
         state.courseStatus = 'succeeded'
-
-        state.archives = action.payload.archives
+console.log( action.payload.archives)
+        state.archives = action.payload.archives || []
         state.error = null
       })
       .addCase(fetchGetArchiveCourses.rejected, (state, action) => {
@@ -434,5 +467,6 @@ export {
   fetchUnlockExamWithCoins,
   fetchRestartCourse,
   fetchGetArchiveCourses,
+  fetchActivateFakeCourse
 }
 export default courseSlice.reducer

@@ -21,7 +21,7 @@ const startPitchTrainer = async (req, res) => {
     })
 
     if (!progress) {
-      return res
+      return res 
         .status(404)
         .json({ message: 'Прогресс по данному интенсиву не найден' })
     }

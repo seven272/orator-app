@@ -106,6 +106,10 @@ const userSchema = new mongoose.Schema(
         isShipped: { type: Boolean, default: false }, // Флаг: отправлен/выполнен ли заказ
       },
     ],
+    activePurchasedCourses: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true, // Автоматически создаст createdAt и updatedAt

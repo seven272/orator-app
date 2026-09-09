@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { PiTimer } from 'react-icons/pi'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
-
+ 
 import styles from './Association.module.css'
 import { getRandomPairWords } from '../../../../utils/getRandomValues'
 import { similarWords } from '../../../../assets/mocks/similarWords'
@@ -96,6 +96,12 @@ const Association = ({ alias, isDaily }) => {
     setStatus(STATUS.FINISHED)
     setIsTaskInterrupted(true)
   }
+
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+    handleAutoCheckResult(transcript)
+  }
+
 
   const clickNext = () => {
     setWords(getRandomPairWords(similarWords))
@@ -216,6 +222,7 @@ const Association = ({ alias, isDaily }) => {
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
+        onComplete={handleCompleteReady}
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}

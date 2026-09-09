@@ -1,83 +1,12 @@
 /* Базовые контейнеры с ограничением по ширине */
-.timeline_container,
-.welcome_wrapper {
+.timeline_container {
   max-width: 600px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px;
   background-color: var(--color-bg);
   color: var(--color-text-primary);
   min-height: 100vh;
   box-sizing: border-box;
-}
-
-.welcome_wrapper {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 24px;
-  background-color: var(--color-bg);
-  min-height: 100vh;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.welcome_icon_container {
-  width: 96px; /* Немного увеличили, чтобы компенсировать отступы */
-  height: 96px;
-  border-radius: 50%;
-  /* Мягкий градиент на фоне */
-  background: linear-gradient(135deg, #ffffff, var(--color-light-blue));
-  
-  /* ДОБАВИЛИ РАМКУ: сине-голубой контур в цвет вашей вторичной переменной */
-  border: 3px solid var(--color-secondary); 
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24px;
-  position: relative;
-  box-sizing: border-box;
-  
-  /* Сложная тень: первая дает объем самой карточке, вторая — легкое свечение контура */
-  box-shadow: 
-    0 10px 24px rgba(0, 122, 255, 0.05),
-    inset 0 0 12px rgba(0, 122, 255, 0.03); 
-}
-
-/* ИИ-картинка внутри рамки */
-.welcome_ai_image {
-  width: 76px;  /* Уменьшили базовый размер, чтобы внутри круга появился "воздух" */
-  height: 76px;
-  object-fit: contain;
-  
-  /* Эффект легкого 3D: картинка визуально приподнимается над подложкой, отбрасывая мягкую тень вниз */
-  filter: drop-shadow(0 6px 10px rgba(0, 122, 255, 0.15));
-  
-  position: relative;
-  z-index: 2;
-}
-/* Сделали заголовок менее крупным и аккуратным */
-.course_title {
-  font: var(
-    --font-l
-  ); /* Переключили с var(--font-xl) на ваш стандартный var(--font-l) */
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--color-black);
-  margin: 0 0 10px 0;
-  line-height: 1.25;
-}
-
-.course_description {
-  font: var(--font-m-light);
-  font-size: 14px;
-  color: var(--color-text-secondary);
-  line-height: 1.45;
-  margin: 0 0 32px 0;
-  max-width: 440px;
 }
 
 /* --- КНОПКИ ДЕЙСТВИЯ --- */

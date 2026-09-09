@@ -1,8 +1,9 @@
 import Course from '../models/Course.js'
 import UserCourseProgress from '../models/UserCourseProgress.js'
 import User from '../models/User.js'
+import CourseArchive from '../models/CourseArchive.js'
 import { checkAchievements } from '../utils/achievementService.js'
-import {  IRL_CHALLENGE_PROMPTS_REGISTRY } from '../assets/prompts/irlPrompt.js'
+import { IRL_CHALLENGE_PROMPTS_REGISTRY } from '../assets/prompts/irlPrompt.js'
 import { EXAM_PROMPTS_REGISTRY } from '../assets/prompts/examPrompt.js'
 import gigachatAxiosClient from '../utils/gigachatAxiosClient.js'
 import { parseAiResponse } from '../utils/aiJsonParser.js'
@@ -12,21 +13,35 @@ import { getXpThreshold } from '../utils/fnForControllers.js'
 const getCourseProgress = async (req, res) => {
   try {
     const { courseCode } = req.params
+    const user = req.user // Берем из checkAuth
 
-    const userId = req.userId
+    // Проверяем, куплен ли курс в данный момент
+    const isPurchased =
+      user.activePurchasedCourses.includes(courseCode)
 
+    if (!isPurchased && !user.isAdmin) {
+      // Состояние А: Курс не куплен вообще или закрылся после прохождения/провала
+      return res.status(200).json({
+        status: 'not_purchased',
+        currentBlockIndex: -1,
+      })
+    }
+
+    // Ищем запись текущего прогресса
     let progress = await UserCourseProgress.findOne({
-      userId,
+      userId: user._id,
       courseCode,
     })
 
-    // Если прогресса нет, возвращаем дефолтный статус "не начат", чтобы фронтенд показал кнопку "Начать курс"
     if (!progress) {
-      return res
-        .status(200)
-        .json({ status: 'not_started', currentBlockIndex: -1 })
+      // Состояние Б: Курс оплачен, но пользователь еще не нажал кнопку «Начать обучение»
+      return res.status(200).json({
+        status: 'purchased_not_started',
+        currentBlockIndex: -1,
+      })
     }
 
+    // Состояние В: Курс куплен и находится в активной стадии прохождения
     res.status(200).json({ status: 'active', progress })
   } catch (error) {
     res.status(500).json({
@@ -36,50 +51,64 @@ const getCourseProgress = async (req, res) => {
   }
 }
 
+// 2. Старт курса (вызывается, только если курс уже куплен)
 const startCourse = async (req, res) => {
   try {
     const { courseCode } = req.body
-
     const userId = req.userId
 
-    // Проверяем существование курса
-
-    const course = await Course.findOne({
-      courseCode: courseCode,
-    })
+    // Дополнительная страховка: проверяем существование курса в системе
+    const course = await Course.findOne({ courseCode })
     if (!course) {
-      return res.status(404).json({ message: 'Курс не найден' })
+      return res
+        .status(404)
+        .json({ message: 'Интенсив не найден в базе данных' })
     }
 
-    // Проверяем, нет ли уже запущенного трека по этому курсу
+    // Проверяем, нет ли уже запущенного трека (активного документа)
     const existingProgress = await UserCourseProgress.findOne({
       userId,
       courseCode,
     })
     if (existingProgress) {
       return res.status(400).json({
-        message: 'Курс уже начат или завершен',
+        message: 'Этот интенсив уже запущен',
         progress: existingProgress,
       })
     }
 
-    // 3. Создаем новую запись прогресса
+    // Создаем новую запись прогресса для текущей оплаченной попытки
     const newProgress = new UserCourseProgress({
       userId,
       courseCode,
-      currentBlockIndex: 0, // Стартуем с теории
+      currentBlockIndex: 0, // Начинаем с теории
       blocksProgress: {
         theory: { isCompleted: false },
-        aiWorkout: { isCompleted: false, completedExercises: [] },
-        irlChallenge: { isCompleted: false },
-        exam: { isCompleted: false },
+        aiWorkout: {
+          isCompleted: false,
+          accumulatedScore: 0,
+          sessionsCount: 0,
+          currentSession: null,
+        },
+        irlChallenge: {
+          isCompleted: false,
+          textReport: '',
+          aiFeedback: '',
+        },
+        exam: {
+          isCompleted: false,
+          bestScore: 0,
+          attemptsCount: 0,
+          lastAttemptScore: 0,
+          aiFeedback: '',
+        },
       },
     })
 
     await newProgress.save()
 
     res.status(201).json({
-      message: 'Курс успешно начат',
+      message: 'Интенсив успешно начат. Желаем удачи!',
       progress: newProgress,
     })
   } catch (error) {
@@ -175,7 +204,8 @@ const submitIrlReport = async (req, res) => {
       })
     }
 
-    const currentIrlPrompt = IRL_CHALLENGE_PROMPTS_REGISTRY[courseCode]
+    const currentIrlPrompt =
+      IRL_CHALLENGE_PROMPTS_REGISTRY[courseCode]
 
     // 2. Проверка состояния прогресса в БД
     const progress = await UserCourseProgress.findOne({
@@ -271,11 +301,9 @@ const submitExamReport = async (req, res) => {
     // 💡 ДИНАМИЧЕСКИЙ ПОДБОР ПРОМПТА: вытаскиваем системный промпт из реестра по коду курса
     const currentExamPrompt = EXAM_PROMPTS_REGISTRY[courseCode]
     if (!currentExamPrompt) {
-      return res
-        .status(400)
-        .json({
-          message: `Системный промпт для курса ${courseCode} не сконфигурирован на сервере`,
-        })
+      return res.status(400).json({
+        message: `Системный промпт для курса ${courseCode} не сконфигурирован на сервере`,
+      })
     }
 
     // 1. Находим прогресс курса в базе данных
@@ -418,8 +446,13 @@ const submitExamReport = async (req, res) => {
 
             // 🔥 АВТОМАТИЧЕСКИЙ ПЕРЕСЧЕТ УРОВНЯ («СТАКАН» ОПЫТА)
             // Цикл вычитает порог текущего уровня из накопленного опыта и апает level
-            while (user.progression.xp >= getXpThreshold(user.progression.level)) {
-              user.progression.xp -= getXpThreshold(user.progression.level)
+            while (
+              user.progression.xp >=
+              getXpThreshold(user.progression.level)
+            ) {
+              user.progression.xp -= getXpThreshold(
+                user.progression.level,
+              )
               user.progression.level += 1
             }
 
@@ -457,14 +490,14 @@ const submitExamReport = async (req, res) => {
       }
     }
 
-    // 8. СОХРАНЕНИЕ ФИНАЛЬНЫХ РЕЗУЛЬТАТОВ В MONGODB через атомарный $set
+    // 8. СОХРАНЕНИЕ ФИНАЛЬНЫХ РЕЗУЛЬТАТОВ В MONGODB через атомарный $set (Ваш оригинальный код без изменений)
     const updatedProgressDoc =
       await UserCourseProgress.findOneAndUpdate(
         { userId, courseCode },
         {
           $set: {
             status: overallCourseStatus,
-            currentBlockIndex: 3, // Закрепляем на финальном шаге
+            currentBlockIndex: 3,
             'blocksProgress.exam.isCompleted': isExamCompleted,
             'blocksProgress.exam.bestScore': newBestScore,
             'blocksProgress.exam.attemptsCount': newAttemptsCount,
@@ -496,11 +529,9 @@ const submitExamReport = async (req, res) => {
     })
   } catch (error) {
     console.error('Глобальная ошибка в submitExamReport:', error)
-    return res
-      .status(500)
-      .json({
-        message: 'Внутренняя ошибка сервера при обработке экзамена.',
-      })
+    return res.status(500).json({
+      message: 'Внутренняя ошибка сервера при обработке экзамена.',
+    })
   }
 }
 
@@ -589,71 +620,58 @@ const restartCourse = async (req, res) => {
     const { courseCode } = req.body
     const userId = req.userId
 
+    // 1. Ищем текущую сессию прогресса
     const progress = await UserCourseProgress.findOne({
       userId,
       courseCode,
     })
-    if (!progress)
-      return res.status(404).json({ message: 'Прогресс не найден' })
+    if (!progress) {
+      return res
+        .status(404)
+        .json({
+          message: 'Активный прогресс по данному интенсиву не найден',
+        })
+    }
 
-    // Проверяем, что курс действительно завершен (успешно или неуспешно)
+    // Запрещаем сброс, если курс еще в процессе прохождения
     if (progress.status === 'active') {
       return res
         .status(400)
-        .json({ message: 'Нельзя перезапустить активный курс' })
+        .json({
+          message:
+            'Нельзя сбросить интенсив, пока он не завершен или не провален',
+        })
     }
 
-    // 1. Формируем архивную запись из текущего состояния
-    const archiveRecord = {
+    // 2. ИЗЯЩНЫЙ ПЕРЕНОС: Создаем независимую строку в таблице архивов
+    await CourseArchive.create({
+      userId,
+      courseCode,
       status: progress.status,
+      blocksProgress: progress.blocksProgress,
       finishedAt: new Date(),
-      blocksProgress: JSON.parse(
-        JSON.stringify(progress.blocksProgress),
-      ), // глубокое копирование
-    }
+    })
 
-    // 2. Сбрасываем прогресс до дефолтных значений и пушим старый в history
-    const updatedProgress = await UserCourseProgress.findOneAndUpdate(
-      { userId, courseCode },
-      {
-        $set: {
-          status: 'active',
-          currentBlockIndex: 0,
-          'blocksProgress.theory.isCompleted': false,
-          'blocksProgress.aiWorkout': {
-            isCompleted: false,
-            accumulatedScore: 0,
-            sessionsCount: 0,
-          },
-          'blocksProgress.irlChallenge': {
-            isCompleted: false,
-            textReport: '',
-            aiFeedback: '',
-          },
-          'blocksProgress.exam': {
-            isCompleted: false,
-            bestScore: 0,
-            attemptsCount: 0,
-            lockedUntil: null,
-            aiFeedback: '',
-          },
-        },
-        $push: {
-          history: archiveRecord, // 💡 Сохраняем в историю
-        },
-      },
-      { new: true },
-    )
+    // 3. Полностью зачищаем таблицу активного прогресса — строка удаляется
+    await UserCourseProgress.deleteOne({ userId, courseCode })
+
+    // 4. СИНХРОНИЗАЦИЯ ДОСТУПА: Вычеркиваем курс из активных покупок юзера
+    await User.findByIdAndUpdate(userId, {
+      $pull: { activePurchasedCourses: courseCode },
+    })
 
     return res.status(200).json({
       success: true,
-      progressData: updatedProgress,
+      message:
+        'Интенсив успешно заархивирован и закрыт. Теперь его можно пройти повторно из каталога.',
     })
   } catch (error) {
-    console.error(error)
+    console.error('Ошибка в контроллере restartCourse:', error)
     return res
       .status(500)
-      .json({ message: 'Ошибка при перезапуске курса' })
+      .json({
+        message: 'Внутренняя ошибка сервера при перезапуске курса',
+      })
   }
 }
 
@@ -661,11 +679,9 @@ const getUserCoursesArchive = async (req, res) => {
   try {
     const userId = req.userId
 
-    // Находим все курсы пользователя, где в массиве history есть хотя бы одна запись
-    const archives = await UserCourseProgress.find(
-      { userId, 'history.0': { $exists: true } },
-      { courseCode: 1, history: 1 }, // Берем только код курса и историю
-    )
+    const archives = await CourseArchive.find({ userId }).sort({
+      createdAt: -1,
+    })
 
     return res.status(200).json({ success: true, archives })
   } catch (error) {
@@ -673,6 +689,44 @@ const getUserCoursesArchive = async (req, res) => {
     return res
       .status(500)
       .json({ message: 'Ошибка при получении архива.' })
+  }
+}
+
+const fakeBuyCourse = async (req, res) => {
+  try {
+    const { courseCode } = req.body
+    const userId = req.userId
+
+    // Находим пользователя, чтобы обновить массив активных курсов
+    const user = await User.findById(userId)
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: 'Пользователь не найден' })
+    }
+
+    // Если курс уже в активных — покупка не требуется
+    if (user.activePurchasedCourses.includes(courseCode)) {
+      return res.status(400).json({
+        message: 'Этот интенсив вами уже приобретен и доступен',
+      })
+    }
+
+    // Записываем код курса в массив активных покупок
+    user.activePurchasedCourses.push(courseCode)
+    await user.save()
+
+    res.status(200).json({
+      success: true,
+      message:
+        'Оплата успешно симулирована. Доступ к интенсиву открыт!',
+      activePurchasedCourses: user.activePurchasedCourses,
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Ошибка при симуляции оплаты курса',
+      error: error.message,
+    })
   }
 }
 
@@ -685,4 +739,5 @@ export {
   unlockExamWithCoins,
   restartCourse,
   getUserCoursesArchive,
+  fakeBuyCourse,
 }

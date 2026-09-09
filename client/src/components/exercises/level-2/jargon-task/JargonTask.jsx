@@ -107,6 +107,10 @@ const JargonTask = ({ alias, isDaily }) => {
     setIsTaskInterrupted(true)
   }
 
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+  }
+
   // логика получения новой задачи
   const clickNext = () => {
     const { selectedItem, newPool } = getRandomObjTask(
@@ -257,6 +261,7 @@ const JargonTask = ({ alias, isDaily }) => {
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
+        onComplete={handleCompleteReady}
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}

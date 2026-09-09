@@ -111,6 +111,11 @@ const JokeMaster = ({ alias, isDaily }) => {
     setStatus(STATUS.FINISHED)
     setIsTaskInterrupted(true)
   }
+
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+  }
+
   const clickNext = () => {
     setShowOriginal(false)
     resetExerciseState()
@@ -243,6 +248,7 @@ const JokeMaster = ({ alias, isDaily }) => {
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
+        onComplete={handleCompleteReady} 
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}

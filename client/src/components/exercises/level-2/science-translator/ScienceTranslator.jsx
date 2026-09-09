@@ -106,6 +106,10 @@ const ScienceTranslator = ({ alias, isDaily }) => {
     setIsTaskInterrupted(true)
   }
 
+   const handleCompleteReady = () => {
+    setStatus(STATUS.FINISHED)
+  }
+
   const clickNext = () => {
     resetExerciseState()
   }
@@ -217,6 +221,7 @@ const ScienceTranslator = ({ alias, isDaily }) => {
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
         onRate={handleManualRate}
+        onComplete={handleCompleteReady} 
         onFinish={clickStop}
         onNext={clickNext}
       />
