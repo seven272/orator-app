@@ -324,7 +324,7 @@ const finishAlibi = async (req, res) => {
       feedback: evaluation.feedback,
       criteria: evaluation.criteria,
     }
-
+ 
     await session.save()
 
     const gamificationResult = await applyAiGamificationProgress(

@@ -1,21 +1,32 @@
 .banner_card {
   width: 100%;
-  height: 160px;
+  min-height: 160px; /* 🔔 ИЗМЕНЕНО: Заменили фиксированную height на min-height */
+  height: auto; /* 🔔 ДОБАВЛЕНО: Карточка плавно растет вниз при наличии новости */
   margin-top: 12px;
-  padding: 20px;
+  padding: 16px 20px 12px 20px; /* Слегка скорректировали паддинги для баланса */
   box-sizing: border-box;
   background: linear-gradient(135deg, #e8f3ff 0%, #ffffff 100%);
   border: 1px solid rgba(0, 122, 255, 0.12);
   border-radius: 24px;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* 🔔 ИЗМЕНЕНО: Элементы теперь выстраиваются сверху вниз */
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0, 122, 255, 0.03);
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  transition:
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.2s ease;
+}
+
+/* 🔔 ДОБАВЛЕНО: Горизонтальный ряд для контента и птички */
+.main_row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex: 1;
 }
 
 .banner_card:hover {
@@ -25,6 +36,69 @@
 
 .banner_card:active {
   transform: scale(0.98);
+}
+
+/* 🔔 ДОБАВЛЕНО: Стилизация живой новостной плашки внизу карточки */
+.pulse_line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 6px 12px;
+  background: rgba(0, 122, 255, 0.05); /* Нежная синяя подложка */
+  border-radius: 12px;
+  border: 1px solid rgba(0, 122, 255, 0.08);
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  z-index: 3;
+}
+
+.pulse_line:hover {
+  background: rgba(0, 122, 255, 0.09);
+  border-color: rgba(0, 122, 255, 0.2);
+}
+
+.pulse_text {
+  font-family: 'Onest', sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Если текст новости длинный, он аккуратно обрежется троеточием */
+}
+
+/* 🟢 Анимированная пульсирующая зеленая точка «В эфире» */
+.pulse_dot {
+  width: 6px;
+  height: 6px;
+  background-color: #52c41a;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.pulse_dot::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #52c41a;
+  border-radius: 50%;
+  animation: pulseGlow 1.8s infinite ease-in-out;
+}
+
+.pulse_arrow {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-primary);
+  transition: transform 0.2s ease;
+}
+
+.pulse_line:hover .pulse_arrow {
+  transform: translateX(3px);
 }
 
 /* Контент слева */
@@ -50,18 +124,15 @@
   letter-spacing: 0.5px;
   color: var(--color-primary);
   line-height: 13px;
-  
-  /* Запрещаем ломать слова пополам, перенос только по целым словам */
-  word-break: keep-all; 
+  word-break: keep-all;
   overflow-wrap: break-word;
 }
 
-/* Обертка для навыка — если не помещается, 
-   вся эта конструкция целиком уйдет на вторую строчку */
 .skill_highlight {
   display: inline-block;
-  white-space: nowrap; /* Слово "ПРОКАЧКА" и сам навык не разделяются */
+  white-space: nowrap;
 }
+
 .exercise_row {
   display: flex;
   align-items: center;
@@ -101,7 +172,6 @@
   overflow: hidden;
 }
 
-/* Интерактивная стрелка */
 .action_link {
   font-family: 'Onest', sans-serif;
   font-size: 13px;
@@ -142,38 +212,52 @@
 
 /* Мобильный адаптив под экраны смартфонов */
 @media (max-width: 480px) {
-  .banner_card {
-    height: auto;
-    min-height: 155px;
-    padding: 16px;
+  .main_row {
+    align-items: flex-end;
   }
-  
+
   .title {
     font-size: 16px;
   }
-  
+
   .image_side {
     width: 90px;
   }
-  
+
   .mascot_img {
     width: 105px;
     height: 105px;
     margin-bottom: -12px;
     margin-right: -5px;
   }
+
+  .pulse_text {
+    font-size: 10.5px; /* Чуть уменьшаем шрифт новости на узких телефонах */
+  }
 }
 
 @media (max-width: 414px) {
   .tag {
-    font-size: 9px; 
+    font-size: 9px;
     letter-spacing: 0.3px;
   }
 }
 
 @media (max-width: 360px) {
   .skill_highlight {
-    display: inline; 
+    display: inline;
     white-space: normal;
+  }
+}
+
+/* 🟢 Анимация расширяющегося свечения вокруг точки */
+@keyframes pulseGlow {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
   }
 }

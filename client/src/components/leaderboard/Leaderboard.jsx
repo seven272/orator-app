@@ -7,7 +7,9 @@ import LeaderboardList from './leaderboard-list/LeaderboardList'
 
 const Leaderboard = () => {
   const dispatch = useDispatch()
-  const [activeTab, setActiveTab] = useState('global') // 'global' | 'weekly'
+  // Оставляем только внутренний подфильтр времени
+  const [timeFilter, setTimeFilter] = useState('global') // 'global' | 'weekly'
+
   const {
     weeklyList,
     globalList,
@@ -16,34 +18,35 @@ const Leaderboard = () => {
     status,
   } = useSelector((state) => state.leaderboard)
 
-  // Динамически определяем, какой массив и какого юзера рендерить прямо сейчас
-  const list = activeTab === 'weekly' ? weeklyList : globalList
+  const list = timeFilter === 'weekly' ? weeklyList : globalList
   const currentUser =
-    activeTab === 'weekly' ? weeklyCurrentUser : globalCurrentUser
+    timeFilter === 'weekly' ? weeklyCurrentUser : globalCurrentUser
 
   const isUserInTopTen = currentUser?.id
     ? list.some((u) => u.id === currentUser.id)
-    : true // Если юзер гость, скрываем нижнюю личную карточку автоматическим true
+    : true
     
   useEffect(() => {
-    dispatch(fetchLeaderboard(activeTab))
-  }, [dispatch, activeTab])
+    dispatch(fetchLeaderboard(timeFilter))
+  }, [dispatch, timeFilter])
 
   return (
     <div className={styles.container}>
+      {/* Возвращаем чистый заголовок */}
       <h2 className={styles.title}>Рейтинг ораторов</h2>
 
-      {/* Переключатель вкладок */}
-      <div className={styles.tabs}>
-        <button
-          className={`${styles.tabButton} ${activeTab === 'global' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('global')}
+      {/* Компактный переключатель времени внутри рейтинга */}
+      <div className={styles.timeSubFilters}>
+        <button 
+          className={`${styles.subFilterBtn} ${timeFilter === 'global' ? styles.subFilterActive : ''}`}
+          onClick={() => setTimeFilter('global')}
         >
           За всё время
         </button>
-        <button
-          className={`${styles.tabButton} ${activeTab === 'weekly' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('weekly')}
+        <span className={styles.subFilterDivider}>|</span>
+        <button 
+          className={`${styles.subFilterBtn} ${timeFilter === 'weekly' ? styles.subFilterActive : ''}`}
+          onClick={() => setTimeFilter('weekly')}
         >
           За неделю
         </button>
@@ -62,16 +65,16 @@ const Leaderboard = () => {
                 key={user.id}
                 user={user}
                 isCurrent={user.id === currentUser?.id}
-                activeTab={activeTab}
+                activeTab={timeFilter}
               />
             ))}
           </div>
 
-          {/* Карточка текущего пользователя, если он не попал в ТОП-10 */}
+          {/* Карточные результаты текущего пользователя вне ТОП-10 */}
           {!isUserInTopTen && currentUser && (
             <>
               <div className={styles.user_divider}>
-                {activeTab === 'weekly'
+                {timeFilter === 'weekly'
                   ? 'Ваш результат за неделю'
                   : 'Ваш глобальный результат'}
               </div>
@@ -79,7 +82,7 @@ const Leaderboard = () => {
                 <LeaderboardList
                   user={currentUser}
                   isCurrent={true}
-                  activeTab={activeTab}
+                  activeTab={timeFilter}
                 />
               </div>
             </>

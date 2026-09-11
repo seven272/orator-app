@@ -10,12 +10,10 @@ const MiniLeaderboard = () => {
   const navigate = useNavigate()
 
   // Достаем данные из нового состояния слайса рейтинга
-  const {
-    globalList,
-    globalCurrentUser,
-    status,
-  } = useSelector((state) => state.leaderboard)
-  
+  const { globalList, globalCurrentUser, status } = useSelector(
+    (state) => state.leaderboard,
+  )
+
   // Подтягиваем данные из профиля как запасной вариант (fallback)
   const profileUser = useSelector((state) => state.profile.user)
 
@@ -26,19 +24,29 @@ const MiniLeaderboard = () => {
   }, [dispatch, globalList])
 
   // Определяем позицию, имя и аватар текущего пользователя
-  const rankNumber = globalCurrentUser?.rank || profileUser?.progression?.level ? 'В рейтинге' : '#—'
-  const userRank = globalCurrentUser?.rank ? `#${globalCurrentUser.rank}` : rankNumber
+  const rankNumber =
+    globalCurrentUser?.rank || profileUser?.progression?.level
+      ? 'В рейтинге'
+      : '#—'
+  const userRank = globalCurrentUser?.rank
+    ? `#${globalCurrentUser.rank}`
+    : rankNumber
   const userScore = globalCurrentUser?.score || profileUser?.xp || 0
-  const isPremium = profileUser?.isPremium || globalCurrentUser?.isPremium || false
+  const isPremium =
+    profileUser?.isPremium || globalCurrentUser?.isPremium || false
 
-  const displayName = profileUser?.displayName || globalCurrentUser?.displayName || 'Аноним'
+  const displayName =
+    profileUser?.displayName ||
+    globalCurrentUser?.displayName ||
+    'Аноним'
   const avatar = profileUser?.avatar || globalCurrentUser?.avatar
   const hasValidAvatar = avatar && avatar.includes('http')
 
   const medals = { 1: '🥇', 2: '🥈', 3: '🥉' }
-  const displayRank = globalCurrentUser?.rank && medals[globalCurrentUser.rank] 
-    ? medals[globalCurrentUser.rank] 
-    : userRank
+  const displayRank =
+    globalCurrentUser?.rank && medals[globalCurrentUser.rank]
+      ? medals[globalCurrentUser.rank]
+      : userRank
 
   return (
     <div className={styles.leaderboard_wrapper}>
@@ -64,9 +72,7 @@ const MiniLeaderboard = () => {
               ${isPremium ? styles.row_premium : ''}
             `}
           >
-            <span className={styles.user_rank}>
-              {displayRank}
-            </span>
+            <span className={styles.user_rank}>{displayRank}</span>
 
             {hasValidAvatar ? (
               <img
@@ -100,7 +106,9 @@ const MiniLeaderboard = () => {
       <button
         type="button"
         className={styles.more_btn}
-        onClick={() => navigate('/leaderboard')}
+        onClick={() =>
+          navigate('/community', { state: { defaultTab: 'rating' } })
+        }
       >
         <span>Смотреть весь рейтинг</span>
         <FaChevronRight className={styles.icon_arrow} />

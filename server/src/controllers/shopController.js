@@ -1,6 +1,8 @@
 import ShopItem from '../models/ShopItem.js'
 import User from '../models/User.js'
 
+import { trackShopPurchase } from '../utils/feedService.js'
+
 // 1. Получить все товары
 const getShopItems = async (req, res) => {
   try {
@@ -96,6 +98,9 @@ const buyItem = async (req, res) => {
     }
 
     await user.save()
+
+    //триггер для уведомления в ленте новостей
+    trackShopPurchase(user._id, item.title)
 
     // Возвращаем понятный ответ фронтенду
     res.status(200).json({

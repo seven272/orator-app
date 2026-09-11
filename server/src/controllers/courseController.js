@@ -9,6 +9,10 @@ import gigachatAxiosClient from '../utils/gigachatAxiosClient.js'
 import { parseAiResponse } from '../utils/aiJsonParser.js'
 import { transcribeLongAudio } from '../utils/speechService.js'
 import { getXpThreshold } from '../utils/fnForControllers.js'
+import {
+  trackCourseStarted,
+  trackCourseCompleted,
+} from '../utils/feedService.js'
 
 const getCourseProgress = async (req, res) => {
   try {
@@ -106,6 +110,14 @@ const startCourse = async (req, res) => {
     })
 
     await newProgress.save()
+
+    //трекер для ленты новостей о начале курса
+    trackCourseStarted(userId, course.title).catch((err) =>
+      console.error(
+        'Ошибка фоновой записи старта курса в Ленту:',
+        err,
+      ),
+    )
 
     res.status(201).json({
       message: 'Интенсив успешно начат. Желаем удачи!',
@@ -463,8 +475,18 @@ const submitExamReport = async (req, res) => {
               currentAttemptScore,
               'course_master',
             )
-
             await user.save()
+            //триггер для ленты новостей при успешной сдачи курса
+            const finishedCourse = await Course.findOne({
+              courseCode: courseCode,
+            })
+            trackCourseCompleted(userId, finishedCourse.title).catch(
+              (err) =>
+                console.error(
+                  'Ошибка фоновой записи завершения курса в Ленту:',
+                  err,
+                ),
+            )
           }
         } catch (rewardError) {
           console.error(
@@ -626,21 +648,17 @@ const restartCourse = async (req, res) => {
       courseCode,
     })
     if (!progress) {
-      return res
-        .status(404)
-        .json({
-          message: 'Активный прогресс по данному интенсиву не найден',
-        })
+      return res.status(404).json({
+        message: 'Активный прогресс по данному интенсиву не найден',
+      })
     }
 
     // Запрещаем сброс, если курс еще в процессе прохождения
     if (progress.status === 'active') {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Нельзя сбросить интенсив, пока он не завершен или не провален',
-        })
+      return res.status(400).json({
+        message:
+          'Нельзя сбросить интенсив, пока он не завершен или не провален',
+      })
     }
 
     // 2. ИЗЯЩНЫЙ ПЕРЕНОС: Создаем независимую строку в таблице архивов
@@ -667,11 +685,9 @@ const restartCourse = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка в контроллере restartCourse:', error)
-    return res
-      .status(500)
-      .json({
-        message: 'Внутренняя ошибка сервера при перезапуске курса',
-      })
+    return res.status(500).json({
+      message: 'Внутренняя ошибка сервера при перезапуске курса',
+    })
   }
 }
 

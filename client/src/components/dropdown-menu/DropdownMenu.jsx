@@ -26,8 +26,8 @@ const DropdownMenu = () => {
       alias: 'exercises-daily',
     },
     {
-      title: 'рейтинг ораторов',
-      alias: 'leaderboard',
+      title: 'рейтинг и лента',
+      alias: 'community',
     },
     {
       title: 'испытания',
@@ -59,7 +59,7 @@ const DropdownMenu = () => {
       'notfound',
       'exercises-all',
       'exercises-daily',
-      'leaderboard',
+      'community',
       'challenges',
       'live-duel',
       'courses',

@@ -1,13 +1,14 @@
 import Challenge from '../models/Challenge.js'
 import UserChallenge from '../models/UserChallenge.js'
-import User from '../models/User.js' 
+import User from '../models/User.js'
 import { checkAchievements } from '../utils/achievementService.js'
+import { trackChallengeCompletion } from '../utils/feedService.js'
 
 // 1. Получить все челленджи с текущим статусом пользователя
 const getChallenges = async (req, res) => {
   try {
     const userId = req.userId
-  
+
     // Берем все глобальные челленджи
     const allChallenges = await Challenge.find({})
 
@@ -106,8 +107,10 @@ const submitChallengeReport = async (req, res) => {
     )
 
     const newAwards = checkAchievements(user, true)
-    
+
     await user.save()
+    //трекер для ленты новостей
+    trackChallengeCompletion(user._id, challenge.title)
 
     res.status(200).json({
       message: 'Челлендж успешно засчитан!',

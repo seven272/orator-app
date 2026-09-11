@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 
 import { checkAchievements } from './achievementService.js'
 import DailyTask from '../models/DailyTask.js'
+import { trackLevelUpEvent, trackStreakAndMilestones, trackNewAchievements } from './feedService.js'
 
 // Мягкая прогрессия: каждый уровень требует на 500 XP больше предыдущего
 const getXpThreshold = (level) => {
@@ -165,6 +166,25 @@ const applyAiGamificationProgress = async (
   }
 
   await user.save()
+
+  // Автоматические триггеры «Ленты новостей»
+  // А. Если произошел Level Up:
+  if (isLevelUp) {
+    trackLevelUpEvent(user._id, user.progression.level);
+  }
+  // Б. Трекинг рекордов, юбилеев и серий дней (стриков):
+  trackStreakAndMilestones({
+    userId: user._id,
+    exerciseAlias: exAlias,
+    exerciseTitle: exerciseTitle,
+    score: score,
+    userStats: user.stats.exerciseStats,
+    streakDays: user.streak.current
+  });
+  // В. Если получены новые достижения/ачивки:
+  if (newAwards && newAwards.length > 0) {
+    trackNewAchievements(user._id, newAwards);
+  }
 
   const completedDays = [
     ...new Set(

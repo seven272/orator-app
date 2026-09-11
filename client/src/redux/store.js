@@ -10,9 +10,9 @@ import challengeSlice from './slices/challengeSlice'
 import adminSlice from './slices/adminSlice'
 import liveDuelSlice from './slices/liveDuelSlice'
 import courseSlice from './slices/courseSlice'
+import feedSlice from './slices/feedSlice'
 //слайсы ИИ тренажеров
 import aiSlices from './slices/ai-exercises/index'
-
 
 const store = configureStore({
   reducer: {
@@ -26,8 +26,9 @@ const store = configureStore({
     admin: adminSlice,
     liveDuel: liveDuelSlice,
     course: courseSlice,
+    feed: feedSlice,
     //ИИ тренажеры
-    ...aiSlices
+    ...aiSlices,
   },
 })
 

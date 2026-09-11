@@ -8,6 +8,7 @@ import {
   EXERCISE_MAX_POINTS,
 } from '../constants/skills.js'
 import { getXpThreshold } from '../utils/fnForControllers.js'
+import { trackPremiumPurchase } from '../utils/feedService.js'
 
 dotenv.config()
 
@@ -680,7 +681,7 @@ const fakeBuyPremium = async (req, res) => {
       {
         isPremium: true,
         premiumExpiresAt: expiresAt,
-      },
+      }, 
       { new: true },
     )
 
@@ -689,6 +690,8 @@ const fakeBuyPremium = async (req, res) => {
         .status(404)
         .json({ message: 'Пользователь не найден' })
     }
+
+    trackPremiumPurchase(updatedUser._id);
 
     res.json({
       success: true,
