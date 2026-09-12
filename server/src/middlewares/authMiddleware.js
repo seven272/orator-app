@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
 import createToken from '../utils/createToken.js'
 
-// Базовый мидлвар авторизации (Требует жесткой регистрации)
 const checkAuth = async (req, res, next) => {
   const token = req.cookies['jwt-oratory']
 
@@ -16,13 +15,12 @@ const checkAuth = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-    // Если токен валиден, но это гость — запрещаем доступ туда, где нужен реальный аккаунт
+    // 🔥 Если токен валиден, но это ГОСТЬ ВК — блокируем запрос!
     if (decoded.isGuest) {
       return res.status(403).json({
         success: false,
         code: 'REGISTRATION_REQUIRED',
-        message:
-          'Для выполнения этого действия необходимо завершить регистрацию',
+        message: 'Для выполнения этого действия необходимо сохранить аккаунт ВК',
       })
     }
 
@@ -30,130 +28,55 @@ const checkAuth = async (req, res, next) => {
     req.user = await User.findById(decoded.userId).select('-password')
 
     if (!req.user) {
-      return res
-        .status(404)
-        .json({ success: false, message: 'Пользователь не найден' })
+      return res.status(404).json({ success: false, message: 'Пользователь не найден' })
     }
 
     next()
   } catch (error) {
-    console.log('Ошибка в checkAuth middleware: ', error)
     if (error instanceof jwt.JsonWebTokenError) {
       return res.status(401).json({
         success: false,
         message: 'Не получилось авторизоваться - токен не валиден',
       })
     }
-    return res
-      .status(500)
-      .json({ success: false, message: 'Ошибка сервера' })
+    return res.status(500).json({ success: false, message: 'Ошибка сервера' })
   }
 }
 
-// Мягкий (необязательный) мидлвар — пропускает Гостей к ИИ-тренажерам 1 и 2 уровней
-// Мягкий мидлвар (Пропускает гостей ВК к упражнениям 1 и 2 уровня)
+/**
+ * 🔓 МЯГКИЙ МИДЛВАР (Пропускает абсолютно всех: анонимов, гостей ВК, юзеров)
+ * Используется на упражнениях 1 и 2 уровня, ленте активности и витринах.
+ */
 const optionalAuth = async (req, res, next) => {
   const token = req.cookies['jwt-oratory']
 
   if (!token) {
-    return next() // Идем дальше как аноним
+    req.isGuest = true
+    return next() // Токена нет — идет дальше как аноним сайта
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
     if (decoded.isGuest) {
+      // Пользователь — подтвержденный гость из ВК
       req.isGuest = true
       req.vkId = decoded.vkId
       req.vkParamsData = decoded.vkParamsData
     } else if (decoded.userId) {
+      // Пользователь — постоянный аккаунт из базы данных
+      req.isGuest = false
       req.userId = decoded.userId
-      req.user = await User.findById(decoded.userId).select(
-        '-password',
-      )
+      req.user = await User.findById(decoded.userId).select('-password')
     }
   } catch (error) {
-    console.log(
-      'Необязательная авторизация: токен невалиден, отдаем как гостю',
-    )
-    console.log(error)
+    console.log('Необязательная авторизация не прошла, отдаем как гостю')
+    req.isGuest = true
   }
 
   next()
 }
 
-// МИДЛВАР ЛЕНИВОЙ РЕГИСТРАЦИИ (Для отправки отчетов по челленджам, покупок и т.д.)
-const enforceRegistration = async (req, res, next) => {
-  const token = req.cookies['jwt-oratory']
-
-  if (!token) {
-    return res
-      .status(401)
-      .json({
-        success: false,
-        code: 'REGISTRATION_REQUIRED',
-        message: 'Авторизация отсутствует',
-      })
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-
-    // Если это полноценный юзер — просто прокидываем дальше
-    if (!decoded.isGuest) {
-      req.userId = decoded.userId
-      req.user = await User.findById(decoded.userId).select(
-        '-password',
-      )
-      return next()
-    }
-
-    // МАГИЯ: Автоматически регистрируем Гостя ВК в MongoDB в один клик
-    const { vkId, vkParamsData } = decoded
-
-    let user = await User.findOne({ vkId: String(vkId) })
-
-    if (!user) {
-      // Генерация защищенного случайного никнейма Спикер#7284
-      const randomDigits = Math.floor(1000 + Math.random() * 9000)
-      const guestNickname = `${vkParamsData?.firstName || 'Спикер'}#${randomDigits}`
-
-      user = await User.create({
-        displayName: guestNickname,
-        firstName: vkParamsData?.firstName || '',
-        lastName: vkParamsData?.lastName || '',
-        avatar: vkParamsData?.avatar || '',
-        vkId: String(vkId),
-        authProvider: 'vk',
-        registeredFrom: 'vk',
-        socialProfilesData: {
-          vk: {
-            firstName: vkParamsData?.firstName || '',
-            lastName: vkParamsData?.lastName || '',
-            avatar: vkParamsData?.avatar || '',
-          },
-        },
-      })
-    }
-
-    // Перезаписываем куку jwt-oratory с гостевой на постоянную (isGuest: false)
-    // Твоя функция createToken обновит куку в браузере автоматически
-    createToken(res, user._id)
-
-    req.userId = user._id
-    req.user = user
-
-    next()
-  } catch (error) {
-    console.error('Ошибка ленивой регистрации:', error)
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: 'Внутренняя ошибка при создании профиля',
-      })
-  }
-}
 
 const checkAdmin = (req, res, next) => {
   if (req.user && req.user.isAdmin) {
@@ -214,6 +137,5 @@ export {
   checkAuth,
   checkAdmin,
   optionalAuth,
-  enforceRegistration,
   checkPremium,
 }

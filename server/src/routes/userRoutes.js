@@ -7,6 +7,7 @@ import {
   getUserProfile,
   updateProfile,
   vkAuth,
+  vkRegister,
   linkEmailToVkAccount,
   linkVkToEmailAccount,
   mergeAccounts,
@@ -15,7 +16,7 @@ import {
 import upload from '../middlewares/upload.js'
 import { checkAuth } from '../middlewares/authMiddleware.js'
 //middleware авторизации VK
-import vkLaunchParamsAuth from "../middlewares/vkLaunchParamsAuth.js"; 
+import verifyVkSignature from "../middlewares/vkLaunchParamsAuth.js"; 
 
 const router = new Router()
 
@@ -44,9 +45,10 @@ router.post('/logout', logout)
 router.get('/me', checkAuth, getMe)
 router.get('/get-data-profile', checkAuth, getUserProfile)
 router.put('/update-profile', checkAuth, updateProfile)
-router.post('/vk-auth', vkLaunchParamsAuth, vkAuth)
+router.post('/vk-auth', verifyVkSignature, vkAuth)
+router.post('/vk-register', verifyVkSignature, vkRegister)
 router.post('/link-email', checkAuth, linkEmailToVkAccount)
-router.post('/link-vk', checkAuth, vkLaunchParamsAuth, linkVkToEmailAccount);
+router.post('/link-vk', checkAuth, verifyVkSignature, linkVkToEmailAccount);
 router.post('/merge-accounts', checkAuth, mergeAccounts);
 // Имитация успешной оплаты через ЮMoney
 router.post('/fake-buy', checkAuth, fakeBuyPremium)

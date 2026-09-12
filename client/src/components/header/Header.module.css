@@ -141,6 +141,38 @@
   user-select: none;
 }
 
+.vk_register_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  height: 32px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(38, 136, 235, 0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.vk_register_btn:hover {
+  background-color: var(--color-blue-dark);
+}
+
+.vk_register_btn:active {
+  transform: scale(0.97);
+}
+
+/* Иконка-подарок внутри кнопки */
+.vk_btn_icon {
+  margin-right: 6px;
+  font-size: 14px;
+}
 
 
 /* 📌 Убираем дублирующие медиа-запросы для max-width: 480px, */
@@ -167,6 +199,8 @@
     font-size: 18px;
   }
 }
+
+
 
 @media screen and (max-width: 340px) {
   .logo_title {

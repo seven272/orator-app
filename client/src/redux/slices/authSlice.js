@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { message } from 'antd'
 
 import axiosInstance from '../../utils/axiosInstance'
 import { fetchActivateFakePremium } from './profileSlice'
@@ -75,6 +74,24 @@ const fetchVkAuth = createAsyncThunk(
     } catch (error) {
       const errorMsg =
         error.response?.data?.message || 'Ошибка входа через VK'
+      return rejectWithValue(errorMsg)
+    }
+  },
+)
+
+const fetchVkRegister = createAsyncThunk(
+  'auth/fetchVkRegister',
+  async (vkData, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post(
+        '/user/vk-register',
+        vkData,
+      )
+      return res.data // Бэкенд вернет { success, isGuest: false, user }
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.message ||
+        'Ошибка при сохранении прогресса'
       return rejectWithValue(errorMsg)
     }
   },
@@ -162,9 +179,9 @@ const fetchMergeAccounts = createAsyncThunk(
 )
 
 const initialState = {
-  isLoading: true,  
+  isLoading: true,
   isAdmin: false,
-  isGuest: false, 
+  isGuest: false,
   user: null,
   error: null,
   mergeConflict: null, // Сюда запишем { code: 'EMAIL_ALREADY_TAKEN' или 'VK_ALREADY_TAKEN', targetUserId: '...' }
@@ -177,13 +194,13 @@ const authSlice = createSlice({
     clearMergeConflict: (state) => {
       state.mergeConflict = null
     },
-     // 📌 Метод для синхронизации стейта при "Ленивой регистрации" из компонентов
+    // 📌 Метод для синхронизации стейта при "Ленивой регистрации" из компонентов
     updateGuestToUser: (state, action) => {
       state.user = action.payload.user
       state.isGuest = false
-    }
+    },
   },
- extraReducers: (builder) => {
+  extraReducers: (builder) => {
     builder
       // ==========================================
       // 1. РЕГИСТРАЦИЯ (Email / Пароль)
@@ -266,7 +283,7 @@ const authSlice = createSlice({
       })
 
       // ==========================================
-      // 5. ВХОД / РЕГИСТРАЦИЯ ЧЕРЕЗ ВКОНТАКТЕ
+      // 5. ВХОД ЧЕРЕЗ ВКОНТАКТЕ
       // ==========================================
       .addCase(fetchVkAuth.pending, (state) => {
         state.isLoading = true
@@ -277,7 +294,7 @@ const authSlice = createSlice({
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
         // 📌 2. ИЗМЕНЕНО: Записываем флаг гостя напрямую из ответа бэкенда!
-        state.isGuest = action.payload?.isGuest || false 
+        state.isGuest = action.payload?.isGuest || false
         state.error = null
       })
       .addCase(fetchVkAuth.rejected, (state, action) => {
@@ -285,9 +302,27 @@ const authSlice = createSlice({
         state.isGuest = false
         state.error = action.payload
       })
+      // ==========================================
+      // 6. РЕГИСТРАЦИЯ ЧЕРЕЗ ВКОНТАКТЕ
+      // ==========================================
+      .addCase(fetchVkRegister.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(fetchVkRegister.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.user = action.payload?.user
+        state.isAdmin = action.payload?.user?.isAdmin || false
+        state.isGuest = false // 👈 Гостевой статус успешно снят!
+        state.error = null
+      })
+      .addCase(fetchVkRegister.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload
+      })
 
       // ==========================================
-      // 6. РЕДАКТИРОВАНИЕ ДАННЫХ ПРОФИЛЯ
+      // 7. РЕДАКТИРОВАНИЕ ДАННЫХ ПРОФИЛЯ
       // ==========================================
       .addCase(fetchUpdateProfile.pending, (state) => {
         state.isLoading = true
@@ -304,7 +339,7 @@ const authSlice = createSlice({
       })
 
       // ==========================================
-      // 7. ПРИВЯЗКА EMAIL К VK-АККАУНТУ
+      // 8. ПРИВЯЗКА EMAIL К VK-АККАУНТУ
       // ==========================================
       .addCase(fetchLinkEmail.pending, (state) => {
         state.isLoading = true
@@ -323,11 +358,12 @@ const authSlice = createSlice({
             targetUserId: null,
           }
         } else {
-          state.error = action.payload?.message || 'Ошибка при привязке Email'
+          state.error =
+            action.payload?.message || 'Ошибка при привязке Email'
         }
       })
       // ==========================================
-      // 8. ПРИВЯЗКА VK К EMAIL-АККАУНТУ (Конфликт 409)
+      // 9. ПРИВЯЗКА VK К EMAIL-АККАУНТУ (Конфликт 409)
       // ==========================================
       .addCase(fetchLinkVk.pending, (state) => {
         state.isLoading = true
@@ -353,7 +389,7 @@ const authSlice = createSlice({
       })
 
       // ==========================================
-      // 9. ФИНАЛЬНОЕ СЛИЯНИЕ АККАУНТОВ (ПОГЛОЩЕНИЕ)
+      // 10. ФИНАЛЬНОЕ СЛИЯНИЕ АККАУНТОВ (ПОГЛОЩЕНИЕ)
       // ==========================================
       .addCase(fetchMergeAccounts.pending, (state) => {
         state.isLoading = true
@@ -371,12 +407,15 @@ const authSlice = createSlice({
         state.isLoading = false
         state.error = action.payload
       })
-// проверяем премиум из profileSlice
-       .addCase(fetchActivateFakePremium.fulfilled, (state, action) => {
-    if (state.user) {
-      state.user.isPremium = action.payload.isPremium
-    }
-  })
+      // проверяем премиум из profileSlice
+      .addCase(
+        fetchActivateFakePremium.fulfilled,
+        (state, action) => {
+          if (state.user) {
+            state.user.isPremium = action.payload.isPremium
+          }
+        },
+      )
   },
 })
 const checkIsAuth = (state) => Boolean(state.auth.user)
@@ -387,6 +426,7 @@ export {
   fetchGetMe,
   fetchLogoutUser,
   fetchVkAuth,
+  fetchVkRegister,
   fetchLinkVk,
   fetchLinkEmail,
   fetchMergeAccounts,

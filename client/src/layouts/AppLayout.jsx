@@ -21,19 +21,27 @@ const AppLayout = () => {
 
       // 1. Проверяем среду запуска: Mini App ВК
       if (launchParams.includes('vk_user_id')) {
-        const result = await dispatch(fetchVkAuth({ launchParams }))
-        
-        if (fetchVkAuth.fulfilled.match(result)) {
+        try {
+          // .unwrap() заставляет промис вернуть чистые данные из payload, 
+          // либо выкинуть ошибку (catch), если бэкенд ответил отказом.
+          // Это гарантирует 100% последовательность выполнения.
+          await dispatch(fetchVkAuth({ launchParams })).unwrap()
+          
           dispatch(fetchProfileData())
           dispatch(fetchLeaderboard())
+        } catch (error) {
+          console.error('Ошибка инициализации ВК сессии:', error)
         }
       } else {
         // 2. Обычный сайт Govorix.ru
-        const result = await dispatch(fetchGetMe())
-        
-        if (fetchGetMe.fulfilled.match(result)) {
+        try {
+          await dispatch(fetchGetMe()).unwrap()
+          
           dispatch(fetchProfileData())
           dispatch(fetchLeaderboard())
+        } catch (error) {
+          console.log('Пользователь не авторизован (анонимный гость сайта)')
+          // Для сайта — если куки нет, мы просто тушим лоадер (это происходит внутри extraReducers.fetchGetMe.rejected)
         }
       }
     }
