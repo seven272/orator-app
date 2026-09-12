@@ -60,7 +60,6 @@ const fetchGetMe = createAsyncThunk(
       const errorMsg =
         error.response?.data?.message ||
         'Ошибка при получении данных об авторизации'
-      message.error(errorMsg)
       return rejectWithValue(errorMsg)
     }
   },
@@ -165,6 +164,7 @@ const fetchMergeAccounts = createAsyncThunk(
 const initialState = {
   isLoading: true,  
   isAdmin: false,
+  isGuest: false, 
   user: null,
   error: null,
   mergeConflict: null, // Сюда запишем { code: 'EMAIL_ALREADY_TAKEN' или 'VK_ALREADY_TAKEN', targetUserId: '...' }
@@ -177,8 +177,13 @@ const authSlice = createSlice({
     clearMergeConflict: (state) => {
       state.mergeConflict = null
     },
+     // 📌 Метод для синхронизации стейта при "Ленивой регистрации" из компонентов
+    updateGuestToUser: (state, action) => {
+      state.user = action.payload.user
+      state.isGuest = false
+    }
   },
-  extraReducers: (builder) => {
+ extraReducers: (builder) => {
     builder
       // ==========================================
       // 1. РЕГИСТРАЦИЯ (Email / Пароль)
@@ -189,8 +194,9 @@ const authSlice = createSlice({
       })
       .addCase(fetchRegisterUser.fulfilled, (state, action) => {
         state.isLoading = false
-        state.user = action.payload?.user // Исправлено под структуру бэкенда
+        state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
+        state.isGuest = false // Полноценная регистрация
         state.error = null
       })
       .addCase(fetchRegisterUser.rejected, (state, action) => {
@@ -209,6 +215,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
+        state.isGuest = false // Полноценный вход
         state.error = null
       })
       .addCase(fetchLoginUser.rejected, (state, action) => {
@@ -228,6 +235,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = null
         state.isAdmin = false
+        state.isGuest = false
         state.error = null
         state.mergeConflict = null
       })
@@ -246,12 +254,14 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
+        state.isGuest = false // Роут /me отдает только зарегистрированных юзеров из СУБД
         state.error = null
       })
       .addCase(fetchGetMe.rejected, (state, action) => {
         state.isLoading = false
         state.user = null
         state.isAdmin = false
+        state.isGuest = false
         state.error = action.payload
       })
 
@@ -266,10 +276,13 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
+        // 📌 2. ИЗМЕНЕНО: Записываем флаг гостя напрямую из ответа бэкенда!
+        state.isGuest = action.payload?.isGuest || false 
         state.error = null
       })
       .addCase(fetchVkAuth.rejected, (state, action) => {
         state.isLoading = false
+        state.isGuest = false
         state.error = action.payload
       })
 
@@ -282,7 +295,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchUpdateProfile.fulfilled, (state, action) => {
         state.isLoading = false
-        state.user = action.payload?.user // Заменяем старые данные профиля новыми
+        state.user = action.payload?.user
         state.error = null
       })
       .addCase(fetchUpdateProfile.rejected, (state, action) => {
@@ -291,7 +304,7 @@ const authSlice = createSlice({
       })
 
       // ==========================================
-      // 7. ПРИВЯЗКА EMAIL К VK-АККАУНТУ (Конфликт 409)
+      // 7. ПРИВЯЗКА EMAIL К VK-АККАУНТУ
       // ==========================================
       .addCase(fetchLinkEmail.pending, (state) => {
         state.isLoading = true
@@ -299,23 +312,20 @@ const authSlice = createSlice({
       })
       .addCase(fetchLinkEmail.fulfilled, (state, action) => {
         state.isLoading = false
-        state.user = action.payload?.user // Email успешно привязан
+        state.user = action.payload?.user
         state.error = null
       })
       .addCase(fetchLinkEmail.rejected, (state, action) => {
         state.isLoading = false
-        // Если поймали структурированный конфликт 409
         if (action.payload?.code) {
           state.mergeConflict = {
             code: action.payload.code,
-            targetUserId: null, // При привязке почты бэкенд не возвращает ID, сверка идет по паролю
+            targetUserId: null,
           }
         } else {
-          state.error =
-            action.payload?.message || 'Ошибка при привязке Email'
+          state.error = action.payload?.message || 'Ошибка при привязке Email'
         }
       })
-
       // ==========================================
       // 8. ПРИВЯЗКА VK К EMAIL-АККАУНТУ (Конфликт 409)
       // ==========================================
@@ -353,6 +363,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user // Записываем итоговый выбранный профиль
         state.isAdmin = action.payload?.user?.isAdmin || false
+        state.isGuest = false // После слияния аккаунт точно постоянный
         state.error = null
         state.mergeConflict = null // Закрываем окно слияния
       })

@@ -242,68 +242,62 @@ const updateProfile = async (req, res) => {
 // Авторизация и регистрация через ВКонтакте
 const vkAuth = async (req, res) => {
   try {
-    // Получаем vkId из middleware verifyVkSignature
-    const vkId = String(req.vkId)
+    const currentVkId = String(req.vkId)
+    const { vkParamsData } = req
 
-    // Фронтенд передает эти данные из VK Bridge при первом запуске
-    const { firstName, lastName, avatar, registeredFrom } = req.body
+    // 1. Ищем, существует ли уже жестко зарегистрированный аккаунт
+    const existingUser = await User.findOne({ vkId: currentVkId })
 
-    // 1. Ищем пользователя в базе по vkId
-    let user = await User.findOne({ vkId })
+    if (existingUser) {
+      // Пользователь уже активен — переиспользуем утилиту для постоянного токена
+      createToken(res, existingUser._id)
 
-    // Флаг, чтобы понять, новая это регистрация или вход
-    let isNewUser = false
+      const userResponse = existingUser.toObject()
+      delete userResponse.password
 
-    // 2. Если пользователя нет — создаем новый аккаунт (Регистрация)
-    if (!user) {
-      isNewUser = true
-
-      // Формируем красивый дефолтный никнейм на основе vkId
-      const defaultDisplayName = `vk_user_${vkId.slice(-6)}`
-
-      user = await User.create({
-        vkId,
-        firstName: firstName || 'Имя',
-        lastName: lastName || 'Фамилия',
-        displayName: defaultDisplayName,
-        avatar: avatar || 'dicebear.com',
-        authProvider: 'vk',
-        // Если передан registeredFrom (vk или android), пишем его, иначе дефолт 'vk'
-        registeredFrom: registeredFrom || 'vk',
-
-        // Сохраняем оригинальные данные соцсети на будущее
-        socialProfilesData: {
-          vk: {
-            firstName: firstName || '',
-            lastName: lastName || '',
-            avatar: avatar || '',
-          },
-        },
+      return res.status(200).json({
+        success: true,
+        isGuest: false,
+        user: userResponse,
+        message: 'С возвращением в Govorix!',
       })
     }
 
-    // 3. Создаем токен для пользователя
-    // Вызываем вашу функцию, которая установит куку или сгенерирует JWT
-    createToken(res, user._id)
+    // 2. Юзера нет в БД -> РЕЖИМ ЛОКАЛЬНОГО ГОСТЯ
+    // Базу данных НЕ ТРОГАЕМ. 
+    const guestData = {
+      vkId: currentVkId,
+      vkParamsData
+    }
 
-    // 4. Убираем чувствительные данные перед отправкой
-    const userResponse = user.toObject()
-    delete userResponse.password
+    // Переиспользуем нашу утилиту для гостевого токена (res, userId = null, guestData)
+    createToken(res, null, guestData)
 
-    res.status(isNewUser ? 201 : 200).json({
-      user: userResponse,
-      message: isNewUser
-        ? 'Регистрация через VK успешна'
-        : 'Вы вошли через VK',
+    // Возвращаем виртуальный профиль для Redux
+    return res.status(200).json({
+      success: true,
+      isGuest: true,
+      user: {
+        _id: `guest_${currentVkId}`,
+        displayName: `${vkParamsData?.firstName || 'Гость'}#${currentVkId.slice(-4)}`, // Красивый временный ник
+        firstName: vkParamsData?.firstName || '',
+        lastName: vkParamsData?.lastName || '',
+        avatar: vkParamsData?.avatar || '',
+        vkId: currentVkId,
+        authProvider: 'vk',
+        registeredFrom: 'vk',
+        progression: { level: 1, xp: 0, coins: 0, achievements: [] },
+        stats: { totalExercises: 0, lifetimeXp: 0, exerciseStats: [] },
+        activePurchasedCourses: []
+      },
+      message: 'Вход в гостевом режиме выполнен успешно.'
     })
+
   } catch (error) {
-    console.error('Ошибка в vkAuth:', error)
-    res.status(500).json({
-      message: 'Ошибка сервера при авторизации через ВКонтакте',
-    })
+    console.error('Ошибка в vkAuth контроллере:', error)
+    return res.status(500).json({ success: false, message: 'Ошибка сервера при авторизации VK' })
   }
 }
-
 // Привязка Email и Пароля к существующему аккаунту (например, созданному через VK)
 const linkEmailToVkAccount = async (req, res) => {
   try {

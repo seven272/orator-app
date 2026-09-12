@@ -39,7 +39,6 @@ const AppConfig = () => {
       <AdaptivityProvider {...adaptivity}>
         <AppRoot mode="full" safeAreaInsets={vkBridgeInsets}>
           <Provider store={store}>
-         
             <RouterProvider router={router} />
           </Provider>
         </AppRoot>
