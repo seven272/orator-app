@@ -419,6 +419,8 @@ const authSlice = createSlice({
   },
 })
 const checkIsAuth = (state) => Boolean(state.auth.user)
+// Проверяет, находится ли пользователь в гостевом режиме ВК
+const checkIsGuest = (state) => Boolean(state.auth.isGuest)
 export const { clearMergeConflict } = authSlice.actions
 export {
   fetchRegisterUser,
@@ -432,5 +434,6 @@ export {
   fetchMergeAccounts,
   fetchUpdateProfile,
   checkIsAuth,
+  checkIsGuest
 }
 export default authSlice.reducer
