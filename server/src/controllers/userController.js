@@ -140,19 +140,36 @@ const logout = async (req, res) => {
 //get me
 const getMe = async (req, res) => {
   try {
-    // Пароль вообще не достаем из базы
+    // Если токена нет (аноним на сайте) или это гость — просто отдаем user: null
+    if (!req.userId || req.isGuest) {
+      return res.status(200).json({
+        success: true,
+        user: null, // Redux поймет, что активной сессии в БД нет
+        message: 'Пользователь не авторизован в СУБД'
+      })
+    }
+
+    // Если есть реальный userId — достаем полноценного юзера из MongoDB
     const user = await User.findById(req.userId).select('-password')
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: 'Пользователь не найден' })
+      return res.status(200).json({
+        success: true,
+        user: null
+      })
     }
 
-    return res.status(200).json({ user })
+    return res.status(200).json({
+      success: true,
+      user
+    })
+
   } catch (error) {
-    console.log(error)
-    res.status(401).json({ message: 'Нет доступа' })
+    console.error('Ошибка в контроллере getMe:', error)
+    return res.status(500).json({
+      success: false,
+      message: 'Ошибка сервера при проверке сессии',
+    })
   }
 }
 
@@ -240,17 +257,18 @@ const updateProfile = async (req, res) => {
 }
 
 // Авторизация через ВКонтакте
-const vkAuth = async (req, res) => {
+ const vkAuth = async (req, res) => {
   try {
     const currentVkId = String(req.vkId)
     const { vkParamsData } = req
 
-    // Ищем, существует ли уже аккаунт в MongoDB
+    // 1. Ищем, существует ли уже жестко зарегистрированный аккаунт
     const existingUser = await User.findOne({ vkId: currentVkId })
 
     if (existingUser) {
       // Пользователь уже активен — выставляем постоянную куку
       createToken(res, existingUser._id)
+
       const userResponse = existingUser.toObject()
       delete userResponse.password
 
@@ -258,39 +276,28 @@ const vkAuth = async (req, res) => {
         success: true,
         isGuest: false,
         user: userResponse,
-        message: 'С возвращением в Govorix.ru!',
+        message: 'С возвращением в Govorix!',
       })
     }
 
-    // Паттерн Local-First Guest: выдаем гостевую куку на 3 дня
+    // 2. ЮЗЕРА НЕТ В БАЗЕ -> РЕЖИМ ГОСТЯ
+    // Базу данных НЕ ТРОГАЕМ. Выдаем гостевую куку на 3 дня через утилиту.
     const guestData = { vkId: currentVkId, vkParamsData }
     createToken(res, null, guestData)
 
+    // Возвращаем пустой user: null, но сохраняем флаг isGuest: true для Header
     return res.status(200).json({
       success: true,
-      isGuest: true,
-      user: {
-        _id: `guest_${currentVkId}`,
-        displayName: `${vkParamsData?.firstName || 'Гость'} (ВК)`,
-        firstName: vkParamsData?.firstName || '',
-        lastName: vkParamsData?.lastName || '',
-        avatar: vkParamsData?.avatar || '',
-        vkId: currentVkId,
-        authProvider: 'vk',
-        registeredFrom: 'vk',
-        isPremium: false,
-        progression: { level: 1, xp: 0, coins: 0, achievements: [] },
-        stats: { totalExercises: 0, lifetimeXp: 0, exerciseStats: [] },
-        activePurchasedCourses: []
-      },
-      message: 'Вход в гостевом режиме.'
+      isGuest: true, // 👈 Передаем, чтобы Header показал кнопку "Создать аккаунт"
+      user: null,    // 👈 Больше никакого визуального шума и огромных объектов!
+      message: 'Вход в гостевом режиме ВКонтакте. Ожидание регистрации.'
     })
+
   } catch (error) {
-    console.error('Ошибка в контроллере vkAuth:', error)
+    console.error('Ошибка в vkAuth контроллере:', error)
     return res.status(500).json({ success: false, message: 'Ошибка сервера при авторизации VK' })
   }
 }
-
 // регистрация через ВКонтакте
  const vkRegister = async (req, res) => {
   try {

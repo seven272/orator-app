@@ -14,7 +14,7 @@ import {
   fakeBuyPremium
 } from '../controllers/userController.js'
 import upload from '../middlewares/upload.js'
-import { checkAuth } from '../middlewares/authMiddleware.js'
+import { checkAuth, optionalAuth } from '../middlewares/authMiddleware.js'
 //middleware авторизации VK
 import verifyVkSignature from "../middlewares/vkLaunchParamsAuth.js"; 
 
@@ -42,7 +42,7 @@ router.post(
 router.post('/register', register)
 router.post('/login', login)
 router.post('/logout', logout)
-router.get('/me', checkAuth, getMe)
+router.get('/me', optionalAuth, getMe)
 router.get('/get-data-profile', checkAuth, getUserProfile)
 router.put('/update-profile', checkAuth, updateProfile)
 router.post('/vk-auth', verifyVkSignature, vkAuth)
