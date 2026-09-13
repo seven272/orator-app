@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { parseURLSearchParamsForGetLaunchParams } from '@vkontakte/vk-bridge'
 
 import AchievementModal from '../components/achievement-modal/AchievementModal'
 import { fetchGetMe, fetchVkAuth } from '../redux/slices/authSlice'
@@ -19,43 +20,24 @@ const AppLayout = () => {
 
   useEffect(() => {
     const initializeGovorix = async () => {
-      // 🚀 ВРЕМЕННЫЙ ДЕБАГ-ЛОГ
-      console.log('--- ДЕБАГ ЗАПУСКА GOVORIX ---')
-      console.log('1. Полный URL страницы:', window.location.href)
-      console.log(
-        '2. Значение window.location.search:',
-        window.location.search,
-      )
-      console.log(
-        '3. Значение window.location.hash:',
-        window.location.hash,
-      )
-
-      const launchParams = window.location.search
-
-      // 🚀 ВРЕМЕННЫЙ ДЕБАГ-ЛОГ
-      if (launchParams.includes('vk_user_id')) {
-        console.log('🎯 Среда ВК успешно обнаружена через search!')
-        // ... твой код fetchVkAuth
-      } else if (window.location.hash.includes('vk_user_id')) {
-        console.warn(
-          '⚠️ Среда ВК найдена в HASH! Нужно брать параметры оттуда.',
-        )
-      } else {
-        console.error('❌ Среда ВК вообще не обнаружена в URL.')
-      }
+      const launchParamsString = window.location.search
 
       // 1. Проверяем среду запуска: Mini App ВК
-      if (launchParams.includes('vk_user_id')) {
+      if (launchParamsString.includes('vk_user_id')) {
         try {
-          // .unwrap() заставляет промис вернуть чистые данные из payload,
-          // либо выкинуть ошибку (catch), если бэкенд ответил отказом.
-          // Это гарантирует 100% последовательность выполнения.
-          await dispatch(fetchVkAuth({ launchParams })).unwrap()
+          // 🔥 Используем встроенный парсер ВК для получения идеального объекта параметров
+          const parsedVkParams =
+            parseURLSearchParamsForGetLaunchParams(launchParamsString)
+
+          // Шлем на бэкенд уже готовый, кристально чистый объект параметров вместо строки!
+          await dispatch(
+            fetchVkAuth({ launchParams: parsedVkParams }),
+          ).unwrap()
 
           dispatch(fetchProfileData())
           dispatch(fetchLeaderboard())
         } catch (error) {
+          // Ошибка 403 из-за подписи теперь не случится, но лог оставляем для контроля
           console.error('Ошибка инициализации ВК сессии:', error)
         }
       } else {
@@ -69,12 +51,39 @@ const AppLayout = () => {
           console.log(
             'Пользователь не авторизован (анонимный гость сайта)',
           )
-          // Для сайта — если куки нет, мы просто тушим лоадер (это происходит внутри extraReducers.fetchGetMe.rejected)
         }
       }
     }
 
     initializeGovorix()
+  }, [dispatch])
+
+  useEffect(() => {
+    // 🚀 ВРЕМЕННЫЙ ДЕБАГ-ЛОГ
+    console.log('--- ДЕБАГ ЗАПУСКА GOVORIX ---')
+    console.log('1. Полный URL страницы:', window.location.href)
+    console.log(
+      '2. Значение window.location.search:',
+      window.location.search,
+    )
+    console.log(
+      '3. Значение window.location.hash:',
+      window.location.hash,
+    )
+
+    const launchParams = window.location.search
+
+    // 🚀 ВРЕМЕННЫЙ ДЕБАГ-ЛОГ
+    if (launchParams.includes('vk_user_id')) {
+      console.log('🎯 Среда ВК успешно обнаружена через search!')
+      // ... твой код fetchVkAuth
+    } else if (window.location.hash.includes('vk_user_id')) {
+      console.warn(
+        '⚠️ Среда ВК найдена в HASH! Нужно брать параметры оттуда.',
+      )
+    } else {
+      console.error('❌ Среда ВК вообще не обнаружена в URL.')
+    }
   }, [dispatch])
 
   // 📌 Безопасный Splash Screen на чистом CSS
