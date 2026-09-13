@@ -75,12 +75,12 @@ const AppLayout = () => {
           // 🚀 ДЕБАГ-ЛОГ ОТВЕТА БЭКЕНДА
           console.log('Ответ бэкенда vk-auth:', resData)
 
-           dispatch(fetchLeaderboard())
+          //  dispatch(fetchLeaderboard())
 
           // 2. Загружаем профиль только если бэкенд сказал, что это НЕ гость
           if (resData && !resData.isGuest) {
             dispatch(fetchProfileData())
-            // dispatch(fetchLeaderboard())
+            dispatch(fetchLeaderboard())
           }
 
           // Если это гость — цепочка завершилась штатно, extraReducers выключат isLoading
