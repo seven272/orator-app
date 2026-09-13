@@ -21,6 +21,10 @@ axiosInstance.interceptors.response.use(
   (error) => {
     // Проверяем, если сервер вернул ошибку 403 (Вы не являетесь администратором)
     if (error.response && error.response.status === 403) {
+       console.error('🚨 КРИТИЧЕСКИЙ ДЕБАГ 403!');
+      console.error(`Метод запроса: ${error.config?.method?.toUpperCase()}`);
+      console.error(`Упавший URL роута: ${error.config?.url}`);
+      console.error('Данные ответа сервера:', error.response.data);
       // Так как у вас используется createHashRouter,
       // принудительно меняем хэш URL, чтобы роутер переключился на страницу 403
       window.location.hash = '/forbidden'
