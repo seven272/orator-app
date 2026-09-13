@@ -282,8 +282,8 @@ const updateProfile = async (req, res) => {
 
     // 2. ЮЗЕРА НЕТ В БАЗЕ -> РЕЖИМ ГОСТЯ
     // Базу данных НЕ ТРОГАЕМ. Выдаем гостевую куку на 3 дня через утилиту.
-    const guestData = { vkId: currentVkId, vkParamsData }
-    createToken(res, null, guestData)
+    // const guestData = { vkId: currentVkId, vkParamsData }
+    // createToken(res, null, guestData)
 
     // Возвращаем пустой user: null, но сохраняем флаг isGuest: true для Header
     return res.status(200).json({
