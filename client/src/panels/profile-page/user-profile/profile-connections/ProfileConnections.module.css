@@ -15,7 +15,6 @@
   color: var(--color-text-secondary);
 }
 
-/* Управление связями */
 .link_row {
   display: flex;
   justify-content: space-between;
@@ -38,54 +37,76 @@
 .inline_email_form {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
-  margin-top: 6px;
+  margin-top: 10px;
+}
+
+.form_field_group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form_field_group label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
 }
 
 .inline_email_form input {
-  padding: 8px;
+  padding: 8px 12px;
   border: 1px solid var(--color-grey-light);
-  border-radius: 4px;
+  border-radius: 6px;
   font: var(--font-m);
   outline: none;
+  background-color: var(--color-bg-light);
 }
 
 .inline_email_form input:focus {
   border-color: var(--color-primary);
+  background-color: var(--color-white);
 }
 
 .inline_form_actions {
   display: flex;
   gap: 6px;
   justify-content: flex-end;
+  margin-top: 4px;
 }
 
 /* ==========================================
    БАЗОВЫЕ СТИЛИ ДЛЯ ВСЕХ КНОПОК КОМПОНЕНТА 
-   (Решает проблему игнорирования стилей)
    ========================================== */
 .success_btn, 
 .cancel_btn, 
 .secondary_btn, 
 .vk_btn {
-  padding: 10px 16px;
+  padding: 8px 16px;
   border-radius: 6px;
-  font: var(--font-m) !important; /* !important защищает от сброса стилей со стороны Ant Design */
+  font: var(--font-m) !important;
   cursor: pointer;
   border: none !important;
   outline: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  font-weight: 600 !important;
 }
 
 .success_btn:hover, 
 .cancel_btn:hover, 
 .secondary_btn:hover, 
 .vk_btn:hover {
-  opacity: 0.8;
+  opacity: 0.85;
+}
+
+.success_btn:active, 
+.cancel_btn:active, 
+.secondary_btn:active, 
+.vk_btn:active {
+  transform: scale(0.98);
 }
 
 .success_btn:disabled, 
@@ -94,19 +115,20 @@
 .vk_btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 /* КОНКРЕТНЫЕ ЦВЕТА КНОПОК */
 .success_btn {
   background-color: var(--color-green) !important;
   color: var(--font-color-light) !important;
-  padding: 4px 10px; /* Уменьшенный паддинг для инлайн-кнопки */
+  padding: 6px 14px;
 }
 
 .cancel_btn {
   background-color: var(--color-red) !important;
   color: var(--font-color-light) !important;
-  padding: 4px 10px; /* Уменьшенный паддинг для инлайн-кнопки */
+  padding: 6px 14px;
 }
 
 .secondary_btn {
