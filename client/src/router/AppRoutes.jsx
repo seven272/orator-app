@@ -9,12 +9,13 @@ import SecondaryLayout from '../layouts/secondary-layout/SecondaryLayout'
 // 📌 Импортируем ваши страницы (панели)
 import MainPage from '../panels/main-page/MainPage'
 import AuthPage from '../panels/auth-page/AuthPage'
+import ProfilePage from '../panels/profile-page/ProfilePage'
 import ExercisesDailyPage from '../panels/exercises-daily-page/ExercisesDailyPage'
 import ExercisesAllPage from '../panels/exercises-all-page/ExercisesAllPage'
 import ExercisesLevelPage from '../panels/exercises-level-page/ExercisesLevelPage'
 import ExercisePage from '../panels/exercise-page/ExercisePage'
 import DashboardPage from '../panels/dashboard-page/DashboardPage'
-import CommunityPage from '../panels/community-page/CommunityPage';
+import CommunityPage from '../panels/community-page/CommunityPage'
 import ShopPage from '../panels/shop-page/ShopPage'
 import ChallengesPage from '../panels/challenges-page/ChallengesPage'
 import AdminPage from '../panels/admin-page/AdminPage'
@@ -53,6 +54,7 @@ const router = createHashRouter([
             element: <SecondaryLayout />,
             children: [
               { path: 'auth', element: <AuthPage /> },
+              { path: 'profile', element: <ProfilePage /> },
               {
                 path: 'exercises-daily',
                 element: <ExercisesDailyPage />,

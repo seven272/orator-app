@@ -89,11 +89,11 @@ const Header = () => {
                   )}
                 </div>
 
-                {/* Клик по аватару теперь ведет на страницу профиля / личного кабинета (AuthPage / UserProfile) */}
+                {/* Клик по аватару теперь ведет на страницу профиля / личного кабинета ( UserProfile) */}
                 <AvatarOrPlaceholder
                   user={authUser}
                   sizeClass="size_s"
-                  onClick={() => navigate('/auth')}
+                  onClick={() => navigate('/profile')}
                 />
               </div>
             )
