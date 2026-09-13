@@ -289,7 +289,10 @@ const updateProfile = async (req, res) => {
     return res.status(200).json({
       success: true,
       isGuest: true, // 👈 Передаем, чтобы Header показал кнопку "Создать аккаунт"
-      user: null,    // 👈 Больше никакого визуального шума и огромных объектов!
+      user: {
+        displayName: 'Гость из ВКонтакте', // 👈 Кратко и емко для Redux селекторов
+        avatar: '' // Пустая строка — AvatarOrPlaceholder автоматически сделает буквенную заглушку "ГО"
+      },
       message: 'Вход в гостевом режиме ВКонтакте. Ожидание регистрации.'
     })
 
