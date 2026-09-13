@@ -7,7 +7,7 @@ import DropdownMenu from '../dropdown-menu/DropdownMenu'
 import AvatarOrPlaceholder from '../avatar-or-placeholder/AvatarOrPlaceholder'
 import {
   checkIsAuth,
-  checkIsGuest,
+  checkIsVkGuest,
   fetchVkRegister,
 } from '../../redux/slices/authSlice'
 import logoImg from '../../assets/images/design/logo.png'
@@ -22,7 +22,7 @@ const Header = () => {
   // 📌 Данные аккаунта и флаг Гостя из нашего обновленного authSlice
   const { user: authUser } = useSelector((state) => state.auth)
   const isAuth = useSelector(checkIsAuth)
-  const isGuest = useSelector(checkIsGuest)
+  const isVkGuest = useSelector(checkIsVkGuest)
 
   // 📌 Хэндлер ручной регистрации в 1 клик для гостя ВК
   const handleFastVkRegister = async () => {
@@ -63,7 +63,7 @@ const Header = () => {
         {/* Правый блок */}
         <div className={styles.right_block}>
           {/* 🔥 1. ЕСЛИ ЭТО ГОСТЬ ИЗ ВК — СРАЗУ РЕНДЕРИМ КНОПКУ РЕГИСТРАЦИИ */}
-          {isGuest ? (
+          {isVkGuest ? (
             <button
               type="button"
               className={styles.vk_register_btn}

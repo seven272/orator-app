@@ -14,49 +14,9 @@ const AppLayout = () => {
   const dispatch = useDispatch()
 
   // Реактивное состояние загрузки и режима гостя
-  const { isLoading, user, isGuest } = useSelector(
+  const { isLoading, user, isVkGuest } = useSelector(
     (state) => state.auth,
   )
-
-  // useEffect(() => {
-  //   const initializeGovorix = async () => {
-  //     const launchParamsString = window.location.search
-
-  //     // 1. Проверяем среду запуска: Mini App ВК
-  //     if (launchParamsString.includes('vk_user_id')) {
-  //       try {
-  //         // 🔥 Используем встроенный парсер ВК для получения идеального объекта параметров
-  //         const parsedVkParams =
-  //           parseURLSearchParamsForGetLaunchParams(launchParamsString)
-
-  //         // Шлем на бэкенд уже готовый, кристально чистый объект параметров вместо строки!
-  //         await dispatch(
-  //           fetchVkAuth({ launchParams: parsedVkParams }),
-  //         ).unwrap()
-
-  //         dispatch(fetchProfileData())
-  //         dispatch(fetchLeaderboard())
-  //       } catch (error) {
-  //         // Ошибка 403 из-за подписи теперь не случится, но лог оставляем для контроля
-  //         console.error('Ошибка инициализации ВК сессии:', error)
-  //       }
-  //     } else {
-  //       // 2. Обычный сайт Govorix.ru
-  //       try {
-  //         await dispatch(fetchGetMe()).unwrap()
-
-  //         dispatch(fetchProfileData())
-  //         dispatch(fetchLeaderboard())
-  //       } catch (error) {
-  //         console.log(
-  //           'Пользователь не авторизован (анонимный гость сайта)',
-  //         )
-  //       }
-  //     }
-  //   }
-
-  //   initializeGovorix()
-  // }, [dispatch])
 
   useEffect(() => {
     const initializeGovorix = async () => {
@@ -72,13 +32,8 @@ const AppLayout = () => {
             fetchVkAuth({ launchParams: parsedVkParams }),
           ).unwrap()
 
-          // 🚀 ДЕБАГ-ЛОГ ОТВЕТА БЭКЕНДА
-          console.log('Ответ бэкенда vk-auth:', resData)
-
-          //  dispatch(fetchLeaderboard())
-
           // 2. Загружаем профиль только если бэкенд сказал, что это НЕ гость
-          if (resData && !resData.isGuest) {
+          if (resData && !resData.isVkGuest) {
             dispatch(fetchProfileData())
             dispatch(fetchLeaderboard())
           }
@@ -122,10 +77,11 @@ const AppLayout = () => {
   // 📌 Основной рендер приложения после прохождения авторизации
   return (
     <div className={styles.app_global_container}>
-      {isGuest && user && (
+      {isVkGuest && (
         <div className={styles.guest_badge_banner}>
-          ⚡ Гостевой режим ВК. Прогресс пишется в память до первого
-          челленджа или покупки.
+          ⚡ Гостевой режим. Прогресс и статистика не сохраняются.
+          Создайте ораторский аккуант, чтобы использовать все
+          возможнотси приложения!
         </div>
       )}
 

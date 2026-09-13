@@ -87,7 +87,7 @@ const fetchVkRegister = createAsyncThunk(
         '/user/vk-register',
         vkData,
       )
-      return res.data // Бэкенд вернет { success, isGuest: false, user }
+      return res.data // Бэкенд вернет { success, isVkGuest: false, user }
     } catch (error) {
       const errorMsg =
         error.response?.data?.message ||
@@ -181,7 +181,7 @@ const fetchMergeAccounts = createAsyncThunk(
 const initialState = {
   isLoading: true,
   isAdmin: false,
-  isGuest: false,
+  isVkGuest: false,
   user: null,
   error: null,
   mergeConflict: null, // Сюда запишем { code: 'EMAIL_ALREADY_TAKEN' или 'VK_ALREADY_TAKEN', targetUserId: '...' }
@@ -197,7 +197,7 @@ const authSlice = createSlice({
     // 📌 Метод для синхронизации стейта при "Ленивой регистрации" из компонентов
     updateGuestToUser: (state, action) => {
       state.user = action.payload.user
-      state.isGuest = false
+      state.isVkGuest = false
     },
   },
   extraReducers: (builder) => {
@@ -213,7 +213,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
-        state.isGuest = false // Полноценная регистрация
+        state.isVkGuest = false // Полноценная регистрация
         state.error = null
       })
       .addCase(fetchRegisterUser.rejected, (state, action) => {
@@ -232,7 +232,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
-        state.isGuest = false // Полноценный вход
+        state.isVkGuest = false // Полноценный вход
         state.error = null
       })
       .addCase(fetchLoginUser.rejected, (state, action) => {
@@ -252,7 +252,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = null
         state.isAdmin = false
-        state.isGuest = false
+        state.isVkGuest = false
         state.error = null
         state.mergeConflict = null
       })
@@ -271,14 +271,14 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
-        state.isGuest = false // Роут /me отдает только зарегистрированных юзеров из СУБД
+        state.isVkGuest = false // Роут /me отдает только зарегистрированных юзеров из СУБД
         state.error = null
       })
       .addCase(fetchGetMe.rejected, (state, action) => {
         state.isLoading = false
         state.user = null
         state.isAdmin = false
-        state.isGuest = false
+        state.isVkGuest = false
         state.error = action.payload
       })
 
@@ -294,12 +294,12 @@ const authSlice = createSlice({
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
         // 📌 2. ИЗМЕНЕНО: Записываем флаг гостя напрямую из ответа бэкенда!
-        state.isGuest = action.payload?.isGuest || false
+        state.isVkGuest = action.payload?.isVkGuest || false
         state.error = null
       })
       .addCase(fetchVkAuth.rejected, (state, action) => {
         state.isLoading = false
-        state.isGuest = false
+        state.isVkGuest = false
         state.error = action.payload
       })
       // ==========================================
@@ -313,7 +313,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
-        state.isGuest = false // 👈 Гостевой статус успешно снят!
+        state.isVkGuest = false // 👈 Гостевой статус успешно снят!
         state.error = null
       })
       .addCase(fetchVkRegister.rejected, (state, action) => {
@@ -399,7 +399,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user // Записываем итоговый выбранный профиль
         state.isAdmin = action.payload?.user?.isAdmin || false
-        state.isGuest = false // После слияния аккаунт точно постоянный
+        state.isVkGuest = false // После слияния аккаунт точно постоянный
         state.error = null
         state.mergeConflict = null // Закрываем окно слияния
       })
@@ -420,7 +420,7 @@ const authSlice = createSlice({
 })
 const checkIsAuth = (state) => Boolean(state.auth.user)
 // Проверяет, находится ли пользователь в гостевом режиме ВК
-const checkIsGuest = (state) => Boolean(state.auth.isGuest)
+const checkIsVkGuest = (state) => Boolean(state.auth.isVkGuest)
 export const { clearMergeConflict } = authSlice.actions
 export {
   fetchRegisterUser,
@@ -434,6 +434,6 @@ export {
   fetchMergeAccounts,
   fetchUpdateProfile,
   checkIsAuth,
-  checkIsGuest
+  checkIsVkGuest
 }
 export default authSlice.reducer

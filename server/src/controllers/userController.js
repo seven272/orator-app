@@ -141,7 +141,7 @@ const logout = async (req, res) => {
 const getMe = async (req, res) => {
   try {
     // Если токена нет (аноним на сайте) или это гость — просто отдаем user: null
-    if (!req.userId || req.isGuest) {
+    if (!req.userId || req.isVkGuest) {
       return res.status(200).json({
         success: true,
         user: null, // Redux поймет, что активной сессии в БД нет
@@ -274,21 +274,19 @@ const updateProfile = async (req, res) => {
 
       return res.status(200).json({
         success: true,
-        isGuest: false,
+        isVkGuest: false,
         user: userResponse,
         message: 'С возвращением в Govorix!',
       })
     }
 
     // 2. ЮЗЕРА НЕТ В БАЗЕ -> РЕЖИМ ГОСТЯ
-    // Базу данных НЕ ТРОГАЕМ. Выдаем гостевую куку на 3 дня через утилиту.
-    // const guestData = { vkId: currentVkId, vkParamsData }
-    // createToken(res, null, guestData)
+ 
 
-    // Возвращаем пустой user: null, но сохраняем флаг isGuest: true для Header
+    // Возвращаем пустой user: null, но сохраняем флаг isVkGuest: true для Header
     return res.status(200).json({
       success: true,
-      isGuest: true, // 👈 Передаем, чтобы Header показал кнопку "Создать аккаунт"
+      isVkGuest: true, // 👈 Передаем, чтобы Header показал кнопку "Создать аккаунт"
       user: {
         displayName: 'Гость из ВКонтакте', // 👈 Кратко и емко для Redux селекторов
         avatar: '' // Пустая строка — AvatarOrPlaceholder автоматически сделает буквенную заглушку "ГО"
@@ -342,7 +340,7 @@ const updateProfile = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      isGuest: false, // Флаг гостя гаснет!
+      isVkGuest: false, // Флаг гостя гаснет!
       user: userResponse,
       message: 'Профиль ВКонтакте успешно зарегистрирован в MongoDB!',
     })
