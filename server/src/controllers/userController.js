@@ -557,117 +557,111 @@ const linkVkToEmailAccount = async (req, res) => {
 }
 
 // 3️⃣ Финальное слияние аккаунтов (Подход Поглощения) — ПОЛНАЯ РЕАЛИЗАЦИЯ
-const mergeAccounts = async (req, res) => {
+ const mergeAccounts = async (req, res) => {
   try {
-    // 🔥 ТЕПЕРЬ ОБЯЗАТЕЛЬНО ТРЕБУЕМ ПАРОЛЬ ОТ КОНФЛИКТУЮЩЕГО АККАУНТА
     const { targetUserId, chosenPlatform, password } = req.body
-    const currentUser = req.user // Сессионный пользователь из куки [INDEX]
-
-    console.log(targetUserId, chosenPlatform, password)
+    const currentUser = req.user 
 
     if (!currentUser) {
-      return res.status(401).json({
-        success: false,
-        message: 'Пользователь не авторизован',
-      })
+      return res.status(401).json({ success: false, message: 'Пользователь не авторизован' })
     }
 
     if (!targetUserId || !chosenPlatform || !password) {
       return res.status(400).json({
         success: false,
-        message:
-          'Не переданы обязательные параметры слияния или неверный пароль',
+        message: 'Не переданы обязательные параметры слияния (требуется пароль)',
       })
     }
 
-    // Ищем второй (конфликтующий) аккаунт Сайта в MongoDB
     const targetUser = await User.findById(targetUserId)
 
     if (!targetUser) {
-      return res.status(404).json({
-        success: false,
-        message: 'Конфликтующий аккаунт не найден',
-      })
+      return res.status(404).json({ success: false, message: 'Конфликтующий аккаунт не найден' })
     }
 
-    // 🔥 ЗАЩИТА ОТ УГОНА: Проверяем, знает ли пользователь пароль от целевого аккаунта!
-    // Проверяем наличие пароля у старого аккаунта (на случай гипотетических пустых полей)
+    if (String(currentUser._id) === String(targetUser._id)) {
+      return res.status(400).json({ success: false, message: 'Невозможно объединить один и тот же аккаунт' })
+    }
+
     if (!targetUser.password) {
       return res.status(400).json({
         success: false,
-        message:
-          'Для целевого аккаунта не установлен пароль. Слияние заблокировано из соображений безопасности.',
+        message: 'Для целевого аккаунта не установлен пароль. Слияние заблокировано.',
       })
     }
 
-    // Сверяем хэш пароля целевого аккаунта с тем, что ввел юзер в модалке слияния [INDEX]
-    const isPasswordValid = bcrypt.compareSync(
-      password,
-      targetUser.password,
-    )
-
+    const isPasswordValid = bcrypt.compareSync(password, targetUser.password)
     if (!isPasswordValid) {
       return res.status(403).json({
         success: false,
-        message:
-          'Критическая ошибка безопасности: неверный пароль от связываемого аккаунта Сайта!',
+        message: 'Неверный пароль от связываемого аккаунта Сайта!',
       })
     }
 
-    // --- ЕСЛИ ПАРОЛЬ СОВПАЛ — МЫ НА 100% УВЕРЕНЫ, ЧТО ЭТО ОДИН И ТOТ ЖЕ ЧЕЛОВЕК ---
     let finalUser = null
 
-    // СЦЕНАРИЙ А: Оставить текущий прогресс ВК, привязав почту старого
+    // ==========================================
+    // 🍏 СЦЕНАРИЙ А: ОСТАВИТЬ ТЕКУЩИЙ ПРОГРЕСС ВК
+    // ==========================================
     if (chosenPlatform === 'current') {
+      // 1. Сохраняем привязки старого аккаунта в оперативную память Node.js
+      const emailToMove = targetUser.email
+      const passwordToMove = targetUser.password
+      const googleSocialData = targetUser.socialProfilesData?.google
+
+      // 2. 🔥 ГЛАВНЫЙ ШАГ: Сначала физически удаляем старый аккаунт из базы данных.
+      // Это действие мгновенно высвобождает уникальный индекс email_1!
+      await User.findByIdAndDelete(targetUserId)
+
+      // 3. Переносим освобожденные данные в наш текущий сессионный документ ВК
       if (!currentUser.vkId && targetUser.vkId) {
         currentUser.vkId = targetUser.vkId
-        currentUser.socialProfilesData.vk =
-          targetUser.socialProfilesData.vk
+        currentUser.socialProfilesData.vk = targetUser.socialProfilesData.vk
       }
-      if (!currentUser.email && targetUser.email) {
-        currentUser.email = targetUser.email
-        currentUser.password = targetUser.password
-        currentUser.socialProfilesData.google =
-          targetUser.socialProfilesData.google
+      
+      if (!currentUser.email && emailToMove) {
+        currentUser.email = emailToMove
+        currentUser.password = passwordToMove
+        
+        if (!currentUser.socialProfilesData) currentUser.socialProfilesData = {}
+        currentUser.socialProfilesData.google = googleSocialData
       }
 
+      // 4. Безопасно сохраняем текущего пользователя — коллизии индексов больше нет!
       await currentUser.save()
       finalUser = currentUser
-      await User.findByIdAndDelete(targetUserId) // Удаляем старый дубликат [INDEX]
     }
-    // СЦЕНАРИЙ Б: Загрузить старый прогресс Сайта, привязав текущий VK ID [INDEX]
-     else if (chosenPlatform === 'target') {
-      // 1. Сохраняем все необходимые привязки временного юзера в оперативную память Node.js
-      const vkIdToMove = currentUser.vkId;
-      const vkSocialData = currentUser.socialProfilesData?.vk;
+    // ==========================================
+    // 🍎 СЦЕНАРИЙ Б: ЗАГРУЗИТЬ СТАРЫЙ ПРОГРЕСС С САЙТА
+    // ==========================================
+    else if (chosenPlatform === 'target') {
+      const vkIdToMove = currentUser.vkId
+      const vkSocialData = currentUser.socialProfilesData?.vk
 
-      // 2. 🔥 ГЛАВНЫЙ ШАГ: Мгновенно УНИЧТОЖАЕМ временный документ из MongoDB.
-      // Это действие сразу же физически очищает ОБА уникальных индекса (и email_1, и vkId_1)!
-      await User.findByIdAndDelete(currentUser._id);
+      // 1. 🔥 ГЛАВНЫЙ ШАГ: Мгновенно уничтожаем временный документ из MongoDB.
+      // Это действие сразу очищает оба уникальных индекса (и email_1, и vkId_1)!
+      await User.findByIdAndDelete(currentUser._id)
 
-      // 3. Теперь база данных абсолютно чиста от дубликатов. Накатываем привязки на старый аккаунт Сайта
+      // 2. Безопасно накатываем привязки на старый аккаунт Сайта
       if (vkIdToMove) {
-        targetUser.vkId = vkIdToMove;
-        
-        if (!targetUser.socialProfilesData) {
-          targetUser.socialProfilesData = {};
-        }
-        
-        targetUser.socialProfilesData.vk = vkSocialData;
+        targetUser.vkId = vkIdToMove
+        if (!targetUser.socialProfilesData) targetUser.socialProfilesData = {}
+        targetUser.socialProfilesData.vk = vkSocialData
       }
 
-      // На всякий случай подстраховываемся с Email, если в старом его почему-то не было
       if (!targetUser.email && currentUser.email) {
-        targetUser.email = currentUser.email;
-        targetUser.password = currentUser.password;
+        targetUser.email = currentUser.email
+        targetUser.password = currentUser.password
       }
 
-      // 4. Безопасно сохраняем старый профиль — теперь никаких E11000 по почте или ВК быть не может!
-      await targetUser.save();
-      finalUser = targetUser;
+      // 3. Безопасно сохраняем старый профиль
+      await targetUser.save()
+      finalUser = targetUser
 
-      // 5. Перевыпускаем HTTP-Only куку авторизации на ID восстановленного аккаунта
-      createToken(res, targetUser._id, null);
+      // 4. Перевыпускаем куку авторизации на ID восстановленного аккаунта
+      createToken(res, targetUser._id, null)
+    } else {
+      return res.status(400).json({ success: false, message: 'Неверно указана целевая платформа' })
     }
 
     const userResponse = finalUser.toObject()
@@ -676,14 +670,11 @@ const mergeAccounts = async (req, res) => {
     return res.status(200).json({
       success: true,
       user: userResponse,
-      message: 'Идентификация пройдена. Профили успешно объединены!',
+      message: 'Профили успешно объединены!',
     })
   } catch (error) {
     console.error('Ошибка в контроллере mergeAccounts:', error)
-    return res.status(500).json({
-      success: false,
-      message: 'Ошибка сервера при слиянии аккаунтов',
-    })
+    return res.status(500).json({ success: false, message: 'Ошибка сервера при слиянии аккаунтов' })
   }
 }
 
