@@ -260,7 +260,6 @@ const updateProfile = async (req, res) => {
  const vkAuth = async (req, res) => {
   try {
     const currentVkId = String(req.vkId)
-    const { vkParamsData } = req
 
     // 1. Ищем, существует ли уже жестко зарегистрированный аккаунт
     const existingUser = await User.findOne({ vkId: currentVkId })
