@@ -126,7 +126,7 @@ const ProfileConnections = () => {
         </div>
       )}
 
-      {/* --- КЕЙС 2: Пользователь вошел по Email, но у него еще нет пароля для авторизации через Яндекс или Гугл--- */}
+      {/* --- КЕЙС : Пользователь вошел по Email, но у него еще нет пароля для авторизации через Яндекс или Гугл--- */}
       {/* {user?.email && !user?.password && (
         <div className={styles.link_row}>
           <span>🔒 Создать пароль для Сайта</span>
@@ -176,6 +176,16 @@ const ProfileConnections = () => {
       )} */}
 
       {/* --- БЛОК СВЯЗИ С ВКОНТАКТЕ --- */}
+      {/* --- КЕЙС 2: Пользователь вошел из ВК, и у него УЖЕ ЕСТЬ почта --- */}
+      {user?.vkId && user?.email && isInsideVkParams && (
+        <div className={styles.link_row}>
+          <span className={styles.status_connected}>
+            🔒 Доступы для Сайта (Email/Пароль) созданы успешно ✅
+          </span>
+        </div>
+      )}
+
+      {/* --- КЕЙС 3: БЛОК СВЯЗИ С ВКОНТАКТЕ (Отображается ТОЛЬКО при заходе с обычного Сайта) --- */}
       {!isInsideVkParams && (
         <div className={styles.link_row}>
           <span>🔵 ВКонтакте:</span>
