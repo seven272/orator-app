@@ -637,23 +637,42 @@ const mergeAccounts = async (req, res) => {
     }
     // СЦЕНАРИЙ Б: Загрузить старый прогресс Сайта, привязав текущий VK ID [INDEX]
     else if (chosenPlatform === 'target') {
-      if (!targetUser.vkId && currentUser.vkId) {
-        targetUser.vkId = currentUser.vkId
-        targetUser.socialProfilesData.vk =
-          currentUser.socialProfilesData.vk
+      // 1. Извлекаем vkId из текущего временного сессионного аккаунта
+      const vkIdToMove = currentUser.vkId
+      const vkSocialData = currentUser.socialProfilesData?.vk
+
+      // 2. 🔥 КРИТИЧЕСКИЙ ШАГ ДЛЯ ИНДЕКСОВ: Очищаем vkId у временного аккаунта прямо сейчас,
+      // чтобы убрать коллизию уникальности в MongoDB, и сохраняем его в промежуточном состоянии
+      currentUser.vkId = undefined
+      if (currentUser.socialProfilesData) {
+        currentUser.socialProfilesData.vk = undefined
       }
+      await currentUser.save()
+
+      // 3. Теперь поле vkId свободно! Безопасно переносим привязки в старый (целевой) аккаунт Сайта
+      if (vkIdToMove) {
+        targetUser.vkId = vkIdToMove
+        targetUser.socialProfilesData = {
+          ...targetUser.socialProfilesData,
+          vk: vkSocialData,
+        }
+      }
+
+      // Переносим почту, если вдруг её не было в старом
       if (!targetUser.email && currentUser.email) {
         targetUser.email = currentUser.email
         targetUser.password = currentUser.password
-        targetUser.socialProfilesData.google =
-          currentUser.socialProfilesData.google
       }
 
+      // 4. Безопасно сохраняем старый профиль — теперь MongoDB не выбросит ошибку E11000!
       await targetUser.save()
       finalUser = targetUser
 
-      await User.findByIdAndDelete(currentUser._id) // Удаляем временный дубликат [INDEX]
-      createToken(res, targetUser._id, null) // Перевыпускаем куку авторизации [INDEX]
+      // 5. Полностью уничтожаем ставший ненужным временный гостевой документ из базы
+      await User.findByIdAndDelete(currentUser._id)
+
+      // 6. Перевыпускаем куку авторизации на ID старого (актуального) аккаунта
+      createToken(res, targetUser._id, null)
     }
 
     const userResponse = finalUser.toObject()
