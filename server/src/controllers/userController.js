@@ -10,6 +10,7 @@ import {
 import { getXpThreshold } from '../utils/fnForControllers.js'
 import { trackPremiumPurchase } from '../utils/feedService.js'
 import { translit } from '../utils/transliterate.js'
+import { validatePasswordStrength } from '../utils/passwordValidator.js'
 
 dotenv.config()
 
@@ -52,6 +53,14 @@ const register = async (req, res) => {
       return res.status(402).json({
         message: 'Пользователь с таким email уже существует',
       })
+    }
+
+    const passwordError = validatePasswordStrength(password, email)
+
+    if (passwordError) {
+      return res
+        .status(400)
+        .json({ success: false, message: passwordError })
     }
 
     const salt = bcrypt.genSaltSync(10)
@@ -238,18 +247,17 @@ const updateProfile = async (req, res) => {
 
     // 🔥 4. НОВАЯ ЛОГИКА: Если пользователь ввел новый пароль
     if (password && password.trim() !== '') {
-      const cleanPassword = password.trim()
+      const passwordError = validatePasswordStrength(
+        password,
+        email || req.user?.email,
+      )
 
-      if (cleanPassword.length < 6) {
-        return res.status(400).json({
-          message:
-            'Новый пароль должен содержать не менее 6 символов',
-        })
+      if (passwordError) {
+        return res.status(400).json({ message: passwordError })
       }
-
       // Хешируем пароль перед записью в базу данных
       const salt = bcrypt.genSaltSync(10)
-      const hashedPassword = bcrypt.hashSync(cleanPassword, salt)
+      const hashedPassword = bcrypt.hashSync(password, salt)
 
       updateData.password = hashedPassword
     }
@@ -434,6 +442,17 @@ const linkEmailToVkAccount = async (req, res) => {
       })
     }
 
+    const passwordError = validatePasswordStrength(
+      password,
+      cleanEmail,
+    )
+
+    if (passwordError) {
+      return res
+        .status(400)
+        .json({ success: false, message: passwordError })
+    }
+
     const salt = bcrypt.genSaltSync(10)
     const hashedPassword = bcrypt.hashSync(password, salt)
 
@@ -540,8 +559,9 @@ const linkVkToEmailAccount = async (req, res) => {
 // 3️⃣ Финальное слияние аккаунтов (Подход Поглощения) — ПОЛНАЯ РЕАЛИЗАЦИЯ
 const mergeAccounts = async (req, res) => {
   try {
-    const { targetUserId, chosenPlatform } = req.body
-    const currentUser = req.user // Сессионный пользователь из куки
+    // 🔥 ТЕПЕРЬ ОБЯЗАТЕЛЬНО ТРЕБУЕМ ПАРОЛЬ ОТ КОНФЛИКТУЮЩЕГО АККАУНТА
+    const { targetUserId, chosenPlatform, password } = req.body
+    const currentUser = req.user // Сессионный пользователь из куки [INDEX]
 
     if (!currentUser) {
       return res.status(401).json({
@@ -550,33 +570,52 @@ const mergeAccounts = async (req, res) => {
       })
     }
 
-    if (!targetUserId || !chosenPlatform) {
+    if (!targetUserId || !chosenPlatform || !password) {
       return res.status(400).json({
         success: false,
         message:
-          'Не переданы обязательные параметры слияния (targetUserId, chosenPlatform)',
+          'Не переданы обязательные параметры слияния (требуется пароль)',
       })
     }
 
+    // Ищем второй (конфликтующий) аккаунт Сайта в MongoDB
     const targetUser = await User.findById(targetUserId)
 
     if (!targetUser) {
       return res.status(404).json({
         success: false,
-        message: 'Конфликтующий аккаунт не найден в базе данных',
+        message: 'Конфликтующий аккаунт не найден',
       })
     }
 
-    if (String(currentUser._id) === String(targetUser._id)) {
+    // 🔥 ЗАЩИТА ОТ УГОНА: Проверяем, знает ли пользователь пароль от целевого аккаунта!
+    // Проверяем наличие пароля у старого аккаунта (на случай гипотетических пустых полей)
+    if (!targetUser.password) {
       return res.status(400).json({
         success: false,
-        message: 'Невозможно объединить один и тот же аккаунт',
+        message:
+          'Для целевого аккаунта не установлен пароль. Слияние заблокировано из соображений безопасности.',
       })
     }
 
+    // Сверяем хэш пароля целевого аккаунта с тем, что ввел юзер в модалке слияния [INDEX]
+    const isPasswordValid = bcrypt.compareSync(
+      password,
+      targetUser.password,
+    )
+
+    if (!isPasswordValid) {
+      return res.status(403).json({
+        success: false,
+        message:
+          'Критическая ошибка безопасности: неверный пароль от связываемого аккаунта Сайта!',
+      })
+    }
+
+    // --- ЕСЛИ ПАРОЛЬ СОВПАЛ — МЫ НА 100% УВЕРЕНЫ, ЧТО ЭТО ОДИН И ТOТ ЖЕ ЧЕЛОВЕК ---
     let finalUser = null
 
-    // СЦЕНАРИЙ А: Юзер выбирает оставить ТЕКУЩИЙ игровой прогресс
+    // СЦЕНАРИЙ А: Оставить текущий прогресс ВК, привязав почту старого
     if (chosenPlatform === 'current') {
       if (!currentUser.vkId && targetUser.vkId) {
         currentUser.vkId = targetUser.vkId
@@ -592,13 +631,10 @@ const mergeAccounts = async (req, res) => {
 
       await currentUser.save()
       finalUser = currentUser
-
-      // Уничтожаем дубликат, высвобождая sparse-индексы почты или ВК
-      await User.findByIdAndDelete(targetUserId)
+      await User.findByIdAndDelete(targetUserId) // Удаляем старый дубликат [INDEX]
     }
-    // 🔥 СЦЕНАРИЙ Б: Юзер выбирает ЗАГРУЗИТЬ СТАРЫЙ игровой прогресс (Дописано до конца)
+    // СЦЕНАРИЙ Б: Загрузить старый прогресс Сайта, привязав текущий VK ID [INDEX]
     else if (chosenPlatform === 'target') {
-      // Переносим привязки с текущего временного сессионного аккаунта в старый (целевой)
       if (!targetUser.vkId && currentUser.vkId) {
         targetUser.vkId = currentUser.vkId
         targetUser.socialProfilesData.vk =
@@ -614,17 +650,8 @@ const mergeAccounts = async (req, res) => {
       await targetUser.save()
       finalUser = targetUser
 
-      // Удаляем текущий временный аккаунт, так как весь профиль переехал в targetUser
-      await User.findByIdAndDelete(currentUser._id)
-
-      // 📌 КРИТИЧЕСКИЙ СЦЕНАРИЙ: Поскольку "живой" аккаунт изменился,
-      // нам необходимо перезаписать HTTP-Only куку на новый _id, чтобы сессия не разлогинилась!
-      createToken(res, targetUser._id, null)
-    } else {
-      return res.status(400).json({
-        success: false,
-        message: 'Неверно указана целевая платформа для слияния',
-      })
+      await User.findByIdAndDelete(currentUser._id) // Удаляем временный дубликат [INDEX]
+      createToken(res, targetUser._id, null) // Перевыпускаем куку авторизации [INDEX]
     }
 
     const userResponse = finalUser.toObject()
@@ -633,14 +660,13 @@ const mergeAccounts = async (req, res) => {
     return res.status(200).json({
       success: true,
       user: userResponse,
-      message:
-        'Профили успешно объединены! Ваш актуальный прогресс зафиксирован.',
+      message: 'Идентификация пройдена. Профили успешно объединены!',
     })
   } catch (error) {
     console.error('Ошибка в контроллере mergeAccounts:', error)
     return res.status(500).json({
       success: false,
-      message: 'Внутренняя ошибка сервера при слиянии аккаунтов',
+      message: 'Ошибка сервера при слиянии аккаунтов',
     })
   }
 }

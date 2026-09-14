@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { message } from 'antd'
 
 import { fetchLinkEmail } from '../../../../redux/slices/authSlice'
+import { validatePassword } from '../../../../utils/passwordValidator'
 import styles from './ProfileConnections.module.css'
 
 const ProfileConnections = () => {
@@ -24,6 +25,16 @@ const ProfileConnections = () => {
 
   const onFormSubmit = async (e) => {
     e.preventDefault()
+    // Проверяем введенный пароль и прокидываем emailInput для сверки дубликатов
+    const validation = validatePassword(
+      password,
+      user?.email || emailInput,
+    )
+
+    if (!validation.isValid) {
+      message.error(validation.message)
+      return
+    }
     setIsPasswordLinking(true)
     try {
       //formData содержит { email, password }, отправляем в Thunk
