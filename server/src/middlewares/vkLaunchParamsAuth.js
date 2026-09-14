@@ -56,14 +56,14 @@ const verifyVkSignature = (req, res, next) => {
   if (hash !== sign) {
     return res.status(403).json({ message: 'Ошибка валидации: подпись не совпадает' })
   }
-
+ 
   req.vkId = String(params.vk_user_id)
   req.vkParamsData = {
     firstName: params.vk_first_name || '',
     lastName: params.vk_last_name || '',
     avatar: params.vk_photo_200 || ''
   }
-
+console.log(params)
   next()
 }
 

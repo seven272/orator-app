@@ -14,9 +14,7 @@ const AppLayout = () => {
   const dispatch = useDispatch()
 
   // Реактивное состояние загрузки и режима гостя
-  const { isLoading, user, isVkGuest } = useSelector(
-    (state) => state.auth,
-  )
+  const { isLoading } = useSelector((state) => state.auth)
 
   useEffect(() => {
     const initializeGovorix = async () => {
@@ -77,14 +75,6 @@ const AppLayout = () => {
   // 📌 Основной рендер приложения после прохождения авторизации
   return (
     <div className={styles.app_global_container}>
-      {isVkGuest && (
-        <div className={styles.guest_badge_banner}>
-          ⚡ Гостевой режим. Прогресс и статистика не сохраняются.
-          Создайте ораторский аккуант, чтобы использовать все
-          возможнотси приложения!
-        </div>
-      )}
-
       <main className={styles.app_main_viewport}>
         <Outlet />
       </main>

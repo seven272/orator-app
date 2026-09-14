@@ -15,12 +15,11 @@ import logoImg from '../../assets/images/design/logo.png'
 const Header = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-
-  // 📌 Данные игрового прогресса (уровень, опыт)
+  // Данные прогресса и аккаунта
   const { user: profileUser } = useSelector((state) => state.profile)
-
-  // 📌 Данные аккаунта и флаг Гостя из нашего обновленного authSlice
   const { user: authUser } = useSelector((state) => state.auth)
+
+  // Использование твоих селекторов из authSlice
   const isAuth = useSelector(checkIsAuth)
   const isVkGuest = useSelector(checkIsVkGuest)
 
@@ -31,93 +30,109 @@ const Header = () => {
     try {
       // Отправляем параметры запуска на наш новый изолированный эндпоинт бэкенда
       await dispatch(fetchVkRegister({ launchParams })).unwrap()
-      message.success(
-        'Аккаунт успешно создан! Ваш прогресс сохранен в MongoDB.',
-      )
+      message.success('Аккаунт успешно создан!')
     } catch (error) {
       message.error(error || 'Не удалось создать аккаунт')
     }
   }
 
-  return (
-    <div className={styles.header}>
-      <div className={styles.header_wrapper}>
-        {/* Левый блок (Меню + Логотип) */}
-        <div className={styles.left_block}>
-          <DropdownMenu />
-          <div
-            className={styles.logo_wrap}
-            onClick={() => navigate('/', { replace: true })}
-          >
-            <span className={styles.logo_title}>
-              Govori
-              <img
-                src={logoImg}
-                alt="X"
-                className={styles.logo_x_img}
-              />
-            </span>
-          </div>
+  const renderGuestBanner = () => {
+    if (isVkGuest || !isAuth) {
+      return (
+        <div
+          className={styles.guest_alert_banner}
+        >
+          ⚡ Гостевой режим. Создайте аккаунт оратора, чтобы сохронять
+          прогресс и статистику!
         </div>
+      )
+    }
+    return null
+  }
 
-        {/* Правый блок */}
-        <div className={styles.right_block}>
-          {/* 🔥 1. ЕСЛИ ЭТО ГОСТЬ ИЗ ВК — СРАЗУ РЕНДЕРИМ КНОПКУ РЕГИСТРАЦИИ */}
-          {isVkGuest ? (
-            <button
-              type="button"
-              className={styles.vk_register_btn}
-              onClick={handleFastVkRegister}
+  return (
+    <div className={styles.header_global_wrap}>
+      {/* Рендерим синий баннер в самом верху потока */}
+      {renderGuestBanner()}
+      <div className={styles.header}>
+        <div className={styles.header_wrapper}>
+          {/* Левый блок (Меню + Логотип) */}
+          <div className={styles.left_block}>
+            <DropdownMenu />
+            <div
+              className={styles.logo_wrap}
+              onClick={() => navigate('/', { replace: true })}
             >
-              <span className={styles.vk_btn_icon}>🎁</span> Создать
-              аккаунт
-            </button>
-          ) : isAuth ? (
-            /* 😎 2. ЕСЛИ ПОЛНОЦЕННЫЙ ЮЗЕР (Вошел по Email или уже зарегистрирован в ВК) */
-            <div className={styles.profile_widget}>
-              <div
-                className={styles.status_badge}
-                onClick={() => navigate('/dashboard')}
-              >
-                {profileUser?.level && (
-                  <>
-                    <span
-                      className={`${styles.status_text} ${styles.level_full}`}
-                    >
-                      Lvl {profileUser.level}
-                    </span>
-                    <span
-                      className={`${styles.status_text} ${styles.level_short}`}
-                    >
-                      Lvl {profileUser.level}
-                    </span>
-                  </>
-                )}
-                {profileUser?.level &&
-                  profileUser?.xp !== undefined && (
-                    <span className={styles.divider}>|</span>
-                  )}
-                {profileUser?.xp !== undefined && (
-                  <span className={styles.status_text}>
-                    {profileUser.xp} XP
-                  </span>
-                )}
-              </div>
-
-              <AvatarOrPlaceholder
-                user={authUser}
-                sizeClass="size_s"
-                onClick={() => navigate('/profile')}
-              />
+              <span className={styles.logo_title}>
+                Govori
+                <img
+                  src={logoImg}
+                  alt="X"
+                  className={styles.logo_x_img}
+                />
+              </span>
             </div>
-          ) : (
-            /* 🔒 3. АНОНИМНЫЙ ПОСЕТИТЕЛЬ С САЙТА */
-            <AvatarOrPlaceholder
-              user={null}
-              sizeClass="size_s"
-              onClick={() => navigate('/auth')}
-            />
-          )}
+          </div>
+
+          {/* Правый блок */}
+          <div className={styles.right_block}>
+            {/* 🔥 1. ЕСЛИ ЭТО ГОСТЬ ИЗ ВК — СРАЗУ РЕНДЕРИМ КНОПКУ РЕГИСТРАЦИИ */}
+            {isVkGuest ? (
+              <button
+                type="button"
+                className={styles.vk_register_btn}
+                onClick={handleFastVkRegister}
+              >
+                <span className={styles.vk_btn_icon}>🎁</span> Создать
+                аккаунт
+              </button>
+            ) : isAuth ? (
+              /* 😎 2. ЕСЛИ ПОЛНОЦЕННЫЙ ЮЗЕР (Вошел по Email или уже зарегистрирован в ВК) */
+              <div className={styles.profile_widget}>
+                <div
+                  className={styles.status_badge}
+                  onClick={() => navigate('/dashboard')}
+                >
+                  {profileUser?.level && (
+                    <>
+                      <span
+                        className={`${styles.status_text} ${styles.level_full}`}
+                      >
+                        Lvl {profileUser.level}
+                      </span>
+                      <span
+                        className={`${styles.status_text} ${styles.level_short}`}
+                      >
+                        Lvl {profileUser.level}
+                      </span>
+                    </>
+                  )}
+                  {profileUser?.level &&
+                    profileUser?.xp !== undefined && (
+                      <span className={styles.divider}>|</span>
+                    )}
+                  {profileUser?.xp !== undefined && (
+                    <span className={styles.status_text}>
+                      {profileUser.xp} XP
+                    </span>
+                  )}
+                </div>
+
+                <AvatarOrPlaceholder
+                  user={authUser}
+                  sizeClass="size_s"
+                  onClick={() => navigate('/profile')}
+                />
+              </div>
+            ) : (
+              /* 🔒 3. АНОНИМНЫЙ ПОСЕТИТЕЛЬ С САЙТА */
+              <AvatarOrPlaceholder
+                user={null}
+                sizeClass="size_s"
+                onClick={() => navigate('/auth')}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

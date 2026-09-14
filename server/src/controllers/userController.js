@@ -281,8 +281,6 @@ const updateProfile = async (req, res) => {
     }
 
     // 2. ЮЗЕРА НЕТ В БАЗЕ -> РЕЖИМ ГОСТЯ
- 
-
     // Возвращаем пустой user: null, но сохраняем флаг isVkGuest: true для Header
     return res.status(200).json({
       success: true,
@@ -303,15 +301,16 @@ const updateProfile = async (req, res) => {
  const vkRegister = async (req, res) => {
   try {
     const currentVkId = String(req.vkId)
-    const { vkParamsData } = req
+    const vkParamsData  = req.vkParamsData
+    console.log(vkParamsData)
 
     // Подстраховка: проверяем, не создали ли аккаунт ранее
     let user = await User.findOne({ vkId: currentVkId })
 
     if (!user) {
-      // Генерируем случайный никнейм Спикер#7284
+      // Генерируем случайный никнейм Оратор#7284
       const randomDigits = Math.floor(1000 + Math.random() * 9000)
-      const generateNickname = `${vkParamsData?.firstName || 'Спикер'}#${randomDigits}`
+      const generateNickname = `${vkParamsData?.firstName || 'Оратор'}#${randomDigits}`
 
       // Создаем запись в базе
       user = await User.create({

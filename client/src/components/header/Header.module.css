@@ -1,3 +1,30 @@
+.header_global_wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-secondary);
+}
+
+/* Компактный синий баннер предупреждения */
+.guest_alert_banner {
+  width: 100%;
+  background-color: var(
+    --color-secondary
+  ); /* Твой основной синий цвет */
+  color: var(--font-color-light); /* Белый текст для контраста */
+  text-align: center;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  box-sizing: border-box;
+  transition: opacity 0.2s ease;
+}
+
+.guest_alert_banner:hover {
+  opacity: 0.95;
+}
+
 .header {
   width: 100%;
   height: auto;
@@ -63,8 +90,6 @@
   width: 100%;
 }
 
-
-
 .logo_title {
   font-family: var(--font-family-decor);
   font-size: 20px;
@@ -74,25 +99,25 @@
   white-space: nowrap;
   letter-spacing: -0.01em;
   text-transform: none;
-  
+
   /* 📌 ДОБАВЛЯЕМ: Помогает идеально выровнять встроенную картинку по вертикали */
   display: flex;
-  align-items: center; 
+  align-items: center;
 }
 
 /* 🎯 НОВЫЙ СТИЛЬ: Логотип-птица вместо буквы Х */
 .logo_x_img {
   /* Автоматически подстраиваем высоту картинки под размер шрифта (20px) */
-  height: 1.2em; 
+  height: 1.2em;
   width: auto;
-  
+
   /* Делаем небольшой отступ от буквы 'i' для воздуха */
-  margin-left: 2px; 
-  
+  margin-left: 2px;
+
   /* Выравниваем по центру текстовой строки */
   display: inline-block;
   vertical-align: middle;
-  
+
   /* Плавная анимация для интерактива */
   transition: transform 0.2s ease;
 }
@@ -156,7 +181,9 @@
   height: 32px;
   box-sizing: border-box;
   box-shadow: 0 2px 8px rgba(38, 136, 235, 0.2);
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
   white-space: nowrap;
 }
 
@@ -173,7 +200,6 @@
   margin-right: 6px;
   font-size: 14px;
 }
-
 
 /* 📌 Убираем дублирующие медиа-запросы для max-width: 480px, */
 /* так как логотип теперь изначально ведет себя правильно и послушно */
@@ -199,8 +225,6 @@
     font-size: 18px;
   }
 }
-
-
 
 @media screen and (max-width: 340px) {
   .logo_title {
