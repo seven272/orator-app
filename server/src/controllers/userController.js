@@ -563,6 +563,8 @@ const mergeAccounts = async (req, res) => {
     const { targetUserId, chosenPlatform, password } = req.body
     const currentUser = req.user // Сессионный пользователь из куки [INDEX]
 
+    console.log(targetUserId, chosenPlatform, password)
+
     if (!currentUser) {
       return res.status(401).json({
         success: false,

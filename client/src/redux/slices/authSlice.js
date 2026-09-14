@@ -194,7 +194,7 @@ const fetchMergeAccounts = createAsyncThunk(
       const res = await axiosInstance.post(
         '/user/merge-accounts',
         mergeData,
-      )
+      ) 
       return res.data
     } catch (error) {
       const errorMsg =
