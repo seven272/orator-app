@@ -42,6 +42,13 @@ const getDailyTasks = async (req, res) => {
     // 3. Получаем данные пользователя для проверки прогресса и премиума
     const user = await User.findById(userId)
 
+    if (!user) {
+  return res.status(401).json({
+    success: false,
+    message: 'Пользователь не найден или сессия истекла'
+  })
+}
+
     // 4. Формируем ответ, совмещая данные задачи и личный прогресс юзера
     const tasksWithProgress = challenge.tasks.map((task) => {
       const userProgress = user.dailyProgress.find(
