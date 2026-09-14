@@ -637,41 +637,44 @@ const mergeAccounts = async (req, res) => {
     }
     // СЦЕНАРИЙ Б: Загрузить старый прогресс Сайта, привязав текущий VK ID [INDEX]
     else if (chosenPlatform === 'target') {
-      // 1. Извлекаем vkId из текущего временного сессионного аккаунта
       const vkIdToMove = currentUser.vkId
       const vkSocialData = currentUser.socialProfilesData?.vk
 
-      // 2. 🔥 КРИТИЧЕСКИЙ ШАГ ДЛЯ ИНДЕКСОВ: Очищаем vkId у временного аккаунта прямо сейчас,
-      // чтобы убрать коллизию уникальности в MongoDB, и сохраняем его в промежуточном состоянии
-      currentUser.vkId = undefined
-      if (currentUser.socialProfilesData) {
-        currentUser.socialProfilesData.vk = undefined
-      }
-      await currentUser.save()
+      // 1. 🔥 ИСПРАВЛЕНО ДЛЯ MONGOOSE: Используем findByIdAndUpdate с оператором $unset,
+      // чтобы намертво стереть vkId и очистить уникальный индекс у временного юзера без ошибок валидации.
+      await User.findByIdAndUpdate(currentUser._id, {
+        $unset: {
+          vkId: '',
+          'socialProfilesData.vk': '',
+        },
+      })
 
-      // 3. Теперь поле vkId свободно! Безопасно переносим привязки в старый (целевой) аккаунт Сайта
+      // 2. Теперь поле vkId гарантированно свободно. Безопасно переносим привязки в старый аккаунт Сайта
       if (vkIdToMove) {
         targetUser.vkId = vkIdToMove
-        targetUser.socialProfilesData = {
-          ...targetUser.socialProfilesData,
-          vk: vkSocialData,
+
+        // Бережно инициализируем объект socialProfilesData, если его не было
+        if (!targetUser.socialProfilesData) {
+          targetUser.socialProfilesData = {}
         }
+
+        targetUser.socialProfilesData.vk = vkSocialData
       }
 
-      // Переносим почту, если вдруг её не было в старом
+      // Переносим почту, если вдруг её не было в старом аккаунте
       if (!targetUser.email && currentUser.email) {
         targetUser.email = currentUser.email
         targetUser.password = currentUser.password
       }
 
-      // 4. Безопасно сохраняем старый профиль — теперь MongoDB не выбросит ошибку E11000!
+      // 3. Сохраняем старый профиль — теперь никаких ошибок дубликатов или CastError!
       await targetUser.save()
       finalUser = targetUser
 
-      // 5. Полностью уничтожаем ставший ненужным временный гостевой документ из базы
+      // 4. Полностью удаляем ставший ненужным временный гостевой документ из базы
       await User.findByIdAndDelete(currentUser._id)
 
-      // 6. Перевыпускаем куку авторизации на ID старого (актуального) аккаунта
+      // 5. Перевыпускаем куку авторизации на ID сохраненного старого (актуального) аккаунта
       createToken(res, targetUser._id, null)
     }
 
