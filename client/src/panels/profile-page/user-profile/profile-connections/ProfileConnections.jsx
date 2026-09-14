@@ -67,9 +67,14 @@ const ProfileConnections = () => {
       <h5 className={styles.sub_heading}>Управление аккаунтами</h5>
 
       {/* --- КЕЙС 1: Пользователь зарегистрирован из ВК, у него НЕТ почты --- */}
+           {/* --- КЕЙС 1: Пользователь зарегистрирован из ВК, у него НЕТ почты --- */}
       {!user?.email && (
-        <div className={styles.link_row}>
-          <span>📧 Привязать Email и Пароль для Сайта</span>
+        <div className={styles.bind_section_container}>
+          {/* Сквозной заголовок: когда форма открыта — он красиво встанет НАД ней */}
+          <span className={styles.bind_row_title}>
+            📧 Привязать email и пароль для входа через сайт
+          </span>
+          
           {!showPasswordForm ? (
             <button
               type="button"
@@ -126,6 +131,8 @@ const ProfileConnections = () => {
         </div>
       )}
 
+      
+
       {/* --- КЕЙС : Пользователь вошел по Email, но у него еще нет пароля для авторизации через Яндекс или Гугл--- */}
       {/* {user?.email && !user?.password && (
         <div className={styles.link_row}>
@@ -180,7 +187,7 @@ const ProfileConnections = () => {
       {user?.vkId && user?.email && isInsideVkParams && (
         <div className={styles.link_row}>
           <span className={styles.status_connected}>
-            🔒 Доступы для Сайта (Email/Пароль) созданы успешно ✅
+            🔒 Доступы для сайта (email/пароль) созданы успешно ✅
           </span>
         </div>
       )}
