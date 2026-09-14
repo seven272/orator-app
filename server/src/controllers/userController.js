@@ -636,46 +636,38 @@ const mergeAccounts = async (req, res) => {
       await User.findByIdAndDelete(targetUserId) // Удаляем старый дубликат [INDEX]
     }
     // СЦЕНАРИЙ Б: Загрузить старый прогресс Сайта, привязав текущий VK ID [INDEX]
-    else if (chosenPlatform === 'target') {
-      const vkIdToMove = currentUser.vkId
-      const vkSocialData = currentUser.socialProfilesData?.vk
+     else if (chosenPlatform === 'target') {
+      // 1. Сохраняем все необходимые привязки временного юзера в оперативную память Node.js
+      const vkIdToMove = currentUser.vkId;
+      const vkSocialData = currentUser.socialProfilesData?.vk;
 
-      // 1. 🔥 ИСПРАВЛЕНО ДЛЯ MONGOOSE: Используем findByIdAndUpdate с оператором $unset,
-      // чтобы намертво стереть vkId и очистить уникальный индекс у временного юзера без ошибок валидации.
-      await User.findByIdAndUpdate(currentUser._id, {
-        $unset: {
-          vkId: '',
-          'socialProfilesData.vk': '',
-        },
-      })
+      // 2. 🔥 ГЛАВНЫЙ ШАГ: Мгновенно УНИЧТОЖАЕМ временный документ из MongoDB.
+      // Это действие сразу же физически очищает ОБА уникальных индекса (и email_1, и vkId_1)!
+      await User.findByIdAndDelete(currentUser._id);
 
-      // 2. Теперь поле vkId гарантированно свободно. Безопасно переносим привязки в старый аккаунт Сайта
+      // 3. Теперь база данных абсолютно чиста от дубликатов. Накатываем привязки на старый аккаунт Сайта
       if (vkIdToMove) {
-        targetUser.vkId = vkIdToMove
-
-        // Бережно инициализируем объект socialProfilesData, если его не было
+        targetUser.vkId = vkIdToMove;
+        
         if (!targetUser.socialProfilesData) {
-          targetUser.socialProfilesData = {}
+          targetUser.socialProfilesData = {};
         }
-
-        targetUser.socialProfilesData.vk = vkSocialData
+        
+        targetUser.socialProfilesData.vk = vkSocialData;
       }
 
-      // Переносим почту, если вдруг её не было в старом аккаунте
+      // На всякий случай подстраховываемся с Email, если в старом его почему-то не было
       if (!targetUser.email && currentUser.email) {
-        targetUser.email = currentUser.email
-        targetUser.password = currentUser.password
+        targetUser.email = currentUser.email;
+        targetUser.password = currentUser.password;
       }
 
-      // 3. Сохраняем старый профиль — теперь никаких ошибок дубликатов или CastError!
-      await targetUser.save()
-      finalUser = targetUser
+      // 4. Безопасно сохраняем старый профиль — теперь никаких E11000 по почте или ВК быть не может!
+      await targetUser.save();
+      finalUser = targetUser;
 
-      // 4. Полностью удаляем ставший ненужным временный гостевой документ из базы
-      await User.findByIdAndDelete(currentUser._id)
-
-      // 5. Перевыпускаем куку авторизации на ID сохраненного старого (актуального) аккаунта
-      createToken(res, targetUser._id, null)
+      // 5. Перевыпускаем HTTP-Only куку авторизации на ID восстановленного аккаунта
+      createToken(res, targetUser._id, null);
     }
 
     const userResponse = finalUser.toObject()
