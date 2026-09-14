@@ -131,9 +131,6 @@ const AccountMergeContent = () => {
           placeholder="Пароль от привязываемой почты"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          style={{
-           
-          }}
           required
         />
       </div>
