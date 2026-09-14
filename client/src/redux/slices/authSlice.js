@@ -382,7 +382,7 @@ const authSlice = createSlice({
         if (action.payload?.code) {
           state.mergeConflict = {
             code: action.payload.code,
-            targetUserId: null,
+            targetUserId: action.payload.targetUserId || null,
           }
         } else {
           state.error =
