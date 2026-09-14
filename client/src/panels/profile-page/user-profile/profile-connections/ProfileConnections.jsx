@@ -1,31 +1,54 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from 'react'
-import { MailOutlined, LockOutlined } from '@ant-design/icons'
+import { useDispatch, useSelector } from 'react-redux'
+import { message } from 'antd'
+
+import { fetchLinkEmail } from '../../../../redux/slices/authSlice'
 import styles from './ProfileConnections.module.css'
 
-const ProfileConnections = ({
-  user,
-  isLoading,
-  password,
-  setPassword,
-  showPasswordForm,
-  setShowPasswordForm,
-  isPasswordLinking,
-  handleLinkPassword,
-  handleLinkVkClick
-}) => {
-  // Локальный стейт для ввода почты (актуально, если юзер пришел из ВК и привязывает её впервые)
+const ProfileConnections = () => {
+  const dispatch = useDispatch()
+
+  // Сами забираем нужные данные из Redux
+  const { user, isLoading } = useSelector((state) => state.auth)
+
+  // Переносим стейты привязки пароля и почты внутрь
   const [emailInput, setEmailInput] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPasswordForm, setShowPasswordForm] = useState(false)
+  const [isPasswordLinking, setIsPasswordLinking] = useState(false)
 
-  // Динамически определяем, запущено ли приложение в экосистеме ВКонтакте
-  const isInsideVkParams = window.location.search.includes('vk_user_id')
+  // Проверка среды запуска
+  const isInsideVkParams =
+    window.location.search.includes('vk_user_id')
 
-  const onFormSubmit = (e) => {
+  const onFormSubmit = async (e) => {
     e.preventDefault()
-    // Передаем в родительский метод введенные данные
-    handleLinkPassword({
-      email: user?.email || emailInput,
-      password: password
-    })
+    setIsPasswordLinking(true)
+    try {
+      //formData содержит { email, password }, отправляем в Thunk
+      await dispatch(
+        fetchLinkEmail({
+          email: user?.email || emailInput,
+          password: password,
+        }),
+      ).unwrap()
+
+      message.success('Пароль успешно создан!')
+      setShowPasswordForm(false)
+      setPassword('')
+      setEmailInput('')
+    } catch (err) {
+      if (err?.code !== 'EMAIL_ALREADY_TAKEN') {
+        message.error(err?.message || 'Ошибка при создании пароля')
+      }
+    } finally {
+      setIsPasswordLinking(false)
+    }
+  }
+
+  const handleLinkVkClick = () => {
+    alert('Запуск процесса привязки ВКонтакте...')
   }
 
   return (
@@ -45,7 +68,10 @@ const ProfileConnections = ({
               Привязать
             </button>
           ) : (
-            <form onSubmit={onFormSubmit} className={styles.inline_email_form}>
+            <form
+              onSubmit={onFormSubmit}
+              className={styles.inline_email_form}
+            >
               <div className={styles.form_field_group}>
                 <label>Ваш Email:</label>
                 <input
@@ -89,8 +115,8 @@ const ProfileConnections = ({
         </div>
       )}
 
-      {/* --- КЕЙС 2: Пользователь вошел по Email, но у него еще нет пароля (редкий стыковочный случай) --- */}
-      {user?.email && !user?.password && (
+      {/* --- КЕЙС 2: Пользователь вошел по Email, но у него еще нет пароля для авторизации через Яндекс или Гугл--- */}
+      {/* {user?.email && !user?.password && (
         <div className={styles.link_row}>
           <span>🔒 Создать пароль для Сайта</span>
           {!showPasswordForm ? (
@@ -102,7 +128,10 @@ const ProfileConnections = ({
               Создать пароль
             </button>
           ) : (
-            <form onSubmit={onFormSubmit} className={styles.inline_email_form}>
+            <form
+              onSubmit={onFormSubmit}
+              className={styles.inline_email_form}
+            >
               <div className={styles.form_field_group}>
                 <label>Введите пароль:</label>
                 <input
@@ -133,10 +162,9 @@ const ProfileConnections = ({
             </form>
           )}
         </div>
-      )}
+      )} */}
 
       {/* --- БЛОК СВЯЗИ С ВКОНТАКТЕ --- */}
-      {/* Если мы запущены внутри ВК, прячем эту строку, так как ВК уже является главным провайдером */}
       {!isInsideVkParams && (
         <div className={styles.link_row}>
           <span>🔵 ВКонтакте:</span>

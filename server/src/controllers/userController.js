@@ -9,6 +9,7 @@ import {
 } from '../constants/skills.js'
 import { getXpThreshold } from '../utils/fnForControllers.js'
 import { trackPremiumPurchase } from '../utils/feedService.js'
+import { translit } from '../utils/transliterate.js'
 
 dotenv.config()
 
@@ -145,7 +146,7 @@ const getMe = async (req, res) => {
       return res.status(200).json({
         success: true,
         user: null, // Redux поймет, что активной сессии в БД нет
-        message: 'Пользователь не авторизован в СУБД'
+        message: 'Пользователь не авторизован в СУБД',
       })
     }
 
@@ -155,15 +156,14 @@ const getMe = async (req, res) => {
     if (!user) {
       return res.status(200).json({
         success: true,
-        user: null
+        user: null,
       })
     }
 
     return res.status(200).json({
       success: true,
-      user
+      user,
     })
-
   } catch (error) {
     console.error('Ошибка в контроллере getMe:', error)
     return res.status(500).json({
@@ -172,13 +172,20 @@ const getMe = async (req, res) => {
     })
   }
 }
-
 // Обновление профиля пользователя
 const updateProfile = async (req, res) => {
   try {
     const userId = req.userId
-    const { firstName, lastName, displayName, avatar, email } =
-      req.body
+
+    // 🔥 Теперь деструктурируем password (новый пароль) из тела запроса
+    const {
+      firstName,
+      lastName,
+      displayName,
+      avatar,
+      email,
+      password,
+    } = req.body
 
     // 1. Формируем объект для обновления
     const updateData = {}
@@ -206,30 +213,48 @@ const updateProfile = async (req, res) => {
       updateData.displayName = cleanDisplayName
     }
 
-    // 2. Если пользователь хочет изменить никнейм (displayName)
+    // 3. Если пользователь хочет изменить Email (или привязать его через форму редактирования)
     if (email) {
-      const cleanEmail = email.trim()
+      const cleanEmail = email.toLowerCase().trim()
 
-      // Проверяем, не занят ли ник кем-то другим
+      // Проверяем, не занята ли почта кем-то другим
       const isEmailTaken = await User.findOne({
         email: cleanEmail,
         _id: { $ne: userId }, // Исключаем самого себя из поиска
       })
 
       if (isEmailTaken) {
-        // Возвращаем 409 статус конфликта для активации модалки слияния
+        // 🔥 ИСПРАВЛЕНО: Меняем ключ на targetUserId для синхронизации со структурой authSlice
         return res.status(409).json({
           code: 'EMAIL_ALREADY_TAKEN',
           message:
             'Этот email уже занят другим оратором. Хотите объединить профили?',
-          vkOwnerId: isEmailTaken._id, // Передаем ID аккаунта-дубликата для слияния
+          targetUserId: isEmailTaken._id,
         })
       }
 
       updateData.email = cleanEmail
     }
 
-    // 3. Обновляем пользователя в базе данных
+    // 🔥 4. НОВАЯ ЛОГИКА: Если пользователь ввел новый пароль
+    if (password && password.trim() !== '') {
+      const cleanPassword = password.trim()
+
+      if (cleanPassword.length < 6) {
+        return res.status(400).json({
+          message:
+            'Новый пароль должен содержать не менее 6 символов',
+        })
+      }
+
+      // Хешируем пароль перед записью в базу данных
+      const salt = bcrypt.genSaltSync(10)
+      const hashedPassword = bcrypt.hashSync(cleanPassword, salt)
+
+      updateData.password = hashedPassword
+    }
+
+    // 5. Обновляем пользователя в базе данных
     // { new: true } возвращает уже обновленный документ, runValidators запускает проверки схемы
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -243,13 +268,13 @@ const updateProfile = async (req, res) => {
         .json({ message: 'Пользователь не найден' })
     }
 
-    // 4. Возвращаем обновленные данные
+    // 6. Возвращаем обновленные данные
     res.status(200).json({
       user: updatedUser,
       message: 'Профиль успешно обновлен',
     })
   } catch (error) {
-    console.error(error)
+    console.error('Ошибка в контроллере updateProfile:', error)
     res.status(500).json({
       message: 'Ошибка сервера при обновлении профиля',
     })
@@ -257,7 +282,7 @@ const updateProfile = async (req, res) => {
 }
 
 // Авторизация через ВКонтакте
- const vkAuth = async (req, res) => {
+const vkAuth = async (req, res) => {
   try {
     const currentVkId = String(req.vkId)
 
@@ -286,21 +311,24 @@ const updateProfile = async (req, res) => {
       isVkGuest: true, // 👈 Передаем, чтобы Header показал кнопку "Создать аккаунт"
       user: {
         displayName: 'Гость из ВКонтакте', // 👈 Кратко и емко для Redux селекторов
-        avatar: '' // Пустая строка — AvatarOrPlaceholder автоматически сделает буквенную заглушку "ГО"
+        avatar: '', // Пустая строка — AvatarOrPlaceholder автоматически сделает буквенную заглушку "ГО"
       },
-      message: 'Вход в гостевом режиме ВКонтакте. Ожидание регистрации.'
+      message:
+        'Вход в гостевом режиме ВКонтакте. Ожидание регистрации.',
     })
-
   } catch (error) {
     console.error('Ошибка в vkAuth контроллере:', error)
-    return res.status(500).json({ success: false, message: 'Ошибка сервера при авторизации VK' })
+    return res.status(500).json({
+      success: false,
+      message: 'Ошибка сервера при авторизации VK',
+    })
   }
 }
 // регистрация через ВКонтакте
 const vkRegister = async (req, res) => {
   try {
     const currentVkId = String(req.vkId) // Извлекли '145266467' из проверенной подписи
-    
+
     // Фронтенд прислал объект, деструктурируем его с подстраховкой на пустые строки
     const { firstName, lastName, avatar } = req.body
 
@@ -308,9 +336,15 @@ const vkRegister = async (req, res) => {
     let user = await User.findOne({ vkId: currentVkId })
 
     if (!user) {
-      // Вычисляем базовое имя для генерации никнейма. Если firstName пустой — берем "Спикер"
-      const cleanFirstName = firstName && firstName.trim() !== '' ? firstName.trim() : 'Оратор'
-      
+      // 1. Сначала переводим имя в латиницу и зачищаем от лишних символов
+      const latinFirstName = translit(firstName)
+
+      // 2. Если имя корректное — берем его, если пустое — подставляем дефолтный латинский корень
+      const cleanFirstName =
+        latinFirstName && latinFirstName.trim() !== ''
+          ? latinFirstName.trim()
+          : 'Speaker'
+
       const randomDigits = Math.floor(1000 + Math.random() * 9000)
       const generateNickname = `${cleanFirstName}#${randomDigits}`
 
@@ -328,8 +362,8 @@ const vkRegister = async (req, res) => {
             firstName: firstName || '',
             lastName: lastName || '',
             avatar: avatar || '',
-          }
-        }
+          },
+        },
       })
     }
 
@@ -347,94 +381,92 @@ const vkRegister = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка в контроллере vkRegister:', error)
-    return res.status(500).json({ success: false, message: 'Ошибка сервера при создании профиля VK' })
+    return res.status(500).json({
+      success: false,
+      message: 'Ошибка сервера при создании профиля VK',
+    })
   }
 }
-// Привязка Email и Пароля к существующему аккаунту (например, созданному через VK)
+
+// 1️⃣ Привязка Email и Пароля к существующему аккаунту (например, созданному через VK)
 const linkEmailToVkAccount = async (req, res) => {
   try {
     const { email, password } = req.body
-    
-    // Получаем текущего пользователя из СУБД (подтянутого через мидлвар checkAuth / optionalAuth)
-    const currentUser = req.user
+    const currentUser = req.user // Подтянуто мидлваром checkAuth / optionalAuth
 
     if (!currentUser) {
       return res.status(401).json({
         success: false,
-        message: 'Пользователь не идентифицирован в системе'
+        message: 'Пользователь не идентифицирован в системе',
       })
     }
 
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email и пароль обязательны для заполнения'
+        message: 'Email и пароль обязательны для заполнения',
       })
     }
 
     const cleanEmail = email.toLowerCase().trim()
 
-    // 1. ПРОВЕРКА НА КОНФЛИКТ: Ищем, не занята ли эта почта другим аккаунтом сайта
-    const userWithThisEmail = await User.findOne({ email: cleanEmail })
+    // Проверка на конфликт индексов
+    const userWithThisEmail = await User.findOne({
+      email: cleanEmail,
+    })
 
     if (userWithThisEmail) {
-      // Если ID совпадают, значит почта уже привязана к ЭТОМУ ЖЕ аккаунту
       if (String(userWithThisEmail._id) === String(currentUser._id)) {
         return res.status(400).json({
           success: false,
-          message: 'Этот Email уже привязан к вашему текущему профилю'
+          message:
+            'Этот Email уже привязан к вашему текущему профилю',
         })
       }
 
-      // 🔥 КРИТИЧЕСКИЙ СЦЕНАРИЙ: Почта занята другим человеком!
-      // Возвращаем статус 409 и структуру конфликта, которую ждет твой authSlice
+      // Возвращаем 409 конфликт для активации модалки слияния в authSlice
       return res.status(409).json({
         success: false,
         code: 'EMAIL_ALREADY_TAKEN',
-        message: 'Пользователь с таким Email уже существует в системе Govorix.',
-        targetUserId: userWithThisEmail._id // Передаем ID аккаунта сайта для последующего слияния
+        message:
+          'Пользователь с таком Email уже существует в системе Govorix.',
+        targetUserId: userWithThisEmail._id,
       })
     }
 
-    // 2. Хешируем присланный пароль
     const salt = bcrypt.genSaltSync(10)
     const hashedPassword = bcrypt.hashSync(password, salt)
 
-    // 3. Безопасно обновляем текущий документ в MongoDB
     currentUser.email = cleanEmail
     currentUser.password = hashedPassword
-    
-    // Если основной провайдер был vk, мы можем оставить его, но обновить метаданные при необходимости
+
     await currentUser.save()
 
-    // Удаляем конфиденциальные поля перед отправкой ответа
     const userResponse = currentUser.toObject()
     delete userResponse.password
 
     return res.status(200).json({
       success: true,
       user: userResponse,
-      message: 'Email и пароль успешно привязаны к вашему профилю!'
+      message: 'Email и пароль успешно привязаны к вашему профилю!',
     })
-
   } catch (error) {
     console.error('Ошибка в контроллере linkEmailToVkAccount:', error)
     return res.status(500).json({
       success: false,
-      message: 'Внутренняя ошибка сервера при привязке Email'
+      message: 'Внутренняя ошибка сервера при привязке Email',
     })
   }
 }
 
-// Привязка VK ID к существующему Email-аккаунту сайта
+// 2️⃣ Привязка VK ID к существующему Email-аккаунту сайта
 const linkVkToEmailAccount = async (req, res) => {
   try {
-    // 📌 req.vkId и req.vkParamsData гарантированно извлечены и проверены мидлваром vkLaunchParamsAuth
-    const currentVkId = String(req.vkId)
-    const { vkParamsData } = req
+    const currentVkId = String(req.vkId) // Извлечено мидлваром
 
-    // Получаем текущего пользователя Сайта, подтянутого мидлваром checkAuth
-    const currentUser = req.user
+    // 🔥 КОРРЕКТИРОВКА: Имя, фамилию и аватар берем из req.body, как договорились ранее!
+    const { firstName, lastName, avatar } = req.body
+    const currentUser = req.user // Подтянуто мидлваром checkAuth
 
     if (!currentUser) {
       return res.status(401).json({
@@ -443,55 +475,51 @@ const linkVkToEmailAccount = async (req, res) => {
       })
     }
 
-    // 1. ПРОВЕРКА НА КОНФЛИКТ: Ищем, не привязан ли этот vkId к другому профилю в MongoDB
     const userWithThisVk = await User.findOne({ vkId: currentVkId })
 
     if (userWithThisVk) {
-      // Если это тот же самый пользователь, значит VK уже привязан к этому Email
       if (String(userWithThisVk._id) === String(currentUser._id)) {
         return res.status(400).json({
           success: false,
-          message: 'Этот аккаунт ВКонтакте уже привязан к вашему профилю',
+          message:
+            'Этот аккаунт ВКонтакте уже привязан к вашему профилю',
         })
       }
 
-      // 🔥 КРИТИЧЕСКИЙ СЦЕНАРИЙ: Этот VK ID уже занят другим аккаунтом в базе!
-      // Возвращаем статус 409 и структуру, которую ждет твой extraReducer в authSlice
       return res.status(409).json({
         success: false,
         code: 'VK_ALREADY_TAKEN',
-        message: 'Этот аккаунт ВКонтакте уже связан с другим профилем Govorix.ru.',
-        vkOwnerId: userWithThisVk._id // Передаем ID владельца ВК для слияния профилей
+        message:
+          'Этот аккаунт ВКонтакте уже связан с другим профилем Govorix.ru.',
+        vkOwnerId: userWithThisVk._id,
       })
     }
 
-    // 2. Проверяем, нет ли у текущего пользователя уже какого-то привязанного vkId
     if (currentUser.vkId) {
       return res.status(400).json({
         success: false,
-        message: 'К вашему профилю уже привязан другой аккаунт ВКонтакте. Сначала отвяжите его.',
+        message:
+          'К вашему профилю уже привязан другой аккаунт ВКонтакте.',
       })
     }
 
-    // 3. Записываем данные соцсети в текущий аккаунт Сайта
+    // Записываем очищенные данные, пришедшие из VK Bridge фронтенда
     currentUser.vkId = currentVkId
     currentUser.socialProfilesData = {
       ...currentUser.socialProfilesData,
       vk: {
-        firstName: vkParamsData?.firstName || '',
-        lastName: vkParamsData?.lastName || '',
-        avatar: vkParamsData?.avatar || '',
-      }
+        firstName: firstName || '',
+        lastName: lastName || '',
+        avatar: avatar || '',
+      },
     }
 
-    // Если у пользователя сайта не было аватара, можем бережно установить аватар из ВК
     if (!currentUser.avatar || currentUser.avatar.trim() === '') {
-      currentUser.avatar = vkParamsData?.avatar || ''
+      currentUser.avatar = avatar || ''
     }
 
     await currentUser.save()
 
-    // Удаляем пароль из ответа перед отправкой на фронтенд
     const userResponse = currentUser.toObject()
     delete userResponse.password
 
@@ -500,7 +528,6 @@ const linkVkToEmailAccount = async (req, res) => {
       user: userResponse,
       message: 'Аккаунт ВКонтакте успешно привязан к вашему профилю!',
     })
-
   } catch (error) {
     console.error('Ошибка в контроллере linkVkToEmailAccount:', error)
     return res.status(500).json({
@@ -510,13 +537,11 @@ const linkVkToEmailAccount = async (req, res) => {
   }
 }
 
-// Финальное слияние аккаунтов по выбору пользователя (Подход Поглощения)
+// 3️⃣ Финальное слияние аккаунтов (Подход Поглощения) — ПОЛНАЯ РЕАЛИЗАЦИЯ
 const mergeAccounts = async (req, res) => {
   try {
     const { targetUserId, chosenPlatform } = req.body
-    
-    // Текущий пользователь из сессии (мидлвар checkAuth)
-    const currentUser = req.user
+    const currentUser = req.user // Сессионный пользователь из куки
 
     if (!currentUser) {
       return res.status(401).json({
@@ -528,11 +553,11 @@ const mergeAccounts = async (req, res) => {
     if (!targetUserId || !chosenPlatform) {
       return res.status(400).json({
         success: false,
-        message: 'Не переданы обязательные параметры слияния (targetUserId, chosenPlatform)',
+        message:
+          'Не переданы обязательные параметры слияния (targetUserId, chosenPlatform)',
       })
     }
 
-    // Ищем второй (конфликтующий) аккаунт в MongoDB
     const targetUser = await User.findById(targetUserId)
 
     if (!targetUser) {
@@ -542,7 +567,6 @@ const mergeAccounts = async (req, res) => {
       })
     }
 
-    // Подстраховка от хака: нельзя объединить аккаунт сам с собой
     if (String(currentUser._id) === String(targetUser._id)) {
       return res.status(400).json({
         success: false,
@@ -550,78 +574,73 @@ const mergeAccounts = async (req, res) => {
       })
     }
 
-    // Итоговый объект пользователя, который останется в живых
     let finalUser = null
 
-    // ==========================================
-    // СЦЕНАРИЙ А: ОСТАВИТЬ ТЕКУЩИЙ ПРОГРЕСС
-    // ==========================================
+    // СЦЕНАРИЙ А: Юзер выбирает оставить ТЕКУЩИЙ игровой прогресс
     if (chosenPlatform === 'current') {
-      // Переносим социальные привязки со старого аккаунта в текущий, если их тут нет
       if (!currentUser.vkId && targetUser.vkId) {
         currentUser.vkId = targetUser.vkId
-        currentUser.socialProfilesData.vk = targetUser.socialProfilesData.vk
+        currentUser.socialProfilesData.vk =
+          targetUser.socialProfilesData.vk
       }
       if (!currentUser.email && targetUser.email) {
         currentUser.email = targetUser.email
-        currentUser.password = targetUser.password // Переносим и хэш пароля сайта
-        currentUser.socialProfilesData.google = targetUser.socialProfilesData.google
+        currentUser.password = targetUser.password
+        currentUser.socialProfilesData.google =
+          targetUser.socialProfilesData.google
       }
 
-      // Сохраняем текущего пользователя в MongoDB
       await currentUser.save()
       finalUser = currentUser
 
-      // Полностью удаляем старый аккаунт, чтобы очистить sparse-индексы
+      // Уничтожаем дубликат, высвобождая sparse-индексы почты или ВК
       await User.findByIdAndDelete(targetUserId)
-    } 
-    // ==========================================
-    // СЦЕНАРИЙ Б: ЗАГРУЗИТЬ СТАРЫЙ ПРОГРЕСС
-    // ==========================================
+    }
+    // 🔥 СЦЕНАРИЙ Б: Юзер выбирает ЗАГРУЗИТЬ СТАРЫЙ игровой прогресс (Дописано до конца)
     else if (chosenPlatform === 'target') {
-      // Переносим привязки с текущего аккаунта в старый (target)
+      // Переносим привязки с текущего временного сессионного аккаунта в старый (целевой)
       if (!targetUser.vkId && currentUser.vkId) {
         targetUser.vkId = currentUser.vkId
-        targetUser.socialProfilesData.vk = currentUser.socialProfilesData.vk
+        targetUser.socialProfilesData.vk =
+          currentUser.socialProfilesData.vk
       }
       if (!targetUser.email && currentUser.email) {
         targetUser.email = currentUser.email
         targetUser.password = currentUser.password
-        targetUser.socialProfilesData.google = currentUser.socialProfilesData.google
+        targetUser.socialProfilesData.google =
+          currentUser.socialProfilesData.google
       }
 
-      // Сохраняем старого пользователя
       await targetUser.save()
       finalUser = targetUser
 
-      // Удаляем текущий временный сессионный аккаунт из базы данных
+      // Удаляем текущий временный аккаунт, так как весь профиль переехал в targetUser
       await User.findByIdAndDelete(currentUser._id)
 
-      // 🔥 КРИТИЧЕСКИ ВАЖНО: Так как мы физически переселились в другой документ MongoDB,
-      // нам необходимо перезаписать куку jwt-oratory на новый finalUser._id!
-      createToken(res, finalUser._id, null)
+      // 📌 КРИТИЧЕСКИЙ СЦЕНАРИЙ: Поскольку "живой" аккаунт изменился,
+      // нам необходимо перезаписать HTTP-Only куку на новый _id, чтобы сессия не разлогинилась!
+      createToken(res, targetUser._id, null)
     } else {
       return res.status(400).json({
         success: false,
-        message: 'Невалидное значение chosenPlatform. Ожидается current или target',
+        message: 'Неверно указана целевая платформа для слияния',
       })
     }
 
-    // Удаляем пароль перед отправкой на фронтенд
     const userResponse = finalUser.toObject()
     delete userResponse.password
 
     return res.status(200).json({
       success: true,
       user: userResponse,
-      message: 'Профили успешно объединены! Данные кроссплатформенности синхронизированы.',
+      message:
+        'Профили успешно объединены! Ваш актуальный прогресс зафиксирован.',
     })
-
   } catch (error) {
     console.error('Ошибка в контроллере mergeAccounts:', error)
     return res.status(500).json({
       success: false,
-      message: 'Внутренняя ошибка сервера при объединении аккаунтов',
+      message: 'Внутренняя ошибка сервера при слиянии аккаунтов',
     })
   }
 }
@@ -754,7 +773,7 @@ const fakeBuyPremium = async (req, res) => {
       {
         isPremium: true,
         premiumExpiresAt: expiresAt,
-      }, 
+      },
       { new: true },
     )
 
@@ -764,7 +783,7 @@ const fakeBuyPremium = async (req, res) => {
         .json({ message: 'Пользователь не найден' })
     }
 
-    trackPremiumPurchase(updatedUser._id);
+    trackPremiumPurchase(updatedUser._id)
 
     res.json({
       success: true,

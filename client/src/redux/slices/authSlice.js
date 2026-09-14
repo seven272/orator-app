@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import bridge from '@vkontakte/vk-bridge'
+import bridge from '@vkontakte/vk-bridge' 
 
 import axiosInstance from '../../utils/axiosInstance'
 import { fetchActivateFakePremium } from './profileSlice'
@@ -88,8 +88,8 @@ const fetchVkRegister = createAsyncThunk(
       let lastName = ''
       let avatar = ''
 
-      // 1. Запрашиваем у ВК реальные данные профиля текущего пользователя
-      if (bridge.isEmbedded() || true) {
+      // 1. Запрашиваем у ВК реальные данные профиля текущего пользователя, только если находимся в среде вонтакте
+      if (bridge.isEmbedded()) {
         // Проверка на среду ВК
         try {
           const vkUserData = await bridge.send('VKWebAppGetUserInfo')
