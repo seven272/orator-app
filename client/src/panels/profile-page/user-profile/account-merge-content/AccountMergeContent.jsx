@@ -122,7 +122,7 @@ const AccountMergeContent = () => {
       </div>
 
       {/* 🔥 НОВЫЙ БЛОК ПОДТВЕРЖДЕНИЯ ПАРОЛЕМ */}
-      <div style={styles.password_block}>
+      <div className={styles.password_block}>
         <label>
           🔑 Введите пароль от аккаунта Сайта для подтверждения:
         </label>
