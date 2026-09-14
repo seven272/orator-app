@@ -298,34 +298,37 @@ const updateProfile = async (req, res) => {
   }
 }
 // регистрация через ВКонтакте
- const vkRegister = async (req, res) => {
+const vkRegister = async (req, res) => {
   try {
-    const currentVkId = String(req.vkId)
-    const vkParamsData  = req.vkParamsData
-    console.log(vkParamsData)
+    const currentVkId = String(req.vkId) // Извлекли '145266467' из проверенной подписи
+    
+    // Фронтенд прислал объект, деструктурируем его с подстраховкой на пустые строки
+    const { firstName, lastName, avatar } = req.body
 
-    // Подстраховка: проверяем, не создали ли аккаунт ранее
+    // Подстраховка: проверяем, нет ли уже юзера в базе
     let user = await User.findOne({ vkId: currentVkId })
 
     if (!user) {
-      // Генерируем случайный никнейм Оратор#7284
+      // Вычисляем базовое имя для генерации никнейма. Если firstName пустой — берем "Спикер"
+      const cleanFirstName = firstName && firstName.trim() !== '' ? firstName.trim() : 'Оратор'
+      
       const randomDigits = Math.floor(1000 + Math.random() * 9000)
-      const generateNickname = `${vkParamsData?.firstName || 'Оратор'}#${randomDigits}`
+      const generateNickname = `${cleanFirstName}#${randomDigits}`
 
-      // Создаем запись в базе
+      // Создаем запись в базе данных MongoDB
       user = await User.create({
         displayName: generateNickname,
-        firstName: vkParamsData?.firstName || '',
-        lastName: vkParamsData?.lastName || '',
-        avatar: vkParamsData?.avatar || '',
+        firstName: firstName || '',
+        lastName: lastName || '',
+        avatar: avatar || '', // Если пришла пустая строка, запишется '', и Хедер покажет красивую буквенную заглушку!
         vkId: currentVkId,
         authProvider: 'vk',
         registeredFrom: 'vk',
         socialProfilesData: {
           vk: {
-            firstName: vkParamsData?.firstName || '',
-            lastName: vkParamsData?.lastName || '',
-            avatar: vkParamsData?.avatar || '',
+            firstName: firstName || '',
+            lastName: lastName || '',
+            avatar: avatar || '',
           }
         }
       })
@@ -339,7 +342,7 @@ const updateProfile = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      isVkGuest: false, // Флаг гостя гаснет!
+      isGuest: false, // Флаг гостя гаснет в Redux!
       user: userResponse,
       message: 'Профиль ВКонтакте успешно зарегистрирован в MongoDB!',
     })
@@ -348,7 +351,6 @@ const updateProfile = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Ошибка сервера при создании профиля VK' })
   }
 }
-
 // Привязка Email и Пароля к существующему аккаунту (например, созданному через VK)
 const linkEmailToVkAccount = async (req, res) => {
   try {

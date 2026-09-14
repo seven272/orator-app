@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import bridge from '@vkontakte/vk-bridge'
 
 import axiosInstance from '../../utils/axiosInstance'
 import { fetchActivateFakePremium } from './profileSlice'
@@ -81,13 +82,39 @@ const fetchVkAuth = createAsyncThunk(
 
 const fetchVkRegister = createAsyncThunk(
   'auth/fetchVkRegister',
-  async (vkData, { rejectWithValue }) => {
+  async ({ launchParams }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post(
-        '/user/vk-register',
-        vkData,
-      )
-      return res.data // Бэкенд вернет { success, isVkGuest: false, user }
+      let firstName = ''
+      let lastName = ''
+      let avatar = ''
+
+      // 1. Запрашиваем у ВК реальные данные профиля текущего пользователя
+      if (bridge.isEmbedded() || true) {
+        // Проверка на среду ВК
+        try {
+          const vkUserData = await bridge.send('VKWebAppGetUserInfo')
+
+          // Наполняем переменные настоящими данными из соцсети!
+          firstName = vkUserData.first_name || ''
+          lastName = vkUserData.last_name || ''
+          avatar = vkUserData.photo_200 || '' // Квадратная аватарка 200х200
+        } catch (bridgeError) {
+          console.warn(
+            'ВК запретил доступ к данным профиля или bridge не инициализирован:',
+            bridgeError,
+          )
+        }
+      }
+
+      // 2. Отправляем на бэкенд полный, чистый и готовый набор данных
+      const res = await axiosInstance.post('/user/vk-register', {
+        launchParams, // Строка из URL (Источник 1)
+        firstName, // Реальное имя (Источник 2)
+        lastName, // Реальная фамилия (Источник 2)
+        avatar, // Реальный аватар (Источник 2)
+      })
+
+      return res.data
     } catch (error) {
       const errorMsg =
         error.response?.data?.message ||
@@ -434,6 +461,6 @@ export {
   fetchMergeAccounts,
   fetchUpdateProfile,
   checkIsAuth,
-  checkIsVkGuest
+  checkIsVkGuest,
 }
 export default authSlice.reducer
