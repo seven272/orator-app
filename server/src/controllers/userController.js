@@ -571,7 +571,7 @@ const vkWebsiteAuth = async (req, res) => {
         vkId: verifiedVkId,
         email: email ? email.toLowerCase().trim() : undefined,
         authProvider: 'vk',
-        registeredFrom: 'vk_id_sdk',
+        registeredFrom: 'vk',
         socialProfilesData: { vk: { firstName, lastName, avatar } },
       })
     }
