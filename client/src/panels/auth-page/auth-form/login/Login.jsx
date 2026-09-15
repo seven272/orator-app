@@ -212,8 +212,7 @@ const Login = ({ showRegister }) => {
       })
 
       // 5. Рендер виджета
-      // 5. Рендер виджета
-      const oAuthList = new VKID.OAuthList()
+      const oneTapButton = new VKID.OneTap()
 
       if (vkContainerRef.current) {
         vkContainerRef.current.innerHTML = ''
@@ -223,16 +222,20 @@ const Login = ({ showRegister }) => {
           // Проверяем, что контейнер все еще существует на экране (пользователь не ушел на другую страницу)
           if (!vkContainerRef.current) return
 
-          oAuthList
+          oneTapButton
             .render({
               container: vkContainerRef.current,
-              styles: { borderRadius: 8, height: 44 },
-              oauthList: ['vkid', 'mail_ru', 'ok_ru'],
+              styles: {
+                borderRadius: 8,
+                height: 44,
+              },
+              // 📌 Выключаем альтернативные способы входа, оставляя строго ВК!
+              showAlternativeLoginMethods: false,
             })
             .on(VKID.WidgetEvents.ERROR, (error) => {
-              console.error('Ошибка виджета VK ID SDK:', error)
+              console.error('Ошибка виджета VK ID One Tap:', error)
               message.error(
-                'Не удалось загрузить виджет авторизации соцсетей',
+                'Не удалось загрузить виджет авторизации ВКонтакте',
               )
             })
             .on(
