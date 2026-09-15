@@ -65,8 +65,6 @@
   align-items: center;
 }
 
-
-
 /* ==========================================================================
    📌 ЭЛЕГАНТНЫЙ КОМПЛЕКС КНОПОК И ССЫЛОК (Взамен старых стилей .btn и .link)
    ========================================================================== */
@@ -158,10 +156,9 @@
   transform-origin: bottom left;
 }
 
-.vk_buttons_container {
+.vk_button_container {
   width: 100%;
   min-height: 44px;
-  margin: 10px 0 10px 0;
 }
 
 /* Исправление отступов для инпутов, чтобы фокус работал красиво */
@@ -172,7 +169,9 @@
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
-
+.divider {
+  margin: 10px 0 10px 0;
+}
 .divider_text {
   color: var(--color-text-secondary);
 }

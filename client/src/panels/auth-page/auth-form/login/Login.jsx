@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { message } from 'antd' // Только для алертов уведомлений
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa' // Чистые Fa-иконки
-import { FaVk } from 'react-icons/fa' // Импортируем официальное векторное лого ВК
-import bridge from '@vkontakte/vk-bridge'
 import * as VKID from '@vkid/sdk'
 
 import {
@@ -19,6 +18,7 @@ import styles from './Login.module.css'
 
 const Login = ({ showRegister }) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const vkContainerRef = useRef(null) // Реф для контейнера списка соцсетей ВК
 
   const [email, setEmail] = useState('')
@@ -66,119 +66,6 @@ const Login = ({ showRegister }) => {
       setLoading(false)
     }
   }
-
-  //   const handleVkLoginClick = async () => {
-  //   try {
-  //     if (bridge.isEmbedded()) {
-  //       await bridge.send('VKWebAppInit')
-  //       const vkData = await bridge.send('VKWebAppGetUserInfo')
-  //       alert(`Привет, ${vkData.first_name}!`)
-  //       return
-  //     }
-
-  //     const VK_APP_ID = '54772667'
-  //     // ⚠️ Без хеша — чистый путь
-  //     const REDIRECT_URI = window.location.origin + '/auth'
-
-  //     const verifier = generateCodeVerifier()
-  //     const challenge = await generateCodeChallenge(verifier)
-
-  //     const array = new Uint32Array(8)
-  //     window.crypto.getRandomValues(array)
-  //     const state = Array.from(array, (dec) => dec.toString(16)).join('')
-
-  //     // ⚠️ sessionStorage вместо localStorage
-  //     sessionStorage.setItem('vk_code_verifier', verifier)
-  //     sessionStorage.setItem('vk_auth_state', state)
-
-  //     const params = new URLSearchParams({
-  //       response_type: 'code',
-  //       client_id: VK_APP_ID,
-  //       redirect_uri: REDIRECT_URI,
-  //       scope: 'email phone',
-  //       state,
-  //       code_challenge: challenge,
-  //       code_challenge_method: 'S256',
-  //     })
-
-  //     window.location.href =
-  //       `https://id.vk.ru/authorize?${params.toString().replaceAll('+', '%20')}`
-  //   } catch (err) {
-  //     console.error('Ошибка VK Auth:', err)
-  //     message.error('Не удалось связаться с ВКонтакте')
-  //   }
-  // }
-  // useEffect(() => {
-  //   const CLIENT_ID =
-  //     Number(import.meta.env.VITE_VK_AUTH_APP_ID) || 54772667
-  //   const REDIRECT_URI = `${window.location.origin}/auth`
-
-  //   // 1. Инициализируем глобальный конфиг через импортированный модуль пакета
-  //   VKID.Config.set({
-  //     app: CLIENT_ID,
-  //     redirectUrl: REDIRECT_URI,
-  //     // responseMode: Callback сообщает SDK, что мы хотим перехватить код прямо в JS-сессии,
-  //     // это отключает конфликты жесткого редиректа страниц
-  //     responseMode: VKID.ConfigResponseMode.Callback,
-  //     state: Math.random().toString(16).substring(2),
-  //   })
-
-  //   // 2. Создаем инстанс списка провайдеров OAuthList
-  //   const oAuthList = new VKID.OAuthList()
-
-  //   if (vkContainerRef.current) {
-  //     // Очищаем контейнер перед рендером для предотвращения дублирования при горячей перезагрузке (HMR)
-  //     vkContainerRef.current.innerHTML = ''
-
-  //     oAuthList
-  //       .render({
-  //         container: vkContainerRef.current,
-  //         styles: {
-  //           borderRadius: 8,
-  //           height: 44,
-  //         },
-  //         // Передаем точные строковые ключи для карты иконок
-  //         oauthList: ['vkid', 'mail_ru', 'ok_ru'],
-  //       })
-  //       .on(VKID.WidgetEvents.ERROR, (error) => {
-  //         console.error('Ошибка виджета VK ID SDK:', error)
-  //         message.error(
-  //           'Не удалось загрузить виджет авторизации соцсетей',
-  //         )
-  //       })
-  //       // Перехватываем успешную авторизацию (для любой из трех выбранных соцсетей!)
-  //       .on(
-  //         VKID.OAuthListInternalEvents.LOGIN_SUCCESS,
-  //         async (payload) => {
-  //           const { code, device_id } = payload
-
-  //           // Автоматически запрашиваем code_verifier из внутреннего стейта самого SDK
-  //           const codeVerifier = VKID.Auth.getCodeVerifier?.() || ''
-
-  //           setLoading(true)
-  //           try {
-  //             // Безопасно отправляем code, deviceId и верификатор на бэкенд
-  //             await dispatch(
-  //               fetchVkWebsiteAuth({
-  //                 code,
-  //                 deviceId: device_id,
-  //                 codeVerifier,
-  //                 redirectUri: REDIRECT_URI,
-  //               }),
-  //             ).unwrap()
-
-  //             message.success('Успешный вход в систему!')
-  //           } catch (err) {
-  //             message.error(
-  //               err || 'Не удалось подтвердить вход в аккаунт',
-  //             )
-  //           } finally {
-  //             setLoading(false)
-  //           }
-  //         },
-  //       )
-  //   }
-  // }, [dispatch])
 
   useEffect(() => {
     const initializeVkSdk = async () => {
@@ -234,9 +121,6 @@ const Login = ({ showRegister }) => {
             })
             .on(VKID.WidgetEvents.ERROR, (error) => {
               console.error('Ошибка виджета VK ID One Tap:', error)
-              message.error(
-                'Не удалось загрузить виджет авторизации ВКонтакте',
-              )
             })
             .on(
               VKID.OAuthListInternalEvents.LOGIN_SUCCESS,
@@ -281,6 +165,7 @@ const Login = ({ showRegister }) => {
                   sessionStorage.removeItem('vk_code_verifier')
                   sessionStorage.removeItem('vk_auth_state')
                   message.success('Успешный вход в систему!')
+                  navigate('/profile', { replace: true })
                 } catch (err) {
                   message.error(
                     err || 'Не удалось подтвердить вход в аккаунт',
@@ -353,21 +238,12 @@ const Login = ({ showRegister }) => {
             {loading ? 'Вход...' : 'Войти'}
           </button>
 
-          {/* <button
-            type="button"
-            className={styles.vk_premium_btn}
-            onClick={handleVkLoginClick}
-          >
-            <div className={styles.vk_glow_effect}></div>
-            <FaVk className={styles.vk_vector_icon} />
-            <span className={styles.vk_btn_text}>
-              Войти через ВКонтакте
-            </span>
-          </button> */}
-
+          <div className={styles.divider}>
+            <span className={styles.divider_text}>или</span>
+          </div>
           <div
             ref={vkContainerRef}
-            className={styles.vk_buttons_container}
+            className={styles.vk_button_container}
           ></div>
 
           <div className={styles.divider}>
