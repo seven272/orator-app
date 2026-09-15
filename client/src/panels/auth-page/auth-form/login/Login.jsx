@@ -108,78 +108,166 @@ const Login = ({ showRegister }) => {
   //     message.error('Не удалось связаться с ВКонтакте')
   //   }
   // }
+  // useEffect(() => {
+  //   const CLIENT_ID =
+  //     Number(import.meta.env.VITE_VK_AUTH_APP_ID) || 54772667
+  //   const REDIRECT_URI = `${window.location.origin}/auth`
+
+  //   // 1. Инициализируем глобальный конфиг через импортированный модуль пакета
+  //   VKID.Config.set({
+  //     app: CLIENT_ID,
+  //     redirectUrl: REDIRECT_URI,
+  //     // responseMode: Callback сообщает SDK, что мы хотим перехватить код прямо в JS-сессии,
+  //     // это отключает конфликты жесткого редиректа страниц
+  //     responseMode: VKID.ConfigResponseMode.Callback,
+  //     state: Math.random().toString(16).substring(2),
+  //   })
+
+  //   // 2. Создаем инстанс списка провайдеров OAuthList
+  //   const oAuthList = new VKID.OAuthList()
+
+  //   if (vkContainerRef.current) {
+  //     // Очищаем контейнер перед рендером для предотвращения дублирования при горячей перезагрузке (HMR)
+  //     vkContainerRef.current.innerHTML = ''
+
+  //     oAuthList
+  //       .render({
+  //         container: vkContainerRef.current,
+  //         styles: {
+  //           borderRadius: 8,
+  //           height: 44,
+  //         },
+  //         // Передаем точные строковые ключи для карты иконок
+  //         oauthList: ['vkid', 'mail_ru', 'ok_ru'],
+  //       })
+  //       .on(VKID.WidgetEvents.ERROR, (error) => {
+  //         console.error('Ошибка виджета VK ID SDK:', error)
+  //         message.error(
+  //           'Не удалось загрузить виджет авторизации соцсетей',
+  //         )
+  //       })
+  //       // Перехватываем успешную авторизацию (для любой из трех выбранных соцсетей!)
+  //       .on(
+  //         VKID.OAuthListInternalEvents.LOGIN_SUCCESS,
+  //         async (payload) => {
+  //           const { code, device_id } = payload
+
+  //           // Автоматически запрашиваем code_verifier из внутреннего стейта самого SDK
+  //           const codeVerifier = VKID.Auth.getCodeVerifier?.() || ''
+
+  //           setLoading(true)
+  //           try {
+  //             // Безопасно отправляем code, deviceId и верификатор на бэкенд
+  //             await dispatch(
+  //               fetchVkWebsiteAuth({
+  //                 code,
+  //                 deviceId: device_id,
+  //                 codeVerifier,
+  //                 redirectUri: REDIRECT_URI,
+  //               }),
+  //             ).unwrap()
+
+  //             message.success('Успешный вход в систему!')
+  //           } catch (err) {
+  //             message.error(
+  //               err || 'Не удалось подтвердить вход в аккаунт',
+  //             )
+  //           } finally {
+  //             setLoading(false)
+  //           }
+  //         },
+  //       )
+  //   }
+  // }, [dispatch])
+
   useEffect(() => {
-    const CLIENT_ID =
-      Number(import.meta.env.VITE_VK_AUTH_APP_ID) || 54772667
-    const REDIRECT_URI = `${window.location.origin}/auth`
+  const CLIENT_ID =
+    Number(import.meta.env.VITE_VK_AUTH_APP_ID) || 54772667
+  const REDIRECT_URI = `${window.location.origin}/auth`
 
-    // 1. Инициализируем глобальный конфиг через импортированный модуль пакета
-    VKID.Config.set({
-      app: CLIENT_ID,
-      redirectUrl: REDIRECT_URI,
-      // responseMode: Callback сообщает SDK, что мы хотим перехватить код прямо в JS-сессии,
-      // это отключает конфликты жесткого редиректа страниц
-      responseMode: VKID.ConfigResponseMode.Callback,
-      state: Math.random().toString(16).substring(2),
-    })
+  // 1. Генерируем PKCE на фронте
+  const verifier = generateCodeVerifier()
+  const challenge = generateCodeChallenge(verifier) // SHA256 → base64url
 
-    // 2. Создаем инстанс списка провайдеров OAuthList
-    const oAuthList = new VKID.OAuthList()
+  // 2. Криптостойкий state
+  const stateArray = new Uint32Array(8)
+  window.crypto.getRandomValues(stateArray)
+  const state = Array.from(stateArray, (dec) => dec.toString(16)).join('')
 
-    if (vkContainerRef.current) {
-      // Очищаем контейнер перед рендером для предотвращения дублирования при горячей перезагрузке (HMR)
-      vkContainerRef.current.innerHTML = ''
+  // 3. Сохраняем verifier — отправим на бэкенд после авторизации
+  sessionStorage.setItem('vk_code_verifier', verifier)
+  sessionStorage.setItem('vk_auth_state', state)
 
-      oAuthList
-        .render({
-          container: vkContainerRef.current,
-          styles: {
-            borderRadius: 8,
-            height: 44,
-          },
-          // Передаем точные строковые ключи для карты иконок
-          oauthList: ['vkid', 'mail_ru', 'ok_ru'],
-        })
-        .on(VKID.WidgetEvents.ERROR, (error) => {
-          console.error('Ошибка виджета VK ID SDK:', error)
-          message.error(
-            'Не удалось загрузить виджет авторизации соцсетей',
-          )
-        })
-        // Перехватываем успешную авторизацию (для любой из трех выбранных соцсетей!)
-        .on(
-          VKID.OAuthListInternalEvents.LOGIN_SUCCESS,
-          async (payload) => {
-            const { code, device_id } = payload
+  // 4. Config.init (НЕ set), передаём codeChallenge (НЕ codeVerifier)
+  VKID.Config.init({
+    app: CLIENT_ID,
+    redirectUrl: REDIRECT_URI,
+    responseMode: VKID.ConfigResponseMode.Callback,
+    state,
+    codeChallenge: challenge,
+    scope: 'email phone',
+  })
 
-            // Автоматически запрашиваем code_verifier из внутреннего стейта самого SDK
-            const codeVerifier = VKID.Auth.getCodeVerifier?.() || ''
+  // 5. Рендер виджета
+  const oAuthList = new VKID.OAuthList()
 
-            setLoading(true)
-            try {
-              // Безопасно отправляем code, deviceId и верификатор на бэкенд
-              await dispatch(
-                fetchVkWebsiteAuth({
-                  code,
-                  deviceId: device_id,
-                  codeVerifier,
-                  redirectUri: REDIRECT_URI,
-                }),
-              ).unwrap()
+  if (vkContainerRef.current) {
+    vkContainerRef.current.innerHTML = ''
 
-              message.success('Успешный вход в систему!')
-            } catch (err) {
-              message.error(
-                err || 'Не удалось подтвердить вход в аккаунт',
-              )
-            } finally {
-              setLoading(false)
-            }
-          },
-        )
-    }
-  }, [dispatch])
+    oAuthList
+      .render({
+        container: vkContainerRef.current,
+        styles: { borderRadius: 8, height: 44 },
+        oauthList: ['vkid', 'mail_ru', 'ok_ru'],
+      })
+      .on(VKID.WidgetEvents.ERROR, (error) => {
+        console.error('Ошибка виджета VK ID SDK:', error)
+        message.error('Не удалось загрузить виджет авторизации соцсетей')
+      })
+      .on(
+        VKID.OAuthListInternalEvents.LOGIN_SUCCESS,
+        async (payload) => {
+          const { code, device_id, state: returnedState } = payload
 
+          // Проверка state — защита от CSRF
+          const savedState = sessionStorage.getItem('vk_auth_state')
+          if (returnedState !== savedState) {
+            message.error('Ошибка безопасности: state не совпадает')
+            return
+          }
+
+          const codeVerifier = sessionStorage.getItem('vk_code_verifier')
+          if (!codeVerifier) {
+            message.error('Утрачен код верификации, попробуйте снова')
+            return
+          }
+
+          setLoading(true)
+          try {
+            await dispatch(
+              fetchVkWebsiteAuth({
+                code,
+                deviceId: device_id,
+                codeVerifier,
+                state: returnedState,
+                redirectUri: REDIRECT_URI,
+              }),
+            ).unwrap()
+
+            // Очищаем одноразовые PKCE-данные
+            sessionStorage.removeItem('vk_code_verifier')
+            sessionStorage.removeItem('vk_auth_state')
+
+            message.success('Успешный вход в систему!')
+          } catch (err) {
+            message.error(err || 'Не удалось подтвердить вход в аккаунт')
+          } finally {
+            setLoading(false)
+          }
+        },
+      )
+  }
+}, [dispatch])
   return (
     <div className="page_form">
       <h3 className={styles.heading}>Авторизоваться</h3>
