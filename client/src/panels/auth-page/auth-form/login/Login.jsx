@@ -71,7 +71,7 @@ const Login = ({ showRegister }) => {
       return
     }
 
-    const VK_APP_ID = import.meta.env.VITE_VK_APP_ID || '54762318'
+    const VK_APP_ID = '54772667'
     // ⚠️ Без хеша — чистый путь
     const REDIRECT_URI = window.location.origin + '/auth'
 
