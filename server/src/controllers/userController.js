@@ -291,84 +291,205 @@ const updateProfile = async (req, res) => {
 }
 
 // авторизация через сайт и кнопку Вкотакте
+// const vkWebsiteAuth = async (req, res) => {
+//   try {
+//     const { code, codeVerifier, redirectUri } = req.body
+
+//     if (!code || !codeVerifier) {
+//       return res.status(400).json({
+//         success: false,
+//         message: 'Не переданы параметры PKCE',
+//       })
+//     }
+
+//     // 1. 📌 ОБМЕН КОДА НА ТОКЕН (id.vk.ru/oauth2/auth)
+//     const vkTokenUrl = 'https://id.vk.ru/oauth2/auth'
+//     const tokenParams = new URLSearchParams({
+//       grant_type: 'authorization_code',
+//       client_id: process.env.VK_APP_ID,
+//       client_secret: process.env.VK_SECRET_KEY,
+//       redirect_uri: redirectUri,
+//       code: code,
+//       code_verifier: codeVerifier,
+//     })
+
+//     const tokenResponse = await fetch(vkTokenUrl, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/x-www-form-urlencoded',
+//       },
+//       body: tokenParams,
+//     })
+//     const tokenData = await tokenResponse.json()
+
+//     if (tokenData.error) {
+//       console.error(
+//         'Ошибка обмена кода в новом VK ID:',
+//         tokenData.error_description,
+//       )
+//       return res.status(401).json({
+//         success: false,
+//         message: 'Сессия авторизации VK ID не подтверждена',
+//       })
+//     }
+
+//     // Из ответа забираем access_token
+//     const { access_token } = tokenData
+
+//     // 2. 📌 ПОЛУЧЕНИЕ ДАННЫХ ПОЛЬЗОВАТЕЛЯ (id.vk.ru/oauth2/user_info)
+//     const vkUserUrl = 'https://id.vk.ru/oauth2/user_info'
+//     const userParams = new URLSearchParams({
+//       client_id: process.env.VK_APP_ID,
+//     })
+
+//     const userResponse = await fetch(vkUserUrl, {
+//       method: 'POST',
+//       headers: {
+//         Authorization: `Bearer ${access_token}`, // Передаем полученный токен в заголовке
+//         'Content-Type': 'application/x-www-form-urlencoded',
+//       },
+//       body: userParams,
+//     })
+//     const userData = await userResponse.json()
+
+//     // В новом VK ID профиль лежит внутри объекта user
+//     const vkUser = userData.user
+//     if (!vkUser) {
+//       return res.status(401).json({
+//         success: false,
+//         message: 'Не удалось получить современный профиль VK ID',
+//       })
+//     }
+
+//     // Парсим поля по новой структуре VK ID API
+//     const verifiedVkId = String(vkUser.user_id)
+//     const firstName = vkUser.first_name || ''
+//     const lastName = vkUser.last_name || ''
+//     const avatar = vkUser.avatar || '' // В новом API поле называется прямо avatar
+//     const email = vkUser.email || '' // Почта тоже лежит внутри объекта user
+
+//     // 3. ЛОГИКА MONGODB (Остается без изменений)
+//     let user = await User.findOne({ vkId: verifiedVkId })
+
+//     if (!user && email) {
+//       user = await User.findOne({ email: email.toLowerCase().trim() })
+//       if (user) {
+//         user.vkId = verifiedVkId
+//         if (!user.avatar) user.avatar = avatar
+//         await user.save()
+//       }
+//     }
+
+//     if (!user) {
+//       //  Сначала переводим имя в латиницу
+//       const latinFirstName = translit(firstName)
+//       // 2. Если имя корректное — берем его, если пустое — подставляем дефолтный латинский корень  и зачищаем от лишних символов
+//       const cleanFirstName =
+//         latinFirstName && latinFirstName.trim() !== ''
+//           ? latinFirstName.trim()
+//           : 'Speaker'
+
+//       const randomDigits = Math.floor(1000 + Math.random() * 9000)
+//       const generateNickname = `${cleanFirstName}#${randomDigits}`
+
+//       user = await User.create({
+//         displayName: generateNickname,
+//         firstName,
+//         lastName,
+//         avatar,
+//         vkId: verifiedVkId,
+//         email: email ? email.toLowerCase().trim() : undefined,
+//         authProvider: 'vk',
+//         registeredFrom: 'id_vk_ru_oauth', // Новый маркер
+//         socialProfilesData: { vk: { firstName, lastName, avatar } },
+//       })
+//     }
+
+//     // 4. СЕССИЯ: Ставим куку
+//     createToken(res, user._id)
+
+//     const websiteUserResponse = user.toObject()
+//     delete websiteUserResponse.password
+
+//     return res
+//       .status(200)
+//       .json({
+//         success: true,
+//         isGuest: false,
+//         user: websiteUserResponse,
+//       })
+//   } catch (error) {
+//     console.error(
+//       'Ошибка в актуальном vkWebsiteAuth (id.vk.ru):',
+//       error,
+//     )
+//     return res.status(500).json({
+//       success: false,
+//       message: 'Ошибка сервера при интеграции с id.vk.ru',
+//     })
+//   }
+// }
+
 const vkWebsiteAuth = async (req, res) => {
   try {
-    const { code, codeVerifier, redirectUri } = req.body
+    const { code, deviceId, redirectUri } = req.body
 
-    if (!code || !codeVerifier) {
-      return res.status(400).json({
-        success: false,
-        message: 'Не переданы параметры PKCE',
-      })
+    if (!code || !deviceId) {
+      return res.status(400).json({ success: false, message: 'Не переданы параметры авторизации VK ID SDK' })
     }
 
-    // 1. 📌 ОБМЕН КОДА НА ТОКЕН (id.vk.ru/oauth2/auth)
+    // 1. ОБМЕНЯТЬ КОД НА ACCESS_TOKEN (id.vk.ru/oauth2/auth)
     const vkTokenUrl = 'https://id.vk.ru/oauth2/auth'
     const tokenParams = new URLSearchParams({
       grant_type: 'authorization_code',
-      client_id: process.env.VK_APP_ID,
-      client_secret: process.env.VK_SECRET_KEY,
+      client_id: process.env.VK_AUTH_APP_ID || '54772667',
+      client_secret: process.env.VK_AUTH_SECRET_KEY, // Секрет от бизнес-панели
       redirect_uri: redirectUri,
       code: code,
-      code_verifier: codeVerifier,
+      device_id: deviceId // Передаем device_id, полученный от SDK
     })
 
-    const tokenResponse = await fetch(vkTokenUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: tokenParams,
+    const tokenResponse = await fetch(vkTokenUrl, { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: tokenParams 
     })
     const tokenData = await tokenResponse.json()
 
     if (tokenData.error) {
-      console.error(
-        'Ошибка обмена кода в новом VK ID:',
-        tokenData.error_description,
-      )
-      return res.status(401).json({
-        success: false,
-        message: 'Сессия авторизации VK ID не подтверждена',
-      })
+      console.error('Ошибка обмена кода в VK ID SDK:', tokenData.error_description)
+      return res.status(401).json({ success: false, message: 'Сессия VK ID не подтверждена сервером' })
     }
 
-    // Из ответа забираем access_token
     const { access_token } = tokenData
 
-    // 2. 📌 ПОЛУЧЕНИЕ ДАННЫХ ПОЛЬЗОВАТЕЛЯ (id.vk.ru/oauth2/user_info)
+    // 2. ЗАПРОС ПРОФИЛЯ ПОЛЬЗОВАТЕЛЯ (id.vk.ru/oauth2/user_info)
     const vkUserUrl = 'https://id.vk.ru/oauth2/user_info'
-    const userParams = new URLSearchParams({
-      client_id: process.env.VK_APP_ID,
-    })
+    const userParams = new URLSearchParams({ client_id: process.env.VK_AUTH_APP_ID })
 
     const userResponse = await fetch(vkUserUrl, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${access_token}`, // Передаем полученный токен в заголовке
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Bearer ${access_token}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: userParams,
+      body: userParams
     })
     const userData = await userResponse.json()
 
-    // В новом VK ID профиль лежит внутри объекта user
     const vkUser = userData.user
     if (!vkUser) {
-      return res.status(401).json({
-        success: false,
-        message: 'Не удалось получить современный профиль VK ID',
-      })
+      return res.status(401).json({ success: false, message: 'Не удалось извлечь данные профиля экосистемы' })
     }
 
-    // Парсим поля по новой структуре VK ID API
+    // Универсальный парсинг данных (работает для ВК, Одноклассников и Mail.ru!)
     const verifiedVkId = String(vkUser.user_id)
     const firstName = vkUser.first_name || ''
     const lastName = vkUser.last_name || ''
-    const avatar = vkUser.avatar || '' // В новом API поле называется прямо avatar
-    const email = vkUser.email || '' // Почта тоже лежит внутри объекта user
+    const avatar = vkUser.avatar || ''
+    const email = vkUser.email || ''
 
-    // 3. ЛОГИКА MONGODB (Остается без изменений)
+    // 3. СИНХРОНИЗАЦИЯ С MONGODB
     let user = await User.findOne({ vkId: verifiedVkId })
 
     if (!user && email) {
@@ -381,7 +502,7 @@ const vkWebsiteAuth = async (req, res) => {
     }
 
     if (!user) {
-      //  Сначала переводим имя в латиницу
+            //  Сначала переводим имя в латиницу
       const latinFirstName = translit(firstName)
       // 2. Если имя корректное — берем его, если пустое — подставляем дефолтный латинский корень  и зачищаем от лишних символов
       const cleanFirstName =
@@ -391,42 +512,36 @@ const vkWebsiteAuth = async (req, res) => {
 
       const randomDigits = Math.floor(1000 + Math.random() * 9000)
       const generateNickname = `${cleanFirstName}#${randomDigits}`
-
+      
+      // Определяем провайдера (ВК, ОК или Mail), чтобы записать правильный маркер
+      // Новый VK ID SDK возвращает внутренние признаки, но мы можем сохранить базовый 'vk_id_ecosystem'
       user = await User.create({
         displayName: generateNickname,
-        firstName,
-        lastName,
-        avatar,
+        firstName, lastName, avatar,
         vkId: verifiedVkId,
         email: email ? email.toLowerCase().trim() : undefined,
         authProvider: 'vk',
-        registeredFrom: 'id_vk_ru_oauth', // Новый маркер
-        socialProfilesData: { vk: { firstName, lastName, avatar } },
+        registeredFrom: 'vk_id_sdk', 
+        socialProfilesData: { vk: { firstName, lastName, avatar } }
       })
     }
 
-    // 4. СЕССИЯ: Ставим куку
+    // 4. СЕССИЯ: Высаживаем куку jwt-oratory
     createToken(res, user._id)
 
     const websiteUserResponse = user.toObject()
     delete websiteUserResponse.password
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        isGuest: false,
-        user: websiteUserResponse,
-      })
-  } catch (error) {
-    console.error(
-      'Ошибка в актуальном vkWebsiteAuth (id.vk.ru):',
-      error,
-    )
-    return res.status(500).json({
-      success: false,
-      message: 'Ошибка сервера при интеграции с id.vk.ru',
+    return res.status(200).json({
+      success: true,
+      isGuest: false,
+      user: websiteUserResponse,
+      message: 'Успешный кроссплатформенный вход!'
     })
+
+  } catch (error) {
+    console.error('Критическая ошибка vkWebsiteAuth через SDK:', error)
+    return res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера при обработке SDK' })
   }
 }
 

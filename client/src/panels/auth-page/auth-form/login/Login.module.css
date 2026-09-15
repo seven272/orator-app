@@ -65,53 +65,8 @@
   align-items: center;
 }
 
-/* Стили только для Register.module.css (Шкала пароля и Капча) */
-.strength_meter {
-  width: 100%;
-  margin-top: 6px;
-}
 
-.strength_bar {
-  height: 4px;
-  border-radius: 2px;
-  transition:
-    width 0.3s ease,
-    background-color 0.3s ease;
-}
 
-.strength_text {
-  font-size: 11px;
-  display: block;
-  margin-top: 4px;
-  font-weight: 500;
-}
-
-.captcha_cloud_container {
-  width: 100%;
-  margin: 15px 0;
-}
-
-.speech_bubble {
-  position: relative;
-  background: var(--color-bg-light);
-  border: 1px solid var(--color-grey-light);
-  border-radius: 8px;
-  padding: 10px 14px;
-  font: var(--font-s);
-  color: var(--color-text-secondary);
-}
-
-.speech_bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;
-  left: 20px;
-  border-width: 6px 6px 0;
-  border-style: solid;
-  border-color: var(--color-bg-light) transparent;
-  display: block;
-  width: 0;
-}
 /* ==========================================================================
    📌 ЭЛЕГАНТНЫЙ КОМПЛЕКС КНОПОК И ССЫЛОК (Взамен старых стилей .btn и .link)
    ========================================================================== */
@@ -203,91 +158,10 @@
   transform-origin: bottom left;
 }
 
-/* 🔵 Обновленная нативная кнопка ВКонтакте */
-/* 🔥 НОВАЯ ПРЕМИАЛЬНАЯ КНОПКА ВКОНТАКТЕ */
-.vk_premium_btn {
-  position: relative;
+.vk_buttons_container {
   width: 100%;
-  height: 44px;
-  border: none;
-  border-radius: 8px;
-  /* Используем глубокий, насыщенный бренд-градиент ВК */
-  background: linear-gradient(135deg, #2688eb 0%, #005bc1 100%);
-  color: var(--color-white);
-  font: var(--font-m);
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  overflow: hidden; /* Прячем вылетающий блик */
-
-  /* Фирменное неоновое свечение кнопки */
-  box-shadow:
-    0 4px 14px rgba(38, 136, 235, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-
-  transition:
-    transform 0.1s ease,
-    box-shadow 0.25s ease,
-    background 0.25s ease;
-}
-
-/* 📌 Эффект "живого" ховера */
-.vk_premium_btn:hover {
-  background: linear-gradient(135deg, #3795f7 0%, #0069dc 100%);
-  box-shadow:
-    0 6px 20px rgba(38, 136, 235, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px); /* Кнопка слегка приподнимается */
-}
-
-/* 📌 Тактильное сжатие при клике */
-.vk_premium_btn:active {
-  transform: translateY(1px) scale(0.98);
-  box-shadow: 0 2px 8px rgba(38, 136, 235, 0.2);
-}
-
-/* 🎯 Глянец-эффект (Бегущий блик при наведении) */
-.vk_glow_effect {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.25),
-    transparent
-  );
-  transform: skewX(-25deg); /* Наклоняем линию блика */
-  transition: none;
-}
-
-/* Анимация запуска блика при ховере */
-.vk_premium_btn:hover .vk_glow_effect {
-  left: 150%;
-  transition: left 0.75s ease-in-out;
-}
-
-/* 📌 Векторная иконка ВК */
-.vk_vector_icon {
-  font-size: 18px;
-  color: var(--color-white);
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* Микро-фишка: при наведении на кнопку иконка кокетливо покачивается */
-.vk_premium_btn:hover .vk_vector_icon {
-  transform: scale(1.15) rotate(-8deg);
-}
-
-.vk_btn_text {
-  position: relative;
-  z-index: 2;
-  letter-spacing: 0.2px;
+  min-height: 44px;
+  margin: 10px 0 10px 0;
 }
 
 /* Исправление отступов для инпутов, чтобы фокус работал красиво */
@@ -297,4 +171,8 @@
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
+}
+
+.divider_text {
+  color: var(--color-text-secondary);
 }
