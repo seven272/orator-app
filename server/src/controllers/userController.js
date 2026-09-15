@@ -147,6 +147,7 @@ const logout = async (req, res) => {
 
   return res.status(201).json({ message: 'Вы вышли из системы' })
 }
+
 //get me
 const getMe = async (req, res) => {
   try {
@@ -285,6 +286,146 @@ const updateProfile = async (req, res) => {
     console.error('Ошибка в контроллере updateProfile:', error)
     res.status(500).json({
       message: 'Ошибка сервера при обновлении профиля',
+    })
+  }
+}
+
+// авторизация через сайт и кнопку Вкотакте
+const vkWebsiteAuth = async (req, res) => {
+  try {
+    const { code, codeVerifier, redirectUri } = req.body
+
+    if (!code || !codeVerifier) {
+      return res.status(400).json({
+        success: false,
+        message: 'Не переданы параметры PKCE',
+      })
+    }
+
+    // 1. 📌 ОБМЕН КОДА НА ТОКЕН (id.vk.ru/oauth2/auth)
+    const vkTokenUrl = 'https://id.vk.ru/oauth2/auth'
+    const tokenParams = new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: process.env.VK_APP_ID,
+      client_secret: process.env.VK_SECRET_KEY,
+      redirect_uri: redirectUri,
+      code: code,
+      code_verifier: codeVerifier,
+    })
+
+    const tokenResponse = await fetch(vkTokenUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: tokenParams,
+    })
+    const tokenData = await tokenResponse.json()
+
+    if (tokenData.error) {
+      console.error(
+        'Ошибка обмена кода в новом VK ID:',
+        tokenData.error_description,
+      )
+      return res.status(401).json({
+        success: false,
+        message: 'Сессия авторизации VK ID не подтверждена',
+      })
+    }
+
+    // Из ответа забираем access_token
+    const { access_token } = tokenData
+
+    // 2. 📌 ПОЛУЧЕНИЕ ДАННЫХ ПОЛЬЗОВАТЕЛЯ (id.vk.ru/oauth2/user_info)
+    const vkUserUrl = 'https://id.vk.ru/oauth2/user_info'
+    const userParams = new URLSearchParams({
+      client_id: process.env.VK_APP_ID,
+    })
+
+    const userResponse = await fetch(vkUserUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${access_token}`, // Передаем полученный токен в заголовке
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: userParams,
+    })
+    const userData = await userResponse.json()
+
+    // В новом VK ID профиль лежит внутри объекта user
+    const vkUser = userData.user
+    if (!vkUser) {
+      return res.status(401).json({
+        success: false,
+        message: 'Не удалось получить современный профиль VK ID',
+      })
+    }
+
+    // Парсим поля по новой структуре VK ID API
+    const verifiedVkId = String(vkUser.user_id)
+    const firstName = vkUser.first_name || ''
+    const lastName = vkUser.last_name || ''
+    const avatar = vkUser.avatar || '' // В новом API поле называется прямо avatar
+    const email = vkUser.email || '' // Почта тоже лежит внутри объекта user
+
+    // 3. ЛОГИКА MONGODB (Остается без изменений)
+    let user = await User.findOne({ vkId: verifiedVkId })
+
+    if (!user && email) {
+      user = await User.findOne({ email: email.toLowerCase().trim() })
+      if (user) {
+        user.vkId = verifiedVkId
+        if (!user.avatar) user.avatar = avatar
+        await user.save()
+      }
+    }
+
+    if (!user) {
+      //  Сначала переводим имя в латиницу
+      const latinFirstName = translit(firstName)
+      // 2. Если имя корректное — берем его, если пустое — подставляем дефолтный латинский корень  и зачищаем от лишних символов
+      const cleanFirstName =
+        latinFirstName && latinFirstName.trim() !== ''
+          ? latinFirstName.trim()
+          : 'Speaker'
+
+      const randomDigits = Math.floor(1000 + Math.random() * 9000)
+      const generateNickname = `${cleanFirstName}#${randomDigits}`
+
+      user = await User.create({
+        displayName: generateNickname,
+        firstName,
+        lastName,
+        avatar,
+        vkId: verifiedVkId,
+        email: email ? email.toLowerCase().trim() : undefined,
+        authProvider: 'vk',
+        registeredFrom: 'id_vk_ru_oauth', // Новый маркер
+        socialProfilesData: { vk: { firstName, lastName, avatar } },
+      })
+    }
+
+    // 4. СЕССИЯ: Ставим куку
+    createToken(res, user._id)
+
+    const websiteUserResponse = user.toObject()
+    delete websiteUserResponse.password
+
+    return res
+      .status(200)
+      .json({
+        success: true,
+        isGuest: false,
+        user: websiteUserResponse,
+      })
+  } catch (error) {
+    console.error(
+      'Ошибка в актуальном vkWebsiteAuth (id.vk.ru):',
+      error,
+    )
+    return res.status(500).json({
+      success: false,
+      message: 'Ошибка сервера при интеграции с id.vk.ru',
     })
   }
 }
@@ -557,40 +698,54 @@ const linkVkToEmailAccount = async (req, res) => {
 }
 
 // 3️⃣ Финальное слияние аккаунтов (Подход Поглощения) — ПОЛНАЯ РЕАЛИЗАЦИЯ
- const mergeAccounts = async (req, res) => {
+const mergeAccounts = async (req, res) => {
   try {
     const { targetUserId, chosenPlatform, password } = req.body
-    const currentUser = req.user 
+    const currentUser = req.user
 
     if (!currentUser) {
-      return res.status(401).json({ success: false, message: 'Пользователь не авторизован' })
+      return res.status(401).json({
+        success: false,
+        message: 'Пользователь не авторизован',
+      })
     }
 
     if (!targetUserId || !chosenPlatform || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Не переданы обязательные параметры слияния (требуется пароль)',
+        message:
+          'Не переданы обязательные параметры слияния (требуется пароль)',
       })
     }
 
     const targetUser = await User.findById(targetUserId)
 
     if (!targetUser) {
-      return res.status(404).json({ success: false, message: 'Конфликтующий аккаунт не найден' })
+      return res.status(404).json({
+        success: false,
+        message: 'Конфликтующий аккаунт не найден',
+      })
     }
 
     if (String(currentUser._id) === String(targetUser._id)) {
-      return res.status(400).json({ success: false, message: 'Невозможно объединить один и тот же аккаунт' })
+      return res.status(400).json({
+        success: false,
+        message: 'Невозможно объединить один и тот же аккаунт',
+      })
     }
 
     if (!targetUser.password) {
       return res.status(400).json({
         success: false,
-        message: 'Для целевого аккаунта не установлен пароль. Слияние заблокировано.',
+        message:
+          'Для целевого аккаунта не установлен пароль. Слияние заблокировано.',
       })
     }
 
-    const isPasswordValid = bcrypt.compareSync(password, targetUser.password)
+    const isPasswordValid = bcrypt.compareSync(
+      password,
+      targetUser.password,
+    )
     if (!isPasswordValid) {
       return res.status(403).json({
         success: false,
@@ -616,14 +771,16 @@ const linkVkToEmailAccount = async (req, res) => {
       // 3. Переносим освобожденные данные в наш текущий сессионный документ ВК
       if (!currentUser.vkId && targetUser.vkId) {
         currentUser.vkId = targetUser.vkId
-        currentUser.socialProfilesData.vk = targetUser.socialProfilesData.vk
+        currentUser.socialProfilesData.vk =
+          targetUser.socialProfilesData.vk
       }
-      
+
       if (!currentUser.email && emailToMove) {
         currentUser.email = emailToMove
         currentUser.password = passwordToMove
-        
-        if (!currentUser.socialProfilesData) currentUser.socialProfilesData = {}
+
+        if (!currentUser.socialProfilesData)
+          currentUser.socialProfilesData = {}
         currentUser.socialProfilesData.google = googleSocialData
       }
 
@@ -645,7 +802,8 @@ const linkVkToEmailAccount = async (req, res) => {
       // 2. Безопасно накатываем привязки на старый аккаунт Сайта
       if (vkIdToMove) {
         targetUser.vkId = vkIdToMove
-        if (!targetUser.socialProfilesData) targetUser.socialProfilesData = {}
+        if (!targetUser.socialProfilesData)
+          targetUser.socialProfilesData = {}
         targetUser.socialProfilesData.vk = vkSocialData
       }
 
@@ -661,7 +819,10 @@ const linkVkToEmailAccount = async (req, res) => {
       // 4. Перевыпускаем куку авторизации на ID восстановленного аккаунта
       createToken(res, targetUser._id, null)
     } else {
-      return res.status(400).json({ success: false, message: 'Неверно указана целевая платформа' })
+      return res.status(400).json({
+        success: false,
+        message: 'Неверно указана целевая платформа',
+      })
     }
 
     const userResponse = finalUser.toObject()
@@ -674,7 +835,10 @@ const linkVkToEmailAccount = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка в контроллере mergeAccounts:', error)
-    return res.status(500).json({ success: false, message: 'Ошибка сервера при слиянии аккаунтов' })
+    return res.status(500).json({
+      success: false,
+      message: 'Ошибка сервера при слиянии аккаунтов',
+    })
   }
 }
 
@@ -838,6 +1002,7 @@ export {
   logout,
   getMe,
   updateProfile,
+  vkWebsiteAuth,
   vkAuth,
   vkRegister,
   linkEmailToVkAccount,

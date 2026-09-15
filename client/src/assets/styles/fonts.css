@@ -108,7 +108,7 @@
 
 @font-face {
   font-family: 'Onest-Thin';
-  src: url('Onest-Thin.woff2') format('woff2');
+  src: url('../fonts/Onest-Thin.woff2') format('woff2');
   font-weight: 100;
   font-style: normal;
   font-display: swap;

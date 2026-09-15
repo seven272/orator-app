@@ -6,6 +6,7 @@ import {
   getMe,
   getUserProfile,
   updateProfile,
+  vkWebsiteAuth,
   vkAuth,
   vkRegister,
   linkEmailToVkAccount,
@@ -45,6 +46,7 @@ router.post('/logout', logout)
 router.get('/me', optionalAuth, getMe)
 router.get('/get-data-profile', checkAuth, getUserProfile)
 router.put('/update-profile', checkAuth, updateProfile)
+router.post('/vk-website-auth', vkWebsiteAuth)
 router.post('/vk-auth', verifyVkSignature, vkAuth)
 router.post('/vk-register', verifyVkSignature, vkRegister)
 router.post('/link-email', checkAuth, linkEmailToVkAccount)

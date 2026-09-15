@@ -18,7 +18,7 @@ const AuthForm = () => {
   }, [closeForm, navigate])
 
   return (
-    <div className={styles.section}>
+    <div className={styles.form}>
       <IoMdClose
         size={30}
         className={styles.icon_close}

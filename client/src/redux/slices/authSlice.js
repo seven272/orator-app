@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import bridge from '@vkontakte/vk-bridge' 
+import bridge from '@vkontakte/vk-bridge'
 
 import axiosInstance from '../../utils/axiosInstance'
 import { fetchActivateFakePremium } from './profileSlice'
@@ -194,12 +194,32 @@ const fetchMergeAccounts = createAsyncThunk(
       const res = await axiosInstance.post(
         '/user/merge-accounts',
         mergeData,
-      ) 
+      )
       return res.data
     } catch (error) {
       const errorMsg =
         error.response?.data?.message ||
         'Ошибка при объединении аккаунтов'
+      return rejectWithValue(errorMsg)
+    }
+  },
+)
+
+// Авторизация на сайте через ВК
+const fetchVkWebsiteAuth = createAsyncThunk(
+  'auth/fetchVkWebsiteAuth',
+  async (oauthData, { rejectWithValue }) => {
+    try {
+      // oauthData содержит { accessToken, vkUserId, email }
+      const res = await axiosInstance.post(
+        '/user/vk-website-auth',
+        oauthData,
+      )
+      return res.data // Бэкенд вернет { success, isGuest: false, user }
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.message ||
+        'Ошибка OAuth авторизации через ВК'
       return rejectWithValue(errorMsg)
     }
   },
@@ -443,6 +463,24 @@ const authSlice = createSlice({
           }
         },
       )
+      // ==========================================
+      // 11. АВТОРИЗАЦИЯ НА САЙТЕ ЧЕРЕЗ ВК
+      // ==========================================
+      .addCase(fetchVkWebsiteAuth.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(fetchVkWebsiteAuth.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.user = action.payload?.user
+        state.isAdmin = action.payload?.user?.isAdmin || false
+        state.isVkGuest = false // На сайте всегда создается полноценный аккаунт
+        state.error = null
+      })
+      .addCase(fetchVkWebsiteAuth.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload
+      })
   },
 })
 const checkIsAuth = (state) => Boolean(state.auth.user)
@@ -460,6 +498,7 @@ export {
   fetchLinkEmail,
   fetchMergeAccounts,
   fetchUpdateProfile,
+  fetchVkWebsiteAuth,
   checkIsAuth,
   checkIsVkGuest,
 }

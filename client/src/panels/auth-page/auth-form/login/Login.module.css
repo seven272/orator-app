@@ -1,79 +1,300 @@
-.heading {
-  color: var(--color-bg-dark);
-  font: var(--font-menu);
-  margin-bottom: 15px;
-  text-align: center;
+/* Общие стили нативных инпутов для ОБОИХ файлов */
+.input_group {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
 }
 
-.btn {
-  background-color: var(--color-primary);
-  font: var(--font-m);
+.input_wrapper {
+  width: 100%;
+  max-width: 100%;
   height: 40px;
+  border: 1px solid var(--color-bg-dark);
   border-radius: 6px;
-}
-
-.link {
-  color: var(--color-text-secondary);
-  font: var(--font-m);
-  margin-top: 10px;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-.link:hover {
-  color: var(--color-primary) !important;
-}
-
-/* Разделитель */
-.divider {
-  width: 100%;
-  text-align: center;
-  position: relative;
-  margin: 10px 0;
-}
-
-.divider::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 100%;
-  height: 1px;
-  background-color: var(--color-bg-light);
-  z-index: 1;
-}
-
-.divider_text {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  box-sizing: border-box;
   background-color: var(--color-white);
-  padding: 0 10px;
+  gap: 10px;
+}
+
+.input_invalid {
+  border-color: var(--color-red) !important;
+}
+
+.input_icon {
+  color: var(--color-grey);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.native_input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font: var(--font-m);
+  color: var(--color-text-dark);
+  background: transparent;
+}
+
+.eye_btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-grey);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.error_text {
+  font-size: 11px;
+  color: var(--color-red);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.action_flex {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Стили только для Register.module.css (Шкала пароля и Капча) */
+.strength_meter {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.strength_bar {
+  height: 4px;
+  border-radius: 2px;
+  transition:
+    width 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.strength_text {
+  font-size: 11px;
+  display: block;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.captcha_cloud_container {
+  width: 100%;
+  margin: 15px 0;
+}
+
+.speech_bubble {
   position: relative;
-  z-index: 2;
+  background: var(--color-bg-light);
+  border: 1px solid var(--color-grey-light);
+  border-radius: 8px;
+  padding: 10px 14px;
   font: var(--font-s);
   color: var(--color-text-secondary);
 }
 
-/* Нативная кнопка ВКонтакте в змеином регистре */
-.vk_login_btn {
+.speech_bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 20px;
+  border-width: 6px 6px 0;
+  border-style: solid;
+  border-color: var(--color-bg-light) transparent;
+  display: block;
+  width: 0;
+}
+/* ==========================================================================
+   📌 ЭЛЕГАНТНЫЙ КОМПЛЕКС КНОПОК И ССЫЛОК (Взамен старых стилей .btn и .link)
+   ========================================================================== */
+
+/* Название формы / Хединг */
+.heading {
+  color: var(--color-bg-dark);
+  font: var(--font-menu);
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+/* 🚀 Главная кнопка отправки (Войти / Отправить) */
+.btn {
   width: 100%;
-  height: 40px;
-  border: none;
-  border-radius: 6px;
-  background-color: var(--color-blue-vk);
+  height: 44px; /* Увеличили до 44px — золотой стандарт мобильного UX для пальца */
+  background-color: var(--color-primary);
   color: var(--color-white);
   font: var(--font-m);
-  font-weight: 500;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px; /* Чуть мягче скругление */
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: opacity 0.3s ease;
+  transition:
+    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.1s ease,
+    box-shadow 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 122, 255, 0.15);
 }
 
-.vk_login_btn:hover {
-  opacity: 0.9;
+/* Ховер: делаем цвет глубже и благороднее, а не просто прозрачным */
+.btn:hover:not(:disabled) {
+  background-color: var(--color-blue-dark);
+  box-shadow: 0 4px 12px rgba(0, 91, 193, 0.25);
 }
 
-.vk_icon {
-  font-size: 16px;
+/* Тактильный отклик при нажатии на смартфоне/мыши */
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Состояние загрузки или блокировки */
+.btn:disabled {
+  background-color: var(--color-grey-light);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* 🔗 Элегантная текстовая ссылка (Регистрация! / Авторизация!) */
+.link {
+  color: var(--color-text-secondary);
+  font: var(--font-m);
+  font-weight: 500;
+  margin-top: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+/* Ховер ссылки: аккуратное окрашивание в бренд-цвет */
+.link:hover {
+  color: var(--color-primary);
+}
+
+/* Современный микро-эффект: появление тонкой линии под ссылкой при ховере */
+.link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1.5px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--color-primary);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.link:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* 🔵 Обновленная нативная кнопка ВКонтакте */
+/* 🔥 НОВАЯ ПРЕМИАЛЬНАЯ КНОПКА ВКОНТАКТЕ */
+.vk_premium_btn {
+  position: relative;
+  width: 100%;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  /* Используем глубокий, насыщенный бренд-градиент ВК */
+  background: linear-gradient(135deg, #2688eb 0%, #005bc1 100%);
+  color: var(--color-white);
+  font: var(--font-m);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  overflow: hidden; /* Прячем вылетающий блик */
+
+  /* Фирменное неоновое свечение кнопки */
+  box-shadow:
+    0 4px 14px rgba(38, 136, 235, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+/* 📌 Эффект "живого" ховера */
+.vk_premium_btn:hover {
+  background: linear-gradient(135deg, #3795f7 0%, #0069dc 100%);
+  box-shadow:
+    0 6px 20px rgba(38, 136, 235, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px); /* Кнопка слегка приподнимается */
+}
+
+/* 📌 Тактильное сжатие при клике */
+.vk_premium_btn:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 8px rgba(38, 136, 235, 0.2);
+}
+
+/* 🎯 Глянец-эффект (Бегущий блик при наведении) */
+.vk_glow_effect {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transform: skewX(-25deg); /* Наклоняем линию блика */
+  transition: none;
+}
+
+/* Анимация запуска блика при ховере */
+.vk_premium_btn:hover .vk_glow_effect {
+  left: 150%;
+  transition: left 0.75s ease-in-out;
+}
+
+/* 📌 Векторная иконка ВК */
+.vk_vector_icon {
+  font-size: 18px;
+  color: var(--color-white);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Микро-фишка: при наведении на кнопку иконка кокетливо покачивается */
+.vk_premium_btn:hover .vk_vector_icon {
+  transform: scale(1.15) rotate(-8deg);
+}
+
+.vk_btn_text {
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.2px;
+}
+
+/* Исправление отступов для инпутов, чтобы фокус работал красиво */
+.input_wrapper:focus-within {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
