@@ -212,70 +212,85 @@ const Login = ({ showRegister }) => {
       })
 
       // 5. Рендер виджета
-  // 5. Рендер виджета
-    const oAuthList = new VKID.OAuthList()
+      // 5. Рендер виджета
+      const oAuthList = new VKID.OAuthList()
 
-    if (vkContainerRef.current) {
-      vkContainerRef.current.innerHTML = ''
+      if (vkContainerRef.current) {
+        vkContainerRef.current.innerHTML = ''
 
-      // 🔥 ИСПРАВЛЕНИЕ: Даем React завершить отрисовку DOM, прежде чем VK ID начнет внедрять свои iframe-хуки
-      setTimeout(() => {
-        // Проверяем, что контейнер все еще существует на экране (пользователь не ушел на другую страницу)
-        if (!vkContainerRef.current) return
+        // 🔥 ИСПРАВЛЕНИЕ: Даем React завершить отрисовку DOM, прежде чем VK ID начнет внедрять свои iframe-хуки
+        setTimeout(() => {
+          // Проверяем, что контейнер все еще существует на экране (пользователь не ушел на другую страницу)
+          if (!vkContainerRef.current) return
 
-        oAuthList
-          .render({
-            container: vkContainerRef.current,
-            styles: { borderRadius: 8, height: 44 },
-            oauthList: ['vkid', 'mail_ru', 'ok_ru'],
-          })
-          .on(VKID.WidgetEvents.ERROR, (error) => {
-            console.error('Ошибка виджета VK ID SDK:', error)
-            message.error('Не удалось загрузить виджет авторизации соцсетей')
-          })
-          .on(VKID.OAuthListInternalEvents.LOGIN_SUCCESS, async (payload) => {
-            const { code, device_id, state: returnedState } = payload
-
-            const savedState = sessionStorage.getItem('vk_auth_state')
-            if (returnedState !== savedState) {
-              message.error('Ошибка безопасности: state не совпадает')
-              return
-            }
-
-            const codeVerifier = sessionStorage.getItem('vk_code_verifier')
-            if (!codeVerifier) {
-              message.error('Утрачен код верификации, попробуйте снова')
-              return
-            }
-
-            setLoading(true)
-            try {
-              await dispatch(
-                fetchVkWebsiteAuth({
+          oAuthList
+            .render({
+              container: vkContainerRef.current,
+              styles: { borderRadius: 8, height: 44 },
+              oauthList: ['vkid', 'mail_ru', 'ok_ru'],
+            })
+            .on(VKID.WidgetEvents.ERROR, (error) => {
+              console.error('Ошибка виджета VK ID SDK:', error)
+              message.error(
+                'Не удалось загрузить виджет авторизации соцсетей',
+              )
+            })
+            .on(
+              VKID.OAuthListInternalEvents.LOGIN_SUCCESS,
+              async (payload) => {
+                const {
                   code,
-                  deviceId: device_id,
-                  codeVerifier,
+                  device_id,
                   state: returnedState,
-                  redirectUri: REDIRECT_URI,
-                }),
-              ).unwrap()
+                } = payload
 
-              sessionStorage.removeItem('vk_code_verifier')
-              sessionStorage.removeItem('vk_auth_state')
-              message.success('Успешный вход в систему!')
-            } catch (err) {
-              message.error(err || 'Не удалось подтвердить вход в аккаунт')
-            } finally {
-              setLoading(false)
-            }
-          })
-      }, 50) // Микро-задержка в 50мс полностью разгружает цикл рендеринга
+                const savedState =
+                  sessionStorage.getItem('vk_auth_state')
+                if (returnedState !== savedState) {
+                  message.error(
+                    'Ошибка безопасности: state не совпадает',
+                  )
+                  return
+                }
+
+                const codeVerifier = sessionStorage.getItem(
+                  'vk_code_verifier',
+                )
+                if (!codeVerifier) {
+                  message.error(
+                    'Утрачен код верификации, попробуйте снова',
+                  )
+                  return
+                }
+
+                setLoading(true)
+                try {
+                  await dispatch(
+                    fetchVkWebsiteAuth({
+                      code,
+                      deviceId: device_id,
+                      codeVerifier,
+                      state: returnedState,
+                      redirectUri: REDIRECT_URI,
+                    }),
+                  ).unwrap()
+
+                  sessionStorage.removeItem('vk_code_verifier')
+                  sessionStorage.removeItem('vk_auth_state')
+                  message.success('Успешный вход в систему!')
+                } catch (err) {
+                  message.error(
+                    err || 'Не удалось подтвердить вход в аккаунт',
+                  )
+                } finally {
+                  setLoading(false)
+                }
+              },
+            )
+        }, 50) // Микро-задержка в 50мс полностью разгружает цикл рендеринга
+      }
     }
-
-
-
-      initializeVkSdk()
-    }
+    initializeVkSdk()
   }, [dispatch])
 
   return (
