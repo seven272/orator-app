@@ -101,6 +101,11 @@ const Login = ({ showRegister }) => {
       // 5. Рендер виджета
       const oneTapButton = new VKID.OneTap()
 
+      // 👇 ВСТАВИТЬ СЮДА 👇
+    console.log('VKID keys:', Object.keys(VKID))
+    console.log('OneTapInternalEvents:', VKID.OneTapInternalEvents)
+    // 👆 ВСТАВИТЬ СЮДА 👆
+
       if (vkContainerRef.current) {
         vkContainerRef.current.innerHTML = ''
 
@@ -121,9 +126,10 @@ const Login = ({ showRegister }) => {
             })
             .on(VKID.WidgetEvents.ERROR, (error) => {
               console.error('Ошибка виджета VK ID One Tap:', error)
+
             })
             .on(
-              VKID.OAuthListInternalEvents.LOGIN_SUCCESS,
+              VKID.OneTapInternalEvents.LOGIN_SUCCESS,
               async (payload) => {
                 const {
                   code,
@@ -161,6 +167,7 @@ const Login = ({ showRegister }) => {
                       redirectUri: REDIRECT_URI,
                     }),
                   ).unwrap()
+
 
                   sessionStorage.removeItem('vk_code_verifier')
                   sessionStorage.removeItem('vk_auth_state')
