@@ -110,21 +110,24 @@ const Login = ({ showRegister }) => {
   // }
   useEffect(() => {
     const CLIENT_ID =
-    Number(import.meta.env.VITE_VK_AUTH_APP_ID=54772667) || 54772667
+      Number(import.meta.env.VITE_VK_AUTH_APP_ID) || 54772667
     const REDIRECT_URI = `${window.location.origin}/auth`
 
-    // 1. Конфигурируем базовые параметры приложения
+    // 1. Инициализируем глобальный конфиг через импортированный модуль пакета
     VKID.Config.set({
       app: CLIENT_ID,
       redirectUrl: REDIRECT_URI,
+      // responseMode: Callback сообщает SDK, что мы хотим перехватить код прямо в JS-сессии,
+      // это отключает конфликты жесткого редиректа страниц
+      responseMode: VKID.ConfigResponseMode.Callback,
       state: Math.random().toString(16).substring(2),
     })
 
-    // 2. Создаем инстанс списка провайдеров OAuthList из npm-пакета
+    // 2. Создаем инстанс списка провайдеров OAuthList
     const oAuthList = new VKID.OAuthList()
 
     if (vkContainerRef.current) {
-      // Очищаем контейнер перед рендером, чтобы избежать дублирования кнопок при hot-reload
+      // Очищаем контейнер перед рендером для предотвращения дублирования при горячей перезагрузке (HMR)
       vkContainerRef.current.innerHTML = ''
 
       oAuthList
@@ -132,10 +135,9 @@ const Login = ({ showRegister }) => {
           container: vkContainerRef.current,
           styles: {
             borderRadius: 8,
-            height: 44, // Наш стандарт 44px под мобильный палец
+            height: 44,
           },
-          // 📌 Набор кнопок: ВКонтакте, Mail.ru и Одноклассники
-
+          // Передаем точные строковые ключи для карты иконок
           oauthList: ['vkid', 'mail_ru', 'ok_ru'],
         })
         .on(VKID.WidgetEvents.ERROR, (error) => {
@@ -144,19 +146,23 @@ const Login = ({ showRegister }) => {
             'Не удалось загрузить виджет авторизации соцсетей',
           )
         })
-        // ⚡ Перехватываем успешную авторизацию (для любой из трех выбранных соцсетей!)
+        // Перехватываем успешную авторизацию (для любой из трех выбранных соцсетей!)
         .on(
           VKID.OAuthListInternalEvents.LOGIN_SUCCESS,
           async (payload) => {
             const { code, device_id } = payload
 
+            // Автоматически запрашиваем code_verifier из внутреннего стейта самого SDK
+            const codeVerifier = VKID.Auth.getCodeVerifier?.() || ''
+
             setLoading(true)
             try {
-              // Безопасно отправляем code и deviceId на бэкенд для обмена на сервере
+              // Безопасно отправляем code, deviceId и верификатор на бэкенд
               await dispatch(
                 fetchVkWebsiteAuth({
                   code,
                   deviceId: device_id,
+                  codeVerifier,
                   redirectUri: REDIRECT_URI,
                 }),
               ).unwrap()
@@ -231,8 +237,6 @@ const Login = ({ showRegister }) => {
             {loading ? 'Вход...' : 'Войти'}
           </button>
 
-          
-
           {/* <button
             type="button"
             className={styles.vk_premium_btn}
@@ -247,7 +251,6 @@ const Login = ({ showRegister }) => {
 
           <div
             ref={vkContainerRef}
-            
             className={styles.vk_buttons_container}
           ></div>
 
