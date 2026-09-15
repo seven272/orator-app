@@ -20,10 +20,10 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--color-bg-light);
-  gap: 16px;
-  flex-wrap: wrap; /* Позволяет форме падать на новую строку, если она открыта */
+  padding: 10px 0;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 12px; /* Фиксированный контролируемый зазор между элементами */
 }
 
 /* 📌 Заголовок строки привязки */
@@ -31,7 +31,8 @@
   font: var(--font-m);
   color: var(--color-text-dark);
   line-height: 1.4;
-  flex: 1 1 250px; /* Занимает максимум места, но на узких экранах складывается */
+  flex: 1; /* Позволяет тексту занимать все свободное место на ПК */
+  white-space: normal;
 }
 
 /* 📌 Сама инлайн-форма теперь занимает 100% ширины и встает четко ПОД заголовком */
@@ -169,14 +170,22 @@
 }
 /* Мобильная адаптация под экраны смартфонов (<576px) */
 @media screen and (max-width: 576px) {
-  .bind_section_container {
+ .bind_section_container {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 6px; /* 📌 Уменьшаем отступ между заголовком и кнопкой до минимума */
+    padding: 8px 0;
   }
   
-  /* Кнопка "Привязать" на мобилках растягивается во всю ширину для удобного тапа */
+  .bind_row_title {
+    width: 100%;
+    flex: none; /* Отменяем флекс-растяжение на мобилках */
+  }
+
+  /* Кнопка "Привязать" на мобилках встает ровно под текстом без лишнего воздуха */
   .bind_section_container .secondary_btn {
     width: 100%;
+    height: 38px; /* Удобный размер для тапа на смартфоне */
+    margin-top: 2px; /* 📌 Ювелирный микро-отступ от текста */
   }
 }
