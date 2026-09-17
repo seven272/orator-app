@@ -50,7 +50,7 @@ const fetchLogoutUser = createAsyncThunk(
   },
 )
 
-const fetchGetMe = createAsyncThunk(
+const fetchGetMe = createAsyncThunk( 
   'auth/fetchGetMe',
   async (_, { rejectWithValue }) => {
     try {

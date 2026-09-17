@@ -159,12 +159,6 @@ const applyAiGamificationProgress = async (
   // 7. Проверка ачивок (передаем чистый объект user)
   const newAwards = checkAchievements(user, false, score, exAlias)
 
-  if (newAwards && newAwards.length > 0) {
-    user.progression.lastAwarded = newAwards
-  } else {
-    user.progression.lastAwarded = []
-  }
-
   await user.save()
 
   // Автоматические триггеры «Ленты новостей»

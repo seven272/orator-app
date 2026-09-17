@@ -18,7 +18,7 @@ const startHistoricalBattle = async (req, res) => {
     // Создаем активную сессию в БД
     const session = await AiExercise.create({
       userId,
-      exerciseType: 'historical-battle',
+      exerciseType: 'ai-historical-battle',
       status: 'active',
       exerciseData,
       messages: [],
@@ -60,7 +60,7 @@ const responseHistoricalBattle = async (req, res) => {
     // Ищем последнюю активную сессию исторического батла
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'historical-battle',
+      exerciseType: 'ai-historical-battle',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -123,7 +123,7 @@ const finishHistoricalBattle = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'historical-battle',
+      exerciseType: 'ai-historical-battle',
       status: 'active',
     }).sort({ createdAt: -1 })
 

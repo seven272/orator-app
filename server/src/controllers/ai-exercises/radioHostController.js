@@ -17,7 +17,7 @@ const startRadioHost = async (req, res) => {
     // Создаем активную сессию в БД
     await AiExercise.create({
       userId,
-      exerciseType: 'radio-host',
+      exerciseType: 'ai-radio-host',
       status: 'active',
       exerciseData,
       messages: [],
@@ -57,7 +57,7 @@ const responseRadioHost = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'radio-host',
+      exerciseType: 'ai-radio-host',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -116,7 +116,7 @@ const finishRadioHost = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'radio-host',
+      exerciseType: 'ai-radio-host',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -249,12 +249,12 @@ const finishRadioHost = async (req, res) => {
 
     await session.save()
 
-    // Начисляем награды по геймификации (используем уникальный изолированный алиас 'ai-radio-host')
+    // Начисляем награды по геймификации (используем уникальный изолированный алиас 'ai-ai-radio-host')
     // Алиас будет биндиться к категории «харизма и юмор» или «техника речи»
     const gamificationResult = await applyAiGamificationProgress(
       user,
       evaluation.totalScore, 
-      'ai-radio-host',
+      'ai-ai-radio-host',
       'Радиоведущий',
       isDaily,
     )

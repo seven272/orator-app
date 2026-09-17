@@ -291,154 +291,6 @@ const updateProfile = async (req, res) => {
 }
 
 // авторизация через сайт и кнопку Вкотакте
-
-// const vkWebsiteAuth = async (req, res) => {
-//   try {
-//     const { code, deviceId, redirectUri, codeVerifier } = req.body
-
-//     if (!code || !deviceId) {
-//       return res
-//         .status(400)
-//         .json({
-//           success: false,
-//           message: 'Не переданы параметры авторизации VK ID SDK',
-//         })
-//     }
-
-//     // 1. ОБМЕНЯТЬ КОД НА ACCESS_TOKEN (id.vk.ru/oauth2/auth)
-//     const vkTokenUrl = 'https://id.vk.ru/oauth2/auth'
-//     const tokenParams = new URLSearchParams({
-//       grant_type: 'authorization_code',
-//       client_id: process.env.VK_AUTH_APP_ID || '54772667',
-//       client_secret: process.env.VK_AUTH_SECRET_KEY, // Секрет от бизнес-панели
-//       redirect_uri: redirectUri,
-//       code: code,
-//       device_id: deviceId, // Передаем device_id, полученный от SDK
-//       code_verifier: codeVerifier || undefined,
-//     })
-
-//     const tokenResponse = await fetch(vkTokenUrl, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/x-www-form-urlencoded',
-//       },
-//       body: tokenParams,
-//     })
-//     const tokenData = await tokenResponse.json()
-
-//     if (tokenData.error) {
-//       console.error(
-//         'Ошибка обмена кода в VK ID SDK:',
-//         tokenData.error_description,
-//       )
-//       return res
-//         .status(401)
-//         .json({
-//           success: false,
-//           message: 'Сессия VK ID не подтверждена сервером',
-//         })
-//     }
-
-//     const { access_token } = tokenData
-
-//     // 2. ЗАПРОС ПРОФИЛЯ ПОЛЬЗОВАТЕЛЯ (id.vk.ru/oauth2/user_info)
-//     const vkUserUrl = 'https://id.vk.ru/oauth2/user_info'
-//     const userParams = new URLSearchParams({
-//       client_id: process.env.VK_AUTH_APP_ID,
-//     })
-
-//     const userResponse = await fetch(vkUserUrl, {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${access_token}`,
-//         'Content-Type': 'application/x-www-form-urlencoded',
-//       },
-//       body: userParams,
-//     })
-//     const userData = await userResponse.json()
-
-//     const vkUser = userData.user
-//     if (!vkUser) {
-//       return res
-//         .status(401)
-//         .json({
-//           success: false,
-//           message: 'Не удалось извлечь данные профиля экосистемы',
-//         })
-//     }
-
-//     // Универсальный парсинг данных (работает для ВК, Одноклассников и Mail.ru!)
-//     const verifiedVkId = String(vkUser.user_id)
-//     const firstName = vkUser.first_name || ''
-//     const lastName = vkUser.last_name || ''
-//     const avatar = vkUser.avatar || ''
-//     const email = vkUser.email || ''
-
-//     // 3. СИНХРОНИЗАЦИЯ С MONGODB
-//     let user = await User.findOne({ vkId: verifiedVkId })
-
-//     if (!user && email) {
-//       user = await User.findOne({ email: email.toLowerCase().trim() })
-//       if (user) {
-//         user.vkId = verifiedVkId
-//         if (!user.avatar) user.avatar = avatar
-//         await user.save()
-//       }
-//     }
-
-//     if (!user) {
-//       //  Сначала переводим имя в латиницу
-//       const latinFirstName = translit(firstName)
-//       // 2. Если имя корректное — берем его, если пустое — подставляем дефолтный латинский корень  и зачищаем от лишних символов
-//       const cleanFirstName =
-//         latinFirstName && latinFirstName.trim() !== ''
-//           ? latinFirstName.trim()
-//           : 'Speaker'
-
-//       const randomDigits = Math.floor(1000 + Math.random() * 9000)
-//       const generateNickname = `${cleanFirstName}#${randomDigits}`
-
-//       // Определяем провайдера (ВК, ОК или Mail), чтобы записать правильный маркер
-//       // Новый VK ID SDK возвращает внутренние признаки, но мы можем сохранить базовый 'vk_id_ecosystem'
-//       user = await User.create({
-//         displayName: generateNickname,
-//         firstName,
-//         lastName,
-//         avatar,
-//         vkId: verifiedVkId,
-//         email: email ? email.toLowerCase().trim() : undefined,
-//         authProvider: 'vk',
-//         registeredFrom: 'vk_id_sdk',
-//         socialProfilesData: { vk: { firstName, lastName, avatar } },
-//       })
-//     }
-
-//     // 4. СЕССИЯ: Высаживаем куку jwt-oratory
-//     createToken(res, user._id)
-
-//     const websiteUserResponse = user.toObject()
-//     delete websiteUserResponse.password
-
-//     return res.status(200).json({
-//       success: true,
-//       isGuest: false,
-//       user: websiteUserResponse,
-//       message: 'Успешный кроссплатформенный вход!',
-//     })
-//   } catch (error) {
-//     console.error(
-//       'Критическая ошибка vkWebsiteAuth через SDK:',
-//       error,
-//     )
-//     return res
-//       .status(500)
-//       .json({
-//         success: false,
-//         message: 'Внутренняя ошибка сервера при обработке SDK',
-//       })
-//   }
-// }
-
 const vkWebsiteAuth = async (req, res) => {
   try {
     const { code, deviceId, codeVerifier, state, redirectUri } =
@@ -596,7 +448,6 @@ const vkWebsiteAuth = async (req, res) => {
     })
   }
 }
-
 // Авторизация через ВКонтакте
 const vkAuth = async (req, res) => {
   try {
@@ -1103,6 +954,7 @@ const getUserProfile = async (req, res) => {
         lifetimeXp: user.stats.lifetimeXp,
         coins: user.progression.coins,
         achievements: user.progression.achievements,
+        inventory: user.inventory || [],
         streak: user.streak.current,
         isPremium: user.isPremium,
         premiumExpiresAt: user.premiumExpiresAt,

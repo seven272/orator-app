@@ -17,7 +17,7 @@ const startPoemTongue = async (req, res) => {
     // Создаем активную сессию в БД
     await AiExercise.create({
       userId,
-      exerciseType: 'poem-tongue',
+      exerciseType: 'ai-poem-tongue',
       status: 'active',
       exerciseData,
       messages: [],
@@ -59,7 +59,7 @@ const responsePoemTongue = async (req, res) => {
     // Ищем активную сессию
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'poem-tongue',
+      exerciseType: 'ai-poem-tongue',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -120,7 +120,7 @@ const finishPoemTongue = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'poem-tongue',
+      exerciseType: 'ai-poem-tongue',
       status: 'active',
     }).sort({ createdAt: -1 })
 

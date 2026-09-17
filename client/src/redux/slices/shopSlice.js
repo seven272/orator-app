@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axiosInstance from '../../utils/axiosInstance'
-import { updateCoinsAndInventory } from './profileSlice' // Импортируем экшен из профиля
 
 const fetchShopItems = createAsyncThunk(
   'shop/fetchShopItems',
@@ -18,25 +17,14 @@ const fetchShopItems = createAsyncThunk(
 
 const fetchPurchaseItem = createAsyncThunk(
   'shop/fetchPurchaseItem',
-  async (
-    { itemCode, deliveryAddress },
-    { dispatch, rejectWithValue },
-  ) => {
+  async ({ itemCode, deliveryAddress }, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.post('/shop/buy-item', {
         itemCode,
         deliveryAddress,
       })
-
-      // Магия: при успешном ответе обновляем кошелек и инвентарь в profileSlice
-      dispatch(
-        updateCoinsAndInventory({
-          coins: res.data.coins,
-          inventory: res.data.inventory,
-        }),
-      )
-
-      return res.data // { message: "...", coins: ..., inventory: ... }
+      // Возвращает { message: "...", coins: 450, inventory: [...] }
+      return res.data
     } catch (err) {
       return rejectWithValue(
         err.response?.data || 'Ошибка при совершении покупки',
@@ -49,8 +37,8 @@ const shopSlice = createSlice({
   name: 'shop',
   initialState: {
     items: [],
-    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
-    purchaseStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    status: 'idle',
+    purchaseStatus: 'idle',
     error: null,
   },
   reducers: {
@@ -74,11 +62,11 @@ const shopSlice = createSlice({
         state.status = 'failed'
         state.error = action.payload
       })
-      // Покупка товара
+      // Покупка товара (СТРАЖ МЕРЦАНИЯ: Массив товаров items не трогаем!)
       .addCase(fetchPurchaseItem.pending, (state) => {
         state.purchaseStatus = 'loading'
       })
-      .addCase(fetchPurchaseItem.fulfilled, (state) => {
+      .addCase(fetchPurchaseItem.fulfilled, (state, action) => {
         state.purchaseStatus = 'succeeded'
       })
       .addCase(fetchPurchaseItem.rejected, (state, action) => {

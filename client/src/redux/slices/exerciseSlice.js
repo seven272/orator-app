@@ -55,7 +55,7 @@ const exerciseSlice = createSlice({
         state.isSubmitting = false
         state.error = action.payload
       })
-  },
+  }, 
 })
 
 export const { clearLastResult } = exerciseSlice.actions

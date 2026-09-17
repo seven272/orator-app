@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { FcStatistics } from "react-icons/fc";
+import { IoStatsChart } from 'react-icons/io5'
 import {
   FaFire,
   FaCoins,
@@ -41,9 +41,9 @@ const MiniDashboard = () => {
     <div className={styles.dashboard_wrapper}>
       {/* 1. Строка экспресс-метрики: Стрик, Жетоны и Общий опыт */}
       <div className={styles.dashboard_title}>
-                <FcStatistics className={styles.icon_statistic} />
-                <span>Экспресс статистика</span>
-              </div>
+        <IoStatsChart className={styles.icon_statistic} />
+        <span>Экспресс статистика</span>
+      </div>
       <div className={styles.top_row}>
         <div className={styles.metric}>
           <FaFire className={styles.icon_streak} />

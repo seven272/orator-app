@@ -101,11 +101,6 @@ const Login = ({ showRegister }) => {
       // 5. Рендер виджета
       const oneTapButton = new VKID.OneTap()
 
-      // 👇 ВСТАВИТЬ СЮДА 👇
-    console.log('VKID keys:', Object.keys(VKID))
-    console.log('OneTapInternalEvents:', VKID.OneTapInternalEvents)
-    // 👆 ВСТАВИТЬ СЮДА 👆
-
       if (vkContainerRef.current) {
         vkContainerRef.current.innerHTML = ''
 

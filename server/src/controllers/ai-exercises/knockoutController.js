@@ -19,7 +19,7 @@ const startKnockout = async (req, res) => {
 
     await AiExercise.create({
       userId,
-      exerciseType: 'knockout',
+      exerciseType: 'ai-knockout',
       status: 'active',
       exerciseData: {
         ...exerciseData,
@@ -46,7 +46,7 @@ const generateKnockoutResponse = async (req, res) => {
     // Ищем активную сессию для knockout
     let session = await AiExercise.findOne({
       userId: userId,
-      exerciseType: 'knockout',
+      exerciseType: 'ai-knockout',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -195,7 +195,7 @@ const finishKnockout = async (req, res) => {
 
     const session = await AiExercise.findOne({
       userId,
-      exerciseType: 'knockout',
+      exerciseType: 'ai-knockout',
       status: 'active',
     }).sort({ createdAt: -1 })
 

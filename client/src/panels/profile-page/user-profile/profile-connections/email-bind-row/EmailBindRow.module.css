@@ -1,0 +1,187 @@
+/* Интеграция Email */
+.bind_section_container {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-bg);
+}
+
+.bind_row_header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+
+.bind_row_title {
+  font: var(--font-m);
+  color: var(--color-text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: var(--font-line-m);
+}
+
+.row_icon {
+  font-size: 18px;
+  color: var(--color-grey);
+  flex-shrink: 0;
+}
+
+/* Инлайн-форма */
+.inline_email_form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px;
+  background-color: var(--color-bg-layout);
+  border-radius: 8px;
+  border: 1px dashed var(--color-grey-light);
+  box-sizing: border-box;
+}
+
+.form_field_group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form_field_group label {
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+}
+
+.input_wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input_icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-grey);
+  font-size: 16px;
+}
+
+.inline_email_form input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-grey-light);
+  border-radius: 8px;
+  font: var(--font-m);
+  outline: none;
+  background-color: var(--color-white);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.inline_email_form input.input_with_icon {
+  padding-left: 36px;
+}
+
+.inline_email_form input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.inline_form_actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+/* Кнопки */
+.success_btn, 
+.cancel_btn, 
+.secondary_btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font: var(--font-m-light);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  width: max-content;
+  min-width: 100px;
+  transition: opacity 0.2s ease, transform 0.1s ease, background-color 0.2s ease;
+}
+
+.success_btn:hover, 
+.cancel_btn:hover, 
+.secondary_btn:hover {
+  filter: brightness(0.95);
+}
+
+.success_btn:active, 
+.cancel_btn:active, 
+.secondary_btn:active {
+  transform: scale(0.98);
+}
+
+.success_btn:disabled, 
+.cancel_btn:disabled, 
+.secondary_btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.success_btn {
+  background-color: var(--color-green);
+  color: var(--font-color-light);
+}
+
+.cancel_btn {
+  background-color: var(--color-bg-light);
+  color: var(--color-grey-dark);
+  border: 1px solid var(--color-grey-light);
+}
+
+.secondary_btn {
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+}
+
+.secondary_btn:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-blue-dark);
+}
+
+/* Адаптивность */
+@media screen and (max-width: 576px) {
+  .bind_row_header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .bind_row_title {
+    width: 100%;
+  }
+
+  .secondary_btn {
+    width: max-content;
+    align-self: flex-start;
+    padding: 10px 18px;
+  }
+
+  .inline_form_actions {
+    width: 100%;
+  }
+
+  .inline_form_actions button {
+    flex: 1;
+    width: auto;
+  }
+}

@@ -35,6 +35,23 @@ const checkAchievements = (
   if (debateStats?.completionsCount >= 5)
     add('ai_debate_5', 'Мастер споров')
 
+  // ==========================================
+  // АЧИВКИ ИЗ МАГАЗИНА ЖЕТОНОВ 🔥
+  // ==========================================
+  // Проверяем, куплен ли товар в инвентаре пользователя
+  // Безопасно проверяем инвентарь пользователя
+  const hasInInventory = (itemCode) => user.inventory?.some(inv => inv.itemCode === itemCode)
+
+  // 1. Ачивка "Гуру Мысли" (код товара: 'thought_guru')
+  if (hasInInventory('thought_guru')) {
+    add('thought_guru', 'Гуру Мысли')
+  }
+
+  // 2. Ачивка "Голос Ночного Города" (код товара: 'title_neon')
+  if (hasInInventory('title_neon')) {
+    add('title_neon', 'Голос Ночного Города')
+  }
+
   // --- ЕЖЕДНЕВНАЯ АКТИВНОСТЬ (Триатлон) ---
   const todayStr = dayjs().format('YYYY-MM-DD')
   const todayExercisesCount = user.dailyProgress

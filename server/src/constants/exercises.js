@@ -105,7 +105,7 @@ const All_EXERCISES = {
     },
   ],
 
-  level3: [
+  level3: [ 
     {
       id: '15',
       alias: 'ai-debate',
@@ -133,6 +133,96 @@ const All_EXERCISES = {
       alias: 'ai-tribune',
       title: 'Трибуна',
       description: 'Выскажись по теме и получи анализ текста',
+      reward: 100,
+    },
+    {
+      id: '19',
+      alias: 'ai-alibi',
+      title: 'Железное алиби',
+      description: 'Убеди прокурора в своей невиновности',
+      reward: 100,
+    },
+
+    {
+      id: '20',
+      alias: 'ai-bargain',
+      title: 'Торг уместен',
+      description: 'Сбей цену у неуступчевого продавца',
+      reward: 100,
+    },
+
+    {
+      id: '21',
+      alias: 'ai-knockout',
+      title: 'Остроумный нокаут',
+      description: 'Не дай хейтеру испортить выступление',
+      reward: 100,
+    },
+
+    {
+      id: '22',
+      alias: 'ai-metaphor',
+      title: 'Трудный переводчик',
+      description: 'Объясни так, чтобы понял даже ребенок',
+      reward: 100,
+    },
+    {
+      id: '23',
+      alias: 'ai-poem-tongue', 
+      title: 'Тяжелая дикция',
+      description:
+        'Прокачай артикуляцию и речевую опору на коварных текстах',
+      reward: 100,
+    },
+    {
+      id: '24',
+      alias: 'ai-poem-acting',
+      title: 'Мастер дубляжа',
+      description:
+        'Озвучивай известные стихи в самых неожиданных и безумных ролях',
+      reward: 100,
+    },
+
+    {
+      id: '25',
+      alias: 'ai-poem-rap',
+      title: 'Рэп-манифест',
+      description:
+        'Преврати классическую поэзию в хип-хоп трек с жестким ритмом',
+      reward: 100,
+    },
+
+    {
+      id: '26',
+      alias: 'ai-radio-host',
+      title: 'Радиоведущий',
+      description:
+        'Проведи прямой эфир утреннего шоу без единой секунды молчания',
+      reward: 100,
+    },
+    {
+      id: '27',
+      alias: 'ai-stop-word',
+      title: 'Анти-слова',
+      description:
+        'Попробуй красочно описать ситуацию, обходя хитрые табу и стоп-слова',
+      reward: 100,
+    },
+
+    {
+      id: '28',
+      alias: 'ai-random-word',
+      title: 'Слово из шляпы',
+      description:
+        'Выдай спич на заданную тему, вплетая в него случайный предмет',
+      reward: 100,
+    },
+    {
+      id: '29',
+      alias: 'ai-historical-battle',
+      title: 'Эхо Истории',
+      description:
+        'Примерить на себя приемы великих ораторов в бытовых ситуациях',
       reward: 100,
     },
   ],

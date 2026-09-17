@@ -1,0 +1,117 @@
+.inventory_container {
+  margin-top: 32px;
+  padding: 20px;
+  background-color: var(--color-white);
+  border-radius: 20px;
+  border: 1px solid var(--color-bg);
+  box-shadow: 0 4px 16px rgba(0, 74, 226, 0.03);
+}
+
+.inventory_title {
+  font: var(--font-subtitle);
+  color: var(--color-text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.title_icon {
+  font-size: 20px;
+  color: var(--color-primary);
+}
+
+.inventory_list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.inventory_card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background-color: var(--color-bg-layout);
+  border: 1px solid var(--color-grey-light);
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.inventory_card:hover {
+  transform: translateY(-2px);
+}
+
+.icon_box {
+  width: 44px;
+  height: 44px;
+  background-color: var(--color-white);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  border: 1px solid var(--color-bg);
+  flex-shrink: 0;
+}
+
+.item_info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.item_name {
+  font: var(--font-m);
+  font-weight: 700;
+  color: var(--color-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Стили для счетчика билетов */
+.ticket_counter {
+  font-size: 12px;
+  color: #2b6cb0;
+  background-color: #ebf8ff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: max-content;
+  border: 1px solid rgba(66, 153, 225, 0.3);
+}
+
+.ticket_counter strong {
+  font-weight: 800;
+}
+
+.ticket_icon {
+  font-size: 13px;
+}
+
+/* Стили для постоянных товаров (темы, ачивки) */
+.status_active {
+  font-size: 12px;
+  color: var(--color-green);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.check_icon {
+  font-size: 14px;
+}
+
+/* Мобильная адаптация */
+@media screen and (max-width: 576px) {
+  .inventory_list {
+    grid-template-columns: 1fr; /* На мобилках выстраиваем карточки в один аккуратный вертикальный список */
+  }
+}

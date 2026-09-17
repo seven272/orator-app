@@ -18,7 +18,7 @@ const startIcebreaker = async (req, res) => {
     // Создаем сессию в БД 
     await AiExercise.create({
       userId,
-      exerciseType: 'icebreaker',
+      exerciseType: 'ai-icebreaker',
       status: 'active',
       exerciseData,
       messages: [],
@@ -42,7 +42,7 @@ const generateIcebreakerResponse = async (req, res) => {
     // 1. Ищем активную сессию именно для icebreaker
     let session = await AiExercise.findOne({
       userId: userId,
-      exerciseType: 'icebreaker',
+      exerciseType: 'ai-icebreaker',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -204,7 +204,7 @@ const finishIcebreaker = async (req, res) => {
     // 1. Находим активную сессию
     const session = await AiExercise.findOne({
       userId,
-      exerciseType: 'icebreaker',
+      exerciseType: 'ai-icebreaker',
       status: 'active',
     }).sort({ createdAt: -1 })
 

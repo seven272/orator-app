@@ -17,7 +17,7 @@ const startPoemRap = async (req, res) => {
     // Создаем активную сессию в БД
     await AiExercise.create({
       userId,
-      exerciseType: 'poem-rap',
+      exerciseType: 'ai-poem-rap',
       status: 'active',
       exerciseData,
       messages: [],
@@ -57,7 +57,7 @@ const responsePoemRap = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'poem-rap',
+      exerciseType: 'ai-poem-rap',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -116,7 +116,7 @@ const finishPoemRap = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'poem-rap',
+      exerciseType: 'ai-poem-rap',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -250,11 +250,11 @@ const finishPoemRap = async (req, res) => {
 
     await session.save()
 
-    // Начисляем прогресс в геймификацию (используем уникальный изолированный алиас 'ai-poem-rap')
+    // Начисляем прогресс в геймификацию (используем уникальный изолированный алиас 'ai-ai-poem-rap')
     const gamificationResult = await applyAiGamificationProgress(
       user,
       evaluation.totalScore,
-      'ai-poem-rap',
+      'ai-ai-poem-rap',
       'Рэп-манифест',
       isDaily,
     )

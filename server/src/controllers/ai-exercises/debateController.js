@@ -16,7 +16,7 @@ const startDebate = async (req, res) => {
     // Создаем сессию в БД
     await AiExercise.create({
       userId,
-      exerciseType: 'debate',
+      exerciseType: 'ai-debate',
       status: 'active', // Сессия сразу активна
       exerciseData,
       messages: [],
@@ -39,7 +39,7 @@ const generateDebateResponse = async (req, res) => {
     // 1. Ищем активную сессию строго для упражнения Дебаты
     let session = await AiExercise.findOne({
       userId: req.userId,
-      exerciseType: 'debate', // Защита от пересечения с другими тренажерами
+      exerciseType: 'ai-debate', // Защита от пересечения с другими тренажерами
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -172,7 +172,7 @@ const finishDebate = async (req, res) => {
     // 1. Находим активную сессию
     const session = await AiExercise.findOne({
       userId,
-      exerciseType: 'debate',
+      exerciseType: 'ai-debate',
       status: 'active',
     }).sort({ createdAt: -1 })
 

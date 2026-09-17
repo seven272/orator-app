@@ -16,7 +16,7 @@ const startTribune = async (req, res) => {
     // Создаем сессию в БД
     await AiExercise.create({
       userId,
-      exerciseType: 'tribune',
+      exerciseType: 'ai-tribune',
       status: 'active',
       exerciseData,
       messages: [],
@@ -57,7 +57,7 @@ const responseTribune = async (req, res) => {
     // 2. Ищем активную сессию именно для tribune (исправили ошибку с icebreaker)
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'tribune',
+      exerciseType: 'ai-tribune',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -115,7 +115,7 @@ const finishTribune = async (req, res) => {
     // Ищем активную сессию именно для icebreaker
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'tribune',
+      exerciseType: 'ai-tribune',
       status: 'active',
     }).sort({ createdAt: -1 })
 

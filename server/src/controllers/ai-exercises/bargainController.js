@@ -19,7 +19,7 @@ const startBargain = async (req, res) => {
 
     await AiExercise.create({
       userId,
-      exerciseType: 'bargain',
+      exerciseType: 'ai-bargain',
       status: 'active',
       exerciseData: {
         ...exerciseData,
@@ -53,7 +53,7 @@ const generateBargainResponse = async (req, res) => {
     // Ищем активную сессию для bargain
     let session = await AiExercise.findOne({
       userId: userId,
-      exerciseType: 'bargain',
+      exerciseType: 'ai-bargain',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -221,7 +221,7 @@ const finishBargain = async (req, res) => {
 
     const session = await AiExercise.findOne({
       userId,
-      exerciseType: 'bargain',
+      exerciseType: 'ai-bargain',
       status: 'active',
     }).sort({ createdAt: -1 })
 

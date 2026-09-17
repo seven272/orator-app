@@ -15,7 +15,7 @@ const startPoemActing = async (req, res) => {
 
     await AiExercise.create({
       userId,
-      exerciseType: 'poem-acting',
+      exerciseType: 'ai-poem-acting',
       status: 'active',
       exerciseData,
       messages: [],
@@ -55,7 +55,7 @@ const responsePoemActing = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'poem-acting',
+      exerciseType: 'ai-poem-acting',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -110,7 +110,7 @@ const finishPoemActing = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'poem-acting',
+      exerciseType: 'ai-poem-acting',
       status: 'active',
     }).sort({ createdAt: -1 })
 

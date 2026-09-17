@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { LuCrown } from 'react-icons/lu'
 import { MdOutlineLock } from 'react-icons/md'
 import { FaQuestion } from 'react-icons/fa'
+import { HiOutlineTicket } from 'react-icons/hi2' // Аккуратная иконка билета
 
 import styles from './ExercisePreview.module.css'
 import Modal from '../../UI/modal/Modal'
@@ -13,30 +14,45 @@ import PremiumModal from '../premium-modal/PremiumModal'
 const ExercisePreview = ({ exData }) => {
   const navigate = useNavigate()
   
-  // Берем данные напрямую из профиля
+  // Извлекаем данные профиля пользователя
   const { user } = useSelector((state) => state.profile)
   
   const [showModalTheory, setShowModalTheory] = useState(false)
   const [showModalPremium, setShowModalPremium] = useState(false)
 
-  // Расчет блокировок
+  // 🎟️ Вычисляем доступы по поштучным билетам магазина
+  const targetTicketCode = `ticket_${exData.alias}`
+  const userTicket = user?.inventory?.find((inv) => inv.itemCode === targetTicketCode)
+  const ticketQuantity = userTicket ? userTicket.quantity : 0
+  const hasTicket = ticketQuantity > 0
+
+  // 🔓 Расчет блокировок (Карточка открыта, если куплен билет ИЛИ активен общий премиум)
   const isLevelLocked = Number(exData.minLevel) > Number(user?.level || 1)
-  const isPremiumLocked = exData.premium && !user?.isPremium
+  const isPremiumLocked = exData.premium && !user?.isPremium && !hasTicket
   const isLocked = isLevelLocked || isPremiumLocked
 
-  // Клик по карточке: если закрыто Премиумом — сразу открываем окно покупки
+  // Отображаем бейдж билета только если у юзера нет глобального премиума, но есть билеты
+  const shouldShowTicketBadge = !user?.isPremium && hasTicket
+
+  // Клик по карточке
   const handleCardClick = () => {
+    if (isLevelLocked) return // Уровень заблокирован — клик не работает
+    
     if (isPremiumLocked) {
-      setShowModalPremium(true)
+       if (isPremiumLocked) {
+      setShowModalPremium(true) // Открывала старую модалку PremiumModal
       return
     }
+    }
+    
+    // Если всё открыто (по премиуму или по билету) — запускаем тренажер
     if (!isLocked) {
       navigate(`/exercise/${exData.alias}`)
     }
   }
 
   const openTheory = (e) => {
-    e.stopPropagation() // Предотвращаем всплытие клика к handleCardClick
+    e.stopPropagation() // Предотвращаем всплытие клика к родителю
     setShowModalTheory(true)
   }
 
@@ -46,6 +62,7 @@ const ExercisePreview = ({ exData }) => {
         className={`${styles.execise_container} ${isLocked ? styles.locked : ''}`}
         onClick={handleCardClick}
       >
+        {/* ОВЕРЛЕЙ ЗАМКА (Отображается только если нет ни премиума, ни билета) */}
         {isLocked && (
           <div
             className={`${styles.lock_overlay} ${isPremiumLocked ? styles.premium_lock : ''}`}
@@ -60,7 +77,7 @@ const ExercisePreview = ({ exData }) => {
             
             <span className={styles.lock_text}>
               {isPremiumLocked
-                ? 'PREMIUM ДОСТУП'
+                ? 'НУЖЕН PREMIUM'
                 : `НУЖЕН ${exData.minLevel} УРОВЕНЬ`}
             </span>
             
@@ -74,7 +91,15 @@ const ExercisePreview = ({ exData }) => {
           </div>
         )}
 
-        {/* Контент упражнения */}
+        {/* СУПЕР-БЕЙДЖ: Сигнализирует о доступности тренажера по поштучному билету */}
+        {shouldShowTicketBadge && (
+          <div className={styles.ticket_badge}>
+            <HiOutlineTicket className={styles.ticket_badge_icon} />
+            <span>Доступно по билету: {ticketQuantity} шт.</span>
+          </div>
+        )}
+
+        {/* КОНТЕНТ УПРАЖНЕНИЯ */}
         <div
           className={`${styles.inner_content} ${isLocked ? styles.content_blur : ''}`}
         >
@@ -116,7 +141,7 @@ const ExercisePreview = ({ exData }) => {
         />
       </Modal>
 
-      {/* Модалка покупки Премиума (Исправлен баг бандла с методом onClose) */}
+      {/* Старая модалка премиума сохранена на уровне импортов, но вызов заменен на умный редирект */}
       <PremiumModal
         active={showModalPremium}
         onClose={() => setShowModalPremium(false)}

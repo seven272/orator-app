@@ -1,10 +1,12 @@
 import express from 'express'
 import multer from 'multer'
 
+import { checkAuth } from '../middlewares/authMiddleware.js'
+
 import {
-  checkAuth,
-  checkPremium,
-} from '../middlewares/authMiddleware.js'
+  checkPremiumAndTicket,
+  checkActiveSessionGuard,
+} from '../middlewares/exerciseMiddleware.js'
 
 import {
   startDebate,
@@ -104,238 +106,318 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // Максимум 10 МБ на реплику
 })
 
-//роутеры упражнения Дебаты
-router.post('/start-debate', checkAuth, checkPremium, startDebate)
+//роутеры упражнения Дебаты ai-debate
+router.post(
+  '/start-debate',
+  checkAuth,
+  checkPremiumAndTicket('ai-debate'),
+  startDebate,
+)
 router.post(
   '/response-debate',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-debate'),
   upload.single('audio'),
   generateDebateResponse,
 )
-router.post('/finish-debate', checkAuth, checkPremium, finishDebate)
+router.post(
+  '/finish-debate',
+  checkAuth,
+  checkActiveSessionGuard('ai-debate'),
+  finishDebate,
+)
 
-//роутеры упражнения Интервью
+//роутеры упражнения Интервью ai-inrerview
 router.post(
   '/start-interview',
   checkAuth,
-  checkPremium,
+  checkPremiumAndTicket('ai-inrerview'),
   startInterview,
 )
 router.post(
   '/response-interview',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-inrerview'),
   upload.single('audio'),
   generateInterviewResponse,
 )
 router.post(
   '/finish-interview',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-inrerview'),
   finishInterview,
 )
 
-//роутеры упражнения Ледокол
+//роутеры упражнения Ледокол ai-icebreaker
 router.post(
   '/start-icebreaker',
   checkAuth,
-  checkPremium,
+  checkPremiumAndTicket('ai-icebreaker'),
   startIcebreaker,
 )
 router.post(
   '/response-icebreaker',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-icebreaker'),
   upload.single('audio'),
   generateIcebreakerResponse,
 )
 router.post(
   '/finish-icebreaker',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-icebreaker'),
   finishIcebreaker,
 )
 
-//роутеры упражнения Трибуна
-router.post('/start-tribune', checkAuth, checkPremium, startTribune)
+//роутеры упражнения Трибуна ai-tribune
+router.post(
+  '/start-tribune',
+  checkAuth,
+  checkPremiumAndTicket('ai-tribune'),
+  startTribune,
+)
 router.post(
   '/response-tribune',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-tribune'),
   upload.single('audio'),
   responseTribune,
 )
-router.post('/finish-tribune', checkAuth, checkPremium, finishTribune)
+router.post(
+  '/finish-tribune',
+  checkAuth,
+  checkActiveSessionGuard('ai-tribune'),
+  finishTribune,
+)
 
-//роутеры упражнения Алиби
-router.post('/start-alibi', checkAuth, checkPremium, startAlibi)
+//роутеры упражнения Алиби ai-alibi
+router.post(
+  '/start-alibi',
+  checkAuth,
+  checkPremiumAndTicket('ai-alibi'),
+  startAlibi,
+)
 router.post(
   '/response-alibi',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-alibi'),
   upload.single('audio'),
   generateAlibiResponse,
 )
-router.post('/finish-alibi', checkAuth, checkPremium, finishAlibi)
+router.post(
+  '/finish-alibi',
+  checkAuth,
+  checkActiveSessionGuard('ai-alibi'),
+  finishAlibi,
+)
 
-//роутеры упражнения Торг уместен
-router.post('/start-bargain', checkAuth, checkPremium, startBargain)
+//роутеры упражнения Торг уместен ai-bargain
+router.post(
+  '/start-bargain',
+  checkAuth,
+  checkPremiumAndTicket('ai-bargain'),
+  startBargain,
+)
 router.post(
   '/response-bargain',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-bargain'),
   upload.single('audio'),
   generateBargainResponse,
 )
-router.post('/finish-bargain', checkAuth, checkPremium, finishBargain)
+router.post(
+  '/finish-bargain',
+  checkAuth,
+  checkActiveSessionGuard('ai-bargain'),
+  finishBargain,
+)
 
-//роутеры упражнения Остроумный нокаут
-router.post('/start-knockout', checkAuth, checkPremium, startKnockout)
+//роутеры упражнения Остроумный нокаут ai-knockout
+router.post(
+  '/start-knockout',
+  checkAuth,
+  checkPremiumAndTicket('ai-knockout'),
+  startKnockout,
+)
 router.post(
   '/response-knockout',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-knockout'),
   upload.single('audio'),
   generateKnockoutResponse,
 )
 router.post(
   '/finish-knockout',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-knockout'),
   finishKnockout,
 )
 
-//роутеры упражнения Трудный переводчик
-router.post('/start-metaphor', checkAuth, checkPremium, startMetaphor)
+//роутеры упражнения Трудный переводчик ai-metaphor
+router.post(
+  '/start-metaphor',
+  checkAuth,
+  checkPremiumAndTicket('ai-metaphor'),
+  startMetaphor,
+)
 router.post(
   '/response-metaphor',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-metaphor'),
   upload.single('audio'),
   generateMetaphorResponse,
 )
 router.post(
   '/finish-metaphor',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-metaphor'),
   finishMetaphor,
 )
 
-//роутеры упражнения Тяжелая дикиция
-router.post('/start-tongue', checkAuth, checkPremium, startPoemTongue)
+//роутеры упражнения Тяжелая дикиция ai-poem-tongue
+router.post(
+  '/start-tongue',
+  checkAuth,
+  checkPremiumAndTicket('ai-poem-tongue'),
+  startPoemTongue,
+)
 router.post(
   '/response-tongue',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-poem-tongue'),
   upload.single('audio'),
   responsePoemTongue,
 )
 router.post(
   '/finish-tongue',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-poem-tongue'),
   finishPoemTongue,
 )
 
-//роутеры упражнения Анти-слова
+// Роутеры упражнения «Мастер дубляжа» ai-poem-rap
 router.post(
-  '/start-stop-word',
+  '/start-acting',
   checkAuth,
-  checkPremium,
-  startStopWord,
+  checkPremiumAndTicket('ai-poem-acting'),
+  startPoemActing,
 )
-router.post(
-  '/response-stop-word',
-  checkAuth,
-  checkPremium,
-  upload.single('audio'),
-  responseStopWord,
-)
-router.post(
-  '/finish-stop-word',
-  checkAuth,
-  checkPremium,
-  finishStopWord,
-)
-
-// Роутеры упражнения «Мастер дубляжа»
-router.post('/start-acting', checkAuth, checkPremium, startPoemActing)
 router.post(
   '/response-acting',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-poem-acting'),
   upload.single('audio'),
   responsePoemActing,
 )
 router.post(
   '/finish-acting',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-poem-acting'),
   finishPoemActing,
 )
 
-// Роутеры упражнения «Рэп-манифест»
-router.post('/start-rap', checkAuth, checkPremium, startPoemRap)
+// Роутеры упражнения «Рэп-манифест» ai-poem-rap
+router.post(
+  '/start-rap',
+  checkAuth,
+  checkPremiumAndTicket('ai-poem-rap'),
+  startPoemRap,
+)
 router.post(
   '/response-rap',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-poem-rap'),
   upload.single('audio'),
   responsePoemRap,
 )
-router.post('/finish-rap', checkAuth, checkPremium, finishPoemRap)
+router.post(
+  '/finish-rap',
+  checkAuth,
+  checkActiveSessionGuard('ai-poem-rap'),
+  finishPoemRap,
+)
 
-// Роутеры упражнения «Радиоведущий»
-router.post('/start-radio', checkAuth, checkPremium, startRadioHost)
+// Роутеры упражнения «Радиоведущий» ai-radio-host
+router.post(
+  '/start-radio',
+  checkAuth,
+  checkPremiumAndTicket('ai-radio-host'),
+  startRadioHost,
+)
 router.post(
   '/response-radio',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-radio-host'),
   upload.single('audio'),
   responseRadioHost,
 )
-router.post('/finish-radio', checkAuth, checkPremium, finishRadioHost)
+router.post(
+  '/finish-radio',
+  checkAuth,
+  checkActiveSessionGuard('ai-radio-host'),
+  finishRadioHost,
+)
 
-// Роутеры упражнения Слово из шляпы
+//роутеры упражнения Анти-слова ai-stop-word
+router.post(
+  '/start-stop-word',
+  checkAuth,
+  checkPremiumAndTicket('ai-stop-word'),
+  startStopWord,
+)
+router.post(
+  '/response-stop-word',
+  checkAuth,
+  checkActiveSessionGuard('ai-stop-word'),
+  upload.single('audio'),
+  responseStopWord,
+)
+router.post(
+  '/finish-stop-word',
+  checkAuth,
+  checkActiveSessionGuard('ai-stop-word'),
+  finishStopWord,
+)
+
+// Роутеры упражнения Слово из шляпы ai-random-word
 router.post(
   '/start-random-word',
   checkAuth,
-  checkPremium,
+  checkPremiumAndTicket('ai-random-word'),
   startRandomWord,
 )
 router.post(
   '/response-random-word',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-random-word'),
   upload.single('audio'),
   responseRandomWord,
 )
 router.post(
   '/finish-random-word',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-random-word'),
   finishRandomWord,
 )
 
-// Роутеры для нового тренажера «Эхо Истории»
+// Роутеры для нового тренажера «Эхо Истории» ai-historical-battle
 router.post(
   '/start-historical',
   checkAuth,
-  checkPremium,
+  checkPremiumAndTicket('ai-historical-battle'),
   startHistoricalBattle,
 )
 router.post(
   '/response-historical',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-historical-battle'),
   upload.single('audio'),
   responseHistoricalBattle,
 )
 router.post(
   '/finish-historical',
   checkAuth,
-  checkPremium,
+  checkActiveSessionGuard('ai-historical-battle'),
   finishHistoricalBattle,
 )
 

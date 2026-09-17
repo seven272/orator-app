@@ -19,7 +19,7 @@ const startAlibi = async (req, res) => {
  
     await AiExercise.create({
       userId,
-      exerciseType: 'alibi',
+      exerciseType: 'ai-alibi',
       status: 'active',
       exerciseData: {
         ...exerciseData,
@@ -47,7 +47,7 @@ const generateAlibiResponse = async (req, res) => {
     // Ищем активную сессию для alibi
     let session = await AiExercise.findOne({
       userId: userId,
-      exerciseType: 'alibi',
+      exerciseType: 'ai-alibi',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -209,7 +209,7 @@ const finishAlibi = async (req, res) => {
 
     const session = await AiExercise.findOne({
       userId,
-      exerciseType: 'alibi',
+      exerciseType: 'ai-alibi',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -324,7 +324,7 @@ const finishAlibi = async (req, res) => {
       feedback: evaluation.feedback,
       criteria: evaluation.criteria,
     }
- 
+  
     await session.save()
 
     const gamificationResult = await applyAiGamificationProgress(

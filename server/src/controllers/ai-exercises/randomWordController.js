@@ -14,7 +14,7 @@ const startRandomWord = async (req, res) => {
 
     await AiExercise.create({
       userId,
-      exerciseType: 'random-word',
+      exerciseType: 'ai-random-word',
       status: 'active',
       exerciseData,
       messages: [],
@@ -52,7 +52,7 @@ const responseRandomWord = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'random-word',
+      exerciseType: 'ai-random-word',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -106,7 +106,7 @@ const finishRandomWord = async (req, res) => {
     // 1. Ищем активную сессию импровизации
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'random-word',
+      exerciseType: 'ai-random-word',
       status: 'active',
     }).sort({ createdAt: -1 })
 

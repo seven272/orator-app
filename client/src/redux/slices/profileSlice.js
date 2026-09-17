@@ -14,6 +14,8 @@ import {
   fetchActivateFakeCourse,
   fetchRestartCourse,
 } from './courseSlice'
+//импорт покупки ачивок в магазине
+import { fetchPurchaseItem } from './shopSlice'
 // Импортируем Thunk-экшены завершения ИИ-тренажеров
 import { fetchFinishDebate } from './ai-exercises/debateSlice'
 import { fetchFinishIcebreaker } from './ai-exercises/icebreakerSlice'
@@ -185,6 +187,29 @@ const profileSlice = createSlice({
             state.user.activePurchasedCourses.filter(
               (code) => code !== action.meta.arg,
             )
+        }
+      })
+      // Подписка на покупку ачивок в магазине и премиума
+      .addCase(fetchPurchaseItem.fulfilled, (state, action) => {
+        //если куплен премиум, пушим его, если куплены ачивки -пушим ачивки
+        if (action.payload.isPremium) {
+          state.user.isPremium = action.payload.isPremium
+        }
+        if (
+          action.payload?.newAchievements &&
+          action.payload.newAchievements.length > 0
+        ) {
+          // Записываем самую первую ачивку в lastAwarded — это стриггерит модалку поздравления!
+          state.lastAwarded = action.payload.newAchievements[0]
+
+          // Синхронизируем массив ачивок в объекте пользователя
+          if (!state.user.achievements) {
+            state.user.achievements = []
+          }
+          // Пушим новые ачивки в стейт профиля на фронтенде
+          state.user.achievements.push(
+            ...action.payload.newAchievements,
+          )
         }
       })
       //Загрузка данных профиля

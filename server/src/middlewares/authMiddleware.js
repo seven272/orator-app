@@ -20,7 +20,8 @@ const checkAuth = async (req, res, next) => {
       return res.status(403).json({
         success: false,
         code: 'REGISTRATION_REQUIRED',
-        message: 'Для выполнения этого действия необходимо сохранить аккаунт ВК',
+        message:
+          'Для выполнения этого действия необходимо сохранить аккаунт ВК',
       })
     }
 
@@ -28,7 +29,9 @@ const checkAuth = async (req, res, next) => {
     req.user = await User.findById(decoded.userId).select('-password')
 
     if (!req.user) {
-      return res.status(404).json({ success: false, message: 'Пользователь не найден' })
+      return res
+        .status(404)
+        .json({ success: false, message: 'Пользователь не найден' })
     }
 
     next()
@@ -39,14 +42,12 @@ const checkAuth = async (req, res, next) => {
         message: 'Не получилось авторизоваться - токен не валиден',
       })
     }
-    return res.status(500).json({ success: false, message: 'Ошибка сервера' })
+    return res
+      .status(500)
+      .json({ success: false, message: 'Ошибка сервера' })
   }
 }
-
-/**
- * 🔓 МЯГКИЙ МИДЛВАР (Пропускает абсолютно всех: анонимов, гостей ВК, юзеров)
- * Используется на упражнениях 1 и 2 уровня, ленте активности и витринах.
- */
+// МЯГКИЙ МИДЛВАР (Пропускает абсолютно всех: анонимов, гостей ВК, юзеров).Используется на упражнениях 1 и 2 уровня, ленте активности и витринах.
 const optionalAuth = async (req, res, next) => {
   const token = req.cookies['jwt-oratory']
 
@@ -67,17 +68,19 @@ const optionalAuth = async (req, res, next) => {
       // Пользователь — постоянный аккаунт из базы данных
       req.isGuest = false
       req.userId = decoded.userId
-      req.user = await User.findById(decoded.userId).select('-password')
+      req.user = await User.findById(decoded.userId).select(
+        '-password',
+      )
     }
   } catch (error) {
-    console.log('Необязательная авторизация не прошла, отдаем как гостю')
+    console.log(
+      'Необязательная авторизация не прошла, отдаем как гостю',
+    )
     req.isGuest = true
   }
 
   next()
 }
-
-
 const checkAdmin = (req, res, next) => {
   if (req.user && req.user.isAdmin) {
     next()
@@ -89,53 +92,4 @@ const checkAdmin = (req, res, next) => {
   }
 }
 
-const checkPremium = async (req, res, next) => {
-  try {
-    // Данные уже лежат в req.user благодаря вашему checkAuth!
-    const user = req.user
-
-    if (!user) {
-      return res
-        .status(404)
-        .json({ message: 'Пользователь не найден' })
-    }
-
-    // 1. Проверяем наличие премиума
-    if (!user.isPremium) {
-      return res.status(403).json({
-        code: 'PREMIUM_REQUIRED',
-        message:
-          'Для доступа к этому тренажеру необходим Премиум-статус',
-      })
-    }
-
-    // 2. Проверяем срок действия подписки
-    if (
-      user.premiumExpiresAt &&
-      new Date() > new Date(user.premiumExpiresAt)
-    ) {
-      // Так как подписка истекла, здесь НАМ НАДО обновить базу данных
-      user.isPremium = false
-      user.premiumExpiresAt = null
-      await user.save() // Сохраняем изменения в БД
-
-      return res.status(403).json({
-        code: 'PREMIUM_EXPIRED',
-        message: 'Срок действия вашего Премиум-статуса истек',
-      })
-    }
-
-    // Если всё отлично, передаем управление ИИ-контроллеру
-    next()
-  } catch (error) {
-    console.error('Ошибка в checkPremium middleware:', error)
-    res.status(500).json({ message: 'Внутренняя ошибка сервера' })
-  }
-}
-
-export {
-  checkAuth,
-  checkAdmin,
-  optionalAuth,
-  checkPremium,
-}
+export { checkAuth, checkAdmin, optionalAuth }

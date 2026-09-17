@@ -19,7 +19,7 @@ const startMetaphor = async (req, res) => {
 
     await AiExercise.create({
       userId,
-      exerciseType: 'metaphor',
+      exerciseType: 'ai-metaphor',
       status: 'active',
       exerciseData: {
         ...exerciseData,
@@ -47,7 +47,7 @@ const generateMetaphorResponse = async (req, res) => {
     // Ищем активную сессию для metaphor
     let session = await AiExercise.findOne({
       userId: userId,
-      exerciseType: 'metaphor',
+      exerciseType: 'ai-metaphor',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -197,7 +197,7 @@ const finishMetaphor = async (req, res) => {
 
     const session = await AiExercise.findOne({
       userId,
-      exerciseType: 'metaphor',
+      exerciseType: 'ai-metaphor',
       status: 'active',
     }).sort({ createdAt: -1 })
 

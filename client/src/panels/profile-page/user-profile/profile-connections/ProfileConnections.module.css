@@ -2,59 +2,30 @@
   display: flex;
   flex-direction: column;
   background-color: var(--color-white);
-  border: 1px solid var(--color-bg-light);
-  padding: 16px;
-  border-radius: 8px;
+  border: 1px solid var(--color-bg);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.03);
 }
 
 .sub_heading {
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   font: var(--font-submenu);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   color: var(--color-text-secondary);
-}
-/* 📌 Новый контейнер секции привязки */
-.bind_section_container {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  width: 100%;
-  box-sizing: border-box;
-  gap: 12px; /* Фиксированный контролируемый зазор между элементами */
+  gap: 6px;
 }
 
-/* 📌 Заголовок строки привязки */
-.bind_row_title {
-  font: var(--font-m);
-  color: var(--color-text-dark);
-  line-height: 1.4;
-  flex: 1; /* Позволяет тексту занимать все свободное место на ПК */
-  white-space: normal;
+.heading_icon {
+  font-size: 16px;
+  color: var(--color-primary);
 }
 
-/* 📌 Сама инлайн-форма теперь занимает 100% ширины и встает четко ПОД заголовком */
-.inline_email_form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  margin-top: 6px;
-}
-.link_row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--color-bg-light);
-  font: var(--font-m);
-  color: var(--color-text-dark);
-}
-
-.link_row:last-child {
-  border-bottom: none;
+.success_status_row {
+  padding: 12px 0;
 }
 
 .status_connected {
@@ -62,130 +33,8 @@
   font: var(--font-m);
 }
 
-.inline_email_form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.form_field_group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.form_field_group label {
-  font-size: 12px;
-  color: var(--color-text-secondary);
-  font-weight: 500;
-}
-
-.inline_email_form input {
-  padding: 8px 12px;
-  border: 1px solid var(--color-grey-light);
-  border-radius: 6px;
-  font: var(--font-m);
-  outline: none;
-  background-color: var(--color-bg-light);
-}
-
-.inline_email_form input:focus {
-  border-color: var(--color-primary);
-  background-color: var(--color-white);
-}
-
-.inline_form_actions {
-  display: flex;
-  gap: 6px;
-  justify-content: flex-end;
-  margin-top: 4px;
-}
-
-/* ==========================================
-   БАЗОВЫЕ СТИЛИ ДЛЯ ВСЕХ КНОПОК КОМПОНЕНТА 
-   ========================================== */
-.success_btn, 
-.cancel_btn, 
-.secondary_btn, 
-.vk_btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font: var(--font-m) !important;
-  cursor: pointer;
-  border: none !important;
-  outline: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.2s ease, transform 0.1s ease;
-  font-weight: 600 !important;
-}
-
-.success_btn:hover, 
-.cancel_btn:hover, 
-.secondary_btn:hover, 
-.vk_btn:hover {
-  opacity: 0.85;
-}
-
-.success_btn:active, 
-.cancel_btn:active, 
-.secondary_btn:active, 
-.vk_btn:active {
-  transform: scale(0.98);
-}
-
-.success_btn:disabled, 
-.cancel_btn:disabled, 
-.secondary_btn:disabled, 
-.vk_btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* КОНКРЕТНЫЕ ЦВЕТА КНОПОК */
-.success_btn {
-  background-color: var(--color-green) !important;
-  color: var(--font-color-light) !important;
-  padding: 6px 14px;
-}
-
-.cancel_btn {
-  background-color: var(--color-red) !important;
-  color: var(--font-color-light) !important;
-  padding: 6px 14px;
-}
-
-.secondary_btn {
-  background-color: var(--color-grey-light) !important;
-  color: var(--font-color-dark) !important;
-}
-
-.vk_btn {
-  background-color: var(--color-blue-vk) !important;
-  color: var(--font-color-light) !important;
-}
-/* Мобильная адаптация под экраны смартфонов (<576px) */
 @media screen and (max-width: 576px) {
- .bind_section_container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px; /* 📌 Уменьшаем отступ между заголовком и кнопкой до минимума */
-    padding: 8px 0;
-  }
-  
-  .bind_row_title {
-    width: 100%;
-    flex: none; /* Отменяем флекс-растяжение на мобилках */
-  }
-
-  /* Кнопка "Привязать" на мобилках встает ровно под текстом без лишнего воздуха */
-  .bind_section_container .secondary_btn {
-    width: 100%;
-    height: 38px; /* Удобный размер для тапа на смартфоне */
-    margin-top: 2px; /* 📌 Ювелирный микро-отступ от текста */
+  .connections_block {
+    padding: 16px;
   }
 }

@@ -25,25 +25,22 @@ const ProfileCard = ({ user }) => {
   }, [dispatch])
 
   return (
-    <div className={styles.gamification_container}>
+    <div className={styles.profile_card}>
       {/* Элемент 1: Информация о пользователе и Премиум */}
-      <ProfileUserInfo
-        user={user}
-        isPremium={isPremium}
-        premiumExpiresAt={premiumExpiresAt}
-      />
-
-      <div className={styles.divider_line} />
-
-      <ProfileSpeakerRank
-        userXp={userXp}
-        progressData={progressData}
-      />
-
-      <div className={styles.divider_line} />
+      <div className={styles.user_info_wrap}>
+        <ProfileUserInfo
+          user={user}
+          isPremium={isPremium}
+          premiumExpiresAt={premiumExpiresAt}
+        />
+        <div className={styles.divider_line} />
+        <ProfileSpeakerRank
+          userXp={userXp}
+          progressData={progressData}
+        />
+      </div>
       <MiniDashboard />
 
-      <div className={styles.divider_line} />
       <MiniLeaderboard />
     </div>
   )

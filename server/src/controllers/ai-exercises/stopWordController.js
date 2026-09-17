@@ -14,7 +14,7 @@ const startStopWord = async (req, res) => {
 
     await AiExercise.create({
       userId,
-      exerciseType: 'stop-word',
+      exerciseType: 'ai-stop-word',
       status: 'active',
       exerciseData,
       messages: [],
@@ -52,7 +52,7 @@ const responseStopWord = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'stop-word',
+      exerciseType: 'ai-stop-word',
       status: 'active',
     }).sort({ createdAt: -1 })
     if (!session)
@@ -101,7 +101,7 @@ const finishStopWord = async (req, res) => {
 
     let session = await AiExercise.findOne({
       userId,
-      exerciseType: 'stop-word',
+      exerciseType: 'ai-stop-word',
       status: 'active',
     }).sort({ createdAt: -1 })
     if (!session)

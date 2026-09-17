@@ -18,7 +18,7 @@ const startInterview = async (req, res) => {
     // Создаем сессию в БД
     const newSession = await AiExercise.create({
       userId,
-      exerciseType: 'interview',
+      exerciseType: 'ai-interview',
       status: 'active',
       exerciseData,
       messages: [],
@@ -42,7 +42,7 @@ const generateInterviewResponse = async (req, res) => {
     // Ищем сессию, созданную при старте дебатов
     let session = await AiExercise.findOne({
       userId: req.userId, 
-      exerciseType: 'interview',
+      exerciseType: 'ai-interview',
       status: 'active',
     }).sort({ createdAt: -1 })
 
@@ -159,7 +159,7 @@ const finishInterview = async (req, res) => {
     // 1. Находим активную сессию
     const session = await AiExercise.findOne({
       userId,
-      exerciseType: 'interview',
+      exerciseType: 'ai-interview',
       status: 'active',
     }).sort({ createdAt: -1 })
 

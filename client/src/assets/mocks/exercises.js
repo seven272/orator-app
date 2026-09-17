@@ -372,7 +372,7 @@ const All_EXERCISES = {
       reward: 100,
       icon: IconEx29,
       skill: 'убедительность',
-      minLevel: 3,
+      minLevel: 1,
       premium: true,
     },
   ],

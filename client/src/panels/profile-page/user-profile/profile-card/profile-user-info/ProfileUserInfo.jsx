@@ -56,7 +56,7 @@ const ProfileUserInfo = ({ user, isPremium, premiumExpiresAt }) => {
       <div className={styles.premium_action_block}>
         {isPremium ? (
           <div className={styles.premium_badge_active}>
-            <span>ПРЕМИУМ</span>
+            <span>PREMIUM АКТИВЕН</span>
             <span className={styles.crown_icon}>👑</span>
           </div>
         ) : (

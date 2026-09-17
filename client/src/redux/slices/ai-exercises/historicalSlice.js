@@ -12,6 +12,7 @@ import {
 const fetchStartHistorical = createAsyncThunk(
   'historical/fetchStartHistorical',
   async (exerciseData, { rejectWithValue }) => {
+    console.log(exerciseData)
     try {
       const res = await axiosInstance.post('/ai/start-historical', {
         exerciseData,
