@@ -171,7 +171,7 @@ const fetchLinkVk = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         '/user/link-vk',
-        vkLinkData,
+        vkLinkData, 
       )
       return res.data
     } catch (error) {
@@ -369,7 +369,7 @@ const authSlice = createSlice({
       })
 
       // ==========================================
-      // 7. РЕДАКТИРОВАНИЕ ДАННЫХ ПРОФИЛЯ
+      //  РЕДАКТИРОВАНИЕ ДАННЫХ ПРОФИЛЯ
       // ==========================================
       .addCase(fetchUpdateProfile.pending, (state) => {
         state.isLoading = true

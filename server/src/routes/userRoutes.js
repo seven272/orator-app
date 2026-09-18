@@ -37,7 +37,7 @@ router.post(
         error
       )
     }
-  }
+  } 
 )
  
 router.post('/register', register)

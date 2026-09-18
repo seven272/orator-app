@@ -555,7 +555,7 @@ const vkRegister = async (req, res) => {
   }
 }
 
-// 1️⃣ Привязка Email и Пароля к существующему аккаунту (например, созданному через VK)
+//  Привязка Email и Пароля к существующему аккаунту (например, созданному через VK)
 const linkEmailToVkAccount = async (req, res) => {
   try {
     const { email, password } = req.body
@@ -637,15 +637,13 @@ const linkEmailToVkAccount = async (req, res) => {
   }
 }
 
-// 2️⃣ Привязка VK ID к существующему Email-аккаунту сайта
+//  Привязка VK ID к существующему Email-аккаунту сайта
 const linkVkToEmailAccount = async (req, res) => {
   try {
-    const currentVkId = String(req.vkId) // Извлечено мидлваром
+    const { code, deviceId, codeVerifier, state, redirectUri } = req.body
+    const currentUser = req.user // Подтянуто и валидировано мидлваром checkAuth
 
-    // 🔥 КОРРЕКТИРОВКА: Имя, фамилию и аватар берем из req.body, как договорились ранее!
-    const { firstName, lastName, avatar } = req.body
-    const currentUser = req.user // Подтянуто мидлваром checkAuth
-
+    // ── 1. ВАЛИДАЦИЯ ВХОДЯЩИХ ПАРАМЕТРОВ PKCE ──
     if (!currentUser) {
       return res.status(401).json({
         success: false,
@@ -653,64 +651,153 @@ const linkVkToEmailAccount = async (req, res) => {
       })
     }
 
-    const userWithThisVk = await User.findOne({ vkId: currentVkId })
-
-    if (userWithThisVk) {
-      if (String(userWithThisVk._id) === String(currentUser._id)) {
-        return res.status(400).json({
-          success: false,
-          message:
-            'Этот аккаунт ВКонтакте уже привязан к вашему профилю',
-        })
-      }
-
-      return res.status(409).json({
+    if (!code || !deviceId || !codeVerifier) {
+      return res.status(400).json({
         success: false,
-        code: 'VK_ALREADY_TAKEN',
-        message:
-          'Этот аккаунт ВКонтакте уже связан с другим профилем Govorix.ru.',
-        vkOwnerId: userWithThisVk._id,
+        message: 'Не переданы криптографические параметры (code, deviceId или codeVerifier)',
       })
     }
 
+    // Проверяем, не привязан ли уже к текущему профилю какой-то VK
     if (currentUser.vkId) {
       return res.status(400).json({
         success: false,
-        message:
-          'К вашему профилю уже привязан другой аккаунт ВКонтакте.',
+        message: 'К вашему профилю уже привязан другой аккаунт ВКонтакте.',
       })
     }
 
-    // Записываем очищенные данные, пришедшие из VK Bridge фронтенда
-    currentUser.vkId = currentVkId
+    // ── 2. СЕРВЕРНЫЙ ОБМЕН КОДА VK ID НА ACCESS_TOKEN ──
+    const tokenParams = new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: process.env.VK_AUTH_APP_ID || '54772667',
+      client_secret: process.env.VK_AUTH_SECRET_KEY,
+      redirect_uri: redirectUri,
+      code,
+      device_id: deviceId,
+      code_verifier: codeVerifier,
+      state,
+    })
+
+    const tokenResponse = await fetch('https://id.vk.ru/oauth2/auth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: tokenParams,
+    })
+
+    if (!tokenResponse.ok) {
+      const errText = await tokenResponse.text()
+      console.error('Ошибка обмена токена в контроллере привязки link-vk:', errText)
+      return res.status(401).json({
+        success: false,
+        message: 'Сессия VK ID не подтверждена сервером ВКонтакте',
+      })
+    }
+
+    const tokenData = await tokenResponse.json()
+    if (tokenData.error) {
+      console.error('Ошибка данных токена VK:', tokenData.error_description)
+      return res.status(401).json({
+        success: false,
+        message: 'Сессия VK ID не подтверждена сервером ВКонтакте',
+      })
+    }
+
+    const { access_token } = tokenData
+
+    // ── 3. ЗАПРОС ОФИЦИАЛЬНОГО ПРОФИЛЯ ПОЛЬЗОВАТЕЛЯ ИЗ VK ID ──
+    const userResponse = await fetch('https://id.vk.ru/oauth2/user_info', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        client_id: process.env.VK_AUTH_APP_ID || '54772667',
+      }),
+    })
+
+    if (!userResponse.ok) {
+      return res.status(401).json({
+        success: false,
+        message: 'Не удалось извлечь защищенные данные профиля экосистемы VK',
+      })
+    }
+
+    const userData = await userResponse.json()
+    const vkUser = userData.user
+
+    if (!vkUser) {
+      return res.status(401).json({
+        success: false,
+        message: 'Профиль пользователя ВКонтакте пуст или недоступен',
+      })
+    }
+
+    // Извлекаем верифицированные сервером данные из экосистемы ВК
+    const verifiedVkId = String(vkUser.user_id)
+    const firstName = vkUser.first_name || ''
+    const lastName = vkUser.last_name || ''
+    const avatar = vkUser.avatar || ''
+
+    // ── 4. ПРОВЕРКА БАЗЫ ДАННЫХ НА КОНФЛИКТЫ ДУБЛИКАТОВ ──
+    const userWithThisVk = await User.findOne({ vkId: verifiedVkId })
+
+    if (userWithThisVk) {
+      // Если этот VK уже привязан к ЭТОМУ ЖЕ пользователю (дублирующий клик)
+      if (String(userWithThisVk._id) === String(currentUser._id)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Этот аккаунт ВКонтакте уже привязан к вашему профилю',
+        })
+      }
+
+      // 🔥 КРИТИЧЕСКИЙ КОНФЛИКТ (409): Этот VK уже занят другим существующим аккаунтом в MongoDB.
+      // Возвращаем структурированный ответ для вызова фронтенд-модалки слияния профилей.
+      return res.status(409).json({
+        success: false,
+        code: 'VK_ALREADY_TAKEN',
+        message: 'Этот аккаунт ВКонтакте уже связан с другим профилем Govorix.ru.',
+        vkOwnerId: userWithThisVk._id, // Передаем ID конфликтующего аккаунта для метода mergeAccounts
+      })
+    }
+
+    // ── 5. УСПЕШНАЯ ЗАПИСЬ ДАННЫХ И ПРИВЯЗКА СОЦСЕТИ ──
+    currentUser.vkId = verifiedVkId
+    
+    // Перезаписываем служебные данные соцсетей
     currentUser.socialProfilesData = {
       ...currentUser.socialProfilesData,
       vk: {
-        firstName: firstName || '',
-        lastName: lastName || '',
-        avatar: avatar || '',
+        firstName,
+        lastName,
+        avatar,
       },
     }
 
+    // Если у пользователя на сайте не стоял личный аватар — автоматически подставляем фото из ВК
     if (!currentUser.avatar || currentUser.avatar.trim() === '') {
-      currentUser.avatar = avatar || ''
+      currentUser.avatar = avatar
     }
 
+    // Сохраняем обновленный документ пользователя в MongoDB
     await currentUser.save()
 
-    const userResponse = currentUser.toObject()
-    delete userResponse.password
+    // Формируем чистый ответ для фронтенда без утечки хэша пароля
+    const userResponseData = currentUser.toObject()
+    delete userResponseData.password
 
     return res.status(200).json({
       success: true,
-      user: userResponse,
+      user: userResponseData,
       message: 'Аккаунт ВКонтакте успешно привязан к вашему профилю!',
     })
   } catch (error) {
-    console.error('Ошибка в контроллере linkVkToEmailAccount:', error)
+    console.error('Критическая ошибка в контроллере linkVkToEmailAccount:', error)
     return res.status(500).json({
       success: false,
-      message: 'Внутренняя ошибка сервера при привязке ВКонтакте',
+      message: 'Внутренняя ошибка сервера при обработке привязки ВКонтакте',
     })
   }
 }

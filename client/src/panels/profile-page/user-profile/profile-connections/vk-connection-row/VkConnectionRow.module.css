@@ -85,4 +85,21 @@
     align-self: flex-start;
     padding: 10px 18px;
   }
+
+  /* Добавьте эти селекторы к вашему VkConnectionRow.module.css */
+
+.vk_widget_bind_container {
+  width: 140px; /* Идеальная ширина для компактной кнопки One Tap в строке профиля */
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  transition: opacity 0.2s ease;
+}
+
+.widget_disabled {
+  opacity: 0.5;
+  pointer-events: none; /* Защита от повторных кликов во время загрузки */
+}
+
 }

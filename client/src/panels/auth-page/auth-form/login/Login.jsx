@@ -152,7 +152,7 @@ const Login = ({ showRegister }) => {
                 }
 
                 setLoading(true)
-                try {
+                try { 
                   await dispatch(
                     fetchVkWebsiteAuth({
                       code,
