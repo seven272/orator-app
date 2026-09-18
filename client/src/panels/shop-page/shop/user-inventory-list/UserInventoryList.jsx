@@ -1,16 +1,12 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import {
-  MdInventory2,
-  MdCheckCircle,
-  MdConfirmationNumber,
-} from 'react-icons/md'
+import { MdInventory2, MdConfirmationNumber } from 'react-icons/md'
 import styles from './UserInventoryList.module.css'
 
 const UserInventoryList = ({ inventory, items }) => {
   // Карта иконок для инвентаря (соответствует иконкам из витрины магазина)
   const iconMap = {
-    'freeze': '❄️',
+    freeze: '❄️',
     'theme-cyber': '🌐',
     'crown-title': '👑',
     'ai-prompt': '💡',
@@ -56,6 +52,7 @@ const UserInventoryList = ({ inventory, items }) => {
                 </span>
 
                 {isTicket ? (
+                  /* Для билетов выводим счетчик попыток */
                   <span className={styles.ticket_counter}>
                     <MdConfirmationNumber
                       className={styles.ticket_icon}
@@ -63,10 +60,20 @@ const UserInventoryList = ({ inventory, items }) => {
                     Осталось попыток:{' '}
                     <strong>{invItem.quantity}</strong>
                   </span>
+                ) : itemMeta.category === 'theme' ? (
+                  /* Для паков тем */
+                  <span className={styles.theme_badge}>
+                    Доступно в тренажерах
+                  </span>
+                ) : itemMeta.category === 'achievement' ? (
+                  /* Для титулов и ников */
+                  <span className={styles.achievement_badge}>
+                    Отображается в профиле
+                  </span>
                 ) : (
-                  <span className={styles.status_active}>
-                    <MdCheckCircle className={styles.check_icon} />
-                    Активировано
+                  /* Для расходников вроде заморозки стрика */
+                  <span className={styles.utility_badge}>
+                    Приобретено: <strong>{invItem.quantity} шт.</strong>
                   </span>
                 )}
               </div>

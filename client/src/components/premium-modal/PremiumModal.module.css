@@ -1,32 +1,75 @@
-.premium_modal_content {
+/* ==========================================================================
+   КОРНЕВОЙ ОВЕРЛЕЙ И КОНТЕНТ
+   ========================================================================== */
+.modal_overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(46, 49, 56, 0.5);
+  backdrop-filter: blur(5px);
   display: flex;
-  flex-direction: column;
-  color: var(--color-text-primary);
-  width: 100%;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
   box-sizing: border-box;
 }
 
-/* Элегантная аккуратная шапка */
+.premium_modal_content {
+  background-color: var(--color-white);
+  width: 440px;
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  animation: slideUpModal 0.25s ease-out;
+}
+
+.close_modal_btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s ease;
+  z-index: 10;
+}
+
+.close_modal_btn:hover {
+  color: var(--color-red);
+}
+
+/* ==========================================================================
+   ВНУТРЕННИЕ ЭЛЕМЕНТЫ (ТЕКСТ И ТАРИФЫ)
+   ========================================================================== */
 .header_zone {
   text-align: center;
-  margin-bottom: 28px;
-  position: relative;
+  margin-bottom: 24px;
 }
 
 .big_crown {
-  font-size: 22px;
+  font-size: 26px;
   display: inline-block;
-  margin-bottom: 8px;
-  filter: drop-shadow(0 4px 10px rgba(255, 189, 18, 0.3));
+  margin-bottom: 6px;
+  filter: drop-shadow(0 4px 10px rgba(0, 122, 255, 0.15));
   animation: gentleFloat 4s ease-in-out infinite;
 }
 
 .header_zone h2 {
-  font: var(--font-decor, var(--font-title));
-  font-size: 1.4rem;
-  color: var(--color-bg-dark, #303030);
+  font: var(--font-title);
+  font-size: 1.3rem;
+  color: var(--color-text-dark);
   margin: 0 0 6px 0;
   letter-spacing: -0.3px;
+  line-height: 1.25;
 }
 
 .subtitle {
@@ -36,68 +79,66 @@
   margin: 0;
 }
 
-/* Список преимуществ с аккуратными тонкими линиями */
 .benefits_list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-bottom: 28px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .benefit_item {
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  padding: 10px;
-  border-radius: 10px;
-  transition: background-color 0.2s;
-}
-
-.benefit_item:hover {
-  background-color: var(--color-bg-light, #f8fafc);
+  padding: 4px 6px;
 }
 
 .benefit_icon {
-  font-size: 18px;
-  background-color: var(--color-bg, #e8f3ff);
+  font-size: 16px;
+  background-color: var(--color-bg);
   width: 34px;
   height: 34px;
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
+.benefit_text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .benefit_text strong {
   font-size: 13px;
   font-weight: 700;
   color: var(--color-text-primary);
-  display: block;
 }
 
 .benefit_text p {
-  margin: 3px 0 0 0;
+  margin: 0;
   font-size: 12px;
   color: var(--color-text-secondary);
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
-/* Минималистичный блок тарифа */
 .price_box {
-  background-color: var(--color-bg-light, #f8fafc);
-  border: 1px solid var(--color-grey-light, #e2dcdc);
-  border-radius: 12px;
-  padding: 16px;
+  background-color: var(--color-bg-light);
+  border: 1px solid var(--color-grey-light);
+  border-radius: 14px;
+  padding: 12px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
 }
 
 .duration {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--color-text-primary);
 }
 
@@ -115,33 +156,35 @@
 
 .current_price {
   font-size: 16px;
-  font-weight: 700;
-  color: var(--color-text, #d86b14);
+  font-weight: 800;
+  color: var(--color-primary);
 }
 
-.current_price small {
+.test_period {
   font-size: 11px;
-  color: var(--color-green, #34c759);
+  color: var(--color-green);
   font-weight: 600;
   margin-left: 2px;
+  background-color: rgba(52, 199, 89, 0.08);
+  padding: 2px 6px;
+  border-radius: 6px;
 }
 
-/* Кнопка действия */
 .activate_btn {
-  background-color: var(--color-primary, #007aff);
-  color: var(--color-white, #ffffff);
+  background-color: var(--color-primary);
+  color: var(--color-white);
   border: none;
   height: 46px;
-  border-radius: 10px;
-  font-size: 13px;
+  border-radius: 12px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
-  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.15);
+  transition: filter 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.2);
 }
 
 .activate_btn:hover {
-  background-color: var(--color-blue-dark, #005bc1);
+  filter: brightness(0.92);
 }
 
 .activate_btn:active {
@@ -149,18 +192,35 @@
 }
 
 .activate_btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
-/* Очень мягкая плавная анимация покачивания короны */
+/* ==========================================================================
+   АНИМАЦИИ И МОБИЛЬНЫЙ МЕДИА-ЗАПРОС
+   ========================================================================== */
+@keyframes slideUpModal {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 @keyframes gentleFloat {
   0% { transform: translateY(0px) rotate(0deg); }
   50% { transform: translateY(-4px) rotate(3deg); }
   100% { transform: translateY(0px) rotate(0deg); }
 }
 
-/* Адаптивность элементов внутри модалки */
+@media screen and (max-width: 576px) {
+  .premium_modal_content {
+    width: calc(100% - 32px);
+    max-width: 100%;
+    min-width: auto;
+    flex-shrink: 0;
+    padding: 20px 16px;
+  }
+}
+
 @media screen and (max-width: 400px) {
   .price_box {
     flex-direction: column;

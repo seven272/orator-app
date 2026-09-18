@@ -1,18 +1,28 @@
+/* ==========================================================================
+   КОРНЕВАЯ СЕКЦИЯ
+   ========================================================================== */
 .level_section {
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
   overflow: hidden;
   padding: 12px 0;
+  box-sizing: border-box;
 }
 
-/* Флекс-контейнер для заголовка и кнопки "Все" */
+/* ==========================================================================
+   ШАПКА
+   ========================================================================== */
 .header_block {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 4px;
-  margin-bottom: 8px;
+  padding: 0 16px;
+  margin-bottom: 12px;
+  gap: 16px;
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
 }
 
 .title_block {
@@ -20,24 +30,29 @@
   font-weight: 700;
   color: var(--color-text-dark);
   margin: 0;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .see_all_btn {
-  background-color: var(--color-bg); /* Мягкий фон под цвет темы приложения */
-  color: var(--color-primary); /* Фирменный синий цвет для текста */
+  background-color: var(--color-bg);
+  color: var(--color-primary);
   border: none;
-  border-radius: 20px; /* Скругленные края (эффект капсулы) */
-  padding: 6px 12px;
+  border-radius: 20px;
+  padding: 6px 14px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px; /* Отступ между текстом, счетчиком и стрелочкой */
+  gap: 6px;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-/* Круглый индикатор количества упражнений внутри кнопки */
 .counter {
   background-color: var(--color-white);
   color: var(--color-primary);
@@ -50,21 +65,21 @@
   justify-content: center;
 }
 
-/* Анимация стрелочки при нажатии (или наведении) */
 .arrow_icon {
   transition: transform 0.2s ease;
 }
 
-/* Эффект при клике на мобильном устройстве */
 .see_all_btn:active {
   background-color: var(--color-secondary);
 }
 
 .see_all_btn:active .arrow_icon {
-  transform: translateX(3px); /* Стрелочка слегка сдвигается вперед */
+  transform: translateX(3px);
 }
 
-/* Обертка для позиционирования стрелок */
+/* ==========================================================================
+   СЛАЙДЕР
+   ========================================================================== */
 .slider_container {
   position: relative;
   width: 100%;
@@ -74,25 +89,24 @@
 
 .carousel_wrapper {
   display: flex;
-  gap: 20px;
+  gap: 12px;
   overflow-x: auto;
   width: 100%;
   box-sizing: border-box;
-  padding: 10px 4px 20px 4px;
+  padding: 12px 0;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
 }
 
 .carousel_wrapper::-webkit-scrollbar {
   display: none;
 }
 
-/* Кнопки навигации (стрелки) */
+/* Стрелки навигации на ПК */
 .nav_btn {
   position: absolute;
-  top: calc(
-    50% - 18px
-  ); /* Центрирование по высоте (минус половина высоты кнопки + компенсация нижнего паддинга) */
+  top: calc(50% - 24px);
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -105,26 +119,54 @@
   cursor: pointer;
   z-index: 5;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-  transition:
-    transform 0.2s ease,
-    opacity 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .nav_btn:active {
   transform: scale(0.92);
 }
 
-.btn_left {
-  left: 4px;
+.nav_btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
-.btn_right {
-  right: 4px;
+.btn_left { left: 4px; }
+.btn_right { right: 4px; }
+
+/* ==========================================================================
+   АДАПТАЦИЯ
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+  .title_block {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
-/* Опционально: скрываем стрелки на девайсах, где точно есть тач-скролл, 
-   чтобы они не перекрывали карточки на маленьких экранах */
-@media (max-width: 480px) {
+@media screen and (max-width: 576px) {
+  .carousel_wrapper {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .carousel_wrapper > div {
+    width: 65vw;
+    min-width: 65vw;
+    max-width: 230px;
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+
   .nav_btn {
     display: none;
   }

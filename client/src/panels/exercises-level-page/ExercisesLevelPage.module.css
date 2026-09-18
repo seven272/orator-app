@@ -84,19 +84,25 @@
   background: linear-gradient(135deg, #f1fcf2, #e8f5e9);
   border: 1px solid #c8e6c9;
 }
-.header_base .title { color: #1b5e20; }
+.header_base .title {
+  color: #1b5e20;
+}
 
 .header_advanced {
   background: linear-gradient(135deg, #fffcf5, #fff3e0);
   border: 1px solid #ffe0b2;
 }
-.header_advanced .title { color: #e65100; }
+.header_advanced .title {
+  color: #e65100;
+}
 
 .header_expert {
   background: linear-gradient(135deg, #fdf6f8, #fce4ec);
   border: 1px solid #f8bbd0;
 }
-.header_expert .title { color: #c2185b; }
+.header_expert .title {
+  color: #c2185b;
+}
 
 /* Сетка списка упражнений */
 .list {
@@ -113,4 +119,69 @@
   font-size: 14px;
   color: var(--color-red);
   padding: 20px;
+}
+
+/* Контейнер хлебных крошек */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 2px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ссылки навигации */
+.crumb_link {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font: var(--font-m);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.crumb_link:hover {
+  color: var(--color-primary); /* Подсветка при наведении */
+}
+
+.crumb_home_icon {
+  font-size: 16px;
+  transform: translateY(-1px);
+}
+
+/* Стрелочки-разделители */
+.crumb_separator {
+  color: var(--color-grey-light);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* 👑 Активный элемент-выпадашка текущего уровня сложности */
+.crumb_current_dropdown {
+  color: var(--color-primary);
+  font: var(--font-m);
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px; /* Ювелирный микро-отступ до стрелочки */
+  padding: 0; /* Полностью убираем аляпистые рамки и фон */
+  background: none;
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+.crumb_current_dropdown:hover {
+  background: none;
+  opacity: 0.8; /* Деликатный визуальный отклик при наведении */
+}
+
+.dropdown_arrow {
+  font-size: 16px;
+  color: var(--color-primary);
+  transform: translateY(
+    0.5px
+  ); /* Микро-выравнивание стрелочки по базовой линии шрифта */
 }

@@ -73,7 +73,6 @@
   text-overflow: ellipsis;
 }
 
-/* Стили для счетчика билетов */
 .ticket_counter {
   font-size: 12px;
   color: #2b6cb0;
@@ -95,20 +94,14 @@
   font-size: 13px;
 }
 
-/* Стили для постоянных товаров (темы, ачивки) */
-.status_active {
+/* Все текстовые бейджи теперь аккуратные и не вводят в заблуждение */
+.theme_badge,
+.achievement_badge,
+.utility_badge {
   font-size: 12px;
-  color: var(--color-green);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
-
-.check_icon {
-  font-size: 14px;
-}
-
 /* Мобильная адаптация */
 @media screen and (max-width: 576px) {
   .inventory_list {

@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+import React, { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useDispatch } from 'react-redux'
 import { message } from 'antd'
-import Modal from '../../UI/modal/Modal' // Ваш существующий компонент Modal
+import { IoCloseOutline } from 'react-icons/io5'
+
 import { fetchActivateFakePremium } from '../../redux/slices/profileSlice'
 import styles from './PremiumModal.module.css'
 
@@ -9,29 +12,57 @@ const PremiumModal = ({ active, onClose }) => {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
 
+  // 🔒 Блокировка скролла
+  useEffect(() => {
+    if (active) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [active])
+
+  // Escape для закрытия
+  useEffect(() => {
+    if (!active) return
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && !loading) onClose()
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [active, onClose, loading])
+
+  if (!active) return null
+
   const handleBuy = async () => {
-    setLoading(false)
+    setLoading(true)
     try {
       await dispatch(fetchActivateFakePremium()).unwrap()
-      message.success('Премиум-статус успешно активирован!')
-      onClose() // Закрываем модалку после успеха
+      message.success('Premium статус успешно активирован!')
+      onClose()
     } catch (err) {
-      message.error(err || 'Ошибка активации')
+      const text = typeof err === 'string' ? err : err?.message || 'Ошибка активации'
+      message.error(text)
     } finally {
       setLoading(false)
     }
   }
 
-  return (
-    <Modal active={active} onClose={onClose}>
-      <div className={styles.premium_modal_content}>
+  return createPortal(
+    <div className={styles.modal_overlay} onClick={loading ? undefined : onClose}>
+      <div className={styles.premium_modal_content} onClick={(e) => e.stopPropagation()}>
+        <button type="button" className={styles.close_modal_btn} onClick={onClose}>
+          <IoCloseOutline size={24} />
+        </button>
+
         <div className={styles.header_zone}>
           <span className={styles.big_crown}>👑</span>
           <h2>Раскройте силу Govorix Premium</h2>
           <p className={styles.subtitle}>Инструменты профессиональных спикеров на базе ИИ</p>
         </div>
 
-        {/* Преимущества списком */}
         <div className={styles.benefits_list}>
           <div className={styles.benefit_item}>
             <span className={styles.benefit_icon}>🤖</span>
@@ -53,23 +84,26 @@ const PremiumModal = ({ active, onClose }) => {
             <span className={styles.benefit_icon}>🎙️</span>
             <div className={styles.benefit_text}>
               <strong>Продвинутые тренажеры</strong>
-              <p>Помогут отточить цлевой разговорный навые до совершенства. Тосты, самопрезентация, рассказ историй, выступления на сцене и многое другое...</p>
+              <p>
+                Помогут отточить целевой разговорный навык до совершенства. Тосты, самопрезентация,
+                рассказ историй, выступления на сцене и многое другое...
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Инфо о тарифе */}
         <div className={styles.price_box}>
           <span className={styles.duration}>Подписка на 30 дней</span>
           <div className={styles.price_row}>
             <span className={styles.old_price}>490 ₽</span>
-            <span className={styles.current_price}>0 ₽ <small>(Тестовый период)</small></span>
+            <span className={styles.current_price}>
+              0 ₽ <small className={styles.test_period}>(Тестовый период)</small>
+            </span>
           </div>
         </div>
 
-        {/* Действие */}
-        <button 
-          type="button" 
+        <button
+          type="button"
           className={styles.activate_btn}
           onClick={handleBuy}
           disabled={loading}
@@ -77,7 +111,8 @@ const PremiumModal = ({ active, onClose }) => {
           {loading ? 'Активация...' : 'Подключить бесплатно'}
         </button>
       </div>
-    </Modal>
+    </div>,
+    document.body
   )
 }
 

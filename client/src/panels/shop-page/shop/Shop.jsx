@@ -125,9 +125,11 @@ const Shop = () => {
       </div>
     )
 
-  const visibleItems = items.filter(
+ 
+   const visibleItems = items.filter(
     (item) => item.category !== 'merch' && item.category !== 'theme',
   )
+
 
   return (
     <div className={styles.container}>

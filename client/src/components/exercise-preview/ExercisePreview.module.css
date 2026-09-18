@@ -12,9 +12,10 @@
   position: relative;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .execise_container:hover {
@@ -90,7 +91,7 @@
 .execise_descr {
   font-size: 0.9rem;
   line-height: 1.4;
-  color: #666;
+  color: var(--color-text-secondary);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -101,8 +102,8 @@
   margin-top: 15px;
   align-self: flex-start;
   padding: 5px 12px;
-  background-color: #e6f4ff;
-  color: #1677ff;
+  background-color: rgba(22, 119, 255, 0.08);
+  color: var(--color-primary);
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.85rem;
@@ -133,8 +134,8 @@
 
 .content_blur {
   filter: blur(1px) saturate(0.1);
-  opacity: 0.95;
-  transition: all 0.3s ease;
+  opacity: 0.7;
+  transition: filter 0.3s ease, opacity 0.3s ease;
   user-select: none;
   pointer-events: none;
 }
@@ -147,15 +148,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(248, 250, 252, 0.65); /* Адаптировано под var(--color-bg-light) */
-  backdrop-filter: blur(1px);
+  border-radius: 12px;
 }
 
 .premium_lock {
   cursor: pointer;
 }
 
-/* Унифицированные синие иконки замков и корон */
+/* Иконки замков и корон — синий цвет */
 .lock_icon,
 .premium_lock .lock_icon {
   color: #4a90e2;
@@ -166,7 +166,7 @@
   justify-content: center;
 }
 
-/* Унифицированные плашки для текста ошибок (Уровень / Премиум) */
+/* Плашки текста ошибок — синие границы и цвет текста */
 .lock_text,
 .premium_lock .lock_text {
   background: #ebf8ff;
@@ -183,7 +183,7 @@
   text-align: center;
 }
 
-/* Унифицированные интерактивные кнопки (Кнопка Теории) */
+/* Кнопка теории — синяя рамка, синий текст, при наведении — синяя заливка */
 .theory_btn {
   display: flex;
   justify-content: center;
@@ -198,7 +198,7 @@
   border: 1px solid #4299e1;
   box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   text-transform: uppercase;
   z-index: 11;
 }
@@ -211,7 +211,7 @@
 }
 
 /* ==========================================================================
-   ИНВЕНТАРНЫЕ КОМПОНЕНТЫ (БЕЙДЖИ)
+   БЕЙДЖ БИЛЕТА
    ========================================================================== */
 .ticket_badge {
   position: absolute;
@@ -244,7 +244,7 @@
 }
 
 /* ==========================================================================
-   АНИМАЦИИ И МЕДИА-ЗАПРОСЫ
+   АНИМАЦИИ
    ========================================================================== */
 @keyframes pulse_badge {
   0% {
@@ -259,19 +259,174 @@
   }
 }
 
+/* ==========================================================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ
+   ========================================================================== */
 @media screen and (max-width: 576px) {
-  .ticket_badge {
-    top: 8px;
-    right: 8px;
-    padding: 4px 8px;
-    border-radius: 10px;
+  .execise_container {
+    height: 115px;
+    max-width: 100%;
+    border-radius: 14px;
+    border: 1px solid var(--color-bg);
+    box-shadow: 0 4px 12px rgba(0, 74, 226, 0.04);
   }
 
-  .ticket_badge span {
+  .execise_container:hover {
+    transform: none;
+  }
+
+  /* Горизонтальная раскладка */
+  .inner_content {
+    flex-direction: row;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    height: 100%;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .execise_header {
+    padding: 0;
+    margin: 0;
+    width: max-content;
+    flex-shrink: 0;
+  }
+
+  .icon_wrap {
+    width: 46px;
+    height: 46px;
+    background-color: var(--color-bg-light);
+    border-radius: 10px;
+    padding: 4px;
+    box-sizing: border-box;
+  }
+
+  .skill_tag {
+    display: none;
+  }
+
+  .execise_text_wrap {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .text_main {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .execise_title {
+    font-size: 0.9rem;
+    font-weight: 800;
+    margin: 0;
+    color: var(--color-text-dark);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .execise_descr {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .execise_reward {
+    position: static;
+    margin-top: 4px;
+    padding: 2px 6px;
+    font-size: 9px;
+    font-weight: 800;
+    border-radius: 4px;
+    width: max-content;
+  }
+
+  .exercise_footer {
+    display: none;
+  }
+
+  /* Оверлей блокировки */
+  .lock_overlay {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 12px 8px;
+    gap: 0;
+    border-radius: 14px;
+  }
+
+  .lock_icon,
+  .premium_lock .lock_icon {
+    margin: 0 0 4px 0;
+    height: 24px;
+    transform: scale(0.6);
+    flex-shrink: 0;
+  }
+
+  .lock_text,
+  .premium_lock .lock_text {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin: 0 0 6px 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .theory_btn,
+  .premium_lock button,
+  .premium_lock .theory_btn {
+    font-size: 9px;
+    padding: 6px 14px;
+    line-height: 12px;
+    height: 24px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    margin: 0 0 4px 0;
+    align-self: center;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .theory_btn_icon {
     font-size: 9px;
   }
 
+  /* Бейдж билета */
+  .ticket_badge {
+    top: 6px;
+    right: 6px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    z-index: 5;
+  }
+
+  .ticket_badge span {
+    font-size: 8px;
+  }
+
   .ticket_badge_icon {
-    font-size: 13px;
+    font-size: 8px;
   }
 }
