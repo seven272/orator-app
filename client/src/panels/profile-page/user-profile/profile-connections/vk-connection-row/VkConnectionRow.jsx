@@ -6,8 +6,8 @@ import { FaVk } from 'react-icons/fa6'
 import { MdCheckCircle } from 'react-icons/md'
 import * as VKID from '@vkid/sdk' // Используем официальный SDK
 
-import { fetchLinkVk } from '../../../redux/slices/authSlice'
-import { generateCodeChallenge, generateCodeVerifier } from '../../../utils/pkce'
+import { fetchLinkVk } from '../../../../../redux/slices/authSlice'
+import { generateCodeChallenge, generateCodeVerifier } from '../../../../../utils/pkce'
 import styles from './VkConnectionRow.module.css'
 
 const VkConnectionRow = ({ user, isLoading: authLoading }) => {
@@ -130,7 +130,7 @@ const VkConnectionRow = ({ user, isLoading: authLoading }) => {
     <div className={styles.link_row}>
       <span className={styles.row_text_label}>
         <FaVk className={`${styles.row_icon} ${styles.vk_color_icon}`} />
-        ВКонтакте
+        Привязать профиль ВК
       </span>
 
       {user?.vkId ? (
