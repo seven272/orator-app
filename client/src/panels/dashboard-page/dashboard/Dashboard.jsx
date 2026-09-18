@@ -13,6 +13,8 @@ import { Radar } from '@ant-design/plots'
 import Achievements from '../achievements/Achievements'
 import LiveDuelStats from '../live-duel-stats/LiveDuelStats'
 import CourseHistory from '../course-history/CourseHistory'
+import ProfileSpeakerRank from '../profile-speaker-rank/ProfileSpeakerRank'
+import { getSpeakerProgress } from '../../../utils/progressHelpers' 
 import styles from './Dashboard.module.css'
 
 const Dashboard = ({
@@ -27,9 +29,13 @@ const Dashboard = ({
   if (!skills || !user || !duelStats) {
     return <Spin size="large" fullscreen />
   }
-
+  const progressData = getSpeakerProgress(user.xp)
   return (
     <div className={styles.container}>
+      <ProfileSpeakerRank
+        userXp={user.xp}
+        progressData={progressData}
+      />
       {/* 1. СТАТИСТИКА (ВЕРХНЯЯ ПАНЕЛЬ) */}
       <div className={styles.stats_grid}>
         {/* Карточка уровня */}

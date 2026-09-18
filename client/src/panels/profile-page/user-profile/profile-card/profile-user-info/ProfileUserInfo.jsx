@@ -29,7 +29,7 @@ const ProfileUserInfo = ({ user, isPremium, premiumExpiresAt }) => {
 
       <div className={styles.gamer_info}>
         <h4 className={styles.display_name}>
-          Оратор {user?.displayName || 'Anonimus'}
+          {user?.displayName || 'Anonimus'}
         </h4>
         <span className={styles.level_badge}>
           Уровень {user?.progression?.level || 1}

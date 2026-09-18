@@ -1,0 +1,259 @@
+.mic_progress_block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+
+/* Шапка блока */
+.mic_header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+
+.mic_icon_box {
+  width: 46px;
+  height: 46px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-bg);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 74, 226, 0.04);
+}
+
+.dynamic_mic {
+  font-size: 22px;
+}
+
+.mic_titles {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rank_title {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.audience_text {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--color-text-dark);
+}
+
+.stage_desc {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  margin: 6px 0 14px 0;
+}
+
+/* Шкала текущего уровня */
+.xp_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 24px;
+  background-color: var(--color-bg-layout);
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--color-grey-light);
+}
+
+.xp_labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.xp_current_text {
+  color: var(--color-primary);
+}
+
+.xp_track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-grey-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.xp_fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1677ff, #4a90e2);
+  border-radius: 4px;
+  transition: width 0.5s cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
+.audience_sub_hint {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+/* ==========================================================================
+   КРАСИВАЯ КАРТА ОРАТОРСКОГО ПУТИ (ТАЙМЛАЙН)
+   ========================================================================== */
+.timeline_container {
+  background-color: var(--color-white);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--color-bg);
+  box-shadow: 0 4px 16px rgba(0, 74, 226, 0.02);
+}
+
+.timeline_title {
+  margin: 0 0 16px 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--color-text-secondary);
+}
+
+/* Обертка для нативного свайпа карты на мобилках */
+.timeline_wrapper_scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.timeline_wrapper_scroll::-webkit-scrollbar {
+  display: none; /* Прячем горизонтальную полосу */
+}
+
+.stages_line {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  min-width: 480px; /* Фиксируем ширину рельсы, чтобы на мобилках она изящно тянулась под свайп */
+  padding: 10px 0;
+}
+
+/* 🔒 Боевая сплошная рельса пути */
+.progress_line_track {
+  position: absolute;
+  top: 26px; /* Выравниваем строго по центру кружков с микрофонами */
+  left: 20px;
+  right: 20px;
+  height: 4px;
+  background-color: var(--color-grey-light);
+  border-radius: 2px;
+  z-index: 1;
+}
+
+/* Живая закрашенная часть рельсы */
+.progress_line_fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1677ff, #4a90e2);
+  border-radius: 2px;
+  transition: width 0.6s ease-in-out;
+}
+
+/* Узел ранга */
+.stage_node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2; /* Поверх линии */
+  width: 76px;
+  opacity: 0.35;
+  transition: all 0.4s ease;
+}
+
+.node_reached {
+  opacity: 1;
+}
+
+/* Круглый контейнер микрофона */
+.node_mic_box {
+  width: 36px;
+  height: 36px;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-grey-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+.node_emoji {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.node_reached .node_mic_box {
+  border-color: #1677ff;
+  background-color: #e6f4ff;
+}
+
+/* 👑 ЭФФЕКТНЫЙ НЕОНОВЫЙ ТЕКУЩИЙ РАНГ */
+.node_current {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.node_current .node_mic_box {
+  border: 2px solid #1677ff;
+  background-color: var(--color-white);
+  box-shadow: 0 0 12px rgba(22, 119, 255, 0.4);
+}
+
+.node_current .node_emoji {
+  transform: scale(1.15);
+}
+
+.node_current .node_title {
+  color: #1677ff;
+  font-weight: 800;
+}
+
+/* Тексты рангов */
+.node_title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.node_xp_hint {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   МОБИЛЬНЫЙ СКРОЛЛ-ТАЧ (НИЧЕГО НЕ СКРЫВАЕМ)
+   ========================================================================== */
+@media screen and (max-width: 576px) {
+  /* Разрешаем узлам дышать на свайп-ленте */
+  .stages_line {
+    min-width: 540px; 
+    padding: 10px 8px;
+  }
+  
+  .timeline_container {
+    padding: 12px 10px;
+    border-radius: 14px;
+  }
+}
