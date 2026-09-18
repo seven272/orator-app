@@ -767,13 +767,10 @@ const linkVkToEmailAccount = async (req, res) => {
     currentUser.vkId = verifiedVkId
     
     // Перезаписываем служебные данные соцсетей
-    currentUser.socialProfilesData = {
-      ...currentUser.socialProfilesData,
-      vk: {
-        firstName,
-        lastName,
-        avatar,
-      },
+     currentUser.socialProfilesData.vk = {
+      firstName,
+      lastName,
+      avatar,
     }
 
     // Если у пользователя на сайте не стоял личный аватар — автоматически подставляем фото из ВК
