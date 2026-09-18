@@ -49,8 +49,8 @@ router.put('/update-profile', checkAuth, updateProfile)
 router.post('/vk-website-auth', vkWebsiteAuth)
 router.post('/vk-auth', verifyVkSignature, vkAuth)
 router.post('/vk-register', verifyVkSignature, vkRegister)
-router.post('/link-email', checkAuth, linkEmailToVkAccount)
-router.post('/link-vk', checkAuth, verifyVkSignature, linkVkToEmailAccount);
+router.post('/link-email', checkAuth, verifyVkSignature, linkEmailToVkAccount)
+router.post('/link-vk', checkAuth, linkVkToEmailAccount);
 router.post('/merge-accounts', checkAuth, mergeAccounts);
 // Имитация успешной оплаты через ЮMoney
 router.post('/fake-buy', checkAuth, fakeBuyPremium)
