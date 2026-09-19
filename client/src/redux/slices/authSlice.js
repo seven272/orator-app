@@ -50,7 +50,7 @@ const fetchLogoutUser = createAsyncThunk(
   },
 )
 
-const fetchGetMe = createAsyncThunk( 
+const fetchGetMe = createAsyncThunk(
   'auth/fetchGetMe',
   async (_, { rejectWithValue }) => {
     try {
@@ -171,7 +171,7 @@ const fetchLinkVk = createAsyncThunk(
     try {
       const res = await axiosInstance.post(
         '/user/link-vk',
-        vkLinkData, 
+        vkLinkData,
       )
       return res.data
     } catch (error) {
@@ -279,8 +279,10 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
-        state.isVkGuest = false // Полноценный вход
+        state.isVkGuest = false 
         state.error = null
+        const todayStr = new Date().toISOString().split('T')[0]
+        localStorage.setItem('govorix_guest_date', todayStr)
       })
       .addCase(fetchLoginUser.rejected, (state, action) => {
         state.isLoading = false
@@ -302,6 +304,7 @@ const authSlice = createSlice({
         state.isVkGuest = false
         state.error = null
         state.mergeConflict = null
+        
       })
       .addCase(fetchLogoutUser.rejected, (state, action) => {
         state.isLoading = false
@@ -360,8 +363,10 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
-        state.isVkGuest = false // 👈 Гостевой статус успешно снят!
+        state.isVkGuest = false 
         state.error = null
+        const todayStr = new Date().toISOString().split('T')[0]
+        localStorage.setItem('govorix_guest_date', todayStr)
       })
       .addCase(fetchVkRegister.rejected, (state, action) => {
         state.isLoading = false
@@ -474,8 +479,10 @@ const authSlice = createSlice({
         state.isLoading = false
         state.user = action.payload?.user
         state.isAdmin = action.payload?.user?.isAdmin || false
-        state.isVkGuest = false // На сайте всегда создается полноценный аккаунт
+        state.isVkGuest = false
         state.error = null
+        const todayStr = new Date().toISOString().split('T')[0]
+        localStorage.setItem('govorix_guest_date', todayStr)
       })
       .addCase(fetchVkWebsiteAuth.rejected, (state, action) => {
         state.isLoading = false

@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
-import createToken from '../utils/createToken.js'
 
 const checkAuth = async (req, res, next) => {
   const token = req.cookies['jwt-oratory']
@@ -76,6 +75,7 @@ const optionalAuth = async (req, res, next) => {
     console.log(
       'Необязательная авторизация не прошла, отдаем как гостю',
     )
+    console.log(error)
     req.isGuest = true
   }
 

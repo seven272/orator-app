@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { clearLastAwarded } from '../../redux/slices/profileSlice'
+import { clearLastAwarded } from '../../../redux/slices/profileSlice'
 import styles from './AchievementModal.module.css'
-import { ALL_ACHIEVEMENTS } from '../../constants/achievements'
-import defaultIcon from '../../assets/images/achievements/first_step.png'
+import { ALL_ACHIEVEMENTS } from '../../../constants/achievements'
+import defaultIcon from '../../../assets/images/achievements/first_step.png'
 
 const AchievementModal = () => {
   const dispatch = useDispatch()
   const lastAwarded = useSelector(
     (state) => state.profile.lastAwarded,
-  ) 
+  )
 
   // Локальный стейт для создания задержки появления
   const [showModal, setShowModal] = useState(false)

@@ -85,6 +85,20 @@ const userSchema = new mongoose.Schema(
         },
       ],
     },
+    dailyEnergy: {
+      allowed: {
+        type: Number,
+        default: 15,
+      }, // Емкость бака энергии зарегистрированного пользователя (15 единиц)
+      used: {
+        type: Number,
+        default: 0,
+      }, // Сколько энергии потрачено за сегодня
+      lastAttemptDate: {
+        type: String,
+        default: '',
+      }, // Текущая дата сервера в формате "YYYY-MM-DD" для ленивого сброса
+    },
     dailyProgress: [
       {
         taskId: {

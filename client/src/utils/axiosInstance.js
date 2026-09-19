@@ -19,20 +19,23 @@ axiosInstance.interceptors.response.use(
     return response
   },
   (error) => {
-     // Проверяем, если сервер вернул ошибку 403 
+    // Проверяем, если сервер вернул ошибку 403
     if (error.response && error.response.status === 403) {
       const requestUrl = error.config?.url || ''
+      const errorData = error.response.data || {}
 
-      // 🔥 ИСКЛЮЧЕНИЕ: Если ошибка 403 пришла от роутов регистрации или входа, 
-      // никуда пользователя НЕ перенаправляем, отдаем ошибку форме!
-      const isAuthRoute = 
-        requestUrl.includes('/user/register') || 
-        requestUrl.includes('/user/login') || 
+      //  ИСКЛЮЧЕНИЕ 1: Роуты авторизации
+      const isAuthRoute =
+        requestUrl.includes('/user/register') ||
+        requestUrl.includes('/user/login') ||
         requestUrl.includes('/user/vk-auth') ||
         requestUrl.includes('/user/vk-register')
 
-      if (!isAuthRoute) {
-        // Во всех остальных случаях (например, если обычный юзер ломится в админку) — уводим на 403
+      //  ИСКЛЮЧЕНИЕ 2: Исчерпание суточных лимитов энергии (не редиректить, отдавать Thunk-у)
+      const isEnergyLimitError = errorData.code === 'ENERGY_EXHAUSTED'
+
+      if (!isAuthRoute && !isEnergyLimitError) {
+        // Уводим на 403 только если это не форма входа и не лимит энергии
         window.location.hash = '/forbidden'
       }
     }

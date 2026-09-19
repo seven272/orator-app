@@ -16,6 +16,8 @@ import {
 } from './courseSlice'
 //импорт покупки ачивок в магазине
 import { fetchPurchaseItem } from './shopSlice'
+//импорт покупки ачивок в магазине
+import { fetchLogoutUser } from './authSlice'
 // Импортируем Thunk-экшены завершения ИИ-тренажеров
 import { fetchFinishDebate } from './ai-exercises/debateSlice'
 import { fetchFinishIcebreaker } from './ai-exercises/icebreakerSlice'
@@ -80,18 +82,22 @@ const initialState = {
     isPremium: true,
     premiumExpiresAt: null,
     activePurchasedCourses: [],
+    dailyEnergy: {
+      allowed: 15,
+      used: 0,
+    },
   },
   skills: [
-    { subject: 'коммуникация', A: 80, fullMark: 100 },
-    { subject: 'харизма и юмор', A: 65, fullMark: 100 },
-    { subject: 'находчивость', A: 90, fullMark: 100 },
-    { subject: 'техника речи', A: 45, fullMark: 100 },
-    { subject: 'убедительность', A: 70, fullMark: 100 },
+    { subject: 'коммуникация', A: 0, fullMark: 100 },
+    { subject: 'харизма и юмор', A: 0, fullMark: 100 },
+    { subject: 'находчивость', A: 0, fullMark: 100 },
+    { subject: 'техника речи', A: 0, fullMark: 100 },
+    { subject: 'убедительность', A: 0, fullMark: 100 },
   ],
   weakPoint: {
-    skill: 'техника речи',
-    score: 45,
-    recommendation: `Твой навык "техника речи" требует внимания. Попробуй улучшить его!`,
+    skill: '', // например, техника речи
+    score: 3,
+    recommendation: `Твой навык "..." требует внимания. Попробуй улучшить его!`,
   },
   recentActivity: [], //последние 5 сделанных упражнений
   totalExercises: 0,
@@ -146,6 +152,18 @@ const profileSlice = createSlice({
       if (state.user) {
         state.user.isPremium = action.payload.isPremium
         state.user.premiumExpiresAt = action.payload.premiumExpiresAt
+      }
+    },
+    // Редюсер локального списания энергии для гостевого режима (из localStorage)
+    syncGuestEnergy: (state, action) => {
+      if (state.user) {
+        // action.payload — это чистый текущий остаток энергии в localStorage (от 0 до 3)
+        const currentLeft = action.payload
+
+        state.user.dailyEnergy = {
+          allowed: 3,
+          used: 3 - currentLeft, // Если в localStorage 0, то used = 3 - 0 = 3 (Бак полностью пуст!)
+        }
       }
     },
   },
@@ -212,6 +230,23 @@ const profileSlice = createSlice({
           )
         }
       })
+      //Подписка на выход их аккаунта:
+      .addCase(fetchLogoutUser.fulfilled, (state) => {
+        const savedEnergy = localStorage.getItem(
+          'govorix_guest_energy',
+        )
+        const currentLeft = savedEnergy
+          ? parseInt(savedEnergy, 10)
+          : 3
+
+        state.user = {
+          ...initialState.user, // Сбрасываем имя, монеты, опыт в 0
+          dailyEnergy: {
+            allowed: 3,
+            used: 3 - currentLeft, // Железно восстанавливаем гостевой лимит из браузера!
+          },
+        }
+      })
       //Загрузка данных профиля
       .addCase(fetchProfileData.pending, (state) => {
         state.loading = true
@@ -272,6 +307,10 @@ const profileSlice = createSlice({
           if (!action.payload || !action.payload.stats) return
 
           if (state.user) {
+            //Извлекаем суточную энергию, если она вернулась (для тренажеров 1 и 2 уровней)
+            if (action.payload.dailyEnergy) {
+              state.user.dailyEnergy = action.payload.dailyEnergy
+            }
             // Атомарно обновляем показатели профиля
             state.user.level = action.payload.stats.level
             state.user.xp = action.payload.stats.xp
@@ -311,6 +350,7 @@ export const {
   setTotalPoints,
   updateRewardAfterCourse,
   setPremiumStatus,
+  syncGuestEnergy,
 } = profileSlice.actions
 export { fetchProfileData, fetchActivateFakePremium }
 export default profileSlice.reducer

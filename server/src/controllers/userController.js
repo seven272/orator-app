@@ -640,7 +640,8 @@ const linkEmailToVkAccount = async (req, res) => {
 //  Привязка VK ID к существующему Email-аккаунту сайта
 const linkVkToEmailAccount = async (req, res) => {
   try {
-    const { code, deviceId, codeVerifier, state, redirectUri } = req.body
+    const { code, deviceId, codeVerifier, state, redirectUri } =
+      req.body
     const currentUser = req.user // Подтянуто и валидировано мидлваром checkAuth
 
     // ── 1. ВАЛИДАЦИЯ ВХОДЯЩИХ ПАРАМЕТРОВ PKCE ──
@@ -654,7 +655,8 @@ const linkVkToEmailAccount = async (req, res) => {
     if (!code || !deviceId || !codeVerifier) {
       return res.status(400).json({
         success: false,
-        message: 'Не переданы криптографические параметры (code, deviceId или codeVerifier)',
+        message:
+          'Не переданы криптографические параметры (code, deviceId или codeVerifier)',
       })
     }
 
@@ -662,7 +664,8 @@ const linkVkToEmailAccount = async (req, res) => {
     if (currentUser.vkId) {
       return res.status(400).json({
         success: false,
-        message: 'К вашему профилю уже привязан другой аккаунт ВКонтакте.',
+        message:
+          'К вашему профилю уже привязан другой аккаунт ВКонтакте.',
       })
     }
 
@@ -678,17 +681,23 @@ const linkVkToEmailAccount = async (req, res) => {
       state,
     })
 
-    const tokenResponse = await fetch('https://id.vk.ru/oauth2/auth', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+    const tokenResponse = await fetch(
+      'https://id.vk.ru/oauth2/auth',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: tokenParams,
       },
-      body: tokenParams,
-    })
+    )
 
     if (!tokenResponse.ok) {
       const errText = await tokenResponse.text()
-      console.error('Ошибка обмена токена в контроллере привязки link-vk:', errText)
+      console.error(
+        'Ошибка обмена токена в контроллере привязки link-vk:',
+        errText,
+      )
       return res.status(401).json({
         success: false,
         message: 'Сессия VK ID не подтверждена сервером ВКонтакте',
@@ -697,7 +706,10 @@ const linkVkToEmailAccount = async (req, res) => {
 
     const tokenData = await tokenResponse.json()
     if (tokenData.error) {
-      console.error('Ошибка данных токена VK:', tokenData.error_description)
+      console.error(
+        'Ошибка данных токена VK:',
+        tokenData.error_description,
+      )
       return res.status(401).json({
         success: false,
         message: 'Сессия VK ID не подтверждена сервером ВКонтакте',
@@ -707,21 +719,25 @@ const linkVkToEmailAccount = async (req, res) => {
     const { access_token } = tokenData
 
     // ── 3. ЗАПРОС ОФИЦИАЛЬНОГО ПРОФИЛЯ ПОЛЬЗОВАТЕЛЯ ИЗ VK ID ──
-    const userResponse = await fetch('https://id.vk.ru/oauth2/user_info', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
+    const userResponse = await fetch(
+      'https://id.vk.ru/oauth2/user_info',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: process.env.VK_AUTH_APP_ID || '54772667',
+        }),
       },
-      body: new URLSearchParams({
-        client_id: process.env.VK_AUTH_APP_ID || '54772667',
-      }),
-    })
+    )
 
     if (!userResponse.ok) {
       return res.status(401).json({
         success: false,
-        message: 'Не удалось извлечь защищенные данные профиля экосистемы VK',
+        message:
+          'Не удалось извлечь защищенные данные профиля экосистемы VK',
       })
     }
 
@@ -749,7 +765,8 @@ const linkVkToEmailAccount = async (req, res) => {
       if (String(userWithThisVk._id) === String(currentUser._id)) {
         return res.status(400).json({
           success: false,
-          message: 'Этот аккаунт ВКонтакте уже привязан к вашему профилю',
+          message:
+            'Этот аккаунт ВКонтакте уже привязан к вашему профилю',
         })
       }
 
@@ -758,16 +775,17 @@ const linkVkToEmailAccount = async (req, res) => {
       return res.status(409).json({
         success: false,
         code: 'VK_ALREADY_TAKEN',
-        message: 'Этот аккаунт ВКонтакте уже связан с другим профилем Govorix.ru.',
+        message:
+          'Этот аккаунт ВКонтакте уже связан с другим профилем Govorix.ru.',
         vkOwnerId: userWithThisVk._id, // Передаем ID конфликтующего аккаунта для метода mergeAccounts
       })
     }
 
     // ── 5. УСПЕШНАЯ ЗАПИСЬ ДАННЫХ И ПРИВЯЗКА СОЦСЕТИ ──
     currentUser.vkId = verifiedVkId
-    
+
     // Перезаписываем служебные данные соцсетей
-     currentUser.socialProfilesData.vk = {
+    currentUser.socialProfilesData.vk = {
       firstName,
       lastName,
       avatar,
@@ -791,10 +809,14 @@ const linkVkToEmailAccount = async (req, res) => {
       message: 'Аккаунт ВКонтакте успешно привязан к вашему профилю!',
     })
   } catch (error) {
-    console.error('Критическая ошибка в контроллере linkVkToEmailAccount:', error)
+    console.error(
+      'Критическая ошибка в контроллере linkVkToEmailAccount:',
+      error,
+    )
     return res.status(500).json({
       success: false,
-      message: 'Внутренняя ошибка сервера при обработке привязки ВКонтакте',
+      message:
+        'Внутренняя ошибка сервера при обработке привязки ВКонтакте',
     })
   }
 }
@@ -955,6 +977,19 @@ const getUserProfile = async (req, res) => {
         .json({ message: 'Пользователь не найден' })
     }
 
+    // для обновления лимитов прохождения тренажеров без прмиум подписки
+    // получаем текущую дату сервера в формате строки YYYY-MM-DD
+    const todayStr = new Date().toISOString().split('T')[0]
+
+    if (
+      user.dailyEnergy &&
+      user.dailyEnergy.lastAttemptDate !== todayStr
+    ) {
+      user.dailyEnergy.used = 0
+      user.dailyEnergy.lastAttemptDate = todayStr
+      await user.save() // Атомарно сохраняем сброшенный бак в MongoDB
+    }
+
     // Рассчитываем прогресс текущего уровня в процентах для фронтенда
     const nextThreshold = getXpThreshold(user.progression.level)
     const levelProgressPercent = Math.round(
@@ -1030,6 +1065,7 @@ const getUserProfile = async (req, res) => {
           .map((item) => item.date), // достаем строки "YYYY-MM-DD"
       ),
     ]
+
     res.status(200).json({
       user: {
         displayName: user.displayName,
@@ -1046,6 +1082,12 @@ const getUserProfile = async (req, res) => {
         levelProgressPercent,
         nextThreshold,
         completed_days: completedDays,
+        ...(!user.isPremium && {
+          dailyEnergy: {
+            allowed: user.dailyEnergy?.allowed,
+            used: user.dailyEnergy?.used,
+          },
+        }),
       },
       skills: skillsData,
       weakPoint,

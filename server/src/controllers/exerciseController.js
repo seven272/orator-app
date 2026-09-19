@@ -4,27 +4,35 @@ import { applyAiGamificationProgress } from '../utils/fnForControllers.js'
 
 const completeExercise = async (req, res) => {
   try {
-    // 1. Извлекаем данные из тела запроса и ID авторизованного пользователя
     const { exAlias, score, isDaily } = req.body
-    const userId = req.userId
 
-    // 2. Ищем метаданные упражнения в глобальном конфигурационном объекте ALL_EXERCISES
+    // 🔥 1. ОБРАБОТКА ГОСТЕВОГО РЕЖИМА
+    if (req.isGuest) {
+      return res.status(200).json({
+        success: true,
+        isGuest: true,
+        message: 'Результат гостя обработан локально',
+        score,
+        exAlias
+      })
+    }
+
+    // 2. Ищем метаданные упражнения
     const exercise = Object.values(All_EXERCISES)
-      .flat() // Превращаем объект категорий в плоский массив всех существующих упражнений
+      .flat()
       .find((ex) => ex.alias === exAlias)
 
-    if (!exercise)
-      return res
-        .status(404)
-        .json({ message: 'Упражнение не найдено' })
+    if (!exercise) {
+      return res.status(404).json({ message: 'Упражнение не найдено' })
+    }
 
-    // 3. Загружаем из базы полный документ пользователя
-    const user = await User.findById(userId)
-    if (!user)
-      return res
-        .status(404)
-        .json({ message: 'Пользователь не найден' })
+    // 3. Загружаем документ пользователя (req.user уже подгружен и обновлен мидлваром энергии!)
+    const user = req.user
+    if (!user) {
+      return res.status(404).json({ message: 'Пользователь не найден' })
+    }
 
+    // 4. Применяем геймификацию (опыт, монеты, ачивки)
     const gamificationResult = await applyAiGamificationProgress(
       user,
       score,
@@ -33,15 +41,19 @@ const completeExercise = async (req, res) => {
       isDaily,
     )
 
+    // 5. Возвращаем успешный ответ + актуальное состояние энергии для UI
     res.status(200).json({
+      success: true,
       message: 'Прогресс сохранен',
+      dailyEnergy: {
+        allowed: user.dailyEnergy.allowed,
+        used: user.dailyEnergy.used,
+      },
       ...gamificationResult,
     })
   } catch (error) {
-    console.error(error)
-    res
-      .status(500)
-      .json({ message: 'Ошибка при сохранении результата' })
+    console.error('Ошибка в completeExercise:', error)
+    res.status(500).json({ message: 'Ошибка при сохранении результата' })
   }
 }
 

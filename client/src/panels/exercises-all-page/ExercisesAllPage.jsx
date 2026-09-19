@@ -4,7 +4,7 @@ import ExerciseSlider from './exercise-slider/ExerciseSlider'
 import styles from './ExercisesAllPage.module.css'
 import { All_EXERCISES } from '../../assets/mocks/exercises'
 import TheoryContent from '../../components/theory-content/TheoryContent'
-import PremiumModal from '../../components/premium-modal/PremiumModal'
+import PremiumModal from '../../components/modal/premium-modal/PremiumModal'
 import Modal from '../../UI/modal/Modal'
 
 const ExercisesAllPage = () => {

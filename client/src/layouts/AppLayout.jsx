@@ -3,7 +3,9 @@ import { Outlet } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { parseURLSearchParamsForGetLaunchParams } from '@vkontakte/vk-bridge'
 
-import AchievementModal from '../components/achievement-modal/AchievementModal'
+import AchievementModal from '../components/modal/achievement-modal/AchievementModal'
+import EnergyLimitAlert from '../components/modal/energy-limit-alert/EnergyLimitAlert'
+import EnergyGuestAlert from '../components/modal/energy-guest-alert/EnergyGuestAlert'
 import { fetchGetMe, fetchVkAuth } from '../redux/slices/authSlice'
 import { fetchProfileData } from '../redux/slices/profileSlice'
 import { fetchLeaderboard } from '../redux/slices/leaderboardSlice'
@@ -79,6 +81,8 @@ const AppLayout = () => {
         <Outlet />
       </main>
       <AchievementModal />
+      <EnergyLimitAlert />
+      <EnergyGuestAlert />
     </div>
   )
 }

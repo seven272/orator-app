@@ -32,7 +32,7 @@
 }
 
 .unauth_bg {
-  background-color: var(--color-bg-light);
+  background-color: var(--color-bg);
   border: 1px solid var(--color-grey-light);
 }
 

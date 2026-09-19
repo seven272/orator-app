@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { message } from 'antd'
 import { IoCloseOutline } from 'react-icons/io5'
 
-import { fetchActivateFakePremium } from '../../redux/slices/profileSlice'
+import { fetchActivateFakePremium } from '../../../redux/slices/profileSlice'
 import styles from './PremiumModal.module.css'
 
 const PremiumModal = ({ active, onClose }) => {

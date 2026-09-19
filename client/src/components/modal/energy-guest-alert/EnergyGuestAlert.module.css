@@ -1,0 +1,158 @@
+/* Фиксированный оверлей */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(46, 49, 56, 0.45);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 16px;
+  box-sizing: border-box;
+  animation: fade_in 0.2s ease-out forwards;
+}
+
+/* Элегантная карточка контента */
+.modal_content {
+  background-color: var(--color-bg-light);
+  border: 1px solid var(--color-secondary);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  padding: 32px 24px 24px 24px;
+  box-sizing: border-box;
+  box-shadow: 0 12px 40px rgba(38, 136, 235, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: scale_up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 🚀 Мягкий неоновый ореол вокруг иконки ракеты */
+.icon_glow_ring {
+  width: 64px;
+  height: 64px;
+  background: radial-gradient(circle, rgba(38, 136, 235, 0.18) 0%, rgba(232, 243, 255, 0) 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  border-radius: 50%;
+}
+
+.rocket_icon {
+  font-size: 26px;
+  color: var(--color-blue-vk);
+  filter: drop-shadow(0 2px 6px rgba(38, 136, 235, 0.3));
+}
+
+/* Заголовок окна */
+.modal_title {
+  font-family: var(--font-family-title);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-blue-vk);
+  margin: 0 0 16px 0;
+  letter-spacing: -0.01em;
+}
+
+/* Описание оффера */
+.modal_description {
+  font-family: var(--font-family-regular);
+  font-size: var(--font-size-m);
+  color: var(--color-text-dark);
+  line-height: 1.6;
+  margin: 0 0 14px 0;
+}
+
+.modal_description:last-of-type {
+  margin-bottom: 28px;
+}
+
+/* Выделение текста */
+.highlight_vk {
+  font-family: var(--font-family-title);
+  color: var(--color-blue-vk);
+  font-weight: 700;
+}
+
+.highlight_blue {
+  font-family: var(--font-family-title);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Вертикальный стек кнопок */
+.actions_stack {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Общие базовые стили кнопок-капсул */
+.base_btn {
+  width: 100%;
+  height: 42px;
+  border-radius: 24px;
+  border: none;
+  font-size: var(--font-size-m);
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.base_btn:active {
+  transform: scale(0.98);
+}
+
+/* 🎁 Кнопка для контекста ВКонтакте (Фирменный синий ВК) */
+.vk_action_btn {
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+  box-shadow: 0 4px 14px rgba(38, 136, 235, 0.25);
+}
+
+.vk_action_btn:hover {
+  background-color: var(--color-blue-dark);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(38, 136, 235, 0.35);
+}
+
+/* 🔑 Кнопка для контекста Сайта (Ярко-синий основной цвет) */
+.site_action_btn {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.2);
+}
+
+.site_action_btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(0, 122, 255, 0.3);
+}
+
+/* Кнопка отмены */
+.cancel_text_btn {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-regular);
+}
+
+.cancel_text_btn:hover {
+  color: var(--color-primary);
+}
+
+/* Анимации */
+@keyframes fade_in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scale_up { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }

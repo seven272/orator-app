@@ -6,6 +6,7 @@ const All_EXERCISES = {
       title: 'Словесный мост',
       description: 'Найди общее между двумя словами',
       reward: 30,
+      level: 1,
     },
     {
       id: '2',
@@ -13,6 +14,7 @@ const All_EXERCISES = {
       title: 'Ода предмету',
       description: 'Описывай предмет 30 секунд без пауз',
       reward: 30,
+      level: 1,
     },
     {
       id: '3',
@@ -20,6 +22,7 @@ const All_EXERCISES = {
       title: 'Битва дикции',
       description: 'Прочитай быстро и четко',
       reward: 30,
+      level: 1,
     },
     {
       id: '4',
@@ -27,6 +30,7 @@ const All_EXERCISES = {
       title: 'Синонимайзер',
       description: 'Назови 5 синонимов к слову',
       reward: 30,
+      level: 1,
     },
     {
       id: '5',
@@ -34,6 +38,7 @@ const All_EXERCISES = {
       title: 'Эмоциональный окрас',
       description: 'Прочитай фразу с заданной эмоцией',
       reward: 30,
+      level: 1,
     },
     {
       id: '6',
@@ -41,6 +46,7 @@ const All_EXERCISES = {
       title: 'Логическая цепь',
       description: 'Продолжи фразу за 15 секунд',
       reward: 30,
+      level: 1,
     },
   ],
   level2: [
@@ -50,6 +56,7 @@ const All_EXERCISES = {
       title: 'Блатной базар',
       description: 'Ответь на провокацию испульзуя ключевые слова',
       reward: 50,
+      level: 2,
     },
     {
       id: '8',
@@ -57,6 +64,7 @@ const All_EXERCISES = {
       title: 'Нить разговора',
       description: 'Свяжи два понятия и ответь на вопросы',
       reward: 50,
+      level: 2,
     },
     {
       id: '9',
@@ -64,6 +72,7 @@ const All_EXERCISES = {
       title: 'Мастер тостов',
       description: 'Произнеси тост по заданной схеме',
       reward: 50,
+      level: 2,
     },
     {
       id: '10',
@@ -71,6 +80,7 @@ const All_EXERCISES = {
       title: 'Импровизатор анекдотов',
       description: 'Придумай свою смешную концовку анекдота',
       reward: 50,
+      level: 2,
     },
     {
       id: '11',
@@ -79,6 +89,7 @@ const All_EXERCISES = {
       description:
         'Расскажи про предмет или явление не используя ключевые слова',
       reward: 50,
+      level: 2,
     },
     {
       id: '12',
@@ -86,6 +97,7 @@ const All_EXERCISES = {
       title: 'Просто о сложном',
       description: 'Опиши сложный термин максимально просто',
       reward: 50,
+      level: 2,
     },
     {
       id: '13',
@@ -94,6 +106,7 @@ const All_EXERCISES = {
       description:
         'Победа над тихим голосом и страхом привлечь внимание',
       reward: 50,
+      level: 2,
     },
     {
       id: '14',
@@ -102,16 +115,18 @@ const All_EXERCISES = {
       description:
         'Учит не бояться фейлов и делать их частью своего триумфа',
       reward: 50,
+      level: 2,
     },
   ],
 
-  level3: [ 
+  level3: [
     {
       id: '15',
       alias: 'ai-debate',
       title: 'Дебат-клуб',
       description: 'Жаркие дебаты и горячие споры с ИИ-оппонентом',
       reward: 100,
+      level: 3,
     },
     {
       id: '16',
@@ -120,6 +135,7 @@ const All_EXERCISES = {
       description:
         'Формат телеинтервью с острыми вопросами с ИИ в роли ведущего',
       reward: 100,
+      level: 3,
     },
     {
       id: '17',
@@ -127,6 +143,7 @@ const All_EXERCISES = {
       title: 'Ледокол',
       description: 'Разговори закрытого собеседника',
       reward: 100,
+      level: 3,
     },
     {
       id: '18',
@@ -134,6 +151,7 @@ const All_EXERCISES = {
       title: 'Трибуна',
       description: 'Выскажись по теме и получи анализ текста',
       reward: 100,
+      level: 3,
     },
     {
       id: '19',
@@ -141,6 +159,7 @@ const All_EXERCISES = {
       title: 'Железное алиби',
       description: 'Убеди прокурора в своей невиновности',
       reward: 100,
+      level: 3,
     },
 
     {
@@ -149,6 +168,7 @@ const All_EXERCISES = {
       title: 'Торг уместен',
       description: 'Сбей цену у неуступчевого продавца',
       reward: 100,
+      level: 3,
     },
 
     {
@@ -157,6 +177,7 @@ const All_EXERCISES = {
       title: 'Остроумный нокаут',
       description: 'Не дай хейтеру испортить выступление',
       reward: 100,
+      level: 3,
     },
 
     {
@@ -165,14 +186,16 @@ const All_EXERCISES = {
       title: 'Трудный переводчик',
       description: 'Объясни так, чтобы понял даже ребенок',
       reward: 100,
+      level: 3,
     },
     {
       id: '23',
-      alias: 'ai-poem-tongue', 
+      alias: 'ai-poem-tongue',
       title: 'Тяжелая дикция',
       description:
         'Прокачай артикуляцию и речевую опору на коварных текстах',
       reward: 100,
+      level: 3,
     },
     {
       id: '24',
@@ -181,6 +204,7 @@ const All_EXERCISES = {
       description:
         'Озвучивай известные стихи в самых неожиданных и безумных ролях',
       reward: 100,
+      level: 3,
     },
 
     {
@@ -190,6 +214,7 @@ const All_EXERCISES = {
       description:
         'Преврати классическую поэзию в хип-хоп трек с жестким ритмом',
       reward: 100,
+      level: 3,
     },
 
     {
@@ -199,6 +224,7 @@ const All_EXERCISES = {
       description:
         'Проведи прямой эфир утреннего шоу без единой секунды молчания',
       reward: 100,
+      level: 3,
     },
     {
       id: '27',
@@ -207,6 +233,7 @@ const All_EXERCISES = {
       description:
         'Попробуй красочно описать ситуацию, обходя хитрые табу и стоп-слова',
       reward: 100,
+      level: 3,
     },
 
     {
@@ -216,6 +243,7 @@ const All_EXERCISES = {
       description:
         'Выдай спич на заданную тему, вплетая в него случайный предмет',
       reward: 100,
+      level: 3,
     },
     {
       id: '29',
@@ -224,6 +252,7 @@ const All_EXERCISES = {
       description:
         'Примерить на себя приемы великих ораторов в бытовых ситуациях',
       reward: 100,
+      level: 3,
     },
   ],
 }
