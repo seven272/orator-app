@@ -21,14 +21,14 @@ const shareExerciseResultToStory = async (exercise) => {
     const urlApp = `https://vk.ru/app54762318`
 
     // Верхний стикер: Название упражнения
-    const textTop = `Пройдено: тренажер «${title}»!`
+    const textTop = `🎉 Пройдено: тренажер «${title}»!`
 
     // Нижний стикер: Описание тренажера (с ограничением длины)
     const shortDesc =
       description.length > 50
         ? `${description.substring(0, 47)}...`
         : description
-    const textBottom = `🗣️ ${shortDesc}. Сможешь так же?`
+    const textBottom = `${shortDesc}. Сможешь так же? 🔥`
 
     const data = await bridge.send('VKWebAppShowStoryBox', {
       background_type: 'image',
@@ -74,7 +74,7 @@ const shareExerciseResultToStory = async (exercise) => {
             },
             transform: {
               gravity: 'center_bottom',
-              translation_y: -0.28, // Подняли выше, чтобы не наползало на маскота
+              translation_y: -0.33, // Подняли выше, чтобы не наползало на маскота
             },
           },
         },
