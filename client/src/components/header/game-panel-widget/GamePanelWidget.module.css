@@ -117,10 +117,11 @@
   font-size: 9px;
   font-weight: 800;
   text-transform: uppercase;
+  cursor: pointer;
 }
 
 .premium_crown_icon {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--color-yellow);
 }
 

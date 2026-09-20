@@ -79,7 +79,7 @@ const initialState = {
     inventory: [],
     levelProgressPercent: 0,
     completed_days: ['2000-01-15', '2000-01-16', '2000-01-17'],
-    isPremium: true,
+    isPremium: false,
     premiumExpiresAt: null,
     activePurchasedCourses: [],
     dailyEnergy: {
