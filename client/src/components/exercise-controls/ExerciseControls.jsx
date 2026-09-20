@@ -19,7 +19,7 @@ import {
 } from '../../redux/slices/exerciseSlice';
 
 // Импортируем конфигурационный массив со структурой всех тренажеров
-import { ALL_EXERCISES } from '../../assets/mocks/exercises';
+import { All_EXERCISES } from '../../assets/mocks/exercises';
 import { useVkEnvironment } from '../../hooks/useVkEnvironment';
 import { shareExerciseResultToStory } from '../../utils/vkShareStory';
 import styles from './ExerciseControls.module.css';
@@ -63,7 +63,7 @@ const ExerciseControls = ({
   // 🛠️ Находим объект текущего тренажера с использованием сглаживания Object.values().flat()
   const currentExercise = useMemo(() => {
     if (!exAlias) return null;
-    return Object.values(ALL_EXERCISES)
+    return Object.values(All_EXERCISES)
       .flat()
       .find((ex) => ex?.alias === exAlias);
   }, [exAlias]);
