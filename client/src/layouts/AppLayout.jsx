@@ -6,6 +6,7 @@ import { parseURLSearchParamsForGetLaunchParams } from '@vkontakte/vk-bridge'
 import AchievementModal from '../components/modal/achievement-modal/AchievementModal'
 import EnergyLimitAlert from '../components/modal/energy-limit-alert/EnergyLimitAlert'
 import EnergyGuestAlert from '../components/modal/energy-guest-alert/EnergyGuestAlert'
+import PremiumModal from '../components/modal/premium-modal/PremiumModal'
 import { fetchGetMe, fetchVkAuth } from '../redux/slices/authSlice'
 import { fetchProfileData } from '../redux/slices/profileSlice'
 import { fetchLeaderboard } from '../redux/slices/leaderboardSlice'
@@ -83,6 +84,7 @@ const AppLayout = () => {
       <AchievementModal />
       <EnergyLimitAlert />
       <EnergyGuestAlert />
+      <PremiumModal />
     </div>
   )
 }

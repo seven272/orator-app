@@ -8,8 +8,8 @@ import ExercisePreview from '../../components/exercise-preview/ExercisePreview'
 import styles from './ExercisesLevelPage.module.css'
 import { All_EXERCISES } from '../../assets/mocks/exercises'
 import TheoryContent from '../../components/theory-content/TheoryContent'
-import PremiumModal from '../../components/modal/premium-modal/PremiumModal'
 import Modal from '../../UI/modal/Modal'
+
 
 import aiLevel1 from '../../assets/images/other/level1.png'
 import aiLevel2 from '../../assets/images/other/level2.png'
@@ -18,8 +18,10 @@ import aiLevel3 from '../../assets/images/other/level3.png'
 const ExercisesLevelPage = () => {
   const { level } = useParams()
   const navigate = useNavigate()
+ 
+
   const exList = All_EXERCISES[level] || []
-  const [showModalPremium, setShowModalPremium] = useState(false)
+
   const [showModalTheory, setShowModalTheory] = useState(false)
   const [activeExercise, setActiveExercise] = useState(null)
 
@@ -62,9 +64,7 @@ const ExercisesLevelPage = () => {
     navigate(`/exercises/${key}`) // Мгновенный переход на выбранный уровень сложности
   }
 
-  const handleOpenPremium = () => {
-    setShowModalPremium(true)
-  }
+ 
 
   const handleOpenTheory = (exData) => {
     setActiveExercise(exData)
@@ -139,7 +139,6 @@ const ExercisesLevelPage = () => {
           <ExercisePreview
             key={ex.alias}
             exData={ex}
-            onOpenPremium={handleOpenPremium}
             onOpenTheory={handleOpenTheory}
           />
         ))}
@@ -163,10 +162,7 @@ const ExercisesLevelPage = () => {
         )}
       </Modal>
 
-      <PremiumModal
-        active={showModalPremium}
-        onClose={() => setShowModalPremium(false)}
-      />
+      
     </div>
   )
 }

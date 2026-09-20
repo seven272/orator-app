@@ -104,6 +104,7 @@ const initialState = {
   lastAwarded: null, // Сюда кладем новую ачивку для триггера модалки
   isStale: false,
   loading: false,
+  isPremiumModalOpen: false,
   error: null,
 }
 
@@ -165,6 +166,12 @@ const profileSlice = createSlice({
           used: 3 - currentLeft, // Если в localStorage 0, то used = 3 - 0 = 3 (Бак полностью пуст!)
         }
       }
+    },
+    openPremiumModal: (state) => {
+      state.isPremiumModalOpen = true
+    },
+    closePremiumModal: (state) => {
+      state.isPremiumModalOpen = false
     },
   },
   extraReducers: (builder) => {
@@ -351,6 +358,8 @@ export const {
   updateRewardAfterCourse,
   setPremiumStatus,
   syncGuestEnergy,
+  openPremiumModal,
+  closePremiumModal,
 } = profileSlice.actions
 export { fetchProfileData, fetchActivateFakePremium }
 export default profileSlice.reducer

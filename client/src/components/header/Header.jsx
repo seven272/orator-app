@@ -34,7 +34,7 @@ const Header = () => {
   // Контроль и ленивый сброс лимитов гостя сайта [INDEX]
   useEffect(() => {
     // Код выполняется строго для неавторизованных гостей сайта / гостей ВК
-    if (!isAuth && !isVkGuest) {
+    if (!isAuth) {
       const todayStr = new Date().toISOString().split('T')[0] // Надежно фиксируем YYYY-MM-DD
       const savedDate = localStorage.getItem('govorix_guest_date')
       const savedEnergy = localStorage.getItem('govorix_guest_energy')

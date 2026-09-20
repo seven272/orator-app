@@ -1,16 +1,17 @@
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { BsBatteryCharging } from "react-icons/bs";
 import { LuCrown } from 'react-icons/lu'
-import { MdOutlineLock, MdBatteryAlert } from 'react-icons/md' // 🔥 Добавили MdBatteryAlert
+import { MdOutlineLock } from 'react-icons/md' // 🔥 Добавили MdBatteryAlert
 import { FaQuestion } from 'react-icons/fa'
 import { HiOutlineTicket } from 'react-icons/hi2'
 import { checkIsAuth, checkIsVkGuest } from '../../redux/slices/authSlice' // Импортируем селекторы
-
+import { openPremiumModal } from '../../redux/slices/profileSlice'
 import styles from './ExercisePreview.module.css'
 
-const ExercisePreview = ({ exData, onOpenPremium, onOpenTheory }) => {
+const ExercisePreview = ({ exData, onOpenTheory }) => {
   const navigate = useNavigate()
-
+ const dispatch = useDispatch()
   const { user: profileUser } = useSelector((state) => state.profile)
   const isAuth = useSelector(checkIsAuth)
   const isVkGuest = useSelector(checkIsVkGuest)
@@ -42,16 +43,18 @@ const ExercisePreview = ({ exData, onOpenPremium, onOpenTheory }) => {
 
     isEnergyExhausted = currentEnergy < cost // Энергии меньше, чем нужно для старта раунда [INDEX]
   }
-
   // Бейдж билета: только если нет глобального премиума, но есть билеты
   const shouldShowTicketBadge = !profileUser?.isPremium && hasTicket
 
+ 
+
   // Клик по карточке
   const handleCardClick = () => {
+   
     if (isLevelLocked) return
 
     if (isPremiumLocked) {
-      onOpenPremium?.()
+     dispatch(openPremiumModal())
       return
     }
 
@@ -60,8 +63,8 @@ const ExercisePreview = ({ exData, onOpenPremium, onOpenTheory }) => {
     navigate(`/exercise/${exData.alias}`)
   }
 
-  const openTheory = (e) => {
-    e.stopPropagation()
+  const openTheory = (evt) => {
+    evt.stopPropagation()
     onOpenTheory?.(exData)
   }
 
@@ -90,7 +93,7 @@ const ExercisePreview = ({ exData, onOpenPremium, onOpenTheory }) => {
       {/* ЛЕГКИЙ ОВЕРЛЕЙ ПУСТОЙ БАТАРЕЙКИ (Только для открытых, но истощенных упражнений) */}
      {!isLocked && isEnergyExhausted && (
   <div className={styles.energy_center_icon_wrap}>
-    <MdBatteryAlert className={styles.battery_center_icon} />
+    <BsBatteryCharging className={styles.battery_center_icon} />
   </div>
 )}
 

@@ -4,21 +4,22 @@
 .modal_overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(46, 49, 56, 0.5);
+  background-color: rgba(46, 49, 56, 0.45);
   backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2200; /* Гарантированный перекрывающий слой */
   box-sizing: border-box;
 }
 
 .premium_modal_content {
-  background-color: var(--color-white);
+  background-color: var(--color-bg-light);
+  border: 1px solid var(--color-border);
   width: 440px;
   border-radius: 20px;
-  padding: 24px 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 28px 20px 24px 20px;
+  box-shadow: 0 15px 35px rgba(216, 107, 20, 0.12);
   box-sizing: border-box;
   position: relative;
   display: flex;
@@ -32,48 +33,50 @@
   right: 14px;
   background: transparent;
   border: none;
-  font-size: 24px;
-  color: var(--color-text-secondary);
+  color: var(--color-grey);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
   z-index: 10;
 }
 
 .close_modal_btn:hover {
-  color: var(--color-red);
+  color: var(--color-text);
+  transform: scale(1.05);
 }
 
 /* ==========================================================================
    ВНУТРЕННИЕ ЭЛЕМЕНТЫ (ТЕКСТ И ТАРИФЫ)
    ========================================================================== */
 .header_zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   margin-bottom: 24px;
 }
 
-.big_crown {
-  font-size: 26px;
-  display: inline-block;
-  margin-bottom: 6px;
-  filter: drop-shadow(0 4px 10px rgba(0, 122, 255, 0.15));
-  animation: gentleFloat 4s ease-in-out infinite;
+/* 🔥 УБРАНА ПУЛЬСАЦИЯ И АНИМАЦИЯ: Статичная, благородная золотая иконка короны */
+.big_crown_icon {
+  color: var(--color-yellow);
+  filter: drop-shadow(0 4px 8px rgba(255, 189, 18, 0.25));
+  margin-bottom: 8px;
 }
 
 .header_zone h2 {
-  font: var(--font-title);
-  font-size: 1.3rem;
-  color: var(--color-text-dark);
-  margin: 0 0 6px 0;
-  letter-spacing: -0.3px;
-  line-height: 1.25;
+  font-family: var(--font-family-decor);
+  font-size: var(--font-size-l);
+  color: var(--color-text);
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .subtitle {
-  font: var(--font-m-light);
+  font-family: var(--font-family-subtitle);
   font-size: 13px;
   color: var(--color-text-secondary);
   margin: 0;
@@ -82,22 +85,23 @@
 .benefits_list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   margin-bottom: 24px;
 }
 
 .benefit_item {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: flex-start;
   padding: 4px 6px;
 }
 
-.benefit_icon {
-  font-size: 16px;
+/* 🔥 ОБНОВЛЕНО: Подготовка под стильные SVG-компоненты */
+.benefit_icon_wrap {
+  color: var(--color-primary);
   background-color: var(--color-bg);
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -109,9 +113,11 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  text-align: left;
 }
 
 .benefit_text strong {
+  font-family: var(--font-family-title);
   font-size: 13px;
   font-weight: 700;
   color: var(--color-text-primary);
@@ -119,14 +125,15 @@
 
 .benefit_text p {
   margin: 0;
+  font-family: var(--font-family-regular);
   font-size: 12px;
   color: var(--color-text-secondary);
   line-height: 1.4;
 }
 
 .price_box {
-  background-color: var(--color-bg-light);
-  border: 1px solid var(--color-grey-light);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-secondary);
   border-radius: 14px;
   padding: 12px 16px;
   display: flex;
@@ -137,6 +144,7 @@
 }
 
 .duration {
+  font-family: var(--font-family-subtitle);
   font-size: 13px;
   font-weight: 700;
   color: var(--color-text-primary);
@@ -149,18 +157,21 @@
 }
 
 .old_price {
+  font-family: var(--font-family-regular);
   text-decoration: line-through;
   color: var(--color-grey);
   font-size: 12px;
 }
 
 .current_price {
+  font-family: var(--font-family-title);
   font-size: 16px;
   font-weight: 800;
-  color: var(--color-primary);
+  color: var(--color-green);
 }
 
 .test_period {
+  font-family: var(--font-family-regular);
   font-size: 11px;
   color: var(--color-green);
   font-weight: 600;
@@ -170,29 +181,38 @@
   border-radius: 6px;
 }
 
+/* 🔥 ЭЛИТНАЯ ЗОЛОТАЯ КНОПКА ПОДКЛЮЧЕНИЯ */
 .activate_btn {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  border: none;
-  height: 46px;
-  border-radius: 12px;
-  font-size: 14px;
+  background: linear-gradient(135deg, var(--color-bg-orange) 0%, var(--color-yellow) 100%);
+  border: 1px solid var(--color-border);
+  color: var(--font-color-dark);
+  font-family: var(--font-family-decor);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  height: 44px;
+  border-radius: 22px;
   font-weight: 700;
   cursor: pointer;
+  outline: none;
   transition: filter 0.2s ease, transform 0.1s ease;
-  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.2);
+  box-shadow: 0 4px 14px rgba(255, 189, 18, 0.25);
 }
 
-.activate_btn:hover {
-  filter: brightness(0.92);
+.activate_btn:hover:not(:disabled) {
+  filter: brightness(1.04);
 }
 
-.activate_btn:active {
+.activate_btn:active:not(:disabled) {
   transform: scale(0.98);
 }
 
 .activate_btn:disabled {
-  opacity: 0.5;
+  background: var(--color-grey-light) !important;
+  border-color: var(--color-grey) !important;
+  color: var(--color-grey) !important;
+  box-shadow: none !important;
+  opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
@@ -201,14 +221,8 @@
    АНИМАЦИИ И МОБИЛЬНЫЙ МЕДИА-ЗАПРОС
    ========================================================================== */
 @keyframes slideUpModal {
-  from { transform: translateY(20px); opacity: 0; }
+  from { transform: translateY(15px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes gentleFloat {
-  0% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-4px) rotate(3deg); }
-  100% { transform: translateY(0px) rotate(0deg); }
 }
 
 @media screen and (max-width: 576px) {
@@ -217,7 +231,7 @@
     max-width: 100%;
     min-width: auto;
     flex-shrink: 0;
-    padding: 20px 16px;
+    padding: 24px 16px 20px 16px;
   }
 }
 

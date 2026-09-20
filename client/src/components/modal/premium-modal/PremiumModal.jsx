@@ -1,20 +1,29 @@
-/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { message } from 'antd'
 import { IoCloseOutline } from 'react-icons/io5'
+import { FaCrown, FaBoltLightning } from 'react-icons/fa6'
+import { HiSparkles, HiMiniQueueList } from 'react-icons/hi2'
 
-import { fetchActivateFakePremium } from '../../../redux/slices/profileSlice'
+import {
+  fetchActivateFakePremium,
+  closePremiumModal,
+} from '../../../redux/slices/profileSlice'
 import styles from './PremiumModal.module.css'
 
-const PremiumModal = ({ active, onClose }) => {
+const PremiumModal = () => {
   const dispatch = useDispatch()
+  
+  // Управление состоянием полностью переведено на Redux
+  const isPremiumModalOpen = useSelector(
+    (state) => state.profile.isPremiumModalOpen,
+  )
+  
   const [loading, setLoading] = useState(false)
 
-  // 🔒 Блокировка скролла
+  // 🔒 Блокировка скролла страницы при открытом окне
   useEffect(() => {
-    if (active) {
+    if (isPremiumModalOpen) {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = ''
@@ -22,74 +31,117 @@ const PremiumModal = ({ active, onClose }) => {
     return () => {
       document.body.style.overflow = ''
     }
-  }, [active])
+  }, [isPremiumModalOpen])
 
-  // Escape для закрытия
+  // ⌨️ Закрытие окна по кнопке Escape
   useEffect(() => {
-    if (!active) return
+    if (!isPremiumModalOpen) return
+    
     const handleEsc = (e) => {
-      if (e.key === 'Escape' && !loading) onClose()
+      if (e.key === 'Escape' && !loading) {
+        dispatch(closePremiumModal())
+      }
     }
     document.addEventListener('keydown', handleEsc)
     return () => document.removeEventListener('keydown', handleEsc)
-  }, [active, onClose, loading])
+  }, [isPremiumModalOpen, loading, dispatch])
 
-  if (!active) return null
+  // Универсальный обработчик закрытия окна
+  const handleClose = () => {
+    if (!loading) {
+      dispatch(closePremiumModal())
+    }
+  }
 
+  // Покупка Premium статуса
   const handleBuy = async () => {
     setLoading(true)
     try {
       await dispatch(fetchActivateFakePremium()).unwrap()
       message.success('Premium статус успешно активирован!')
-      onClose()
+      dispatch(closePremiumModal())
     } catch (err) {
-      const text = typeof err === 'string' ? err : err?.message || 'Ошибка активации'
+      const text =
+        typeof err === 'string'
+          ? err
+          : err?.message || 'Ошибка активации'
       message.error(text)
     } finally {
       setLoading(false)
     }
   }
 
-  return createPortal(
-    <div className={styles.modal_overlay} onClick={loading ? undefined : onClose}>
-      <div className={styles.premium_modal_content} onClick={(e) => e.stopPropagation()}>
-        <button type="button" className={styles.close_modal_btn} onClick={onClose}>
-          <IoCloseOutline size={24} />
+  // Условный чистый рендер без использования порталов
+  if (!isPremiumModalOpen) {
+    return null
+  }
+
+  return (
+    <div
+      className={styles.modal_overlay}
+      onClick={handleClose}
+    >
+      <div
+        className={styles.premium_modal_content}
+        onClick={(evt) => evt.stopPropagation()}
+      >
+        <button
+          type="button"
+          className={styles.close_modal_btn}
+          onClick={handleClose}
+          disabled={loading}
+        >
+          <IoCloseOutline size={22} />
         </button>
 
         <div className={styles.header_zone}>
-          <span className={styles.big_crown}>👑</span>
-          <h2>Раскройте силу Govorix Premium</h2>
-          <p className={styles.subtitle}>Инструменты профессиональных спикеров на базе ИИ</p>
+          {/* Статичная элегантная SVG-корона без анимации покачивания */}
+          <FaCrown size={32} className={styles.big_crown_icon} />
+          <h2>Govorix Premium</h2>
+          <p className={styles.subtitle}>
+            Инструменты профессиональных спикеров на базе ИИ
+          </p>
         </div>
 
+        {/* Ровно 3 вовлекающих, емких и ярких пункта преимуществ */}
         <div className={styles.benefits_list}>
+          
           <div className={styles.benefit_item}>
-            <span className={styles.benefit_icon}>🤖</span>
-            <div className={styles.benefit_text}>
-              <strong>Интерактивный ИИ-оппонент</strong>
-              <p>Умные дебаты, каверзные вопросы и жесткие переговоры с ИИ в реальном времени.</p>
+            <div className={styles.benefit_icon_wrap}>
+              <FaBoltLightning size={15} />
             </div>
-          </div>
-
-          <div className={styles.benefit_item}>
-            <span className={styles.benefit_icon}>📊</span>
             <div className={styles.benefit_text}>
-              <strong>Глубокая ИИ-аналитика</strong>
-              <p>Разбор аргументации, выявление речевых ошибок и персонализированная оценка за каждое упражнение.</p>
-            </div>
-          </div>
-
-          <div className={styles.benefit_item}>
-            <span className={styles.benefit_icon}>🎙️</span>
-            <div className={styles.benefit_text}>
-              <strong>Продвинутые тренажеры</strong>
+              <strong>Безлимитная практика</strong>
               <p>
-                Помогут отточить целевой разговорный навык до совершенства. Тосты, самопрезентация,
-                рассказ историй, выступления на сцене и многое другое...
+                Прохождение любых базовых и продвинутых тренажеров неограниченное количество раз без пауз и ожиданий.
               </p>
             </div>
           </div>
+
+          <div className={styles.benefit_item}>
+            <div className={styles.benefit_icon_wrap}>
+              <HiSparkles size={16} />
+            </div>
+            <div className={styles.benefit_text}>
+              <strong>Интерактивный ИИ-оппонент</strong>
+              <p>
+                Умные дебаты, каверзные вопросы и жесткие переговоры с искусственным интеллектом в реальном времени.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.benefit_item}>
+            <div className={styles.benefit_icon_wrap}>
+              <HiMiniQueueList size={16} />
+            </div>
+            <div className={styles.benefit_text}>
+              <strong>Глубокая ИИ-аналитика и курсы</strong>
+              <p>
+                Поминутный разбор аргументации, выявление речевых ошибок и доступ к продвинутым сценариям выступлений.
+              </p>
+            </div>
+          </div>
+
         </div>
 
         <div className={styles.price_box}>
@@ -97,7 +149,7 @@ const PremiumModal = ({ active, onClose }) => {
           <div className={styles.price_row}>
             <span className={styles.old_price}>490 ₽</span>
             <span className={styles.current_price}>
-              0 ₽ <small className={styles.test_period}>(Тестовый период)</small>
+              0 ₽ <small className={styles.test_period}>Тест</small>
             </span>
           </div>
         </div>
@@ -111,8 +163,7 @@ const PremiumModal = ({ active, onClose }) => {
           {loading ? 'Активация...' : 'Подключить бесплатно'}
         </button>
       </div>
-    </div>,
-    document.body
+    </div>
   )
 }
 
