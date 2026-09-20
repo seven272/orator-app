@@ -234,7 +234,7 @@ const Emotion = ({ alias, isDaily }) => {
       {/* блок с нижними кнопками */}
       <ExerciseControls
         status={status}
-        level="LEVEL_1"
+        exAlias={alias}
         STATUS={STATUS}
         xp={xp}
         isTaskInterrupted={isTaskInterrupted}

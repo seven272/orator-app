@@ -259,7 +259,7 @@ const Synonyms = ({ alias, isDaily }) => {
       <ExerciseControls
         status={status}
         STATUS={STATUS}
-        level="LEVEL_1"
+        exAlias={alias}
         xp={xp}
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}

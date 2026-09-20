@@ -244,6 +244,7 @@ const JokeMaster = ({ alias, isDaily }) => {
       <ExerciseControls
         status={status}
         STATUS={STATUS}
+        exAlias={alias}
         xp={xp}
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}

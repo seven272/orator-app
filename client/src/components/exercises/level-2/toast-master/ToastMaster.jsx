@@ -127,7 +127,7 @@ const ToastMaster = ({ alias, isDaily }) => {
     setIsTaskInterrupted(true)
   }
 
-   const handleCompleteReady = () => {
+  const handleCompleteReady = () => {
     setStatus(STATUS.FINISHED)
   }
 
@@ -252,11 +252,12 @@ const ToastMaster = ({ alias, isDaily }) => {
       <ExerciseControls
         status={status}
         STATUS={STATUS}
+        exAlias={alias}
         xp={xp}
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
-        onComplete={handleCompleteReady} 
+        onComplete={handleCompleteReady}
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}
