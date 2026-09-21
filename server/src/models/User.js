@@ -26,7 +26,6 @@ const userSchema = new mongoose.Schema(
       enum: ['local', 'vk', 'google'],
       default: 'local',
     },
-
     // Платформа, на которой аккаунт был создан
     registeredFrom: {
       type: String,
@@ -40,6 +39,18 @@ const userSchema = new mongoose.Schema(
         firstName: String,
         lastName: String,
         avatar: String,
+        // Метка времени последнего показа окна для контроля кулдауна
+        lastViralModalShown: {
+          type: Date,
+          default: null,
+        },
+        // Карта выполненных виральных заданий
+        viralBonusesClaimed: {
+          favorites: { type: Boolean, default: false }, // Избранное
+          homeScreen: { type: Boolean, default: false }, // Экран смартфона
+          notifications: { type: Boolean, default: false }, // Пуш-уведомления
+          communityJoin: { type: Boolean, default: false }, // Вступление в паблик
+        },
       },
       google: {
         firstName: String,

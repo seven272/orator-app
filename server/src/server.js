@@ -19,6 +19,7 @@ import adminRoutes from './routes/adminRoutes.js'
 import liveDuelRoutes from './routes/liveDuelRoutes.js'
 import courseRoutes from './routes/courseRoutes.js'
 import feedRoutes from './routes/feedRouter.js'
+import vkRoutes from './routes/vkRoutes.js'
 
 dotenv.config()
 
@@ -47,6 +48,7 @@ app.use('/api/admin', adminRoutes)
 app.use('/api/live/', liveDuelRoutes)
 app.use('/api/courses', courseRoutes)
 app.use('/api/feed', feedRoutes)
+app.use('/api/vk', feedRoutes)
 
 const start = async () => {
   try {

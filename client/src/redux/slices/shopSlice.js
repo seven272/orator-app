@@ -66,7 +66,7 @@ const shopSlice = createSlice({
       .addCase(fetchPurchaseItem.pending, (state) => {
         state.purchaseStatus = 'loading'
       })
-      .addCase(fetchPurchaseItem.fulfilled, (state, action) => {
+      .addCase(fetchPurchaseItem.fulfilled, (state, ) => {
         state.purchaseStatus = 'succeeded'
       })
       .addCase(fetchPurchaseItem.rejected, (state, action) => {

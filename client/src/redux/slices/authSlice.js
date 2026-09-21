@@ -64,7 +64,7 @@ const fetchGetMe = createAsyncThunk(
     }
   },
 )
-
+ 
 const fetchVkAuth = createAsyncThunk(
   'auth/fetchVkAuth',
   async (vkData, { rejectWithValue }) => {

@@ -7,17 +7,34 @@ import AchievementModal from '../components/modal/achievement-modal/AchievementM
 import EnergyLimitAlert from '../components/modal/energy-limit-alert/EnergyLimitAlert'
 import EnergyGuestAlert from '../components/modal/energy-guest-alert/EnergyGuestAlert'
 import PremiumModal from '../components/modal/premium-modal/PremiumModal'
-import { fetchGetMe, fetchVkAuth } from '../redux/slices/authSlice'
+import ViralBonusModal from '../components/modal/viral-bonus-modal/ViralBonusModal' // 🤖 НОВЫЙ ИМПОРТ
+
+import {
+  fetchGetMe,
+  fetchVkAuth,
+  checkIsVkGuest,
+} from '../redux/slices/authSlice'
 import { fetchProfileData } from '../redux/slices/profileSlice'
 import { fetchLeaderboard } from '../redux/slices/leaderboardSlice'
-
+import {
+  openViralModal,
+  fetchUpdateViralModalTimer,
+} from '../redux/slices/vkSlice'
+import { useVkEnvironment } from '../hooks/useVkEnvironment'
 import styles from './AppLayout.module.css'
 
 const AppLayout = () => {
   const dispatch = useDispatch()
-
+  const isVkEnvironment = useVkEnvironment()
   // Реактивное состояние загрузки и режима гостя
   const { isLoading } = useSelector((state) => state.auth)
+  const isVkGuest = useSelector(checkIsVkGuest)
+
+  const { user } = useSelector((state) => state.profile)
+  // Читаем служебные флаги из изолированного ВК-слайса
+  const { viralBonusesClaimed, lastViralModalShown } = useSelector(
+    (state) => state.vk,
+  )
 
   useEffect(() => {
     const initializeGovorix = async () => {
@@ -60,13 +77,44 @@ const AppLayout = () => {
     initializeGovorix()
   }, [dispatch])
 
+  // Автоматический триггер показа «Центра бонусов» в ВК
+  useEffect(() => {
+    if (isLoading || !user) return
+    //  Используем нативный хук вместо window.location.search.includes
+    if (!isVkEnvironment || isVkGuest) return
+    if (user.isPremium) return
+
+    const isCooldownPassed =
+      !lastViralModalShown ||
+      Date.now() - new Date(lastViralModalShown).getTime() > 259200000
+
+    if (!isCooldownPassed) return
+
+    const hasUnfinishedTasks = Object.values(
+      viralBonusesClaimed,
+    ).includes(false)
+
+    if (hasUnfinishedTasks) {
+      dispatch(openViralModal())
+      dispatch(fetchUpdateViralModalTimer())
+    }
+  }, [
+    isLoading,
+    user,
+    isVkEnvironment,
+    isVkGuest,
+    viralBonusesClaimed,
+    lastViralModalShown,
+    dispatch,
+  ])
+
   // 📌 Безопасный Splash Screen на чистом CSS
   if (isLoading) {
     return (
       <div className={styles.loading_splash_screen}>
         <div className={styles.custom_loader_circle}></div>
         <h2 className={styles.loading_title}>
-          Синхронизация с Govorix.ru
+          Синхронизация с Govorix
         </h2>
         <p className={styles.loading_subtitle}>
           Прокачиваем навыки ораторского искусства
@@ -85,6 +133,7 @@ const AppLayout = () => {
       <EnergyLimitAlert />
       <EnergyGuestAlert />
       <PremiumModal />
+      <ViralBonusModal />
     </div>
   )
 }

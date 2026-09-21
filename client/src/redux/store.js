@@ -11,6 +11,7 @@ import adminSlice from './slices/adminSlice'
 import liveDuelSlice from './slices/liveDuelSlice'
 import courseSlice from './slices/courseSlice'
 import feedSlice from './slices/feedSlice'
+import vkSlice from './slices/vkSlice'
 //слайсы ИИ тренажеров
 import aiSlices from './slices/ai-exercises/index'
 
@@ -27,6 +28,7 @@ const store = configureStore({
     liveDuel: liveDuelSlice,
     course: courseSlice,
     feed: feedSlice,
+    vk: vkSlice,
     //ИИ тренажеры
     ...aiSlices,
   },

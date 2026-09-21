@@ -18,6 +18,8 @@ import {
 import { fetchPurchaseItem } from './shopSlice'
 //импорт покупки ачивок в магазине
 import { fetchLogoutUser } from './authSlice'
+//импорт выполнения фич (подписка, избранное) из вк
+import { fetchClaimVkBonus } from './vkSlice'
 // Импортируем Thunk-экшены завершения ИИ-тренажеров
 import { fetchFinishDebate } from './ai-exercises/debateSlice'
 import { fetchFinishIcebreaker } from './ai-exercises/icebreakerSlice'
@@ -253,6 +255,13 @@ const profileSlice = createSlice({
             used: 3 - currentLeft, // Железно восстанавливаем гостевой лимит из браузера!
           },
         }
+      })
+      // подписка на успех выполнения квеста из ВК-слайса
+      .addCase(fetchClaimVkBonus.fulfilled, (state) => {
+        state.user.coins += 10 
+        state.user.xp += 100
+        state.user.lifetimeXp += 100 
+        state.user.dailyEnergy.used -= 5 // Срезаем 5 единиц потраченной емкости
       })
       //Загрузка данных профиля
       .addCase(fetchProfileData.pending, (state) => {
