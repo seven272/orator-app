@@ -1,8 +1,11 @@
-import React from 'react'
-import { IoMdShare } from 'react-icons/io'
+import { useState } from 'react'
+import { FaVk } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
 import { ScreenSpinner } from '@vkontakte/vkui'
+import { message } from 'antd'
 
+import { useVkEnvironment } from '../../../../../hooks/useVkEnvironment'
+import { shareAiExerciseResultToStory } from '../../../../../utils/vkShareStory'
 import styles from './DebateResult.module.css'
 
 const dictianory = {
@@ -12,9 +15,40 @@ const dictianory = {
 }
 
 const DebateResult = ({ onCloseExercise, onRestartExercise }) => {
-  const { verdict } = useSelector(
-    (state) => state.debate,
-  )
+  const { verdict } = useSelector((state) => state.debate)
+  const isVkEnvironment = useVkEnvironment()
+  const [isSharing, setIsSharing] = useState(false)
+
+  const handleShareStory = async () => {
+    if (isSharing) return
+    setIsSharing(true)
+
+    message.loading({
+      content: 'Связываемся с VK Игры...',
+      key: 'storyAiVk',
+    })
+
+    const result = await shareAiExerciseResultToStory(
+      'ai-debate',
+      verdict,
+    )
+
+    if (result && result.success) {
+      message.success({
+        content: 'Результат опубликован в Истории!',
+        key: 'storyAiVk',
+        duration: 3,
+      })
+    } else {
+      message.error({
+        content: 'Не удалось опубликовать историю',
+        key: 'storyAiVk',
+        duration: 3,
+      })
+    }
+
+    setIsSharing(false)
+  }
 
   if (!verdict) return <ScreenSpinner />
   return (
@@ -54,7 +88,7 @@ const DebateResult = ({ onCloseExercise, onRestartExercise }) => {
         <div className={styles.btn_group}>
           <button
             className={styles.btn_restart}
-            onClick={onRestartExercise} 
+            onClick={onRestartExercise}
           >
             Начать заново
           </button>
@@ -65,12 +99,15 @@ const DebateResult = ({ onCloseExercise, onRestartExercise }) => {
             Завершить упражнение
           </button>
 
-          <button
-            className={styles.btn_share}
-            onClick={() => console.log('vk share')}
-          >
-            <IoMdShare size={15} /> Поделиться результатом
-          </button>
+          {isVkEnvironment && (
+            <button
+              className={styles.btn_share}
+              onClick={handleShareStory}
+              disabled={isSharing}
+            >
+              <FaVk size={18} /> Поделиться результатом
+            </button>
+          )}
         </div>
       </div>
     </div>

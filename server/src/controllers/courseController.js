@@ -8,7 +8,7 @@ import { EXAM_PROMPTS_REGISTRY } from '../assets/prompts/examPrompt.js'
 import gigachatAxiosClient from '../utils/gigachatAxiosClient.js'
 import { parseAiResponse } from '../utils/aiJsonParser.js'
 import { transcribeLongAudio } from '../utils/speechService.js'
-import { getXpThreshold } from '../utils/fnForControllers.js'
+import { getXpThreshold } from '../utils/gamificationProgress.js'
 import {
   trackCourseStarted,
   trackCourseCompleted,

@@ -7,7 +7,7 @@ import {
   SKILLS_MAP,
   EXERCISE_MAX_POINTS,
 } from '../constants/skills.js'
-import { getXpThreshold } from '../utils/fnForControllers.js'
+import { getXpThreshold } from '../utils/gamificationProgress.js'
 import { trackPremiumPurchase } from '../utils/feedService.js'
 import { translit } from '../utils/transliterate.js'
 import { validatePasswordStrength } from '../utils/passwordValidator.js'

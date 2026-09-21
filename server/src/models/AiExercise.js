@@ -18,7 +18,7 @@ const aiExercisesSchema = new mongoose.Schema(
         'ai-icebreaker',
         'ai-tribune',
         'ai-alibi',
-        'ai-bargain',
+        'ai-bargain', 
         'ai-knockout',
         'ai-metaphor',
         'ai-poem-tongue',

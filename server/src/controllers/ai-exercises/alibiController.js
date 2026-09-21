@@ -1,7 +1,7 @@
 import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
-import { applyAiGamificationProgress } from '../../utils/fnForControllers.js'
+import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
 import { parseAiResponse } from '../../utils/aiJsonParser.js'
 import { transcribeShortAudio } from '../../utils/speechService.js'
 
@@ -337,7 +337,7 @@ const finishAlibi = async (req, res) => {
 
     res.status(200).json({
       message: 'Упражнение успешно сохранено',
-      session,
+      session, 
       ...gamificationResult,
     })
   } catch (error) {

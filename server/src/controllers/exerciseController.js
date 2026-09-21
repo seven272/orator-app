@@ -1,6 +1,6 @@
 import User from '../models/User.js'
 import { All_EXERCISES } from '../constants/exercises.js'
-import { applyAiGamificationProgress } from '../utils/fnForControllers.js'
+import { applyAiGamificationProgress } from '../utils/gamificationProgress.js'
 
 const completeExercise = async (req, res) => {
   try {

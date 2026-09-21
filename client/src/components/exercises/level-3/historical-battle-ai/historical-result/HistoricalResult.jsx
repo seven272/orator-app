@@ -1,7 +1,11 @@
-import React from 'react'
-import { IoMdShare } from 'react-icons/io'
+import { useState } from 'react'
+import { FaVk } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
 import { ScreenSpinner } from '@vkontakte/vkui'
+import { message } from 'antd'
+
+import { useVkEnvironment } from '../../../../../hooks/useVkEnvironment'
+import { shareAiExerciseResultToStory } from '../../../../../utils/vkShareStory'
 import styles from './HistoricalResult.module.css'
 
 // Словарь локализации строго под новые критерии исторического батла
@@ -14,15 +18,53 @@ const dictionary = {
 const HistoricalResult = ({ onCloseExercise, onRestartExercise }) => {
   const { verdict } = useSelector((state) => state.historical)
 
+  const isVkEnvironment = useVkEnvironment()
+  const [isSharing, setIsSharing] = useState(false)
+
+  const handleShareStory = async () => {
+    if (isSharing) return
+    setIsSharing(true)
+
+    message.loading({
+      content: 'Связываемся с VK Игры...',
+      key: 'storyAiVk',
+    })
+
+    const result = await shareAiExerciseResultToStory(
+      'ai-historical-battle',
+      verdict,
+    )
+
+    if (result && result.success) {
+      message.success({
+        content: 'Результат опубликован в Истории!',
+        key: 'storyAiVk',
+        duration: 3,
+      })
+    } else {
+      message.error({
+        content: 'Не удалось опубликовать историю',
+        key: 'storyAiVk',
+        duration: 3,
+      })
+    }
+
+    setIsSharing(false)
+  }
+
   if (!verdict) return <ScreenSpinner />
 
   return (
     <div className={styles.screen_finished}>
       <div className={styles.finish_card}>
-        <h3 className={styles.finish_title}>Анализ великой речи завершен</h3>
+        <h3 className={styles.finish_title}>
+          Анализ великой речи завершен
+        </h3>
 
         <div className={styles.score_circle}>
-          <span className={styles.score_value}>{verdict.totalScore}</span>
+          <span className={styles.score_value}>
+            {verdict.totalScore}
+          </span>
           <span className={styles.score_label}>баллов</span>
         </div>
 
@@ -40,20 +82,34 @@ const HistoricalResult = ({ onCloseExercise, onRestartExercise }) => {
         </div>
 
         <div className={styles.verdict_box}>
-          <h4 className={styles.verdict_subtitle}>Рецензия профессора риторики:</h4>
+          <h4 className={styles.verdict_subtitle}>
+            Рецензия профессора риторики:
+          </h4>
           <p className={styles.verdict_text}>{verdict.feedback}</p>
         </div>
 
         <div className={styles.btn_group}>
-          <button className={styles.btn_restart} onClick={onRestartExercise}>
+          <button
+            className={styles.btn_restart}
+            onClick={onRestartExercise}
+          >
             Выбрать другую речь
           </button>
-          <button className={styles.btn_close} onClick={onCloseExercise}>
+          <button
+            className={styles.btn_close}
+            onClick={onCloseExercise}
+          >
             Завершить тренажер
           </button>
-          <button className={styles.btn_share} onClick={() => console.log('vk share historical')}>
-            <IoMdShare size={15} /> Поделиться триумфом
-          </button>
+          {isVkEnvironment && (
+            <button
+              className={styles.btn_share}
+              onClick={handleShareStory}
+              disabled={isSharing}
+            >
+              <FaVk size={18} /> Поделиться результатом
+            </button>
+          )}
         </div>
       </div>
     </div>

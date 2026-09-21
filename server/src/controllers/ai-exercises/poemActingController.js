@@ -1,7 +1,7 @@
 import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
-import { applyAiGamificationProgress } from '../../utils/fnForControllers.js'
+import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
 import { parseAiResponse } from '../../utils/aiJsonParser.js'
 import { transcribeLongAudio } from '../../utils/speechService.js'
 

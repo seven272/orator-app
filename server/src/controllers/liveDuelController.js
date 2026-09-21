@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 
 import LiveDuel from '../models/LiveDuel.js'
 import User from '../models/User.js'
-import { getXpThreshold } from '../utils/fnForControllers.js'
+import { getXpThreshold } from '../utils/gamificationProgress.js'
 import { checkAchievements } from '../utils/achievementService.js'
 import generateDuelData from '../utils/liveDuelTopicSelector.js'
 import { DUEL_TOPICS } from '../constants/duelTopics.js'
