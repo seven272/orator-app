@@ -1,8 +1,8 @@
 // utils/shareExerciseResultToStory.js
 import bridge from '@vkontakte/vk-bridge'
 import { convertBase64FromUrl } from './convertToBase64'
-import ImgBlobStandard from '../assets/images/other/vk_story.jpeg' // Шаблон фона
-import ImgBlobPremium from '../assets/images/other/vk_story_2.jpeg'
+import ImgBlob from '../assets/images/other/vk_story.jpeg' // Шаблон фона
+
 import { All_EXERCISES } from '../assets/mocks/exercises'
 
 /**
@@ -17,7 +17,7 @@ const shareExerciseResultToStory = async (exercise) => {
 
   try {
     // Конвертируем изображение в Base64 формат (передача через blob)
-    const imgBase64 = await convertBase64FromUrl(ImgBlobStandard)
+    const imgBase64 = await convertBase64FromUrl(ImgBlob)
 
     // Формируем ссылку для перехода друзей из истории в мини-приложение с реферальными метками
     const urlApp = `https://vk.ru/app54762318`
@@ -97,8 +97,9 @@ const shareExerciseResultToStory = async (exercise) => {
 
 //AI тренажеры
 const shareAiExerciseResultToStory = async (exAlias, verdict) => {
-  const currentExercise = All_EXERCISES.level3
-    .find((ex) => ex?.alias === exAlias)
+  const currentExercise = All_EXERCISES.level3.find(
+    (ex) => ex?.alias === exAlias,
+  )
 
   if (!currentExercise) {
     console.error(
@@ -108,15 +109,26 @@ const shareAiExerciseResultToStory = async (exAlias, verdict) => {
   }
 
   const { title } = currentExercise
+  
 
   try {
     // Используем премиальный ИИ-шаблон (кибер-птица в золотой рамке)
-    const imgBase64 = await convertBase64FromUrl(ImgBlobPremium)
+    const imgBase64 = await convertBase64FromUrl(ImgBlob)
 
     // Зашиваем точный балл ИИ в параметры перехода приложения
     const urlApp = `https://vk.ru/app54762318`
 
+    // Формируем тексты для трех уровней стикеров
     const textTop = `🏆 Успех в ИИ-тренажере «${title}»!`
+
+    // Безопасно сжимаем длинный текст отзыва ИИ, оставляя самую суть для мобильного экрана
+    const rawFeedback = verdict.feedback || ''
+    const shortFeedback =
+      rawFeedback.length > 75
+        ? `${rawFeedback.substring(0, 72)}...`
+        : rawFeedback
+    const textCenter = `💬 Резюме: "${shortFeedback}"`
+
     const textBottom = `🤖 ИИ-тренер оценил мою речь на ${verdict.totalScore} из 100! Попробуй побить?`
 
     const data = await bridge.send('VKWebAppShowStoryBox', {
@@ -129,6 +141,7 @@ const shareAiExerciseResultToStory = async (exAlias, verdict) => {
         url: urlApp,
       },
       stickers: [
+        // 1. ВЕРХНИЙ СТИКЕР: Название пройденного тренажера
         {
           sticker_type: 'native',
           sticker: {
@@ -137,14 +150,32 @@ const shareAiExerciseResultToStory = async (exAlias, verdict) => {
               text: textTop,
               style: 'cursive',
               background_style: 'neon',
-              selection_color: '#ffffff', // Контрастный белый текст на темно-синем фоне
+              selection_color: '#ffffff', // Контрастный белый текст
             },
             transform: {
               gravity: 'center_top',
-              translation_y: 0.15,
+              translation_y: 0.12, // Слегка опустили от самого края
             },
           },
         },
+        // 2. 🤖 НОВЫЙ ЦЕНТРАЛЬНЫЙ СТИКЕР: Текстовый фидбек ИИ-судьи
+        {
+          sticker_type: 'native',
+          sticker: {
+            action_type: 'text',
+            action: {
+              text: textCenter,
+              style: 'cursive', // Элегантный шрифт для цитаты
+              background_style: 'none', // Без подложки, ложится на чистый темно-синий градиент
+              selection_color: '#ffffff', // Строго белый цвет текста
+            },
+            transform: {
+              gravity: 'center', // По центру экрана
+              translation_y: -0.05, // Аккуратное смещение к верхней трети
+            },
+          },
+        },
+        // 3. НИЖНИЙ СТИКЕР: Итоговый балл и вызов друзьям
         {
           sticker_type: 'native',
           sticker: {
@@ -152,12 +183,12 @@ const shareAiExerciseResultToStory = async (exAlias, verdict) => {
             action: {
               text: textBottom,
               style: 'marker',
-              background_style: 'black', // Темная плашка для идеальной читаемости
-              selection_color: '#ffffff', // Контрастный белый текст
+              background_style: 'black', // Темная плашка для идеального контраста
+              selection_color: '#ffffff',
             },
             transform: {
               gravity: 'center_bottom',
-              translation_y: -0.38, // Подняли текст существенно выше, чтобы не перекрывать птицу
+              translation_y: -0.38, // Подняли над компактной нижней 3D-инсталляцией
             },
           },
         },
