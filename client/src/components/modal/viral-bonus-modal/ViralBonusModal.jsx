@@ -96,7 +96,7 @@ const ViralBonusModal = () => {
         }
         case 'communityJoin': {
           const res = await bridge.send('VKWebAppJoinGroup', {
-            group_id: 54762318,
+            group_id: 241671966,
           })
           bridgeResult = res.result
           break
@@ -174,7 +174,7 @@ const ViralBonusModal = () => {
                 const isClaimed = viralBonusesClaimed[task.type] ?? false
                 const isLoading = btnLoaders[task.type] ?? false
 
-                return (
+                return ( 
                   <div
                     key={task.type}
                     className={`${styles.task_item_row} ${isClaimed ? styles.task_item_claimed : ''}`}
