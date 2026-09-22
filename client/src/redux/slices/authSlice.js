@@ -225,7 +225,7 @@ const fetchVkWebsiteAuth = createAsyncThunk(
   },
 )
 
-const initialState = {
+const initialState = { 
   isLoading: true,
   isAdmin: false,
   isVkGuest: false,

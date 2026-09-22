@@ -1,5 +1,5 @@
-// components/modals/ViralBonusModal.jsx
-import React from 'react'
+// components/modals/viral-bonus-modal/ViralBonusModal.jsx
+import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import bridge from '@vkontakte/vk-bridge'
 import {
@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fa'
 import { IoMdCheckmarkCircle } from 'react-icons/io'
 
+import { useVkEnvironment } from '../../../hooks/useVkEnvironment'
 import {
   closeViralModal,
   fetchClaimVkBonus,
@@ -44,21 +45,33 @@ const VIRAL_TASKS_CONFIG = [
 
 const ViralBonusModal = () => {
   const dispatch = useDispatch()
+  const { isVkMobile } = useVkEnvironment()
 
-  const { isViralModalOpen, btnLoaders, viralBonusesClaimed } =
-    useSelector((state) => state.vk)
+  // Чтение карты квестов и состояния лоадеров напрямую из изолированного vkSlice
+  const { isViralModalOpen, btnLoaders, viralBonusesClaimed } = useSelector((state) => state.vk)
 
+  // 🛠️На десктопном ВК скрываем мобильные методы [INDEX]
+  const visibleTasks = useMemo(() => {
+    if (!isVkMobile) {
+      return VIRAL_TASKS_CONFIG.filter(
+        (task) => task.type !== 'homeScreen' && task.type !== 'notifications'
+      )
+    }
+    return VIRAL_TASKS_CONFIG
+  }, [isVkMobile])
 
-  if (!isViralModalOpen) return null
+  // Проверяем наличие невыполненных заданий среди видимых
+  const hasUnfinishedTasks = useMemo(() => {
+    return visibleTasks.some((task) => !viralBonusesClaimed[task.type])
+  }, [visibleTasks, viralBonusesClaimed])
 
   const handleClose = () => {
     dispatch(closeViralModal())
   }
 
-  // Перенаправление на покупку Premium
   const handleOpenPremium = () => {
-    dispatch(closeViralModal()) // Закрываем текущую виральную модалку
-    dispatch(openPremiumModal()) // Открываем системный экран оплаты/премиума
+    dispatch(closeViralModal())
+    dispatch(openPremiumModal())
   }
 
   const handleExecuteTask = async (type) => {
@@ -96,17 +109,34 @@ const ViralBonusModal = () => {
         dispatch(fetchClaimVkBonus({ taskType: type }))
       }
     } catch (error) {
-      console.warn(
-        `Действие отклонено в VK Bridge для таска: ${type}`,
-        error,
-      )
+      console.warn(`Действие отклонено в VK Bridge для таска: ${type}`, error)
     }
   }
 
-  // Вычисляем, есть ли еще доступные задания для бесплатной энергии
-  const hasUnfinishedTasks = Object.values(
-    viralBonusesClaimed,
-  ).includes(false)
+  useEffect(() => {
+    if (isViralModalOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isViralModalOpen])
+
+  useEffect(() => {
+    if (!isViralModalOpen) return
+
+    const handleEsc = (evt) => {
+      if (evt.key === 'Escape') {
+        dispatch(closeViralModal())
+      }
+    }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [isViralModalOpen, dispatch])
+
+  if (!isViralModalOpen) return null
 
   return (
     <div className={styles.modal_overlay} onClick={handleClose}>
@@ -114,21 +144,16 @@ const ViralBonusModal = () => {
         className={styles.modal_container}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Крестик закрытия */}
         <button className={styles.btn_close_x} onClick={handleClose}>
           <FaTimes size={16} />
         </button>
 
         {hasUnfinishedTasks ? (
-          /* КЕЙС А: Есть доступные бесплатные задания */
           <>
             <div className={styles.modal_header}>
-              <h3 className={styles.modal_title}>
-                🏆 Ораторские бусты
-              </h3>
+              <h3 className={styles.modal_title}>🏆 Ораторские бусты</h3>
               <p className={styles.modal_subtitle}>
-                Выполняй задания от сообщества и забирай тройное комбо
-                наград за каждое!
+                Выполняй задания от сообщества и забирай тройное комбо наград за каждое!
               </p>
 
               <div className={styles.reward_badge_combo}>
@@ -144,11 +169,9 @@ const ViralBonusModal = () => {
               </div>
             </div>
 
-            {/* Список оставшихся тасков */}
             <div className={styles.tasks_list_wrap}>
-              {VIRAL_TASKS_CONFIG.map((task) => {
-                const isClaimed =
-                  viralBonusesClaimed[task.type] ?? false
+              {visibleTasks.map((task) => {
+                const isClaimed = viralBonusesClaimed[task.type] ?? false
                 const isLoading = btnLoaders[task.type] ?? false
 
                 return (
@@ -157,12 +180,8 @@ const ViralBonusModal = () => {
                     className={`${styles.task_item_row} ${isClaimed ? styles.task_item_claimed : ''}`}
                   >
                     <div className={styles.task_left_block}>
-                      <div className={styles.task_icon_wrapper}>
-                        {task.icon}
-                      </div>
-                      <span className={styles.task_name_text}>
-                        {task.title}
-                      </span>
+                      <div className={styles.task_icon_wrapper}>{task.icon}</div>
+                      <span className={styles.task_name_text}>{task.title}</span>
                     </div>
 
                     <div className={styles.task_right_block}>
@@ -190,7 +209,6 @@ const ViralBonusModal = () => {
               })}
             </div>
 
-            {/* Элегантный разделитель и подвал с предложением Premium */}
             <div className={styles.modal_footer_premium}>
               <div className={styles.divider} />
               <p className={styles.footer_text}>
@@ -206,19 +224,13 @@ const ViralBonusModal = () => {
             </div>
           </>
         ) : (
-          /* КЕЙС Б: Все бесплатные бусты израсходованы -> Полноценный сочный Premium оффер */
           <div className={styles.premium_fullscreen_block}>
             <div className={styles.premium_crown_zone}>
               <FaCrown size={40} className={styles.crown_gold} />
             </div>
-            <h3 className={styles.premium_title}>
-              Все бусты собраны! 🎉
-            </h3>
+            <h3 className={styles.premium_title}>Все бусты собраны! 🎉</h3>
             <p className={styles.premium_description}>
-              Вы успешно выполнили все задания сообщества Govorix
-              ВКонтакте и получили максимум бесплатных наград. Чтобы
-              продолжить тренировки без ограничений, переходите на
-              тариф **Premium**.
+              Вы успешно выполнили все доступные задания сообщества Govorix ВКонтакте и получили максимум бесплатных наград. Чтобы продолжить тренировки без ограничений, переходите на тариф **Premium**.
             </p>
 
             <div className={styles.premium_features_mini}>
