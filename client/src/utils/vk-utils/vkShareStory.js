@@ -121,13 +121,7 @@ const shareAiExerciseResultToStory = async (exAlias, verdict) => {
     // Формируем тексты для трех уровней стикеров
     const textTop = `🏆 Успех в ИИ-тренажере «${title}»!`
 
-    // Безопасно сжимаем длинный текст отзыва ИИ, оставляя самую суть для мобильного экрана
-    const rawFeedback = verdict.feedback || ''
-    const shortFeedback =
-      rawFeedback.length > 75
-        ? `${rawFeedback.substring(0, 72)}...`
-        : rawFeedback
-    const textCenter = `💬 Резюме: "${shortFeedback}"`
+  
 
     const textBottom = `🤖 ИИ-тренер оценил мою речь на ${verdict.totalScore} из 100! Попробуй побить?`
 
@@ -158,24 +152,8 @@ const shareAiExerciseResultToStory = async (exAlias, verdict) => {
             },
           },
         },
-        // 2. 🤖 НОВЫЙ ЦЕНТРАЛЬНЫЙ СТИКЕР: Текстовый фидбек ИИ-судьи
-        {
-          sticker_type: 'native',
-          sticker: {
-            action_type: 'text',
-            action: {
-              text: textCenter,
-              style: 'cursive', // Элегантный шрифт для цитаты
-              background_style: 'none', // Без подложки, ложится на чистый темно-синий градиент
-              selection_color: '#ffffff', // Строго белый цвет текста
-            },
-            transform: {
-              gravity: 'center', // По центру экрана
-              translation_y: -0.05, // Аккуратное смещение к верхней трети
-            },
-          },
-        },
-        // 3. НИЖНИЙ СТИКЕР: Итоговый балл и вызов друзьям
+      
+        // НИЖНИЙ СТИКЕР: Итоговый балл и вызов друзьям
         {
           sticker_type: 'native',
           sticker: {
