@@ -8,7 +8,6 @@ import EnergyGuestAlert from '../components/modal/energy-guest-alert/EnergyGuest
 import PremiumModal from '../components/modal/premium-modal/PremiumModal'
 import ViralBonusModal from '../components/modal/viral-bonus-modal/ViralBonusModal'
 //хуки
-import { useViralModalTrigger } from '../hooks/useViralModalTrigger'
 import { useAppInitialization } from '../hooks/useAppInitialization'
 
 import styles from './AppLayout.module.css'
@@ -16,7 +15,7 @@ import styles from './AppLayout.module.css'
 const AppLayout = () => {
  
   useAppInitialization()
-  useViralModalTrigger()
+ 
 
   // Реактиное состояние загрузки и режима гостя
   const { isLoading } = useSelector((state) => state.auth)

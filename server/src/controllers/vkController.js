@@ -93,48 +93,6 @@ const claimVkBonus = async (req, res) => {
   }
 }
 
-/**
- * Эндпоинт фиксации даты последнего показа модального окна (для кулдауна 3 дня)
- * POST /api/vk-features/update-modal-timer
- */
-const updateViralModalTimer = async (req, res) => {
-  try {
-    //нативный vkId, прописанный мидлваром подписи
-    const vkId = req.vkId
 
-    if (!vkId) {
-      return res
-        .status(401)
-        .json({ message: 'Пользователь ВК не идентифицирован' })
-    }
 
-    const updatedUser = await User.findOneAndUpdate(
-      { vkId },
-      {
-        $set: {
-          'socialProfilesData.vk.lastViralModalShown': new Date(),
-        },
-      },
-      { new: true },
-    )
-
-    if (!updatedUser) {
-      return res
-        .status(404)
-        .json({ message: 'Пользователь не найден' })
-    }
-
-    return res.status(200).json({
-      message: 'Таймер кулдауна обновлен',
-      lastViralModalShown:
-        updatedUser.socialProfilesData?.vk?.lastViralModalShown,
-    })
-  } catch (error) {
-    console.error('Ошибка в updateViralModalTimer:', error)
-    return res
-      .status(500)
-      .json({ message: 'Не удалось обновить таймер показа окна' })
-  }
-}
-
-export { claimVkBonus, updateViralModalTimer }
+export { claimVkBonus }

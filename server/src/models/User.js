@@ -39,11 +39,6 @@ const userSchema = new mongoose.Schema(
         firstName: String,
         lastName: String,
         avatar: String,
-        // Метка времени последнего показа окна для контроля кулдауна
-        lastViralModalShown: {
-          type: Date,
-          default: null, 
-        },
         // Карта выполненных виральных заданий
         viralBonusesClaimed: {
           favorites: { type: Boolean, default: false }, // Избранное

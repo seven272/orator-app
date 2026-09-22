@@ -16,6 +16,7 @@ import ProfileCard from './profile-card/ProfileCard'
 import ProfileForm from './profile-form/ProfileForm'
 import ProfileConnections from './profile-connections/ProfileConnections'
 import { useVkEnvironment } from '../../../hooks/useVkEnvironment'
+import { useViralModalTrigger } from '../../../hooks/useViralModalTrigger'
 
 import styles from './UserProfile.module.css'
 
@@ -23,6 +24,9 @@ const UserProfile = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { isVkEnvironment } = useVkEnvironment()
+
+   // Контролирует 3 дня кулдауна через VK Storage строго на экране Профиля [INDEX]
+  useViralModalTrigger()
 
   const { user, isLoading, error, mergeConflict } = useSelector(
     (state) => state.auth,
@@ -70,7 +74,7 @@ const UserProfile = () => {
       <ProfileConnections />
 
       {/* Кнопка скрывается, если приложение запущено внутри ВКонтакте */}
-      {/* {!isVkEnvironment && (
+      {!isVkEnvironment && (
         <div className={styles.logout_block}>
           <button
             type="button"
@@ -81,18 +85,9 @@ const UserProfile = () => {
             Выйти из аккаунта
           </button>
         </div>
-      )} */}
+      )}
 
-      <div className={styles.logout_block}>
-        <button
-          type="button"
-          className={styles.logout_btn}
-          onClick={showLogoutConfirm}
-          disabled={isLoading}
-        >
-          Выйти из аккаунта
-        </button>
-      </div>
+    
 
       <Modal
         active={mergeConflict !== null}
