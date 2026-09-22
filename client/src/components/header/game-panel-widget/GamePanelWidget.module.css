@@ -1,3 +1,5 @@
+/* components/game-panel-widget/GamePanelWidget.module.css */
+
 .game_panel_capsule {
   display: flex;
   align-items: center;
@@ -11,36 +13,8 @@
   transition: all 0.25s ease;
   user-select: none;
   
-  /* 📌 ДОБАВЛЕНО: Безопасный отступ от аватара / кнопки справа */
+  /* Безопасный отступ от аватара / кнопки справа */
   margin-right: 12px;
-}
-
-/* Блок геймификации (Левый) */
-.gamification_section {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-/* 🎨 ОБНОВЛЕНО: Все текстовые счетчики теперь синие и консистентные */
-.status_text,
-.digital_counter {
-  font-family: var(--font-family-title);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--color-primary);
-  white-space: nowrap;
-}
-
-.level_short {
-  display: none;
-}
-
-.text_divider {
-  font-size: 10px;
-  color: var(--color-primary);
-  opacity: 0.25;
-  margin: 0 5px;
 }
 
 /* Центральный жесткий разделитель блоков */
@@ -52,94 +26,13 @@
   margin: 0 8px;
 }
 
-/* Блок энергии (Правый) */
-.energy_section {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-}
-
-/* 🔋 ----------------- ВЕРТИКАЛЬНАЯ ИКОНКА-БАТАРЕЙКА ----------------- */
-.vertical_battery {
-  position: relative;
-  width: 10px;
-  height: 15px;
-  border: 1.5px solid var(--color-primary);
-  border-radius: 2px;
-  background-color: var(--color-white);
-  padding: 1px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: flex-end; /* Сигнализирует заполнение снизу вверх */
-}
-
-/* Маленький носик батарейки сверху */
-.vertical_battery::before {
-  content: '';
-  position: absolute;
-  top: -2.5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 1.5px;
-  background-color: var(--color-primary);
-  border-radius: 1px 1px 0 0;
-}
-
-/* Внутренний контейнер заряда (сжатие снизу вверх) */
-.battery_fill {
-  width: 100%;
-  border-radius: 0.5px;
-  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
-}
-
-/* Динамические цвета заряда батарейки */
-.fill_green { background-color: var(--color-green); }
-.fill_yellow { background-color: var(--color-yellow); }
-.fill_empty { background-color: var(--color-red); }
-
-/* Изменяем цвет контура батарейки и носика при 0 энергии */
-.battery_alert {
-  border-color: var(--color-red) !important;
-}
-.battery_alert::before {
-  background-color: var(--color-red) !important;
-}
-
-/* Золотая тема для Premium */
-.premium_wrapper {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--color-text);
-  font-family: var(--font-family-decor);
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.premium_crown_icon {
-  font-size: 14px;
-  color: var(--color-yellow);
-}
-
-/* Пульсация капсулы при полном нуле */
-.pulse_alert {
-  border-color: var(--color-secondary) !important;
-  animation: border_wave 2s infinite ease-in-out;
-}
-
-@keyframes border_wave {
-  0% { box-shadow: 0 0 0 0 rgba(5, 82, 226, 0.25); }
-  70% { box-shadow: 0 0 0 5px rgba(243, 4, 4, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(243, 4, 4, 0); }
-}
-
+/* 📱 МОБИЛЬНАЯ АДАПТАЦИЯ (ЭКРАНЫ ДО 380px) */
 @media screen and (max-width: 380px) {
-  .level_full { display: none; }
-  .level_short { display: inline; }
-  .game_panel_capsule { padding: 4px 8px; margin-right: 8px; }
-  .block_separator { margin: 0 5px; }
+  .game_panel_capsule { 
+    padding: 4px 8px; 
+    margin-right: 8px; 
+  }
+  .block_separator { 
+    margin: 0 5px; 
+  }
 }

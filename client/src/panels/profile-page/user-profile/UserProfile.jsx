@@ -22,15 +22,12 @@ import styles from './UserProfile.module.css'
 const UserProfile = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const {isVkEnvironment} = useVkEnvironment()
+  const { isVkEnvironment } = useVkEnvironment()
 
   const { user, isLoading, error, mergeConflict } = useSelector(
     (state) => state.auth,
   )
   const isAuth = useSelector(checkIsAuth)
-
-
-
 
   // 🛠️ Функция подтверждения выхода через Ant Design
   const showLogoutConfirm = () => {
@@ -73,7 +70,7 @@ const UserProfile = () => {
       <ProfileConnections />
 
       {/* Кнопка скрывается, если приложение запущено внутри ВКонтакте */}
-      {isVkEnvironment && (
+      {/* {!isVkEnvironment && (
         <div className={styles.logout_block}>
           <button
             type="button"
@@ -84,7 +81,18 @@ const UserProfile = () => {
             Выйти из аккаунта
           </button>
         </div>
-      )}
+      )} */}
+
+      <div className={styles.logout_block}>
+        <button
+          type="button"
+          className={styles.logout_btn}
+          onClick={showLogoutConfirm}
+          disabled={isLoading}
+        >
+          Выйти из аккаунта
+        </button>
+      </div>
 
       <Modal
         active={mergeConflict !== null}

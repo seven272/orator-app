@@ -15,6 +15,10 @@ import {
   fetchVkRegister,
 } from '../../redux/slices/authSlice'
 import { syncGuestEnergy } from '../../redux/slices/profileSlice'
+import {
+  getGuestEnergy,
+  setGuestEnergy,
+} from '../../utils/vk-utils/vkStorageEnergy'
 import logoImg from '../../assets/images/design/logo.png'
 
 const Header = () => {
@@ -26,34 +30,51 @@ const Header = () => {
   const { user: authUser } = useSelector((state) => state.auth)
 
   const isAuth = useSelector(checkIsAuth)
-  // const isVkGuest = true
   const isVkGuest = useSelector(checkIsVkGuest)
-
   const [siteGuestEnergy, setSiteGuestEnergy] = useState(3)
 
   // Контроль и ленивый сброс лимитов гостя сайта [INDEX]
   useEffect(() => {
-    // Код выполняется строго для неавторизованных гостей сайта / гостей ВК
-    if (!isAuth) {
-      const todayStr = new Date().toISOString().split('T')[0] // Надежно фиксируем YYYY-MM-DD
-      const savedDate = localStorage.getItem('govorix_guest_date')
-      const savedEnergy = localStorage.getItem('govorix_guest_energy')
+    if (isAuth) return
 
-      // СБРОС В 3 ПРОИСХОДИТ: Только если ключа даты вообще нет (первый заход) ИЛИ дата действительно старая (новые сутки)
-      if (!savedDate || savedDate !== todayStr) {
-        localStorage.setItem('govorix_guest_date', todayStr)
-        localStorage.setItem('govorix_guest_energy', '3')
-        setSiteGuestEnergy(3)
-        dispatch(syncGuestEnergy(3))
+    const initializeGuestEnergy = async () => {
+      const todayStr = new Date().toISOString().split('T')[0] // Формат YYYY-MM-DD
+      const savedDate = localStorage.getItem('govorix_guest_date')
+
+      if (isVkGuest) {
+        // 🌐 СЦЕНАРИЙ ГОСТЯ ВК: Синхронизируем через облако ВКонтакте [INDEX]
+        if (!savedDate || savedDate !== todayStr) {
+          localStorage.setItem('govorix_guest_date', todayStr)
+          await setGuestEnergy(3) // Обнуляем в облаке ВК [INDEX]
+          setSiteGuestEnergy(3)
+          dispatch(syncGuestEnergy(3))
+        } else {
+          const currentVkEnergy = await getGuestEnergy() // Читаем из облака ВК [INDEX]
+          setSiteGuestEnergy(currentVkEnergy)
+          dispatch(syncGuestEnergy(currentVkEnergy))
+        }
       } else {
-        // ЕСЛИ ДАТА СЕГОДНЯШНЯЯ: Браво! Мы берем именно то число, которое там честно лежало (даже если это 0!)
-        const currentEnergy =
-          savedEnergy !== null ? parseInt(savedEnergy, 10) : 3
-        setSiteGuestEnergy(currentEnergy)
-        dispatch(syncGuestEnergy(currentEnergy))
+        // 💻 СЦЕНАРИЙ ГОСТЯ САЙТА: Работаем через классический localStorage
+        const savedEnergy = localStorage.getItem(
+          'govorix_guest_energy',
+        )
+        if (!savedDate || savedDate !== todayStr) {
+          localStorage.setItem('govorix_guest_date', todayStr)
+          localStorage.setItem('govorix_guest_energy', '3')
+          setSiteGuestEnergy(3)
+          dispatch(syncGuestEnergy(3))
+        } else {
+          const currentEnergy =
+            savedEnergy !== null ? parseInt(savedEnergy, 10) : 3
+          setSiteGuestEnergy(currentEnergy)
+          dispatch(syncGuestEnergy(currentEnergy))
+        }
       }
     }
+
+    initializeGuestEnergy()
   }, [isAuth, isVkGuest, dispatch])
+
   // Быстрая регистрация из ВК Mini Apps [INDEX]
   const handleFastVkRegister = async () => {
     const launchParams = window.location.search
@@ -69,7 +90,6 @@ const Header = () => {
     <div className={styles.header_global_wrap}>
       <div className={styles.header}>
         <div className={styles.header_wrapper}>
-          {/* Левый блок (Навигация и Брендинг) */}
           <div className={styles.left_block}>
             <DropdownMenu />
             <div
@@ -87,9 +107,8 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Правый блок (Универсальная игровая панель и Аватар) */}
           <div className={styles.right_block}>
-            {/* 🎮 Единый монолитный супер-виджет (Уровень + Опыт + Шкала Энергии) */}
+            {/* Пробрасываем накопленные пропсы в супер-виджет [INDEX] */}
             <GamePanelWidget
               isAuth={isAuth}
               isVkGuest={isVkGuest}
@@ -98,12 +117,10 @@ const Header = () => {
             />
 
             {isVkGuest ? (
-              /* 🎁 Графическая круглая кнопка регистрации с Tooltip подсказкой */
               <Tooltip
-                
                 title="Нажмите, чтобы создать аккаунт оратора и забрать 15 ⚡ энергии!"
                 placement="bottom"
-               color="var(--color-primary)"
+                color="var(--color-primary)"
                 styles={{
                   container: {
                     fontFamily: 'var(--font-family-regular)',
@@ -116,12 +133,9 @@ const Header = () => {
                   className={styles.vk_register_btn}
                   onClick={handleFastVkRegister}
                 >
-                  {/* Центрированная иконка человечка с плюсом */}
                   <span className={styles.vk_btn_icon}>
                     <TbUserPlus size={18} />
                   </span>
-
-                  {/* Элемент привлечения внимания — подарок-бонус */}
                   <span className={styles.vk_gift_badge}>🎁</span>
                 </button>
               </Tooltip>

@@ -1,0 +1,91 @@
+/* components/game-panel-widget/energy-section/EnergySection.module.css */
+
+/* Блок энергии (Правый) */
+.energy_section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* Все текстовые счетчики синие и консистентные */
+.digital_counter {
+  font-family: var(--font-family-title);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+/* 🔋 ----------------- ВЕРТИКАЛЬНАЯ ИКОНКА-БАТАРЕЙКА ----------------- */
+.vertical_battery {
+  position: relative;
+  width: 10px;
+  height: 15px;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 2px;
+  background-color: var(--color-white);
+  padding: 1px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-end; /* Сигнализирует заполнение снизу вверх */
+}
+
+/* Маленький носик батарейки сверху */
+.vertical_battery::before {
+  content: '';
+  position: absolute;
+  top: -2.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 1.5px;
+  background-color: var(--color-primary);
+  border-radius: 1px 1px 0 0;
+}
+
+/* Внутренний контейнер заряда (сжатие снизу вверх) */
+.battery_fill {
+  width: 100%;
+  border-radius: 0.5px;
+  transition:
+    height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s ease;
+}
+
+/* Динамические цвета заряда батарейки */
+.fill_green {
+  background-color: var(--color-green);
+}
+.fill_yellow {
+  background-color: var(--color-yellow);
+}
+.fill_empty {
+  background-color: var(--color-red);
+}
+
+/* Изменяем цвет контура батарейки и носика при 0 энергии */
+.battery_alert {
+  border-color: var(--color-red) !important;
+}
+.battery_alert::before {
+  background-color: var(--color-red) !important;
+}
+
+/* Золотая тема для Premium */
+.premium_wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-text);
+  font-family: var(--font-family-decor);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.premium_crown_icon {
+  font-size: 14px;
+  color: var(--color-yellow);
+}

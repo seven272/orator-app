@@ -1,0 +1,39 @@
+/* components/game-panel-widget/gamification-section/GamificationSection.module.css */
+
+/* Блок геймификации (Левый) */
+.gamification_section {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Все текстовые счетчики синие и консистентные */
+.status_text {
+  font-family: var(--font-family-title);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.level_short {
+  display: none;
+}
+
+.text_divider {
+  font-size: 10px;
+  color: var(--color-primary);
+  opacity: 0.25;
+  margin: 0 5px;
+  user-select: none;
+}
+
+/* 📱 МОБИЛЬНАЯ АДАПТАЦИЯ (ЭКРАНЫ ДО 380px) */
+@media screen and (max-width: 380px) {
+  .level_full { 
+    display: none; 
+  }
+  .level_short { 
+    display: inline; 
+  }
+}
