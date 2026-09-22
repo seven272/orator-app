@@ -1,9 +1,9 @@
 // utils/shareExerciseResultToStory.js
 import bridge from '@vkontakte/vk-bridge'
-import { convertBase64FromUrl } from './convertToBase64'
-import ImgBlob from '../assets/images/other/vk_story.jpeg' // Шаблон фона
+import { convertBase64FromUrl } from '../convertToBase64'
+import ImgBlob from '../../assets/images/other/vk_story.jpeg' // Шаблон фона
 
-import { All_EXERCISES } from '../assets/mocks/exercises'
+import { All_EXERCISES } from '../../assets/mocks/exercises'
 
 /**
  * Размещение результатов тренажеров 1 и 2 уровня в Истории ВКонтакте

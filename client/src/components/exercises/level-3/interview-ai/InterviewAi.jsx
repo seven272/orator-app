@@ -11,7 +11,7 @@ import InterviewProcess from './interview-process/InterviewProcess'
 import InterviewResult from './interview-result/InterviewResult'
 import { useSpeechSber } from '../../../../hooks/useSpeechSber'
 import {
-  SCREEN_STATUS,
+  SCREEN_STATUS, 
   AI_STATUS,
 } from '../../../../constants/exercises'
 

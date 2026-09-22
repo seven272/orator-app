@@ -15,21 +15,22 @@ import AccountMergeContent from './account-merge-content/AccountMergeContent'
 import ProfileCard from './profile-card/ProfileCard'
 import ProfileForm from './profile-form/ProfileForm'
 import ProfileConnections from './profile-connections/ProfileConnections'
+import { useVkEnvironment } from '../../../hooks/useVkEnvironment'
 
 import styles from './UserProfile.module.css'
 
 const UserProfile = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const {isVkEnvironment} = useVkEnvironment()
 
   const { user, isLoading, error, mergeConflict } = useSelector(
     (state) => state.auth,
   )
   const isAuth = useSelector(checkIsAuth)
 
-  // 🌐 Проверка среды запуска (VK Mini Apps: десктоп или мобильный)
-  const isInsideVkParams =
-    window.location.search.includes('vk_user_id')
+
+
 
   // 🛠️ Функция подтверждения выхода через Ant Design
   const showLogoutConfirm = () => {
@@ -72,7 +73,7 @@ const UserProfile = () => {
       <ProfileConnections />
 
       {/* Кнопка скрывается, если приложение запущено внутри ВКонтакте */}
-      {!isInsideVkParams && (
+      {isVkEnvironment && (
         <div className={styles.logout_block}>
           <button
             type="button"

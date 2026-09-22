@@ -5,7 +5,7 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { message } from 'antd'
 
 import { useVkEnvironment } from '../../../../../hooks/useVkEnvironment'
-import { shareAiExerciseResultToStory } from '../../../../../utils/vkShareStory'
+import { shareAiExerciseResultToStory } from '../../../../../utils/vk-utils/vkShareStory'
 import styles from './BargainResult.module.css'
 
 // Словарь критериев адаптирован под жесткий коммерческий торг
@@ -103,8 +103,6 @@ const BargainResult = ({ onCloseExercise, onRestartExercise }) => {
             Завершить упражнение
           </button>
 
-
-
           {isVkEnvironment && (
             <button
               className={styles.btn_share}
@@ -114,8 +112,6 @@ const BargainResult = ({ onCloseExercise, onRestartExercise }) => {
               <FaVk size={18} /> Поделиться результатом
             </button>
           )}
-
-
         </div>
       </div>
     </div>

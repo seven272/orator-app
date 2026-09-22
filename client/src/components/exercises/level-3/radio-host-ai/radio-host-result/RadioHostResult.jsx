@@ -5,7 +5,7 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { message } from 'antd'
 
 import { useVkEnvironment } from '../../../../../hooks/useVkEnvironment'
-import { shareAiExerciseResultToStory } from '../../../../../utils/vkShareStory'
+import { shareAiExerciseResultToStory } from '../../../../../utils/vk-utils/vkShareStory'
 import styles from './RadioHostResult.module.css'
 
 // Специализированный словарь локализации для линейного радиоэфира

@@ -16,7 +16,7 @@ import { RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import '@vkontakte/vkui/dist/vkui.css'
 
-import transformVKBridgeAdaptivity from './utils/transformVKBridgeAdaptivity'
+import transformVKBridgeAdaptivity from './utils/vk-utils/transformVKBridgeAdaptivity'
 import router from './router/AppRoutes' // Ваша новая конфигурация маршрутов
 import store from './redux/store'
 import './assets/styles/index.css'

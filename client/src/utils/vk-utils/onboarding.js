@@ -1,6 +1,6 @@
 import bridge from '@vkontakte/vk-bridge'
 import ImgOnboarding from '../assets/images/onboarding.jpeg'
-import { convertBase64FromUrl } from './convertToBase64'
+import { convertBase64FromUrl } from '../convertToBase64'
 // ф-ий отправки флага о показе Онбординга в ВКсторадж и ф-я получения информации о показе
 import { setOnboardingShown, getOnboardingShown } from './vkStorage'
 

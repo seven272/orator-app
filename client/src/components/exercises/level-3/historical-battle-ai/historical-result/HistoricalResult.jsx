@@ -5,7 +5,7 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { message } from 'antd'
 
 import { useVkEnvironment } from '../../../../../hooks/useVkEnvironment'
-import { shareAiExerciseResultToStory } from '../../../../../utils/vkShareStory'
+import { shareAiExerciseResultToStory } from '../../../../../utils/vk-utils/vkShareStory'
 import styles from './HistoricalResult.module.css'
 
 // Словарь локализации строго под новые критерии исторического батла
