@@ -57,7 +57,7 @@ const claimVkBonus = async (req, res) => {
       // Сразу фиксируем сброс в документе пользователя перед начислением бонуса
       user.dailyEnergy.used = 0
       user.dailyEnergy.lastAttemptDate = currentServerDate
-      await user.save()
+      await user.save() 
     }
 
     // АТОМАРНОЕ НАЧИСЛЕНИЕ РЕСУРСОВ

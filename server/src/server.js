@@ -48,7 +48,7 @@ app.use('/api/admin', adminRoutes)
 app.use('/api/live/', liveDuelRoutes)
 app.use('/api/courses', courseRoutes)
 app.use('/api/feed', feedRoutes)
-app.use('/api/vk', feedRoutes)
+app.use('/api/vk', vkRoutes)
 
 const start = async () => {
   try {

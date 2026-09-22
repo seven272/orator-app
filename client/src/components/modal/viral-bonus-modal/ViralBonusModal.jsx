@@ -106,6 +106,7 @@ const ViralBonusModal = () => {
       }
 
       if (bridgeResult) {
+        console.log(bridgeResult)
         dispatch(fetchClaimVkBonus({ taskType: type }))
       }
     } catch (error) {
@@ -238,10 +239,10 @@ const ViralBonusModal = () => {
                 🚀 Полный безлимит энергии каждый день
               </div>
               <div className={styles.feature_bullet}>
-                🤖 Доступ к ИИ-тренажерам 3-го уровня (GigaChat-2)
+                🤖 Доступ к тренажерам 3-го уровня
               </div>
               <div className={styles.feature_bullet}>
-                ✨ Уникальный золотой ободок профиля в рейтингах
+                ✨ Продвинутая ИИ-аналитика выполненых заданий 
               </div>
             </div>
 

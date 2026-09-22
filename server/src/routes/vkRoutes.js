@@ -4,7 +4,7 @@ import {
  
 } from '../controllers/vkController.js'
 
-//middleware авторизации VK
+//middleware авторизации VK 
 import verifyVkSignature from '../middlewares/vkLaunchParamsAuth.js'
 
 const router = new Router()
