@@ -10,7 +10,7 @@ const fetchClaimVkBonus = createAsyncThunk(
     try {
       // Запрос идет на новый защищенный роут подписи ВК
       const response = await axiosInstance.post(
-        '/api/vk/claim-bonus',
+        '/vk/claim-bonus',
         { taskType },
       )
       return response.data // Возвращает { message, user }

@@ -5,7 +5,7 @@ const fetchShopItems = createAsyncThunk(
   'shop/fetchShopItems',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get('shop/get-all-items')
+      const res = await axiosInstance.get('/shop/get-all-items')
       return res.data
     } catch (err) {
       return rejectWithValue(
