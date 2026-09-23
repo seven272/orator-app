@@ -15,7 +15,7 @@ import { useLevelUpTrigger } from '../../hooks/useLevelUpTrigger'
 
 const MainPage = () => {
   const dispatch = useDispatch()
-  useLevelUpTrigger()
+  // useLevelUpTrigger()
 
   useEffect(() => {
     dispatch(fetchDailyTasks())

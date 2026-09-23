@@ -30,7 +30,9 @@ const showOnboarding = async () => {
 
   // получаем информацию о "флаге" из хранилища о том были ли уже показа онбодинг, если да то прекращаю выполнения ф-и
   const isShown = await getOnboardingShown()
+  alert(`ДЕБАГ 3: Флаг просмотрено = ${isShown}`);
   if (isShown) {
+    alert('ДЕБАГ 3.1: Выход, онбординг уже был показан');
     return
   }
   try {
@@ -47,7 +49,7 @@ const showOnboarding = async () => {
         },
       ],
     })
-
+alert(`ДЕБАГ 5: Результат вызова слайдов ВК: ${JSON.stringify(data)}`);
     if (data.result) {
       console.log('Слайды успешно показаны, фиксируем флаг в облако ВК...')
       await setOnboardingShown()
