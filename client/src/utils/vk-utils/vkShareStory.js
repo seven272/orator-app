@@ -223,7 +223,7 @@ const shareLevelUpToStory = async (newLevel) => {
               text: textBottom,
               style: 'marker',
               background_style: 'black',
-              selection_color: '#ffffff',
+              selection_color: '#bd1c8d',
             },
             transform: {
               gravity: 'center_bottom',

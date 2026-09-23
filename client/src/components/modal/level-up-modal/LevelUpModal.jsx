@@ -116,7 +116,7 @@ const LevelUpModal = () => {
               onClick={handleShareStory}
               disabled={isSharing}
             >
-              <FaVk size={18} /> Рассказать друзьям
+              <FaVk size={18} /> Поделиться успехом
             </button>
           )}
 

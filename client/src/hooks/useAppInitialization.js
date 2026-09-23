@@ -5,7 +5,7 @@ import { parseURLSearchParamsForGetLaunchParams } from '@vkontakte/vk-bridge'
 
 import { fetchGetMe, fetchVkAuth } from '../redux/slices/authSlice'
 import { fetchProfileData } from '../redux/slices/profileSlice'
-import { fetchLeaderboard } from '../redux/slices/leaderboardSlice'
+import { fetchLeaderboard } from '../redux/slices/leaderboardSlice' 
 import { showOnboarding } from '../utils/vk-utils/vkShowOnboarding'
 
 /**

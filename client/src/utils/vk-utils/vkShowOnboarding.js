@@ -3,8 +3,8 @@ import ImgOnboarding from '../../assets/images/other/onboarding.jpeg'
 import { convertBase64FromUrl } from '../convertToBase64'
 
 // ф-ий отправки флага о показе Онбординга в ВКсторадж и ф-я получения информации о показе
-const setOnboardingShown = () => {
-  return bridge.send('VKWebAppStorageSet', {
+const setOnboardingShown = async () => {
+  return await bridge.send('VKWebAppStorageSet', {
     key: 'govorix_onboarding',
     value: '1',
   })
@@ -25,6 +25,7 @@ const getOnboardingShown = async () => {
 }
 
 const showOnboarding = async () => {
+  console.log('START ONBORDING VK')
   const imgForOnboarding = await convertBase64FromUrl(ImgOnboarding)
 
   // получаем информацию о "флаге" из хранилища о том были ли уже показа онбодинг, если да то прекращаю выполнения ф-и
@@ -33,7 +34,7 @@ const showOnboarding = async () => {
     return
   }
   try {
-    const data = bridge.send('VKWebAppShowSlidesSheet', {
+    const data = await bridge.send('VKWebAppShowSlidesSheet', {
       slides: [
         {
           media: {
@@ -48,8 +49,8 @@ const showOnboarding = async () => {
     })
 
     if (data.result) {
-      // Слайды показаны
-      setOnboardingShown()
+      console.log('Слайды успешно показаны, фиксируем флаг в облако ВК...')
+      await setOnboardingShown()
     }
   } catch (error) {
     // Ошибка
