@@ -17,7 +17,6 @@ const claimVkBonus = async (req, res) => {
     const { taskType } = req.body
     //нативный vkId, прописанный мидлваром подписи
     const vkId = req.vkId
-     console.log('claimVkBonus отработал ')
     console.log('тип фичи ВК ' + taskType)
     //  Проверка входящих данных
     if (!VALID_TASKS.includes(taskType)) {
@@ -81,7 +80,6 @@ const claimVkBonus = async (req, res) => {
       updateQuery,
       { new: true, runValidators: true },
     )
-    console.log(updatedUser)
     return res.status(200).json({
       message: 'Награда успешно начислена!',
       user: updatedUser,
