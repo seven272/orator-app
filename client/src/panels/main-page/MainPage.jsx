@@ -12,10 +12,11 @@ import LeaderboardShortBlock from './leaderboard-short-block/LeaderboardShortBlo
 import ActivityBlock from './activity-block/ActivityBlock'
 import CoursesBannerBlock from './courses-banner-block/CoursesBannerBlock'
 
+import { useLevelUpTrigger } from '../../hooks/useLevelUpTrigger'
 
 const MainPage = () => {
   const dispatch = useDispatch()
-
+  useLevelUpTrigger()
 
   useEffect(() => {
     dispatch(fetchDailyTasks())
