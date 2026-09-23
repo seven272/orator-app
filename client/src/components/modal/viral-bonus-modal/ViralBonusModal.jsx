@@ -95,9 +95,8 @@ const ViralBonusModal = () => {
 
       case 'homeScreen': {
         try {
-          const res = await bridge.send('VKWebAppAddToHomeScreen')
-          // Трактуем как успех, если не было явного отказа
-          bridgeResult = !(res && res.result === false)
+          await bridge.send('VKWebAppAddToHomeScreen')
+          bridgeResult = true
         } catch (error) {
           console.error('homeScreen error', error)
           bridgeResult = false
@@ -108,7 +107,7 @@ const ViralBonusModal = () => {
       case 'notifications': {
         try {
           const res = await bridge.send('VKWebAppAllowNotifications')
-          bridgeResult = Boolean(res?.enabled)
+          bridgeResult = Boolean(res?.result)
         } catch (error) {
           console.error('notifications error', error)
           bridgeResult = false
