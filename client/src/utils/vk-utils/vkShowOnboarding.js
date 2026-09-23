@@ -31,7 +31,7 @@ const showOnboarding = async () => {
   // получаем информацию о "флаге" из хранилища о том были ли уже показа онбодинг, если да то прекращаю выполнения ф-и
   const isShown = await getOnboardingShown()
 
-  if (!isShown) {
+  if (isShown) {
     return
   }
   try {

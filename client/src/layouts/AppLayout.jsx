@@ -16,7 +16,7 @@ import styles from './AppLayout.module.css'
 
 const AppLayout = () => {
   useAppInitialization()
-  // useLevelUpTrigger()
+  useLevelUpTrigger()
 
   // Реактиное состояние загрузки и режима гостя
   const { isLoading } = useSelector((state) => state.auth)
