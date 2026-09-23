@@ -42,53 +42,97 @@ import { openLevelUpModal } from '../redux/slices/vkSlice'
 //   }, [user, isLoading, dispatch])
 // }
 
-const useLevelUpTrigger = () => {
-  const dispatch = useDispatch()
+// const useLevelUpTrigger = () => {
+//   const dispatch = useDispatch()
 
-  // 1. Извлекаем данные профиля и его личный статус загрузки!
-  const { user, loading: profileLoading } = useSelector(
-    (state) => state.profile,
-  )
-  const { isLoading: authLoading } = useSelector(
-    (state) => state.auth,
-  )
+//   // 1. Извлекаем данные профиля и его личный статус загрузки!
+//   const { user, loading: profileLoading } = useSelector(
+//     (state) => state.profile,
+//   )
+//   const { isLoading: authLoading } = useSelector(
+//     (state) => state.auth,
+//   )
 
-  const previousLevelRef = useRef(null)
+//   const previousLevelRef = useRef(null)
 
-  useEffect(() => {
-    // 🔒 ИСПРАВЛЕНО: Ждем, пока ЗАВЕРШИТСЯ фоновый fetchProfileData (status === 'succeeded')
-    // Это полностью защищает от гонки данных между authSlice и profileSlice
-    if (!user || typeof user.level === 'undefined') {
-    return;
-  }
+//   useEffect(() => {
+//     // 🔒 ИСПРАВЛЕНО: Ждем, пока ЗАВЕРШИТСЯ фоновый fetchProfileData (status === 'succeeded')
+//     // Это полностью защищает от гонки данных между authSlice и profileSlice
+//     if (!user || typeof user.level === 'undefined') {
+//     return;
+//   }
 
-    const actualLevel = user.level
+//     const actualLevel = user.level
 
-    // 🔒 ИСПРАВЛЕНО: Защита от дефолтных нулей. Уровень оратора не может быть равен 0.
-    if (actualLevel <= 1) {
-      // Но при этом всё равно инициализируем реф, чтобы потом поймать рост
-    if (previousLevelRef.current === null) {
-      previousLevelRef.current = actualLevel;
-    }
-    return;
-    }
+//     // 🔒 ИСПРАВЛЕНО: Защита от дефолтных нулей. Уровень оратора не может быть равен 0.
+//     if (actualLevel <= 1) {
+//       // Но при этом всё равно инициализируем реф, чтобы потом поймать рост
+//     if (previousLevelRef.current === null) {
+//       previousLevelRef.current = actualLevel;
+//     }
+//     return;
+//     }
 
  
 
-    // 2. Инициализация рефа при первом полноценном входе
+//     // 2. Инициализация рефа при первом полноценном входе
+//     if (previousLevelRef.current === null) {
+//       previousLevelRef.current = actualLevel
+//       return
+//     }
+
+//     // 3. 🚀 НАСТОЯЩИЙ LEVEL UP: Уровень действительно вырос в процессе игры
+//     if (actualLevel > previousLevelRef.current) {
+//       const oldLevel = previousLevelRef.current
+//       previousLevelRef.current = actualLevel // Сразу фиксируем, убирая дубли
+
+//       dispatch(openLevelUpModal({ newLevel: actualLevel, oldLevel }))
+//     }
+//   }, [user, dispatch])
+// }
+
+
+
+const useLevelUpTrigger = () => {
+  const dispatch = useDispatch();
+
+  const { user, loading: profileLoading } = useSelector((state) => state.profile);
+  const { isLoading: authLoading } = useSelector((state) => state.auth);
+
+  const previousLevelRef = useRef(null);
+
+  useEffect(() => {
+    // Базовые защиты: ждём, пока данные точно есть
+    if (!user || typeof user.level === 'undefined') {
+      return;
+    }
+
+    const actualLevel = user.level;
+
+    // Не показываем на уровнях 0, 1 (если это стартовые уровни)
+    if (actualLevel <= 1) {
+      // Всё равно инициализируем реф, чтобы потом поймать рост
+      if (previousLevelRef.current === null) {
+        previousLevelRef.current = actualLevel;
+      }
+      return;
+    }
+
+    // Инициализация при первом полноценном проходе: просто запоминаем, не показываем
     if (previousLevelRef.current === null) {
-      previousLevelRef.current = actualLevel
-      return
+      previousLevelRef.current = actualLevel;
+      return; // <--- самое важное: при первой инициализации модалку НЕ показываем
     }
 
-    // 3. 🚀 НАСТОЯЩИЙ LEVEL UP: Уровень действительно вырос в процессе игры
+    // Только если уровень реально вырос по сравнению с запомненным — показываем
     if (actualLevel > previousLevelRef.current) {
-      const oldLevel = previousLevelRef.current
-      previousLevelRef.current = actualLevel // Сразу фиксируем, убирая дубли
+      const oldLevel = previousLevelRef.current;
+      previousLevelRef.current = actualLevel; // сразу фиксируем, чтобы не дублировать
 
-      dispatch(openLevelUpModal({ newLevel: actualLevel, oldLevel }))
+      dispatch(openLevelUpModal({ newLevel: actualLevel, oldLevel }));
     }
-  }, [user, dispatch])
-}
+  }, [user, dispatch]); // достаточно user и dispatch
+};
+
 
 export { useLevelUpTrigger }

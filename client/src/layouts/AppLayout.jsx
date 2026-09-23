@@ -23,9 +23,9 @@ const AppLayout = () => {
   // Реактиное состояние загрузки и режима гостя
   const { isLoading } = useSelector((state) => state.auth)
 
-  useEffect(() => {
-    showOnboarding()
-  }, [])
+  // useEffect(() => {
+  //   showOnboarding()
+  // }, [])
 
   // 📌 Безопасный Splash Screen на чистом CSS
   if (isLoading) {
