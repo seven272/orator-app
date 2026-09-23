@@ -1,6 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
 import AchievementModal from '../components/modal/achievement-modal/AchievementModal'
 import EnergyLimitAlert from '../components/modal/energy-limit-alert/EnergyLimitAlert'
@@ -11,6 +12,7 @@ import LevelUpModal from '../components/modal/level-up-modal/LevelUpModal'
 //хуки
 import { useAppInitialization } from '../hooks/useAppInitialization'
 import { useLevelUpTrigger } from '../hooks/useLevelUpTrigger'
+import { showOnboarding } from '../utils/vk-utils/vkShowOnboarding'
 
 import styles from './AppLayout.module.css'
 
@@ -20,6 +22,10 @@ const AppLayout = () => {
 
   // Реактиное состояние загрузки и режима гостя
   const { isLoading } = useSelector((state) => state.auth)
+
+  useEffect(() => {
+    showOnboarding()
+  }, [])
 
   // 📌 Безопасный Splash Screen на чистом CSS
   if (isLoading) {
