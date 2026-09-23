@@ -1,0 +1,278 @@
+/* ==========================================================================
+   💎 LEVEL UP MODAL STYLES (Pixar & Apple Aesthetic)
+   ========================================================================== */
+
+/* 🌌 Темная размытая подложка оверлея */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(
+    0,
+    15,
+    35,
+    0.45
+  ); /* Глубокий темно-синий оттенок с прозрачностью */
+  backdrop-filter: blur(
+    12px
+  ); /* Элегантное премиальное размытие заднего фона */
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 16px;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 🤍 Основной контейнер карточки достижения */
+.modal_container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background: #ffffff;
+  border-radius: 28px; /* Стильные скругленные углы в стиле Apple */
+  padding: 32px 24px 24px 24px;
+  box-shadow:
+    0 20px 50px rgba(0, 43, 92, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.02);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /* Эффект вылета окна снизу вверх при открытии */
+  transform: translateY(20px);
+  animation: scaleUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 👑 Праздничная шапка */
+.celebration_header {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+/* Зона золотой короны с бесконечным мягким парением (Bobbing animation) */
+.crown_animate_zone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90px;
+  height: 90px;
+  background: linear-gradient(
+    135deg,
+    #007aff,
+    #b2d7ff
+  ); /* Ваша фирменная палитра */
+  border-radius: 50%;
+  margin: 0 auto 20px auto;
+  box-shadow: 0 10px 25px rgba(0, 122, 255, 0.3);
+  animation: floatAvatar 3s ease-in-out infinite;
+}
+
+.crown_gold_icon {
+  color: #ffffff;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.modal_title {
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.modal_subtitle {
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: #64748b;
+  line-height: 1.45;
+  margin: 0;
+  padding: 0 8px;
+}
+
+/* Подсветка цифры нового уровня */
+.accent_level_num {
+  font-weight: 800;
+  color: #007aff; /* Синий бренд-фокус */
+  background-color: rgba(0, 122, 255, 0.08);
+  padding: 2px 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+/* ✨ Карточка бонуса / Мотивационная плашка */
+.level_perk_card {
+  width: 100%;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 28px;
+}
+
+.perk_text {
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #475569;
+  line-height: 1.4;
+  margin: 0;
+  text-align: center;
+}
+
+/* 🕹️ Вертикальная группа управляющих кнопок */
+.btn_group_vertical {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+/* 🔵 Акцентная Premium-кнопка публикации в Истории ВК */
+.btn_share_levelup {
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 8px;
+
+  background: linear-gradient(
+    135deg,
+    #007aff,
+    #0066d6
+  ); /* Мощный синий градиент */
+  color: #ffffff;
+
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 122, 255, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn_share_levelup:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.35);
+}
+
+.btn_share_levelup:active:not(:disabled) {
+  transform: translateY(0);
+  background: linear-gradient(135deg, #0066d6, #0052ad);
+}
+
+/* 🔘 Воздушная кнопка «Продолжить» */
+.btn_continue_game {
+  width: 100%;
+  padding: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 6px;
+
+  background: none;
+  border: none;
+  color: #94a3b8; /* Спокойный нейтральный цвет */
+
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 16px;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.btn_continue_game:hover:not(:disabled) {
+  color: #64748b;
+  background-color: #f1f5f9;
+}
+
+.btn_continue_game:active:not(:disabled) {
+  color: #475569;
+  background-color: #e2e8f0;
+}
+
+/* 🔒 Состояние задизейбленных кнопок во время шеринга */
+.btn_share_levelup:disabled,
+.btn_continue_game:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   🎬 АНИМАЦИИ (Плавность и сочность)
+   ========================================================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Анимация мягкого покачивания короны */
+@keyframes floatAvatar {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* 📱 МОБИЛЬНАЯ ОПТИМИЗАЦИЯ (ЭКРАНЫ ДО 450px) */
+@media (max-width: 450px) {
+  .modal_container {
+    padding: 28px 20px 20px 20px;
+    border-radius: 24px;
+  }
+
+  .crown_animate_zone {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+  }
+
+  .modal_title {
+    font-size: 21px;
+  }
+
+  .modal_subtitle {
+    font-size: 14px;
+  }
+
+  .btn_share_levelup {
+    padding: 14px;
+    font-size: 14px;
+  }
+}

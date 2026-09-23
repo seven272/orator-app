@@ -13,7 +13,7 @@ const fetchClaimVkBonus = createAsyncThunk(
         taskType,
         launchParams,
       })
-     
+
       return response.data // Возвращает { message, user }
     } catch (error) {
       return rejectWithValue(
@@ -38,6 +38,11 @@ const initialState = {
     notifications: false,
     communityJoin: false,
   },
+  isLevelUpModalOpen: false,
+  levelUpData: {
+    newLevel: 0,
+    oldLevel: 0,
+  },
   status: 'idle',
   error: null,
 }
@@ -52,6 +57,14 @@ const vkSlice = createSlice({
     closeViralModal: (state) => {
       state.isViralModalOpen = false
       state.error = null
+    },
+    openLevelUpModal: (state, action) => {
+      state.isLevelUpModalOpen = true
+      state.levelUpData = action.payload // Прилетает { newLevel, oldLevel }
+    },
+    closeLevelUpModal: (state) => {
+      state.isLevelUpModalOpen = false
+      state.levelUpData = { newLevel: 0, oldLevel: 0 }
     },
   },
   extraReducers: (builder) => {
@@ -92,6 +105,11 @@ const vkSlice = createSlice({
   },
 })
 
-export const { openViralModal, closeViralModal } = vkSlice.actions
+export const {
+  openViralModal,
+  closeViralModal,
+  openLevelUpModal,
+  closeLevelUpModal,
+} = vkSlice.actions
 export { fetchClaimVkBonus }
 export default vkSlice.reducer

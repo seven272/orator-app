@@ -7,19 +7,19 @@ import EnergyLimitAlert from '../components/modal/energy-limit-alert/EnergyLimit
 import EnergyGuestAlert from '../components/modal/energy-guest-alert/EnergyGuestAlert'
 import PremiumModal from '../components/modal/premium-modal/PremiumModal'
 import ViralBonusModal from '../components/modal/viral-bonus-modal/ViralBonusModal'
+import LevelUpModal from '../components/modal/level-up-modal/LevelUpModal'
 //хуки
 import { useAppInitialization } from '../hooks/useAppInitialization'
+import { useLevelUpTrigger } from '../hooks/useLevelUpTrigger'
 
 import styles from './AppLayout.module.css'
 
 const AppLayout = () => {
- 
   useAppInitialization()
- 
+  useLevelUpTrigger()
 
   // Реактиное состояние загрузки и режима гостя
   const { isLoading } = useSelector((state) => state.auth)
-
 
   // 📌 Безопасный Splash Screen на чистом CSS
   if (isLoading) {
@@ -47,6 +47,7 @@ const AppLayout = () => {
       <EnergyGuestAlert />
       <PremiumModal />
       <ViralBonusModal />
+      <LevelUpModal />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { parseURLSearchParamsForGetLaunchParams } from '@vkontakte/vk-bridge'
 import { fetchGetMe, fetchVkAuth } from '../redux/slices/authSlice'
 import { fetchProfileData } from '../redux/slices/profileSlice'
 import { fetchLeaderboard } from '../redux/slices/leaderboardSlice'
+import { showOnboarding } from '../utils/vk-utils/vkShowOnboarding'
 
 /**
  * Кастомный хук для инициализации сессии Govorix при старте приложения.
@@ -28,6 +29,8 @@ const useAppInitialization = () => {
           const resData = await dispatch(
             fetchVkAuth({ launchParams: parsedVkParams }),
           ).unwrap()
+          // показываем приветсвенный онбординг 1 раз
+          showOnboarding()
 
           // Загружаем данные профиля и рейтинги только если бэкенд подтвердил, что это НЕ гость
           if (resData && !resData.isVkGuest) {

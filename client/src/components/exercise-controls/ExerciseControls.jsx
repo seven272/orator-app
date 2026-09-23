@@ -303,7 +303,7 @@ const ExerciseControls = ({
               </button>
             </div>
             {/* Кнопка Истории отображается строго в ВК и только при успешном завершении */}
-            {!isVkEnvironment && !isTaskInterrupted && (
+            {isVkEnvironment && !isTaskInterrupted && (
               <button
                 className={styles.btn_share}
                 onClick={handleShareStory}

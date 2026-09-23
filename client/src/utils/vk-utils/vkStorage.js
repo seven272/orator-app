@@ -51,27 +51,6 @@ const getAllItemsStorage = () => {
     })
 }
 
-// сохранение состояние просмотренного онбординга
-const setOnboardingShown = () => {
-  return bridge.send('VKWebAppStorageSet', {
-    key: 'onboardingShownPrankSound',
-    value: '1',
-  })
-}
-
-// получение состояние просмотренного онбординга
-const getOnboardingShown = async () => {
-  const result = await bridge.send('VKWebAppStorageGet', {
-    keys: ['onboardingShownPrankSound'],
-  })
-  // получением значение первого элемента массива обьектов keys
-  const resultValue = result.keys[0].value
-  if (resultValue === '') {
-    return false
-  } else if (resultValue === '1') {
-    return true
-  }
-}
 
 // сохранение темы в ВК-сторадж
 const setThemeStorage = (payload) => {
@@ -100,8 +79,6 @@ export {
   setDataFromVkStorage,
   setElemInCollection,
   getAllItemsStorage,
-  setOnboardingShown,
-  getOnboardingShown,
   setThemeStorage,
   getThemeStorage,
 }
