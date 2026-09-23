@@ -6,13 +6,13 @@ import axiosInstance from '../../utils/axiosInstance'
 // 1. Экшен начисления наград за выполнение ВК-заданий
 const fetchClaimVkBonus = createAsyncThunk(
   'vk/fetchClaimVkBonus',
-  async ({ taskType }, { rejectWithValue }) => {
+  async ({ taskType, launchParams }, { rejectWithValue }) => {
     try {
       // Запрос идет на новый защищенный роут подписи ВК
-      const response = await axiosInstance.post(
-        '/vk/claim-bonus',
-        { taskType },
-      )
+      const response = await axiosInstance.post('/vk/claim-bonus', {
+        taskType,
+        launchParams,
+      })
       console.log('fetchClaimVkBonus ' + response.data)
       console.log(response.data)
       return response.data // Возвращает { message, user }

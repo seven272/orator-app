@@ -107,7 +107,7 @@ const ViralBonusModal = () => {
 
       if (bridgeResult) {
         console.log(bridgeResult)
-        dispatch(fetchClaimVkBonus({ taskType: type }))
+        dispatch(fetchClaimVkBonus({ taskType: type,  launchParams: window.location.search }))
       }
     } catch (error) {
       console.error(`Действие отклонено в VK Bridge для таска: ${type}`, error)
