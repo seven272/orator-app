@@ -17,7 +17,7 @@ const claimVkBonus = async (req, res) => {
     const { taskType } = req.body
     //нативный vkId, прописанный мидлваром подписи
     const vkId = req.vkId
-
+    console.log('тип фичи ВК ' + taskType)
     //  Проверка входящих данных
     if (!VALID_TASKS.includes(taskType)) {
       return res
@@ -31,7 +31,7 @@ const claimVkBonus = async (req, res) => {
         .json({ message: 'Пользователь ВК не идентифицирован' })
     }
 
-    // Ищем пользователя в СУБД по vkId, а не по внутреннему _id
+    // Ищем пользователя в СУБД по vkId
     const user = await User.findOne({ vkId })
     if (!user) {
       return res
@@ -57,7 +57,7 @@ const claimVkBonus = async (req, res) => {
       // Сразу фиксируем сброс в документе пользователя перед начислением бонуса
       user.dailyEnergy.used = 0
       user.dailyEnergy.lastAttemptDate = currentServerDate
-      await user.save() 
+      await user.save()
     }
 
     // АТОМАРНОЕ НАЧИСЛЕНИЕ РЕСУРСОВ
@@ -80,7 +80,7 @@ const claimVkBonus = async (req, res) => {
       updateQuery,
       { new: true, runValidators: true },
     )
-
+    console.log(updatedUser)
     return res.status(200).json({
       message: 'Награда успешно начислена!',
       user: updatedUser,
@@ -92,7 +92,5 @@ const claimVkBonus = async (req, res) => {
     })
   }
 }
-
-
 
 export { claimVkBonus }

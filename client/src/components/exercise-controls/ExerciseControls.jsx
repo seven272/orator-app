@@ -5,7 +5,7 @@ import {
   IoMdArrowRoundForward,
 } from 'react-icons/io'
 import { FaCheck } from 'react-icons/fa'
-import { ShareAltOutlined } from '@ant-design/icons'
+import { FaVk } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -289,19 +289,6 @@ const ExerciseControls = ({
       {status === STATUS.FINISHED &&
         (xp !== 0 || isTaskInterrupted) && (
           <div className={styles.btns_end_container}>
-            {/* Кнопка Истории отображается строго в ВК и только при успешном завершении */}
-            {isVkEnvironment && !isTaskInterrupted && (
-              <button
-                type="button"
-                className={styles.btn_vk_story}
-                onClick={handleShareStory}
-                disabled={isSharing}
-              >
-                <ShareAltOutlined size={16} />
-                Поделиться успехом в Истории
-              </button>
-            )}
-
             <div className={styles.btns_finished_wrap}>
               <button className={styles.btn_end} onClick={onFinish}>
                 <IoMdArrowRoundBack size={18} />
@@ -315,6 +302,16 @@ const ExerciseControls = ({
                 <IoMdArrowRoundForward size={18} />
               </button>
             </div>
+            {/* Кнопка Истории отображается строго в ВК и только при успешном завершении */}
+            {!isVkEnvironment && !isTaskInterrupted && (
+              <button
+                className={styles.btn_share}
+                onClick={handleShareStory}
+                disabled={isSharing}
+              >
+                <FaVk size={18} /> Поделиться результатом
+              </button>
+            )}
           </div>
         )}
     </div>

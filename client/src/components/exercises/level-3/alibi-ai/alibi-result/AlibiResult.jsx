@@ -108,7 +108,7 @@ const AlibiResult = ({ onCloseExercise, onRestartExercise }) => {
               className={styles.btn_share}
               onClick={handleShareStory}
               disabled={isSharing}
-            >
+            > 
               <FaVk size={18} /> Поделиться результатом
             </button>
           )}
