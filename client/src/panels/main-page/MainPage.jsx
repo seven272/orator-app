@@ -11,9 +11,11 @@ import ExerciseCatalogBlock from './exercise-catalog-block/ExerciseCatalogBlock'
 import LeaderboardShortBlock from './leaderboard-short-block/LeaderboardShortBlock'
 import ActivityBlock from './activity-block/ActivityBlock'
 import CoursesBannerBlock from './courses-banner-block/CoursesBannerBlock'
+import { useLevelUpTrigger } from '../../hooks/useLevelUpTrigger'
 
 const MainPage = () => {
-  const dispatch = useDispatch() 
+  const dispatch = useDispatch()
+  useLevelUpTrigger()
 
   useEffect(() => {
     dispatch(fetchDailyTasks())
@@ -23,7 +25,7 @@ const MainPage = () => {
     <div className={styles.section_main}>
       {/* Наш новый изолированный компонент баннера */}
       <PromoBannerBlock />
-      
+
       <div className={styles.border}></div>
       <DashboardBlock />
       <div className={styles.border}></div>
