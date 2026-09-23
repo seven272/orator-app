@@ -30,7 +30,7 @@ const useAppInitialization = () => {
             fetchVkAuth({ launchParams: parsedVkParams }),
           ).unwrap()
           // показываем приветсвенный онбординг 1 раз
-          await showOnboarding()
+           showOnboarding()
 
           // Загружаем данные профиля и рейтинги только если бэкенд подтвердил, что это НЕ гость
           if (resData && !resData.isVkGuest) {
