@@ -30,11 +30,11 @@ const useAppInitialization = () => {
             fetchVkAuth({ launchParams: parsedVkParams }),
           ).unwrap()
           // показываем приветсвенный онбординг 1 раз
-          showOnboarding()
+          await showOnboarding()
 
           // Загружаем данные профиля и рейтинги только если бэкенд подтвердил, что это НЕ гость
           if (resData && !resData.isVkGuest) {
-            dispatch(fetchProfileData())
+            await dispatch(fetchProfileData()).unwrap() 
             dispatch(fetchLeaderboard())
           }
           // Если это гость — цепочка завершена, extraReducers в authSlice выключат isLoading
@@ -45,7 +45,7 @@ const useAppInitialization = () => {
         // 2. Сценарий запуска на обычном браузере Сайта Govorix.ru
         try {
           await dispatch(fetchGetMe()).unwrap()
-          dispatch(fetchProfileData())
+          await dispatch(fetchProfileData()).unwrap() 
           dispatch(fetchLeaderboard())
         } catch (error) {
           console.error(

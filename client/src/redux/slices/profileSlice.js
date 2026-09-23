@@ -95,7 +95,7 @@ const initialState = {
     { subject: 'находчивость', A: 0, fullMark: 100 },
     { subject: 'техника речи', A: 0, fullMark: 100 },
     { subject: 'убедительность', A: 0, fullMark: 100 },
-  ],
+  ], 
   weakPoint: {
     skill: '', // например, техника речи
     score: 3,
