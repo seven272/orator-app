@@ -89,57 +89,94 @@ import { openLevelUpModal } from '../redux/slices/vkSlice'
 //   }, [user, dispatch])
 // }
 
+// const useLevelUpTrigger = () => {
+//   const dispatch = useDispatch()
+
+//   const { user, loading: profileLoading } = useSelector(
+//     (state) => state.profile,
+//   )
+//   const { isLoading: authLoading } = useSelector(
+//     (state) => state.auth,
+//   )
+
+//   const previousLevelRef = useRef(null)
+
+//   useEffect(() => {
+
+
+//     if (profileLoading || authLoading) return
+
+//     // Базовые защиты: ждём, пока данные точно есть
+//     if (!user || typeof user.level === 'undefined') {
+//       return
+//     }
+
+//     const actualLevel = user.level
+//     console.log('actualLevel ' + actualLevel)
+
+//     // Не показываем на уровнях 0, 1 (если это стартовые уровни)
+//     if (actualLevel <= 1) {
+//       // Всё равно инициализируем реф, чтобы потом поймать рост
+//       if (previousLevelRef.current === null) {
+//         previousLevelRef.current = actualLevel
+//       }
+//       return
+//     }
+
+//     // Инициализация при первом полноценном проходе: просто запоминаем, не показываем
+//     if (previousLevelRef.current === null) {
+//       previousLevelRef.current = actualLevel
+//       return // <--- самое важное: при первой инициализации модалку НЕ показываем
+//     }
+
+//     // Только если уровень реально вырос по сравнению с запомненным — показываем
+//     if (actualLevel > previousLevelRef.current) {
+//       const oldLevel = previousLevelRef.current
+//       previousLevelRef.current = actualLevel // сразу фиксируем, чтобы не дублировать
+//       console.log('level-up-check', {
+//         actualLevel,
+//         previous: previousLevelRef.current,
+//         shouldShow: actualLevel > (previousLevelRef.current ?? -1),
+//       })
+
+//       dispatch(openLevelUpModal({ newLevel: actualLevel, oldLevel }))
+//     }
+//   }, [user, dispatch, profileLoading, authLoading]) // достаточно user и dispatch
+// }
+
 const useLevelUpTrigger = () => {
   const dispatch = useDispatch()
-
-  const { user, loading: profileLoading } = useSelector(
-    (state) => state.profile,
-  )
-  const { isLoading: authLoading } = useSelector(
-    (state) => state.auth,
-  )
-
+  
+  // Достаем юзера напрямую из profileSlice
+  const { user } = useSelector((state) => state.profile)
+  
+  // Использовать useRef вместо useState — это железный способ заблокировать гонку стейтов
   const previousLevelRef = useRef(null)
 
   useEffect(() => {
-    if (profileLoading || authLoading) return
+    const apiLevel = user?.level
 
-    // Базовые защиты: ждём, пока данные точно есть
-    if (!user || typeof user.level === 'undefined') {
-      return
-    }
+    // 1. Полностью игнорируем дефолтный нулевой уровень из initialState
+    if (!apiLevel || apiLevel <= 0) return
 
-    const actualLevel = user.level
-    console.log('actualLevel ' + actualLevel)
-
-    // Не показываем на уровнях 0, 1 (если это стартовые уровни)
-    if (actualLevel <= 1) {
-      // Всё равно инициализируем реф, чтобы потом поймать рост
-      if (previousLevelRef.current === null) {
-        previousLevelRef.current = actualLevel
-      }
-      return
-    }
-
-    // Инициализация при первом полноценном проходе: просто запоминаем, не показываем
+    // 2. ИНИЦИАЛИЗАЦИЯ: При первом запуске просто запоминаем ваш текущий уровень из БД (например, 2)
     if (previousLevelRef.current === null) {
-      previousLevelRef.current = actualLevel
-      return // <--- самое важное: при первой инициализации модалку НЕ показываем
+      previousLevelRef.current = apiLevel
+      console.log('Level trigger initialized with:', apiLevel)
+      return
     }
 
-    // Только если уровень реально вырос по сравнению с запомненным — показываем
-    if (actualLevel > previousLevelRef.current) {
+    // 3. 🚀 ЧИСТЫЙ LEVEL UP: Срабатывает только если новый уровень реально выше сохраненного в памяти рефа
+    if (apiLevel > previousLevelRef.current) {
       const oldLevel = previousLevelRef.current
-      previousLevelRef.current = actualLevel // сразу фиксируем, чтобы не дублировать
-      console.log('level-up-check', {
-        actualLevel,
-        previous: previousLevelRef.current,
-        shouldShow: actualLevel > (previousLevelRef.current ?? -1),
-      })
-
-      dispatch(openLevelUpModal({ newLevel: actualLevel, oldLevel }))
+      previousLevelRef.current = apiLevel // Мгновенно обновляем память, блокируя дубликаты [INDEX]
+      
+      console.log(`🎉 LEVEL UP DETECTED: с ${oldLevel} на ${apiLevel}`)
+      
+      // Открываем праздничное оверлей-окно
+      dispatch(openLevelUpModal({ newLevel: apiLevel, oldLevel }))
     }
-  }, [user, dispatch, profileLoading, authLoading]) // достаточно user и dispatch
+  }, [user?.level, dispatch]) // В зависимостях только сам уровень, никаких локальных стейтов!
 }
 
 export { useLevelUpTrigger }
