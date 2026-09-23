@@ -48,13 +48,15 @@ const ViralBonusModal = () => {
   const { isVkMobile } = useVkEnvironment()
 
   // Чтение карты квестов и состояния лоадеров напрямую из изолированного vkSlice
-  const { isViralModalOpen, btnLoaders, viralBonusesClaimed } = useSelector((state) => state.vk)
+  const { isViralModalOpen, btnLoaders, viralBonusesClaimed } =
+    useSelector((state) => state.vk)
 
   // 🛠️На десктопном ВК скрываем мобильные методы [INDEX]
   const visibleTasks = useMemo(() => {
     if (!isVkMobile) {
       return VIRAL_TASKS_CONFIG.filter(
-        (task) => task.type !== 'homeScreen' && task.type !== 'notifications'
+        (task) =>
+          task.type !== 'homeScreen' && task.type !== 'notifications',
       )
     }
     return VIRAL_TASKS_CONFIG
@@ -62,7 +64,9 @@ const ViralBonusModal = () => {
 
   // Проверяем наличие невыполненных заданий среди видимых
   const hasUnfinishedTasks = useMemo(() => {
-    return visibleTasks.some((task) => !viralBonusesClaimed[task.type])
+    return visibleTasks.some(
+      (task) => !viralBonusesClaimed[task.type],
+    )
   }, [visibleTasks, viralBonusesClaimed])
 
   const handleClose = () => {
@@ -75,42 +79,70 @@ const ViralBonusModal = () => {
   }
 
   const handleExecuteTask = async (type) => {
-    try {
-      let bridgeResult = false
+    let bridgeResult = false
 
-      switch (type) {
-        case 'favorites': {
+    switch (type) {
+      case 'favorites': {
+        try {
           const res = await bridge.send('VKWebAppAddToFavorites')
-          bridgeResult = res.result
-          break
+          bridgeResult = Boolean(res?.result)
+        } catch (error) {
+          console.error('favorites error', error)
+          bridgeResult = false
         }
-        case 'homeScreen': {
+        break
+      }
+
+      case 'homeScreen': {
+        try {
           const res = await bridge.send('VKWebAppAddToHomeScreen')
-          bridgeResult = res.result
-          break
+          // Трактуем как успех, если не было явного отказа
+          bridgeResult = !(res && res.result === false)
+        } catch (error) {
+          console.error('homeScreen error', error)
+          bridgeResult = false
         }
-        case 'notifications': {
+        break
+      }
+
+      case 'notifications': {
+        try {
           const res = await bridge.send('VKWebAppAllowNotifications')
-          bridgeResult = res.result
-          break
+          bridgeResult = Boolean(res?.enabled)
+        } catch (error) {
+          console.error('notifications error', error)
+          bridgeResult = false
         }
-        case 'communityJoin': {
+        break
+      }
+
+      case 'communityJoin': {
+        try {
           const res = await bridge.send('VKWebAppJoinGroup', {
             group_id: 241671966,
           })
-          bridgeResult = res.result
-          break
+          bridgeResult = Boolean(res?.result)
+        } catch (error) {
+          console.error('communityJoin error', error)
+          bridgeResult = false
         }
-        default:
-          break
+        break
       }
 
-      if (bridgeResult) {
-        console.log(bridgeResult)
-        dispatch(fetchClaimVkBonus({ taskType: type,  launchParams: window.location.search }))
-      }
-    } catch (error) {
-      console.error(`Действие отклонено в VK Bridge для таска: ${type}`, error)
+      default:
+        console.warn(`Неизвестный тип действия: ${type}`)
+        bridgeResult = false
+        break
+    }
+
+    if (bridgeResult) {
+      console.log('Bridge success:', { type, bridgeResult })
+      dispatch(
+        fetchClaimVkBonus({
+          taskType: type,
+          launchParams: window.location.search,
+        }),
+      )
     }
   }
 
@@ -152,9 +184,12 @@ const ViralBonusModal = () => {
         {hasUnfinishedTasks ? (
           <>
             <div className={styles.modal_header}>
-              <h3 className={styles.modal_title}>🏆 Ораторские бусты</h3>
+              <h3 className={styles.modal_title}>
+                🏆 Ораторские бусты
+              </h3>
               <p className={styles.modal_subtitle}>
-                Выполняй задания от сообщества и забирай тройное комбо наград за каждое!
+                Выполняй задания от сообщества и забирай тройное комбо
+                наград за каждое!
               </p>
 
               <div className={styles.reward_badge_combo}>
@@ -172,17 +207,22 @@ const ViralBonusModal = () => {
 
             <div className={styles.tasks_list_wrap}>
               {visibleTasks.map((task) => {
-                const isClaimed = viralBonusesClaimed[task.type] ?? false
+                const isClaimed =
+                  viralBonusesClaimed[task.type] ?? false
                 const isLoading = btnLoaders[task.type] ?? false
 
-                return ( 
+                return (
                   <div
                     key={task.type}
                     className={`${styles.task_item_row} ${isClaimed ? styles.task_item_claimed : ''}`}
                   >
                     <div className={styles.task_left_block}>
-                      <div className={styles.task_icon_wrapper}>{task.icon}</div>
-                      <span className={styles.task_name_text}>{task.title}</span>
+                      <div className={styles.task_icon_wrapper}>
+                        {task.icon}
+                      </div>
+                      <span className={styles.task_name_text}>
+                        {task.title}
+                      </span>
                     </div>
 
                     <div className={styles.task_right_block}>
@@ -229,9 +269,14 @@ const ViralBonusModal = () => {
             <div className={styles.premium_crown_zone}>
               <FaCrown size={40} className={styles.crown_gold} />
             </div>
-            <h3 className={styles.premium_title}>Все бусты собраны! 🎉</h3>
+            <h3 className={styles.premium_title}>
+              Все бусты собраны! 🎉
+            </h3>
             <p className={styles.premium_description}>
-              Вы успешно выполнили все доступные задания сообщества Govorix ВКонтакте и получили максимум бесплатных наград. Чтобы продолжить тренировки без ограничений, переходите на тариф **Premium**.
+              Вы успешно выполнили все доступные задания сообщества
+              Govorix ВКонтакте и получили максимум бесплатных наград.
+              Чтобы продолжить тренировки без ограничений, переходите
+              на тариф **Premium**.
             </p>
 
             <div className={styles.premium_features_mini}>
@@ -242,7 +287,7 @@ const ViralBonusModal = () => {
                 🤖 Доступ к тренажерам 3-го уровня
               </div>
               <div className={styles.feature_bullet}>
-                ✨ Продвинутая ИИ-аналитика выполненых заданий 
+                ✨ Продвинутая ИИ-аналитика выполненых заданий
               </div>
             </div>
 
