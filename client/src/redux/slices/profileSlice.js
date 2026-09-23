@@ -72,7 +72,7 @@ const fetchActivateFakePremium = createAsyncThunk(
 const initialState = {
   user: {
     displayName: '',
-    level: 0,
+    level: 1,
     coins: 0,
     streak: 0,
     xp: 0,

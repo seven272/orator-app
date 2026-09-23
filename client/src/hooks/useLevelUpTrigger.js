@@ -102,12 +102,15 @@ const useLevelUpTrigger = () => {
   const previousLevelRef = useRef(null)
 
   useEffect(() => {
+    if (profileLoading || authLoading) return
+
     // Базовые защиты: ждём, пока данные точно есть
     if (!user || typeof user.level === 'undefined') {
       return
     }
 
     const actualLevel = user.level
+    console.log('actualLevel ' + actualLevel)
 
     // Не показываем на уровнях 0, 1 (если это стартовые уровни)
     if (actualLevel <= 1) {
@@ -133,10 +136,10 @@ const useLevelUpTrigger = () => {
         previous: previousLevelRef.current,
         shouldShow: actualLevel > (previousLevelRef.current ?? -1),
       })
-      
+
       dispatch(openLevelUpModal({ newLevel: actualLevel, oldLevel }))
     }
-  }, [user, dispatch]) // достаточно user и dispatch
+  }, [user, dispatch, profileLoading, authLoading]) // достаточно user и dispatch
 }
 
 export { useLevelUpTrigger }
