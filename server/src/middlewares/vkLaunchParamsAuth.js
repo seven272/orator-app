@@ -5,12 +5,12 @@ const verifyVkSignature = (req, res, next) => {
   const launchParams =
     req.body.launchParams || req.query.launchParams || req.body
 
-  if (!launchParams) {
+if (!launchParams) {
+    console.warn('verifyVkSignature: Параметры запуска не переданы в запросе')
     return res
       .status(400)
       .json({ message: 'Параметры запуска не переданы' })
   }
-
   let queryParams = {}
 
   // Если пришла строка (начинается с ? или содержит vk_) — парсим её
@@ -30,17 +30,20 @@ const verifyVkSignature = (req, res, next) => {
   const { sign, ...params } = queryParams
 
   // 2. Валидация "свежести" (оставляем твою рабочую логику)
-  const vkTs = parseInt(params.vk_ts, 10)
+ const vkTs = parseInt(params.vk_ts, 10)
   const now = Math.floor(Date.now() / 1000)
-  if (!vkTs || Math.abs(now - vkTs) > 40800) {
+  const THIRTY_DAYS_IN_SECONDS = 2592000
+
+  if (!vkTs || Math.abs(now - vkTs) > THIRTY_DAYS_IN_SECONDS) {
+    // 🛠️ Добавили логирование, чтобы бэкенд перестал молчать в консоли
+    console.error(`verifyVkSignature ❌ Срок действия параметров истек. vk_ts: ${vkTs}, текущее время: ${now}, разница: ${now - vkTs} сек.`)
     return res
       .status(403)
       .json({
         message: 'Срок действия параметров запуска ВКонтакте истек',
       })
   }
-
-  // 3. Формируем строку проверки без encodeURIComponent (как в твоем оригинале)
+  // 3. Формируем строку проверки без encodeURIComponent
   const checkString = Object.keys(params)
     .filter((key) => key.startsWith('vk_'))
     .sort()
@@ -67,6 +70,7 @@ const verifyVkSignature = (req, res, next) => {
     .replace(/=$/, '')
 
   if (hash !== sign) {
+    console.error(`verifyVkSignature ❌ Ошибка валидации: подпись не совпадает. Ожидался: ${sign}, рассчитан: ${hash}`)
     return res
       .status(403)
       .json({ message: 'Ошибка валидации: подпись не совпадает' })

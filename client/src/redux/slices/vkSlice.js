@@ -13,6 +13,7 @@ const fetchClaimVkBonus = createAsyncThunk(
         '/vk/claim-bonus',
         { taskType },
       )
+      console.log('fetchClaimVkBonus ' + response.data)
       console.log(response.data)
       return response.data // Возвращает { message, user }
     } catch (error) {
