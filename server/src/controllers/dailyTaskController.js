@@ -1,7 +1,7 @@
 import User from '../models/User.js'
 import DailyTask from '../models/DailyTask.js'
 import Task from '../models/Task.js'
-import { generateWeeklySuperPrize } from '../utils/prizeGenerator.js'
+// import { generateWeeklySuperPrize } from '../utils/prizeGenerator.js'
 
 const getDailyTasks = async (req, res) => {
   try {
