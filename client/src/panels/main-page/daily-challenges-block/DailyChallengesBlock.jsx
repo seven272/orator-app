@@ -12,8 +12,8 @@ const DailyChallengesBlock = () => {
   )
 
   // Берем первое доступное задание из списка
-  const task = tasks[0] || {}
-  const { alias, title, description, reward, goal, currentValue } =
+  const task = tasks[0] || All_EXERCISES.level1[0]
+  const { alias, title, description, reward, goal, currentValue = 0} =
     task
 
   // Ищем иконку в статичном конфиге
@@ -41,7 +41,7 @@ const DailyChallengesBlock = () => {
         <div className={styles.content_wrap}>
           <div className={styles.icon_wrapper}>
             {iconSrc && (
-              <img
+              <img 
                 src={iconSrc}
                 alt={title}
                 className={styles.icon}

@@ -30,10 +30,10 @@ const Dashboard = ({
     return <Spin size="large" fullscreen />
   }
   const progressData = getSpeakerProgress(user.xp)
-  return (
+  return ( 
     <div className={styles.container}>
       <ProfileSpeakerRank
-        userXp={user.xp}
+        userXp={user.lifetimeXp}
         progressData={progressData}
       />
       {/* 1. СТАТИСТИКА (ВЕРХНЯЯ ПАНЕЛЬ) */}

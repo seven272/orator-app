@@ -75,7 +75,7 @@ const userSchema = new mongoose.Schema(
       ],
     },
     // --- УДЕРЖАНИЕ (Retention) ---
-    streak: {
+    streak: { 
       current: { type: Number, default: 0 },
       lastCompletedDate: { type: Date },
     },
