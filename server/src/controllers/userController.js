@@ -139,13 +139,18 @@ const login = async (req, res) => {
   }
 }
 const logout = async (req, res) => {
-  // Название куки должно совпадать с тем, что в createToken
+ // 🎯 Все опции до единой должны дублировать те, что были при создании,
+  // чтобы браузер понял, какую конкретно куку нужно уничтожить.
   res.cookie('jwt-oratory', '', {
     httpOnly: true,
-    expires: new Date(0),
+    path: '/', // Явно задаем корень, чтобы исключить конфликты путей
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    partitioned: process.env.NODE_ENV === 'production', // Важно: затираем partitioned куку внутри фрейма VK
+    expires: new Date(0), // Переводим время действия в прошлое для моментального удаления
   })
 
-  return res.status(201).json({ message: 'Вы вышли из системы' })
+  return res.status(200).json({ message: 'Вы вышли из системы' })
 }
 //get me
 const getMe = async (req, res) => {
