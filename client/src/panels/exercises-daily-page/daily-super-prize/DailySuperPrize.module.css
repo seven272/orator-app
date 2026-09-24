@@ -1,0 +1,186 @@
+.prize_container {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.section_title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+
+/* Базовая карточка */
+.prize_card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: var(--color-white);
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+/* Карточка в состоянии "Готова к открытию" */
+.card_ready {
+  border: 1px solid #ddd6fe;
+  background: linear-gradient(to right, #ffffff, #faf8ff);
+}
+
+/* Карточка в состоянии "Уже получена" */
+.card_claimed {
+  background-color: #f8f9fa;
+  opacity: 0.85;
+}
+
+/* Блок иконки */
+.chest_visual {
+  width: 56px;
+  height: 56px;
+  background-color: var(--color-bg);
+  color: var(--color-text-secondary);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Цвет сундука, когда он доступен */
+.card_ready .chest_visual {
+  background-color: #f3e8ff;
+  color: #7c3aed;
+}
+
+/* Сундук открыт */
+.chest_opened {
+  background-color: #e6f7ed !important;
+  color: #2a9d8f !important;
+}
+
+.success_icon {
+  color: #2a9d8f;
+}
+
+.info_block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.description_text {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Интерактивная кнопка */
+.action_button {
+  align-self: flex-start;
+  background-color: #e2e8f0;
+  color: #64748b;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: not-allowed;
+  transition: all 0.2s ease;
+}
+
+.card_ready .action_button {
+  background-color: #7c3aed;
+  color: var(--color-white);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+.card_ready .action_button:hover {
+  background-color: #6d28d9;
+  transform: translateY(-1px);
+}
+
+/* Демо-заглушка для гостя */
+.card_disabled {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: #fafafa;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  border-radius: 16px;
+  opacity: 0.75;
+}
+
+.icon_box_locked {
+  width: 48px;
+  height: 48px;
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card_title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 4px 0;
+}
+
+.description {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Анимация пульсации доступного сундука */
+.pulse_animation {
+  animation: chestWobble 2.5s infinite ease-in-out;
+}
+
+@keyframes chestWobble {
+  0% { transform: scale(1); }
+  5% { transform: scale(1.1) rotate(-3deg); }
+  10% { transform: scale(1.1) rotate(3deg); }
+  15% { transform: scale(1.1) rotate(-3deg); }
+  20% { transform: scale(1) rotate(0); }
+  100% { transform: scale(1); }
+}
+
+
+
+/* 📱 МОБИЛЬНАЯ АДАПТАЦИЯ (до 500px) */
+@media (max-width: 500px) {
+  .prize_card {
+    flex-direction: column; /* Разворачиваем элементы карточки вертикально */
+    align-items: center;
+    text-align: center;
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .action_button {
+    align-self: center; /* Центрируем кнопку на мобильном */
+    width: 100%;        /* Растягиваем на всю ширину для удобного тапа пальцем */
+    padding: 12px;
+    font-size: 0.88rem;
+  }
+}

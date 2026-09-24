@@ -10,7 +10,7 @@ const DailyTasksList = () => {
   const dispatch = useDispatch()
 
   const { tasks = [], isDemo, status } = useSelector((state) => state.daily || {})
-
+  
   useEffect(() => {
     dispatch(fetchDailyTasks())
   }, [dispatch])

@@ -141,7 +141,7 @@ const ALL_EXERCISES = [
     title: 'Дебат-клуб',
     description: 'Жаркие дебаты с ИИ-оппонентом',
     reward: 100,
-    level: 3,
+    level: 1,
     premium: true,
     skill: 'убедительность',
   },
@@ -150,7 +150,7 @@ const ALL_EXERCISES = [
     title: 'Неудобный вопрос',
     description: 'Формат телеинтервью с острыми вопросами',
     reward: 100,
-    level: 3,
+    level: 1,
     premium: true,
     skill: 'коммуникация',
   },
@@ -159,7 +159,7 @@ const ALL_EXERCISES = [
     title: 'Ледокол',
     description: 'Разговори закрытого собеседника с ИИ',
     reward: 100,
-    level: 3,
+    level: 1,
     premium: true,
     skill: 'коммуникация',
   },
@@ -168,7 +168,7 @@ const ALL_EXERCISES = [
     title: 'Трибуна',
     description: 'Выскажись по теме и получи анализ ИИ',
     reward: 100,
-    level: 3,
+    level: 1,
     premium: true,
     skill: 'убедительность',
   },
@@ -178,7 +178,8 @@ const ALL_EXERCISES = [
     title: 'Железное алиби',
     description: 'Убеди прокурора в своей невиновности',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'убедительность',
   },
 
@@ -187,7 +188,8 @@ const ALL_EXERCISES = [
     title: 'Торг уместен',
     description: 'Сбей цену у неуступчевого продавца',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'коммуникация',
   },
 
@@ -196,7 +198,8 @@ const ALL_EXERCISES = [
     title: 'Остроумный нокаут',
     description: 'Не дай хейтеру испортить выступление',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'харизма и юмор',
   },
 
@@ -205,7 +208,8 @@ const ALL_EXERCISES = [
     title: 'Трудный переводчик',
     description: 'Объясни так, чтобы понял даже ребенок',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'находчивость',
   },
   {
@@ -214,7 +218,8 @@ const ALL_EXERCISES = [
     description:
       'Прокачай артикуляцию и речевую опору на коварных текстах',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'техника речи',
   },
   {
@@ -223,7 +228,8 @@ const ALL_EXERCISES = [
     description:
       'Озвучивай известные стихи в самых неожиданных и безумных ролях',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'харизма и юмор',
   },
 
@@ -233,7 +239,8 @@ const ALL_EXERCISES = [
     description:
       'Преврати классическую поэзию в хип-хоп трек с жестким ритмом',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'техника речи',
   },
 
@@ -243,7 +250,8 @@ const ALL_EXERCISES = [
     description:
       'Проведи прямой эфир утреннего шоу без единой секунды молчания',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'техника речи',
   },
   {
@@ -252,7 +260,8 @@ const ALL_EXERCISES = [
     description:
       'Попробуй красочно описать ситуацию, обходя хитрые табу и стоп-слова',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'находчивость',
   },
 
@@ -262,7 +271,8 @@ const ALL_EXERCISES = [
     description:
       'Выдай спич на заданную тему, вплетая в него случайный предмет',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'находчивость',
   },
   {
@@ -271,7 +281,8 @@ const ALL_EXERCISES = [
     description:
       'Примерить на себя приемы великих ораторов в бытовых ситуациях',
     reward: 100,
-    level: 3,
+    level: 1,
+    premium: true,
     skill: 'убедительность',
   },
 ]

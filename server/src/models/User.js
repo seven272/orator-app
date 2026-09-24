@@ -130,6 +130,10 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    lastWeeklyRewardDate: { //дата получения награды за удержание стрика в 7 дней
+      type: String,
+      default: '', // Будет хранить дату воскресенья выполненной недели "YYYY-MM-DD"
+    },
   },
   {
     timestamps: true, // Автоматически создаст createdAt и updatedAt

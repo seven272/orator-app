@@ -147,7 +147,6 @@ const logout = async (req, res) => {
 
   return res.status(201).json({ message: 'Вы вышли из системы' })
 }
-
 //get me
 const getMe = async (req, res) => {
   try {

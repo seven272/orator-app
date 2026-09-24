@@ -7,11 +7,14 @@ import styles from './DailyChallengesBlock.module.css'
 
 const DailyChallengesBlock = () => {
   const navigate = useNavigate()
-  const { tasks = [], isDemo } = useSelector((state) => state.daily || {})
-  
+  const { tasks = [], isDemo } = useSelector(
+    (state) => state.daily || {},
+  )
+
   // Берем первое доступное задание из списка
   const task = tasks[0] || {}
-  const { alias, title, description, reward, goal, currentValue } = task
+  const { alias, title, description, reward, goal, currentValue } =
+    task
 
   // Ищем иконку в статичном конфиге
   const exerciseConfig = Object.values(All_EXERCISES)
@@ -37,13 +40,21 @@ const DailyChallengesBlock = () => {
       >
         <div className={styles.content_wrap}>
           <div className={styles.icon_wrapper}>
-            {iconSrc && <img src={iconSrc} alt={title} className={styles.icon} />}
+            {iconSrc && (
+              <img
+                src={iconSrc}
+                alt={title}
+                className={styles.icon}
+              />
+            )}
           </div>
 
           <div className={styles.content}>
             <span className={styles.task_title}>{title}</span>
             <span className={styles.description}>
-              {isDemo ? 'Войди в аккаунт, чтобы активировать квест и забрать XP' : description}
+              {isDemo
+                ? 'Войди в аккаунт, чтобы активировать квест и забрать XP'
+                : description}
             </span>
           </div>
 
@@ -55,7 +66,11 @@ const DailyChallengesBlock = () => {
           </div>
         </div>
         <div className={styles.banner_footer}>
-          <span>{isDemo ? 'Доступно 3 новых задания ежедневно' : 'Нажми, чтобы посмотреть все 3 задания'}</span>
+          <span>
+            {isDemo
+              ? 'Доступно 3 новых задания ежедневно'
+              : 'Нажми, чтобы посмотреть все 3 задания'}
+          </span>
           <span className={styles.chevron_icon}>›</span>
         </div>
       </div>

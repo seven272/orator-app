@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import DailyTasksList from './daily-tasks-list/DailyTasksList'
 import DailyHeader from './daily-header/DailyHeader'
 import DailyCalendar from './daily-calendar/DailyCalendar'
+import DailySuperPrize from './daily-super-prize/DailySuperPrize'
 import styles from './ExercisesDailyPage.module.css'
 
 const ExercisesDailyPage = () => {
@@ -16,6 +17,7 @@ const ExercisesDailyPage = () => {
       <DailyHeader />
       <DailyCalendar activeDays={completedDays} />
       <DailyTasksList />
+      <DailySuperPrize />
     </div>
   )
 }

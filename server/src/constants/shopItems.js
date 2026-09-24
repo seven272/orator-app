@@ -14,7 +14,7 @@ const items = [
     title: 'Гуру Мысли',
     description:
       'Уникальное звание, которое будет отображаться у тебя в лидерборде.',
-    price: 5500,
+    price: 3500,
     category: 'achievement',
     icon: 'crown-title',
   },
@@ -25,7 +25,7 @@ const items = [
     title: 'Голос Ночного Города',
     description:
       'Эксклюзивное звание, которое навсегда зафиксируется в твоем профиле и лидерборде.',
-    price: 6500,
+    price: 4500,
     category: 'achievement',
     icon: 'title-neon',
   },
@@ -36,7 +36,7 @@ const items = [
     title: 'Купон «Рэп-манифест»',
     description:
       '1 разовая попытка прохождения ИИ-тренажера «Рэп-манифест». Преврати классическую поэзию в хип-хоп трек с жестким ритмом.',
-    price: 10000,
+    price: 5000,
     category: 'utility',
     icon: 'ticket-rap',
   },
@@ -45,7 +45,7 @@ const items = [
     title: 'Купон: «Торг уместен»',
     description:
       '1 разовая попытка прохождения ИИ-тренажера «Торг уместен». Попробуй сбить цену у неуступчивого и жесткого продавца.',
-    price: 10000,
+    price: 5000,
     category: 'utility',
     icon: 'ticket-bargain',
   },
@@ -54,7 +54,7 @@ const items = [
     title: 'Купон «Эхо Истории»',
     description:
       '1 разовая попытка прохождения ИИ-тренажера «Эхо Истории». Примени проверенные приемы великих ораторов в бытовых ситуациях.',
-    price: 10000,
+    price: 5000,
     category: 'utility',
     icon: 'ticket-history',
   },
@@ -65,7 +65,7 @@ const items = [
     title: 'Premium статус (1 час)',
     description:
       'Мгновенный безлимитный доступ ко всем ИИ-тренажерам и курсам на 60 минут без рекламы.',
-    price: 50000,
+    price: 10000,
     category: 'utility',
     icon: 'premium-1h',
   },

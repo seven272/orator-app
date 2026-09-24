@@ -41,9 +41,7 @@ const applyAiGamificationProgress = async (
 
   // 2. Вычисление множителя опыта за серию дней
   let multiplier = 1
-  if (user.streak.current >= 3) multiplier = 1.2
-  if (user.streak.current >= 7) multiplier = 1.5
-
+  if (user.streak.current >= 5) multiplier = 1.2
   // 1 балл от ИИ = 1 XP
   let baseEarnedXp = Math.round(score * multiplier)
   let baseEarnedCoins = Math.max(Math.floor(baseEarnedXp / 10), 1)
@@ -98,7 +96,7 @@ const applyAiGamificationProgress = async (
         ) {
           user.dailyProgress[pIndex].isCompleted = true
           isJustCompleted = true
-        }
+        } 
       }
 
       // Формируем объект обновления для фронтенда
