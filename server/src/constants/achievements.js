@@ -94,6 +94,12 @@ const ACHIEVEMENT_LIST = [
     title: 'Выпускник академии',
     descr: 'Закончить успешно любой курс',
   },
+  {
+    code: 'favorite_fortune',
+    title: 'Баловень фортуны',
+    descr:
+      'Удерживать стрик 7 дней подряд и открыть сундук с призами',
+  },
 ]
 
 export { ACHIEVEMENT_LIST }

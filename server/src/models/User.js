@@ -62,7 +62,7 @@ const userSchema = new mongoose.Schema(
       // уровень
       level: { type: Number, default: 1 },
       // игровой опыт текущего уроня
-      xp: { type: Number, default: 0 },
+      xp: { type: Number, default: 0 }, 
       // баланс жетонов оратора
       coins: { type: Number, default: 0 },
       // Список полученных званий и наград

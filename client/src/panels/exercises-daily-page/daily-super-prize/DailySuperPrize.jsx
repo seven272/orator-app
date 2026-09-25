@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { FaGift, FaLock, FaCheckCircle } from 'react-icons/fa'
+import { message } from 'antd'
+
 import { fetchClaimSuperPrize } from '../../../redux/slices/dailySlice'
 import WeeklyPrizeModal from '../../../components/modal/weekly-prize-modal/WeeklyPrizeModal'
 import styles from './DailySuperPrize.module.css'
@@ -39,16 +41,18 @@ const DailySuperPrize = () => {
   const isWeekPerfect = currentWeekDays.every((date) =>
     completedDays.includes(date),
   )
+  // ЗНАЧЕНИЯ ДЛЯ ТЕСТА:
+  // const isWeekPerfect = true
 
   // Проверяем статус получения
-  // const isAlreadyClaimed = lastWeeklyRewardDate === sundayStr
+  const isAlreadyClaimed = lastWeeklyRewardDate === sundayStr
+  // ЗНАЧЕНИЯ ДЛЯ ТЕСТА:
+  // const isAlreadyClaimed = false // Сундук НИКОГДА не отображается закрытым/взятым
 
   // Кнопка активна только в воскресенье (или в пн за прошлую неделю), если все дни закрыты и сундук еще не взят
-  // const canOpenChest = isWeekPerfect && !isAlreadyClaimed && !isDemo
-
-  // Временно в DailySuperPrizeBlock.jsx для теста:
-  const canOpenChest = true // Кнопка активна ВСЕГДА
-  const isAlreadyClaimed = false // Сундук НИКОГДА не отображается закрытым/взятым
+  const canOpenChest = isWeekPerfect && !isAlreadyClaimed && !isDemo
+  // ЗНАЧЕНИЯ ДЛЯ ТЕСТА:
+  // const canOpenChest = true // Кнопка активна ВСЕГДА
 
   const handleOpenChest = async () => {
     if (!canOpenChest) return
@@ -56,7 +60,7 @@ const DailySuperPrize = () => {
       await dispatch(fetchClaimSuperPrize()).unwrap()
       setShowPrizeModal(true) // Открываем модальное окно с выигранным призом
     } catch (err) {
-      alert(err || 'Произошла ошибка')
+      message.error(err || 'Произошла ошибка')
     }
   }
 
@@ -110,7 +114,7 @@ const DailySuperPrize = () => {
               ? 'Поздравляем! Вы полностью закрыли неделю тренировок и забрали свой заслуженный подарок. Новая неделя начнется в понедельник!'
               : canOpenChest
                 ? 'Потрясающе! Вы проявили идеальную дисциплину и занимались всю неделю без единого пропуска. Откройте ваш сундук прямо сейчас!'
-                : 'Выполняйте хотя бы одно задание дня с понедельника по воскресенье. В конце недели сундук откроется, и вы сможете выиграть монеты, билеты ИИ или целый обучающий курс!'}
+                : 'Выполняйте хотя бы одно задание дня с понедельника по воскресенье. В конце недели сундук откроется и вы сможете выиграть жетоны оратора, уникальную ачивку, купоны на ИИ-тренажеры или целый обучающий курс!'}
           </p>
 
           {/* Кнопка действия */}

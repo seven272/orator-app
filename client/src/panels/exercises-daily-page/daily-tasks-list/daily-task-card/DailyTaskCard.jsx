@@ -19,11 +19,12 @@ const DailyTaskCard = ({ task }) => {
     reward,
     goal,
     currentValue,
-    isCompleted,
+    isCompleted, 
     locked,
   } = task
   const navigate = useNavigate()
   const dispatch = useDispatch()
+ 
 
   // 🚀 Проверяем демо-режим напрямую в карточке для стабильности клика
   const { isDemo } = useSelector((state) => state.daily || {})

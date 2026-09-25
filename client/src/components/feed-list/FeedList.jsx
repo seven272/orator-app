@@ -86,7 +86,7 @@ const FeedList = () => {
           icon: '💰',
           text: (
             <>
-              приобрел {' '}
+              приобрел{' '}
               <span className={styles.highlight_premium}>
                 «{meta?.eventTargetName}»
               </span>{' '}
@@ -161,6 +161,19 @@ const FeedList = () => {
                 «{meta?.eventTargetName}»
               </span>
               ! Легендарно!
+            </>
+          ),
+        }
+      case 'WEEKLY_PRIZE':
+        return {
+          icon: '🎁',
+          text: (
+            <>
+              выиграл приз недели:{' '}
+              <span className={styles.highlight_premium}>
+                «{meta?.eventTargetName}»
+              </span>
+              . Заслуженная награда!
             </>
           ),
         }

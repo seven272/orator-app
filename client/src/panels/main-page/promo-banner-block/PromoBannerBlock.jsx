@@ -59,6 +59,8 @@ const PromoBannerBlock = () => {
       return `📜 ${name} успешно завершил курс: «${target}»`;
     case 'SHOP_PURCHASE':
       return `💰 ${name} купил «${target}» в магазине оратора!`;
+    case 'WEEKLY_PRIZE':
+      return `🎁 ${name} выиграл приз «${target}»!`;
     default:
       return `📢 Новая активность в комьюнити Govorix!`;
   }

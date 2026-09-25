@@ -17,12 +17,13 @@ const feedEventSchema = new mongoose.Schema(
         'CHALLENGE_DONE',
         'PREMIUM_BUY',
         'STREAK_WEEK',
-        'EXERCISE_TOP_SCORE', // 🎙️ Высокий балл в ИИ-тренажере (>80)
-        'EXERCISE_MILESTONE', // ⚡ Круглое число прохождений (кратное 5 или 10)
+        'EXERCISE_TOP_SCORE', // Высокий балл в ИИ-тренажере (>80)
+        'EXERCISE_MILESTONE', // Круглое число прохождений (кратное 5 или 10)
         'ACHIEVEMENT_UNLOCKED', // Для публикаций о новых ачивках
         'COURSE_STARTED', //Началло курса
         'COURSE_COMPLETED', //Завершение курса
         'SHOP_PURCHASE', // Покупка в магазине
+        'WEEKLY_PRIZE' // Приз недели
       ],
       required: true,
     },

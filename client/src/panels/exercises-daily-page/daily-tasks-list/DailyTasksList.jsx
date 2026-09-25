@@ -12,7 +12,7 @@ const DailyTasksList = () => {
   const { tasks = [], isDemo, status } = useSelector((state) => state.daily || {})
   
   useEffect(() => {
-    dispatch(fetchDailyTasks())
+    dispatch(fetchDailyTasks()) 
   }, [dispatch])
 
   if (status === 'loading') {

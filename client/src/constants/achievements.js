@@ -17,7 +17,7 @@ import Icon15 from '../assets/images/achievements/marathon_runner.png'
 import Icon16 from '../assets/images/achievements/live_pioneer.png'
 import Icon17 from '../assets/images/achievements/course_master.png'
 import Icon18 from '../assets/images/achievements/title_neon.png'
-
+import Icon19 from '../assets/images/achievements/favorite_fortune.png'
 const ALL_ACHIEVEMENTS = [
   {
     code: 'first_step',
@@ -132,6 +132,13 @@ const ALL_ACHIEVEMENTS = [
     icon: Icon18,
     descr:
       'Эксклюзивное достижение, приобретенное в магазине за жетоны оратора.',
+  },
+  {
+    code: 'favorite_fortune',
+    title: 'Баловень фортуны',
+    icon: Icon19,
+    descr:
+      'Эксклюзивное достижение, которое можно выйграть если удерживать стрик 7 дней подряд.',
   },
 ]
 

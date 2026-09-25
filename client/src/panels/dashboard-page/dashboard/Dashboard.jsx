@@ -14,7 +14,7 @@ import Achievements from '../achievements/Achievements'
 import LiveDuelStats from '../live-duel-stats/LiveDuelStats'
 import CourseHistory from '../course-history/CourseHistory'
 import ProfileSpeakerRank from '../profile-speaker-rank/ProfileSpeakerRank'
-import { getSpeakerProgress } from '../../../utils/progressHelpers' 
+import { getSpeakerProgress } from '../../../utils/progressHelpers'
 import styles from './Dashboard.module.css'
 
 const Dashboard = ({
@@ -29,8 +29,8 @@ const Dashboard = ({
   if (!skills || !user || !duelStats) {
     return <Spin size="large" fullscreen />
   }
-  const progressData = getSpeakerProgress(user.xp)
-  return ( 
+  const progressData = getSpeakerProgress(user.lifetimeXp)
+  return (
     <div className={styles.container}>
       <ProfileSpeakerRank
         userXp={user.lifetimeXp}
@@ -60,17 +60,17 @@ const Dashboard = ({
         <div className={styles.card}>
           <div className={styles.stat_header}>
             <DollarOutlined className={styles.icon_coins} />
-            <span className={styles.stat_title}>Жетоны</span>
+            <span className={styles.stat_title}>Жетоны оратора</span>
           </div>
           <div className={styles.stat_value}>{user.coins}</div>
-          <div className={styles.stat_sub}>Валюта для курсов</div>
+          <div className={styles.stat_sub}>Валюта приложения</div>
         </div>
 
         {/* Карточка опыта за все время */}
         <div className={styles.card}>
           <div className={styles.stat_header}>
             <BarChartOutlined className={styles.icon_xp} />
-            <span className={styles.stat_title}>Общий опыт</span>
+            <span className={styles.stat_title}>Общий опыт (xp)</span>
           </div>
           <div className={styles.stat_value}>
             {user.lifetimeXp || 0}
@@ -82,7 +82,9 @@ const Dashboard = ({
         <div className={styles.card}>
           <div className={styles.stat_header}>
             <FireOutlined className={styles.icon_streak} />
-            <span className={styles.stat_title}>Стрик</span>
+            <span className={styles.stat_title}>
+              Регулярность (стрик)
+            </span>
           </div>
           <div className={styles.stat_value}>
             {user.streak} <span className={styles.unit}>дн.</span>

@@ -49,6 +49,7 @@ const dailySlice = createSlice({
     prizeLoading: false, // Флаг процесса открытия сундука на бэкенде
     prizeError: null, // Текст ошибки при попытке забрать недельный суперприз
     claimedPrizeData: null, // Объект с данными выигранного приза (тип, название, код) для модалки
+    lastWeeklyRewardDate: '',
   },
   reducers: {
     updateTaskProgress: (state, action) => {
@@ -82,6 +83,8 @@ const dailySlice = createSlice({
         state.tasks = action.payload.tasks
         state.date = action.payload.date
         state.isDemo = action.payload.isDemo
+        state.lastWeeklyRewardDate =
+          action.payload.lastWeeklyRewardDate || ''
       })
       .addCase(fetchDailyTasks.rejected, (state, action) => {
         state.status = 'failed'
@@ -96,6 +99,8 @@ const dailySlice = createSlice({
         state.prizeLoading = false
         // Приз успешно получен, фронтенд покажет красивое окно с подарком action.payload.prize
         state.claimedPrizeData = action.payload.prize
+        state.lastWeeklyRewardDate =
+          action.payload.lastWeeklyRewardDate || '' // Обновляем дату забора, чтобы сундук закрылся
       })
       .addCase(fetchClaimSuperPrize.rejected, (state, action) => {
         state.prizeLoading = false

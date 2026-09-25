@@ -20,6 +20,8 @@ import { fetchPurchaseItem } from './shopSlice'
 import { fetchLogoutUser } from './authSlice'
 //импорт выполнения фич (подписка, избранное) из вк
 import { fetchClaimVkBonus } from './vkSlice'
+//импорт открытие сундука ежедневных заданий
+import { fetchClaimSuperPrize } from './dailySlice'
 // Импортируем Thunk-экшены завершения ИИ-тренажеров
 import { fetchFinishDebate } from './ai-exercises/debateSlice'
 import { fetchFinishIcebreaker } from './ai-exercises/icebreakerSlice'
@@ -95,7 +97,7 @@ const initialState = {
     { subject: 'находчивость', A: 0, fullMark: 100 },
     { subject: 'техника речи', A: 0, fullMark: 100 },
     { subject: 'убедительность', A: 0, fullMark: 100 },
-  ], 
+  ],
   weakPoint: {
     skill: '', // например, техника речи
     score: 3,
@@ -258,11 +260,27 @@ const profileSlice = createSlice({
       })
       // подписка на успех выполнения квеста из ВК-слайса
       .addCase(fetchClaimVkBonus.fulfilled, (state) => {
-        state.user.coins += 10 
+        state.user.coins += 10
         state.user.xp += 100
-        state.user.lifetimeXp += 100 
+        state.user.lifetimeXp += 100
         state.user.dailyEnergy.used -= 5 // Срезаем 5 единиц потраченной емкости
       })
+      // подписка на открытие еженедельного сундука подарков
+      .addCase(fetchClaimSuperPrize.fulfilled, (state, action) => {
+        // бэкенд возвращает { coins, inventory, activePurchasedCourses, isPremium, premiumExpiresAt, lastWeeklyRewardDate }
+        const data = action.payload
+
+        if (state.user) {
+          state.user.coins = data.coins
+          state.user.inventory = data.inventory
+          state.user.activePurchasedCourses =
+            data.activePurchasedCourses
+          state.user.isPremium = data.isPremium
+          state.user.premiumExpiresAt = data.premiumExpiresAt
+          
+        }
+      })
+
       //Загрузка данных профиля
       .addCase(fetchProfileData.pending, (state) => {
         state.loading = true

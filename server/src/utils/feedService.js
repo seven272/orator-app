@@ -217,6 +217,19 @@ const trackLevelUpEvent = async (userId, newLevel) => {
   }
 };
 
+//  Сундук с призыми
+const trackWeeklyPrize = async (userId, itemTitle) => {
+  try {
+    await FeedEvent.create({
+      user: userId,
+      type: 'WEEKLY_PRIZE',
+      meta: { eventTargetName: itemTitle }, // 🔔 Универсальный ключ
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 
 export {
   trackPremiumPurchase,
@@ -227,4 +240,5 @@ export {
   trackStreakAndMilestones,
   trackNewAchievements,
   trackLevelUpEvent,
+  trackWeeklyPrize
 }
