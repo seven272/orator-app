@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import vkBridge from '@vkontakte/vk-bridge'
 
 import {
   resetLiveDuelState,
@@ -119,6 +120,28 @@ const LiveRoomReal = () => {
     }
   }
 
+  const handleOpenVkCall = (evt) => {
+  evt.preventDefault()
+  
+  if (!currentRoom?.vkCallLink) return
+
+  // Проверяем, запущено ли приложение в среде ВК
+  if (vkBridge.supports('VKWebAppOpenURL')) {
+    vkBridge
+      .send('VKWebAppOpenURL', {
+        url: currentRoom.vkCallLink,
+      })
+      .catch((err) => {
+        console.error('Ошибка при нативном открытии ссылки звонка:', err)
+        // Резервный фолбэк, если вызов отклонен платформой
+        window.open(currentRoom.vkCallLink, '_blank', 'noopener,noreferrer')
+      })
+  } else {
+    // Обычный фолбэк для автономного сайта вне фрейма ВК
+    window.open(currentRoom.vkCallLink, '_blank', 'noopener,noreferrer')
+  }
+}
+
   // Завершение дуэли и начисление наград через Бэкенд
   const handleVoteSubmit = (rating) => {
     if (!currentRoom?._id) return
@@ -223,18 +246,16 @@ const LiveRoomReal = () => {
           </div>
 
           {/* Главная кнопка перехода в ВК звонок (адаптирована под vkCallLink) */}
-          <a
-            href={currentRoom?.vkCallLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.vk_call_btn}
-          >
-            📞 Открыть VK Звонок
-          </a>
-          <p className={styles.vk_hint}>
-            Звонок откроется в официальном приложении VK. Вернитесь
-            сюда, чтобы следить за таймером раундов.
-          </p>
+         <button
+  onClick={handleOpenVkCall}
+  className={styles.vk_call_btn}
+>
+  Открыть VK Звонок
+</button>
+<p className={styles.vk_hint}>
+  Звонок откроется в официальном интерфейсе VK. Вернитесь
+  сюда, чтобы следить за таймером раундов.
+</p>
         </div>
       )}
 
