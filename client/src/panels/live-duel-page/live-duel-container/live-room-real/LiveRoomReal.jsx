@@ -1,27 +1,42 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import {
+  FiPhoneCall,
+  FiCornerRightDown,
+  FiClock,
+  FiCheckCircle,
+} from 'react-icons/fi'
 import vkBridge from '@vkontakte/vk-bridge'
 
 import {
   resetLiveDuelState,
   fetchSubmitLiveRating,
-  fetchCheckRatingStatus
+  fetchCheckRatingStatus,
 } from '../../../../redux/slices/liveDuelSlice'
 import LiveRoomRewardModal from './live-room-reward-modal/LiveRoomRewardModal'
 import styles from './LiveRoomReal.module.css'
 
 const LiveRoomReal = () => {
   const dispatch = useDispatch()
-  const { currentRoom, opponentRating, isRatingSubmitted, loading } = useSelector((state) => state.liveDuel)
+  const { currentRoom, opponentRating, isRatingSubmitted, loading } =
+    useSelector((state) => state.liveDuel)
   const currentUserId = useSelector(
     (state) => state.profile?.user?._id || state.auth?.user?._id,
   )
 
-  // Инициализация раундов: 'intro' (0:30), 'speakerA' (2:00), 'speakerB' (2:00), 'blitz' (1:00), 'feedback'
+  // ПРОДАКШЕН ТАЙМЕРЫ (в секундах): intro (30с), monologues (120с), blitz (60с)
+  const ROUND_TIMES = {
+    intro: 30,
+    speakerA: 120,
+    speakerB: 120,
+    blitz: 60,
+    feedback: 0,
+  }
+
   const [currentRound, setCurrentRound] = useState('intro')
-  const [timeLeft, setTimeLeft] = useState(3) // Стартуем с 30 секунд на знакомство
+  const [timeLeft, setTimeLeft] = useState(ROUND_TIMES.intro)
   const [isVoted, setIsVoted] = useState(false)
-  const [isOpponentLeaved, setIsOpponentLeaved] = useState(false) // Флаг таймаута оппонента
+  const [isOpponentLeaved, setIsOpponentLeaved] = useState(false)
 
   const [showRewardModal, setShowRewardModal] = useState(false)
   const [rewardsData, setRewardsData] = useState(null)
@@ -32,26 +47,26 @@ const LiveRoomReal = () => {
 
   const roomId = currentRoom?._id
 
-  // Определяем позицию текущего пользователя 
+  // Позиция текущего пользователя
   const isSpeakerA = currentRoom?.userA === currentUserId
   const mySide = isSpeakerA
     ? currentRoom?.topic?.sideA
     : currentRoom?.topic?.sideB
 
+  // 1. Жизненный цикл таймеров дискуссии
   useEffect(() => {
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          // Логика переключения раундов по таймеру
           if (currentRound === 'intro') {
             setCurrentRound('speakerA')
-            return 5 // 2 минуты для Спикера А
+            return ROUND_TIMES.speakerA
           } else if (currentRound === 'speakerA') {
             setCurrentRound('speakerB')
-            return 5 // 2 минуты для Спикера Б
+            return ROUND_TIMES.speakerB
           } else if (currentRound === 'speakerB') {
             setCurrentRound('blitz')
-            return 3 // 1 минута на блиц-вопросы
+            return ROUND_TIMES.blitz
           } else {
             clearInterval(timerRef.current)
             setCurrentRound('feedback')
@@ -65,25 +80,19 @@ const LiveRoomReal = () => {
     return () => clearInterval(timerRef.current)
   }, [currentRound])
 
-
-  // 2. Эффект взаимного пуллинга оценок после нашего голосования
+  // 2. Взаимный пуллинг оценок на финише
   useEffect(() => {
-    // Начинаем проверку, только если мы отправили/пропустили оценку, комната валидна и оппонент не ИИ
-    if (isRatingSubmitted && roomId && !currentRoom?.isAiBot) {
-      
-      // Запускаем интервал запросов каждые 2.5 секунды
+    if (isRatingSubmitted && roomId) {
       pollingInterval.current = setInterval(() => {
         dispatch(fetchCheckRatingStatus(roomId))
       }, 2500)
 
-      // Ограничиваем время ожидания до 15 секунд, чтобы юзер не залип на экране
       timeoutId.current = setTimeout(() => {
         clearInterval(pollingInterval.current)
-        setIsOpponentLeaved(true) // Оппонент закрыл вкладку или пропустил оценку
+        setIsOpponentLeaved(true)
       }, 15000)
     }
 
-    // Если оценка от оппонента успешно пришла в стейт, очищаем таймеры раньше срока
     if (opponentRating !== null) {
       clearInterval(pollingInterval.current)
       clearTimeout(timeoutId.current)
@@ -93,16 +102,14 @@ const LiveRoomReal = () => {
       clearInterval(pollingInterval.current)
       clearTimeout(timeoutId.current)
     }
-  }, [isRatingSubmitted, opponentRating, roomId, currentRoom, dispatch])
+  }, [isRatingSubmitted, opponentRating, roomId, dispatch])
 
-  // Форматирование времени в формат ММ:СС
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`
   }
 
-  // Возвращает понятный текст текущего статуса дискуссии
   const getRoundTitle = () => {
     switch (currentRound) {
       case 'intro':
@@ -120,41 +127,40 @@ const LiveRoomReal = () => {
     }
   }
 
+  // Нативное открытие звонка через VK Bridge
   const handleOpenVkCall = (evt) => {
-  evt.preventDefault()
-  
-  if (!currentRoom?.vkCallLink) return
+    evt.preventDefault()
+    if (!currentRoom?.vkCallLink) return
 
-  // Проверяем, запущено ли приложение в среде ВК
-  if (vkBridge.supports('VKWebAppOpenURL')) {
-    vkBridge
-      .send('VKWebAppOpenURL', {
-        url: currentRoom.vkCallLink,
-      })
-      .catch((err) => {
-        console.error('Ошибка при нативном открытии ссылки звонка:', err)
-        // Резервный фолбэк, если вызов отклонен платформой
-        window.open(currentRoom.vkCallLink, '_blank', 'noopener,noreferrer')
-      })
-  } else {
-    // Обычный фолбэк для автономного сайта вне фрейма ВК
-    window.open(currentRoom.vkCallLink, '_blank', 'noopener,noreferrer')
+    if (vkBridge.supports('VKWebAppOpenURL')) {
+      vkBridge
+        .send('VKWebAppOpenURL', { url: currentRoom.vkCallLink })
+        .catch((err) => {
+          console.error('Ошибка нативного открытия ссылки:', err)
+          window.open(
+            currentRoom.vkCallLink,
+            '_blank',
+            'noopener,noreferrer',
+          )
+        })
+    } else {
+      window.open(
+        currentRoom.vkCallLink,
+        '_blank',
+        'noopener,noreferrer',
+      )
+    }
   }
-}
 
-  // Завершение дуэли и начисление наград через Бэкенд
   const handleVoteSubmit = (rating) => {
     if (!currentRoom?._id) return
-
     setIsVoted(true)
 
-    // Отправляем данные на бэкенд контроллеру submitRating
     dispatch(
       fetchSubmitLiveRating({ roomId: currentRoom._id, rating }),
     )
       .unwrap()
       .then((data) => {
-        // Записываем данные наград в стейт и открываем модалку вместо alert
         setRewardsData({
           rating,
           earnedXp: data.earnedXp,
@@ -171,19 +177,10 @@ const LiveRoomReal = () => {
       })
   }
 
-  // Метод закрытия модалки и возврата в меню
   const handleCloseModal = () => {
     setShowRewardModal(false)
-   
-    
-  }
-
-   // Финальный выход в меню по кнопке пользователя
-  const handleLeaveRoom = () => {
     dispatch(resetLiveDuelState())
-    // Здесь при необходимости можно сделать редирект, например: navigate('/dashboard')
   }
-
   return (
     <div className={styles.duel_room_container}>
       {/* Шапка с таймером */}
@@ -191,7 +188,8 @@ const LiveRoomReal = () => {
         <span className={styles.round_badge}>{getRoundTitle()}</span>
         {currentRound !== 'feedback' && (
           <h1 className={styles.timer_display}>
-            {formatTime(timeLeft)}
+            <FiClock className={styles.clock_icon} />
+            <span>{formatTime(timeLeft)}</span>
           </h1>
         )}
       </div>
@@ -211,7 +209,6 @@ const LiveRoomReal = () => {
       {/* Экран активных раундов общения */}
       {currentRound !== 'feedback' && (
         <div className={styles.action_block}>
-          {/* Индикатор, чья сейчас очередь говорить */}
           <div className={styles.turn_indicator}>
             {currentRound === 'speakerA' && (
               <p
@@ -245,21 +242,44 @@ const LiveRoomReal = () => {
             )}
           </div>
 
-          {/* Главная кнопка перехода в ВК звонок (адаптирована под vkCallLink) */}
-         <button
-  onClick={handleOpenVkCall}
-  className={styles.vk_call_btn}
->
-  Открыть VK Звонок
-</button>
-<p className={styles.vk_hint}>
-  Звонок откроется в официальном интерфейсе VK. Вернитесь
-  сюда, чтобы следить за таймером раундов.
-</p>
+          <button
+            onClick={handleOpenVkCall}
+            className={styles.vk_call_btn}
+          >
+            <FiPhoneCall size={18} />
+            <span>Открыть VK Звонок</span>
+          </button>
+
+          {/* Интерактивная инструкция свертывания звонка в PiP (Картинка в картинке) */}
+          <div className={styles.pip_instruction_card}>
+            <div className={styles.pip_header}>
+              <div className={styles.pip_pulse_dot}></div>
+              <h4>Как одновременно видеть таймер?</h4>
+            </div>
+            <p className={styles.pip_text}>
+              После старта звонка нажмите кнопку{' '}
+              <strong>«Свернуть»</strong> внутри интерфейса VK. Видео
+              перейдет в плавающее окно, а перед вами откроется таймер
+              текущего раунда дебатов.
+            </p>
+            <div className={styles.pip_animation_container}>
+              <div className={styles.mock_phone}>
+                <div className={styles.mock_video_overlay}>
+                  🎙️ Видеозвонок
+                </div>
+                <div className={styles.mock_arrow_stream}>
+                  <FiCornerRightDown
+                    className={styles.animated_arrow}
+                  />
+                </div>
+                <div className={styles.mock_pip_window}></div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
-       {/* Экран взаимного оценивания (Финиш) */}
+      {/* Экран взаимного оценивания (Финиш поединка) */}
       {currentRound === 'feedback' && (
         <div className={styles.feedback_block}>
           {!isVoted ? (
@@ -268,60 +288,73 @@ const LiveRoomReal = () => {
                 Как справился ваш оппонент?
               </h3>
               <p className={styles.feedback_description}>
-                Оцените культуру речи, силу аргументов и убедительность собеседника:
+                Оцените структуру аргументов, уверенность речи и
+                навыки контратакапирования.
               </p>
-
               <div className={styles.rating_buttons}>
                 {[1, 2, 3, 4, 5].map((num) => (
                   <button
                     key={num}
-                    disabled={loading}
                     className={styles.rating_btn}
                     onClick={() => handleVoteSubmit(num)}
+                    disabled={loading}
                   >
-                    {num} ⭐
+                    {num}
                   </button>
                 ))}
               </div>
-
-              {/* Кнопка добровольного пропуска оценивания оппонента */}
               <button
-                disabled={loading}
                 className={styles.skip_btn}
                 onClick={() => handleVoteSubmit(null)}
+                disabled={loading}
               >
                 Пропустить оценку
               </button>
             </>
           ) : (
             <div className={styles.success_vote}>
-              {/* Логика отображения статуса взаимной оценки */}
-              {currentRoom?.isAiBot ? (
-                <p>🤖 Тренировка с ИИ успешно завершена.</p>
-              ) : opponentRating !== null ? (
-                <div className={styles.opponent_rating_info}>
-                  <h3>Оппонент оценил ваше выступление на:</h3>
-                  <div className={styles.stars_display}>{opponentRating} из 5 ⭐</div>
-                </div>
-              ) : isOpponentLeaved ? (
-                <p className={styles.muted_text}>Собеседник решил не оставлять оценку или покинул комнату.</p>
-              ) : (
-                <div className={styles.loader_box}>
-                  <div className={styles.spinner}></div>
-                  <p>Ожидаем взаимную оценку от оппонента...</p>
-                </div>
-              )}
-
-              {/* Кнопка выхода в меню, доступная пользователю всегда */}
-              <button className={styles.leave_room_btn} onClick={handleLeaveRoom}>
-                Вернуться в меню
-              </button>
+              <div className={styles.loader_box}>
+                {opponentRating === null && !isOpponentLeaved ? (
+                  <>
+                    <div className={styles.spinner}></div>
+                    <p>Ожидаем решение второго оратора...</p>
+                  </>
+                ) : (
+                  <>
+                    <FiCheckCircle
+                      size={44}
+                      className={styles.success_check_icon}
+                    />
+                    <div className={styles.opponent_rating_info}>
+                      {isOpponentLeaved ? (
+                        <p className={styles.muted_text}>
+                          Оппонент завершил сессию, не выставив
+                          оценку. Награды уже начислены в ваш профиль!
+                        </p>
+                      ) : (
+                        <>
+                          <h3>Ваш итоговый рейтинг за бой:</h3>
+                          <div className={styles.stars_display}>
+                            {'★'.repeat(opponentRating)}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <button
+                      className={styles.leave_room_btn}
+                      onClick={handleCloseModal}
+                    >
+                      Вернуться в главное меню
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           )}
         </div>
       )}
 
-      {showRewardModal && rewardsData && (
+      {showRewardModal && (
         <LiveRoomRewardModal
           data={rewardsData}
           onClose={handleCloseModal}
