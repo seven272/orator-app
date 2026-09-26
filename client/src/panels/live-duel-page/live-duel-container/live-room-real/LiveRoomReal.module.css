@@ -1,54 +1,69 @@
 .duel_room_container {
-  max-width: 600px;
+  max-width: 480px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 24px 16px;
   box-sizing: border-box;
-  background-color: var(--color-bg);
+  background-color: var(--color-bg-layout);
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-height: calc(100vh - 80px);
+}
+
+/* --- КАРТОЧКИ И ШАПКА --- */
+.header_card,
+.topic_card,
+.feedback_block {
+  background-color: var(--color-white);
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.02);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .header_card {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-secondary);
-  border-radius: 16px;
   padding: 16px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .round_badge {
   font: var(--font-submenu);
+  font-family: var(--font-family-subtitle);
   color: var(--color-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
+  font-weight: 700;
 }
 
 .timer_display {
   font: var(--font-xl);
+  font-family: var(--font-family-title);
   color: var(--color-red);
-  margin-top: 8px;
+  margin-top: 10px;
   margin-bottom: 0;
+  letter-spacing: -0.01em;
 }
 
+/* --- ТЕМА ДИСКУССИИ --- */
 .topic_card {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-secondary);
-  border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .topic_label {
   font: var(--font-s);
+  font-family: var(--font-family-subtitle);
   color: var(--color-text-secondary);
-  margin: 0 0 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0 0 8px 0;
 }
 
 .topic_title {
   font: var(--font-title);
-  color: var(--color-black);
+  font-family: var(--font-family-title);
+  color: var(--font-color-dark);
   margin: 0 0 16px 0;
   line-height: 1.4;
 }
@@ -56,105 +71,126 @@
 .my_position_box {
   font: var(--font-m);
   color: var(--color-text-primary);
-  background-color: var(--color-bg-light);
+  background-color: var(--color-bg-layout);
+  border-left: 3px solid var(--color-blue-vk);
   padding: 10px 14px;
-  border-radius: 8px;
-  display: inline-block;
+  border-radius: 0 10px 10px 0;
+  display: block;
+  line-height: 1.5;
 }
 
 .side_highlight {
   color: var(--color-blue-vk);
-  font: var(--font-ml);
+  font-family: var(--font-family-subtitle);
+  font-weight: 600;
 }
 
+/* --- ИГРОВОЙ БЛОК И ХОДЫ --- */
 .action_block {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  margin-top: 10px;
+  gap: 16px;
+  width: 100%;
 }
 
 .turn_indicator {
   width: 100%;
-  text-align: center;
 }
 
 .your_turn {
   font: var(--font-ml);
+  font-family: var(--font-family-subtitle);
   color: var(--color-green);
-  background-color: rgba(52, 199, 89, 0.1);
-  padding: 14px;
-  border-radius: 12px;
+  background-color: rgba(52, 199, 89, 0.08);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+  padding: 16px;
+  border-radius: 16px;
   margin: 0;
+  text-align: center;
+  line-height: 1.4;
 }
 
 .opponent_turn {
   font: var(--font-m);
   color: var(--color-text-secondary);
   background-color: var(--color-white);
-  border: 1px solid var(--color-secondary);
-  padding: 14px;
-  border-radius: 12px;
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  padding: 16px;
+  border-radius: 16px;
   margin: 0;
+  text-align: center;
+  line-height: 1.4;
 }
 
 .blitz_turn {
   font: var(--font-ml);
-  color: var(--color-yellow);
-  background-color: rgba(255, 189, 18, 0.1);
-  padding: 14px;
-  border-radius: 12px;
+  font-family: var(--font-family-subtitle);
+  color: #d69e00;
+  background-color: rgba(255, 189, 18, 0.08);
+  border: 1px solid rgba(255, 189, 18, 0.2);
+  padding: 16px;
+  border-radius: 16px;
   margin: 0;
+  text-align: center;
+  line-height: 1.4;
 }
 
+/* --- ВК ЗВОНОК ПРЕМИУМ КНОПКА --- */
 .vk_call_btn {
-  background-color: var(--color-blue-vk);
+  background: linear-gradient(135deg, var(--color-blue-vk) 0%, #1a72cb 100%);
   color: var(--color-white);
-  font: var(--font-l);
+  font: var(--font-ml);
+  font-family: var(--font-family-title);
   text-decoration: none;
   padding: 16px;
-  border-radius: 12px;
+  border-radius: 16px;
   width: 100%;
   text-align: center;
   box-sizing: border-box;
-  font-weight: bold;
-  box-shadow: 0 4px 14px rgba(38, 136, 235, 0.4);
-  transition: transform 0.1s ease;
+  box-shadow: 0 8px 20px rgba(38, 136, 235, 0.25);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vk_call_btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(38, 136, 235, 0.35);
 }
 
 .vk_call_btn:active {
-  transform: scale(0.98);
+  transform: translateY(1px);
+  background: linear-gradient(135deg, #1a72cb 0%, var(--color-blue-dark) 100%);
 }
 
 .vk_hint {
-  font: var(--font-xs);
+  font: var(--font-s);
   color: var(--color-text-secondary);
   text-align: center;
-  max-width: 90%;
-  line-height: 1.3;
+  max-width: 95%;
+  line-height: 1.4;
 }
 
+/* --- ЭКРАН ГОЛОСОВАНИЯ (ФИДБЕК) --- */
 .feedback_block {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-secondary);
-  border-radius: 16px;
-  padding: 24px;
+  padding: 24px 20px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .feedback_title {
   font: var(--font-title);
-  color: var(--color-black);
+  font-family: var(--font-family-title);
+  color: var(--font-color-dark);
   margin: 0 0 8px 0;
 }
 
 .feedback_description {
-  font: var(--font-m);
+  font: var(--font-m-light);
   color: var(--color-text-secondary);
-  margin: 0 0 20px 0;
-  line-height: 1.4;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
 }
 
 .rating_buttons {
@@ -162,19 +198,27 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .rating_btn {
   flex: 1;
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-secondary);
+  background-color: var(--color-white);
+  border: 1px solid rgba(178, 215, 255, 0.5);
   color: var(--color-text-primary);
   font: var(--font-m);
-  padding: 12px 0;
-  border-radius: 8px;
+  font-family: var(--font-family-subtitle);
+  font-weight: 600;
+  padding: 14px 0;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.rating_btn:hover:not(:disabled) {
+  border-color: var(--color-blue-vk);
+  background-color: var(--color-bg);
+  color: var(--color-blue-vk);
 }
 
 .rating_btn:active:not(:disabled) {
@@ -182,113 +226,123 @@
   color: var(--color-white);
 }
 
-.rating_btn:disabled, .skip_btn:disabled {
-  opacity: 0.6;
+.rating_btn:disabled, 
+.skip_btn:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
+  transform: none !important;
 }
 
-/* === НОВЫЕ СТИЛИ ПОСЛЕ ПРАВОК === */
-
-/* Кнопка "Пропустить оценку" */
 .skip_btn {
   background: none;
   border: none;
   color: var(--color-text-secondary);
   font: var(--font-m);
+  font-family: var(--font-family-subtitle);
   text-decoration: underline;
   cursor: pointer;
   padding: 8px 16px;
-  margin-top: 4px;
+  margin-top: 8px;
   transition: color 0.2s ease;
 }
 
 .skip_btn:hover:not(:disabled) {
-  color: var(--color-text-primary);
+  color: var(--color-blue-vk);
 }
 
-/* Контейнер состояния после нашего голосования */
+/* --- СОСТОЯНИЯ ОЖИДАНИЯ ВЗАИМНЫХ ОЦЕНОК --- */
 .success_vote {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  padding: 10px 0;
+  gap: 24px;
+  padding: 8px 0;
+  animation: fadeIn 0.4s ease forwards;
 }
 
-/* Блок с информацией об оценке от оппонента */
 .opponent_rating_info {
-  background-color: var(--color-bg-light);
-  border-radius: 12px;
+  background-color: var(--color-bg-layout);
+  border-radius: 16px;
   padding: 16px;
   width: 100%;
   box-sizing: border-box;
+  border: 1px solid rgba(178, 215, 255, 0.3);
 }
 
 .opponent_rating_info h3 {
-  font: var(--font-ml);
-  color: var(--color-black);
+  font: var(--font-m);
+  font-family: var(--font-family-subtitle);
+  color: var(--font-color-dark);
   margin: 0 0 8px 0;
 }
 
 .stars_display {
   font: var(--font-xl);
+  font-family: var(--font-family-decor);
   color: var(--color-yellow);
-  font-weight: bold;
+  letter-spacing: 2px;
 }
 
-/* Текст таймаута (если оппонент ушел) */
 .muted_text {
-  font: var(--font-m);
+  font: var(--font-m-light);
   color: var(--color-text-secondary);
-  line-height: 1.4;
+  line-height: 1.5;
   margin: 0;
+  text-align: center;
 }
 
-/* Блок ожидания со спиннером */
 .loader_box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .loader_box p {
-  font: var(--font-m);
+  font: var(--font-m-light);
   color: var(--color-text-secondary);
   margin: 0;
 }
 
-/* Крутилка-анимация */
 .spinner {
-  width: 28px;
-  height: 28px;
-  border: 3px solid var(--color-secondary);
+  width: 32px;
+  height: 32px;
+  border: 2.5px solid rgba(38, 136, 235, 0.15);
   border-top-color: var(--color-blue-vk);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.75s linear infinite;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
-/* Финальная кнопка закрытия комнаты */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- ВЫХОД ИЗ КОМНАТЫ --- */
 .leave_room_btn {
-  background-color: var(--color-blue-vk);
+  background: linear-gradient(135deg, var(--color-blue-vk) 0%, #1a72cb 100%);
   color: var(--color-white);
   font: var(--font-m);
-  font-weight: bold;
+  font-family: var(--font-family-subtitle);
+  font-weight: 700;
   border: none;
   padding: 14px 28px;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(38, 136, 235, 0.2);
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 14px rgba(38, 136, 235, 0.2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
 }
 
+.leave_room_btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(38, 136, 235, 0.3);
+}
+
 .leave_room_btn:active {
-  transform: scale(0.98);
+  transform: translateY(1px);
 }

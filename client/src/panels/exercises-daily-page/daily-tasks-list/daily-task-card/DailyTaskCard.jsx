@@ -34,7 +34,7 @@ const DailyTaskCard = ({ task }) => {
     .flat()
     .find((ex) => ex.alias === alias)
 
-  const iconSrc = exerciseConfig?.icon
+  const iconSrc = exerciseConfig?.icon 
 
   const handleClick = async () => {
     // 🎲 Обработка ДЕМО-РЕЖИМА (Гость)

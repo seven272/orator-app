@@ -2,13 +2,13 @@
 import LiveDuel from '../models/LiveDuel.js' // Новое имя модели
 import User from '../models/User.js'
 import gigachatAxiosClient from '../utils/gigachatAxiosClient.js'
-import { parseAiResponse } from '../utils/aiJsonParser.js'
+
 import { getXpThreshold } from '../utils/gamificationProgress.js'
 import { transcribeShortAudio } from '../utils/salutSpeechAxiosClient.js'
 
 // --- 1. ФОЛБЭК НА ИИ-БОТА (Перенесен сюда и адаптирован) ---
 const startLiveDuelAi = async (req, res) => {
-  try {
+  try { 
     const { roomId } = req.body
     const room = await LiveDuel.findById(roomId)
 

@@ -14,11 +14,7 @@ const liveDuelSchema = new mongoose.Schema({
     ref: 'User',
     default: null,
   },
-  // Флаг, указывающий, что оппонентом в итоге стал робот
-  isAiBot: {
-    type: Boolean,
-    default: false,
-  },
+
   // Тип создания комнаты
   creationType: {
     type: String,
@@ -61,16 +57,9 @@ const liveDuelSchema = new mongoose.Schema({
     index: true,
   },
 
-  // Лог раундов (для ИИ-заглушки или сохранения текстовых логов)
-  messagesAi: [
-    {
-      sender: { type: String, enum: ['userA', 'userB'] },
-      text: String,
-      timestamp: { type: Date, default: Date.now },
-    },
-  ],
-
+ 
   createdAt: { type: Date, default: Date.now },
 })
 
 export default mongoose.model('LiveDuel', liveDuelSchema)
+ 

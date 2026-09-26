@@ -3,7 +3,8 @@
   width: 100%;
   margin: 0 auto;
   min-height: 100vh;
-  background-color: var(--color-bg);
+  /* Переключаем на единый чистый премиальный фон, как и во внутренних экранах */
+  background-color: var(--color-bg-layout); 
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -11,31 +12,59 @@
 
 .back_button_container {
   width: 100%;
-  margin-bottom: 12px;
-  padding: 0 4px;
-  margin-top: 10px;
+  padding: 16px 20px 0 20px; /* Добавляем правильные отступы по краям экрана */
+  box-sizing: border-box;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start; 
+  margin-bottom: 30px;
+}
+
+/* Мобильная адаптация контейнера под вьюпорт ВКонтакте */
+@media (max-width: 600px) {
+  .container_wrapper {
+    min-height: calc(100vh - var(--vk-app-header-height, 0px));
+  }
+}
+
+.back_button_container {
+  width: 100%;
+  padding: 16px 20px 0 20px; /* Добавляем правильные отступы по краям экрана */
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-start; /* Смещаем кнопку влево для естественного восприятия (назад) */
+}
+
+@media (max-width: 480px) {
+  .back_button_container {
+    padding: 12px 16px 0 16px;
+  }
 }
 
 .back_menu_btn {
-  background: transparent;
-  border: 1px solid var(--color-secondary);
+  background: var(--color-white); /* Делаем белую подложку вместо прозрачной для премиальности */
+  border: 1px solid rgba(178, 215, 255, 0.4);
   color: var(--color-text-secondary);
   font: var(--font-s);
-  font-weight: 500;
-  padding: 8px 14px;
-  border-radius: 8px;
+  font-family: var(--font-family-subtitle);
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 12px; /* Округляем в тон основным кнопкам меню */
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.02);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
 }
 
-/* Эффект наведения (заменяет onMouseOver/onMouseOut) */
 .back_menu_btn:hover {
-  background-color: var(--color-bg);
-  color: var(--color-text-primary);
+  background-color: var(--color-bg); /* Мягкий синий налет при наведении */
+  color: var(--color-blue-vk);
+  border-color: var(--color-secondary);
+  transform: translateX(-2px); /* Элегантное микро-смещение влево по вектору стрелки */
+}
+
+.back_menu_btn:active {
+  transform: translateX(1px);
 }

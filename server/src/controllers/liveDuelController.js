@@ -17,8 +17,6 @@ const getActiveCalendarQuery = (userId) => ({
   scheduledAt: { $gt: new Date() }, // Слот еще не просрочен
 })
 
-
-
 // Инициализация комнаты (для Быстрого поиска, Ссылки или Календаря)
 const createRoom = async (req, res) => {
   try {
@@ -127,7 +125,29 @@ const joinRoom = async (req, res) => {
     }
 
     // 6. УСПЕШНОЕ СОЕДИНЕНИЕ: Заполняем данные Игрока Б и активируем комнату
-    const vkCallLink = `https://vk.com/${room._id}` // Генерация ссылки на звонок
+    // const vkCallLink = `https://vk.com/${room._id}` // Генерация ссылки на звонок
+
+    // === КЛЮЧЕВОЕИЗМЕНЕНИЕ: Достаем реальный vkId Создателя (UserA) ===
+    const hostUser = await User.findById(room.userA)
+    let vkCallLink = ''
+
+    if (hostUser && hostUser.vkId) {
+      // Сценарий А: Пользователь авторизован через VK — запускаем нативный звонок по его ID
+      vkCallLink = `https://vk.ru/${hostUser.vkId}`
+    } else {
+      // Сценарий Б (Фолбэк): Создатель зашел с сайта (local/google) и не имеет vkId.
+      // Используем уникальный инстант-хэш комнаты для создания общего веб-звонка,
+      // доступного как из браузера, так и из приложения VK.
+      vkCallLink = `https://vk.ru/${room._id.toString()}`
+    }
+
+    if (!hostUser || !hostUser.vkId) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'Не удалось сгенерировать VK Звонок: у создателя комнаты отсутствует привязка к VK',
+      })
+    }
 
     room.userB = userBId
     room.status = 'active'
@@ -175,7 +195,6 @@ const checkRoomStatus = async (req, res) => {
   }
 }
 
-
 const submitRating = async (req, res) => {
   try {
     const { roomId, rating } = req.body
@@ -199,12 +218,10 @@ const submitRating = async (req, res) => {
     // Защита от накрутки наград
     if (room.userA.toString() === userId.toString()) {
       if (room.ratingFromA !== null) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: 'Вы уже получили награду за эту дуэль',
-          })
+        return res.status(400).json({
+          success: false,
+          message: 'Вы уже получили награду за эту дуэль',
+        })
       }
       if (rating) room.ratingFromA = rating
     } else if (
@@ -212,21 +229,17 @@ const submitRating = async (req, res) => {
       room.userB.toString() === userId.toString()
     ) {
       if (room.ratingFromB !== null) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: 'Вы уже получили награду за эту дуэль',
-          })
+        return res.status(400).json({
+          success: false,
+          message: 'Вы уже получили награду за эту дуэль',
+        })
       }
       if (rating) room.ratingFromB = rating
     } else {
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: 'Вы не являетесь участником этой комнаты',
-        })
+      return res.status(403).json({
+        success: false,
+        message: 'Вы не являетесь участником этой комнаты',
+      })
     }
 
     const user = await User.findById(userId)
@@ -646,7 +659,9 @@ const getLiveDuelStats = async (req, res) => {
         topic: lastRoom.topic?.title || 'Без темы',
         rating: isUserA ? lastRoom.ratingFromB : lastRoom.ratingFromA,
         date: lastRoom.createdAt,
-        points: isUserA ? lastRoom.pointsEarnedA : lastRoom.pointsEarnedB,
+        points: isUserA
+          ? lastRoom.pointsEarnedA
+          : lastRoom.pointsEarnedB,
       })
     }
 
@@ -669,7 +684,6 @@ const getLiveDuelStats = async (req, res) => {
       .json({ success: false, message: 'Ошибка сервера' })
   }
 }
-
 
 export {
   createRoom,

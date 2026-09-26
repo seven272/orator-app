@@ -38,7 +38,7 @@ import { fetchFinishRadioHost } from './ai-exercises/radioHostSlice'
 import { fetchFinishRandomWord } from './ai-exercises/randomWordSlice'
 import { fetchFinishHistorical } from './ai-exercises/historicalSlice'
 import { fetchSubmitLiveRating } from './liveDuelSlice'
-import { fetchFinishLiveDuelAiBot } from './liveDuelSlice'
+
 
 // Один универсальный запрос для получения всех данных профиля и дашборда
 const fetchProfileData = createAsyncThunk(
@@ -333,7 +333,6 @@ const profileSlice = createSlice({
           fetchFinishRadioHost.fulfilled,
           fetchFinishRandomWord.fulfilled,
           fetchSubmitLiveRating.fulfilled,
-          fetchFinishLiveDuelAiBot.fulfilled,
           fetchFinishHistorical.fulfilled,
         ),
         (state, action) => {

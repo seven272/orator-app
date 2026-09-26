@@ -1,67 +1,51 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
- 
+import { FiLoader, FiArrowLeft, FiShare2 } from 'react-icons/fi'
+
 import {
-  fetchStartLiveDuelAiBot,
   fetchCheckRoomStatus,
   setSearchStatus,
   resetLiveDuelState,
 } from '../../../../redux/slices/liveDuelSlice'
 import styles from './LiveDuelMatching.module.css'
-import LiveDuelAiOffer from '../../live-duel-ui/live-duel-ai-offer/LiveDuelAiOffer'
-import LiveDuelPaywall from '../../live-duel-ui/live-duel-paywall/LiveDuelPaywall'
 
 const LiveDuelMatching = () => {
   const dispatch = useDispatch()
-    const navigate = useNavigate()
-  const { currentRoom, loading } = useSelector(
-    (state) => state.liveDuel,
-  )
-  const { user } = useSelector((state) => state.profile)
-  const isPremium = user?.isPremium || false
-
+  const navigate = useNavigate()
+  
+  const { currentRoom } = useSelector((state) => state.liveDuel)
   const [timerSeconds, setTimerSeconds] = useState(60)
-  const [showAiOffer, setShowAiOffer] = useState(false)
-  const [showPaywall, setShowPaywall] = useState(false)
+  const [isSearchTimeout, setIsSearchTimeout] = useState(false)
 
   const countdownRef = useRef(null)
   const pollingRef = useRef(null)
-
   const roomId = currentRoom?._id
 
   useEffect(() => {
-    // Если ID комнаты пропал или еще не подгрузился — полностью игнорируем запуск
     if (!roomId) return
 
-    // 1. Таймер обратного отсчета до ИИ
+    // 1. Таймер обратного отсчета до вывода финального сообщения
     countdownRef.current = setInterval(() => {
       setTimerSeconds((prev) => {
         if (prev <= 1) {
           clearInterval(countdownRef.current)
-          clearInterval(pollingRef.current)
-          setShowAiOffer(true)
+          setIsSearchTimeout(true) // Активируем финальное текстовое сообщение
           return 0
         }
         return prev - 1
       })
     }, 1000)
 
-    // 2. Чистый пуллинг статуса комнаты
+    // 2. Постоянный живой пуллинг статуса комнаты (идет непрерывно)
     pollingRef.current = setInterval(() => {
-      // Передаем изолированную строку roomId, сохраненную на момент старта интервала
       dispatch(fetchCheckRoomStatus({ roomId }))
         .unwrap()
         .then((res) => {
-          // Если оппонент зашел, роутер перенаправит нас в саму игру
           if (res.room?.status === 'active') {
             console.log('=== ПУЛЛИНГ: Оппонент подключился! ===')
-
-            // Жестко очищаем таймеры, чтобы они не слали запросы в фоне во время игры
             clearInterval(countdownRef.current)
             clearInterval(pollingRef.current)
-
-            // Явно переводим статус поиска в active для Игрока А
             dispatch(setSearchStatus('active'))
           }
         })
@@ -70,81 +54,75 @@ const LiveDuelMatching = () => {
         })
     }, 3000)
 
-    // Строгий клинап при размонтировании экрана или изменении ID
     return () => {
       clearInterval(countdownRef.current)
       clearInterval(pollingRef.current)
     }
   }, [roomId, dispatch])
 
-  const handleAiClick = () => {
-    if (!isPremium) {
-      setShowPaywall(true)
-      return
-    }
-
-    dispatch(fetchStartLiveDuelAiBot({ roomId }))
-  }
-
-  const handleSubscribeMock = () => {
-    // Вызов нативного окна оплаты VK или вашей платежной системы
-    alert('Инициализация оплаты Premium подписки...')
-  }
-
-  const handleGoMainScreen = () => {
+  const handleCancelSearch = () => {
     navigate('/live-duel')
-    setShowAiOffer(false)
-    setShowPaywall(false)
     dispatch(setSearchStatus('idle'))
     dispatch(resetLiveDuelState())
   }
 
-  if (showPaywall) {
-    return (
-      <LiveDuelPaywall
-        onSubscribe={handleSubscribeMock}
-        onBack={() => setShowPaywall(false)}
-      />
-    )
-  }
-
-  if (showAiOffer) {
-    return (
-      <LiveDuelAiOffer
-        onAccept={handleAiClick}
-        onBack={handleGoMainScreen}
-        loading={loading}
-      />
-    )
+  const handleGoToCalendar = () => {
+    dispatch(setSearchStatus('slot_create'))
   }
 
   return (
     <div className={styles.matching_container}>
-      <div className={styles.pulse_loader}>
-        <div className={styles.circle_core}>🎙️</div>
+      {/* Премиальный пульсирующий индикатор поиска */}
+      <div className={styles.loader_wrapper}>
+        <div className={styles.pulse_loader}>
+          <FiLoader className={styles.spinner_icon} />
+        </div>
         <div className={styles.wave_ring}></div>
-        <div className={styles.wave_ring_delayed}></div>
       </div>
 
-      <h2 className={styles.matching_title}>Ищем оппонента...</h2>
+      <h2 className={styles.matching_title}>
+        {isSearchTimeout ? 'Поиск затягивается...' : 'Ищем оппонента...'}
+      </h2>
 
-      <div className={styles.timer_badge}>
-        Осталось времени:{' '}
-        <span className={styles.seconds_count}>
-          {timerSeconds} сек
-        </span>
-      </div>
-
-      <p className={styles.matching_hint}>
-        Бэкенд подбирает оратора равного уровня. Если поиск затянется,
-        можно будет устроить дуэль с ИИ.
-      </p>
-
-      {loading && (
-        <div className={styles.sub_loader_text}>
-          Подключаем ИИ-эксперта...
+      {/* Отображение таймера или финального текста */}
+      {!isSearchTimeout ? (
+        <div className={styles.timer_badge}>
+          Осталось времени:{' '}
+          <span className={styles.seconds_count}>{timerSeconds} сек</span>
+        </div>
+      ) : (
+        <div className={styles.timeout_message_box}>
+          <p className={styles.timeout_text}>
+            Свободные спикеры сейчас заняты в поединках. Система продолжает 
+            фоновый подбор пары, но вы можете зафиксировать удобное время самостоятельно.
+          </p>
         </div>
       )}
+
+      <p className={styles.matching_hint}>
+        Бэкенд подбирает оратора равного уровня для честного и аргументированного баттла.
+      </p>
+
+      {/* Управляющие кнопки */}
+      <div className={styles.action_group}>
+        {isSearchTimeout && (
+          <button 
+            className={styles.btn_calendar} 
+            onClick={handleGoToCalendar}
+          >
+            <FiShare2 />
+            <span>Предложить свое время</span>
+          </button>
+        )}
+        
+        <button 
+          className={styles.btn_cancel} 
+          onClick={handleCancelSearch}
+        >
+          <FiArrowLeft />
+          <span>Отменить поиск</span>
+        </button>
+      </div>
     </div>
   )
 }

@@ -8,7 +8,7 @@ import {
 import styles from './LiveDuelJoinHandler.module.css' // Импорт стилей
 
 const LiveDuelJoinHandler = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch() 
   const navigate = useNavigate()
   const params = useParams()
   const token = params?.token

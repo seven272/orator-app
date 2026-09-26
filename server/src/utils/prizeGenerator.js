@@ -78,7 +78,7 @@ const generateWeeklySuperPrize = async (user) => {
       }
     }
   }
-  // --- ВЕТКА 4: СУПЕР-ПРИЗ — Случайный обучающий курс (15% шанс, roll от 80 до 100) ---
+  // --- ВЕТКА 4: СУПЕР-ПРИЗ — Случайный обучающий курс (20% шанс, roll от 80 до 100) ---
   // Фильтруем только те курсы, которые пользователь ЕЩЕ НЕ КУПИЛ
   const availableCourses = allCourses.filter(
     (courseCode) => !user.activePurchasedCourses.includes(courseCode),

@@ -1,90 +1,181 @@
 .selection_container {
   max-width: 600px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 32px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  background-color: var(--color-bg);
+  background-color: var(--color-bg-layout);
+  min-height: 100vh;
 }
 
+.vk_icon {
+  color: var(--color-primary);
+  font-size: 27px;
+}
+
+
 .main_title {
-  font: var(--font-xl);
-  color: var(--color-black);
-  margin-bottom: 10px;
+  font: var(--font-decor);
+  font-family: var(--font-family-decor);
+  color: var(--color-grey-dark);
+  margin-top: 20px;
+  margin-bottom: 12px;
   text-align: center;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 .main_description {
-  font: var(--font-m);
+  font: var(--font-m-light);
   color: var(--color-text-secondary);
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  line-height: 1.5;
+  max-width: 90%;
 }
 
 .error_banner {
-  background-color: rgba(243, 4, 4, 0.1);
-  border: 1px solid var(--color-red);
+  background-color: rgba(243, 4, 4, 0.06);
+  border: 1px solid rgba(243, 4, 4, 0.2);
   color: var(--color-red);
   font: var(--font-s);
-  padding: 12px;
-  border-radius: 10px;
+  padding: 14px;
+  border-radius: 12px;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   text-align: center;
   box-sizing: border-box;
-}
-
-.calendar_wrapper_block {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin-top: 20px;
 }
 
 .menu_list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   width: 100%;
 }
 
+/* --- ОБЩИЙ СТИЛЬ КНОПОК --- */
+.menu_button_primary,
+.menu_button_secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  box-sizing: border-box;
+  width: 100%;
+  outline: none;
+  font-family: var(--font-family-subtitle);
+  user-select: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- ПРЕМИАЛЬНАЯ ГЛАВНАЯ КНОПКА (Градиент и объем) --- */
 .menu_button_primary {
-  background-color: var(--color-blue-vk);
+  background: linear-gradient(
+    135deg,
+    var(--color-blue-vk) 0%,
+    #1a72cb 100%
+  );
   color: var(--color-white);
   font: var(--font-ml);
   border: none;
-  padding: 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  width: 100%;
+  box-shadow: 0 8px 20px rgba(38, 136, 235, 0.25);
+}
+
+.menu_button_primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(38, 136, 235, 0.35);
 }
 
 .menu_button_primary:active {
-  background-color: var(--color-blue-dark);
+  transform: translateY(1px);
+  background: linear-gradient(
+    135deg,
+    #1a72cb 0%,
+    var(--color-blue-dark) 100%
+  );
+  box-shadow: 0 4px 10px rgba(38, 136, 235, 0.2);
 }
 
 .menu_button_primary:disabled {
-  background-color: var(--color-grey-light);
-  color: var(--color-grey);
+  background: var(--color-grey-light) !important;
+  color: var(--color-grey) !important;
+  transform: none !important;
+  box-shadow: none !important;
   cursor: not-allowed;
 }
 
+/* --- ЭЛЕГАНТНЫЕ ВТОРОСТЕПЕННЫЕ КНОПКИ --- */
 .menu_button_secondary {
   background-color: var(--color-white);
   color: var(--color-text-primary);
   font: var(--font-m);
-  border: 1px solid var(--color-secondary);
-  padding: 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  width: 100%;
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.03);
+}
+
+.menu_button_secondary:hover {
+  border-color: var(--color-secondary);
+  background-color: var(--color-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 122, 255, 0.08);
 }
 
 .menu_button_secondary:active {
+  transform: translateY(1px);
   background-color: var(--color-secondary);
+  box-shadow: 0 2px 6px rgba(0, 122, 255, 0.04);
+}
+
+/* --- ИКОНКИ --- */
+.btn_icon {
+  font-size: 18px;
+  color: var(--color-blue-vk);
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.btn_icon_flash {
+  font-size: 18px;
+  color: var(--color-yellow);
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(255, 189, 18) 0.3);
+}
+
+/* Эффект легкого поворота иконки при наведении на кнопку */
+.menu_button_secondary:hover .btn_icon {
+  transform: scale(1.05);
+}
+
+.menu_button_primary:hover .btn_icon_flash {
+  animation: pulseFlash 1s infinite alternate;
+}
+
+@keyframes pulseFlash {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 2px 4px rgba(255, 189, 18, 0.3));
+  }
+  100% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 4px 8px rgba(255, 189, 18, 0.6));
+  }
+}
+
+/* Мобильная адаптация для автономного контейнера или внутри iframe ВК */
+@media (max-width: 480px) {
+  .selection_container {
+    padding: 24px 16px;
+    min-height: calc(100vh - var(--vk-app-header-height, 0px));
+  }
 }

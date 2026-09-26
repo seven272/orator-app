@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
+import { FiZap, FiLink, FiCalendar, FiSearch } from 'react-icons/fi'
+import { FaVk } from 'react-icons/fa'
 import {
   fetchCreateLiveRoom,
   fetchJoinLiveRoom,
@@ -19,8 +20,6 @@ const LiveDuelSelection = () => {
       .then((res) => {
         // 2. Если комната нашлась (Игрок Б успешно зашел к Игроку А)
         if (res.room) {
-          // Редюсер fetchJoinLiveRoom сам переведет searchStatus в 'active',
-          // и контейнер сразу откроет экран игры LiveRoomReal
           console.log(
             'Успешно подключились к существующей комнате:',
             res.room._id,
@@ -30,8 +29,6 @@ const LiveDuelSelection = () => {
           dispatch(
             fetchCreateLiveRoom({ creationType: 'quick_search' }),
           )
-          // После fetchCreateLiveRoom стейт получит статус 'searching'
-          // и запишет созданную комнату в currentRoom. Больше ничего дергать не нужно!
         }
       })
       .catch((err) => {
@@ -43,22 +40,23 @@ const LiveDuelSelection = () => {
     dispatch(fetchCreateLiveRoom({ creationType: 'direct_link' }))
   }
 
-  // Нажатие на кнопку "Запланировать дуэль"
   const handleGoFormCreateSlot = () => {
     dispatch(setSearchStatus('slot_create'))
   }
 
-  // Нажатие на кнопку "Найти слот"
   const handleGoCalendar = () => {
     dispatch(setSearchStatus('slots_list'))
   }
 
   return (
     <div className={styles.selection_container}>
-      <h1 className={styles.main_title}>🎙️ Живые Дуэли</h1>
+      <h1 className={styles.main_title}>
+        Видео Дуэли <FaVk className={styles.vk_icon} />
+      </h1>
       <p className={styles.main_description}>
-        Практикуйте ораторское мастерство с реальными людьми или
-        ИИ-тренером в режиме реального времени.
+        Парные поединки по ораторскому искусству внутри ВКонтакте.
+        Бросайте вызов сильнейшим оппонентам, защищайте свои убеждения
+        и прокачивайте харизму в живом диалоге.
       </p>
 
       {error && <div className={styles.error_banner}>{error}</div>}
@@ -69,7 +67,10 @@ const LiveDuelSelection = () => {
           onClick={handleQuickSearch}
           disabled={loading}
         >
-          {loading ? 'Инициализация...' : '⚡ Быстрый поиск пары'}
+          <FiZap className={styles.btn_icon_flash} />
+          <span>
+            {loading ? 'Инициализация...' : 'Быстрый поиск пары'}
+          </span>
         </button>
 
         <button
@@ -77,7 +78,8 @@ const LiveDuelSelection = () => {
           onClick={handleDirectLink}
           disabled={loading}
         >
-          🔗 Создать ссылку-приглашение
+          <FiLink className={styles.btn_icon} />
+          <span>Создать ссылку-приглашение</span>
         </button>
 
         <button
@@ -85,7 +87,8 @@ const LiveDuelSelection = () => {
           onClick={handleGoFormCreateSlot}
           disabled={loading}
         >
-          📅 Запланировать дуэль
+          <FiCalendar className={styles.btn_icon} />
+          <span>Запланировать встречу</span>
         </button>
 
         <button
@@ -93,10 +96,12 @@ const LiveDuelSelection = () => {
           onClick={handleGoCalendar}
           disabled={loading}
         >
-          🔍 Найти дуэль
+          <FiSearch className={styles.btn_icon} />
+          <span>Расписание поединков</span>
         </button>
       </div>
     </div>
   )
 }
+
 export default LiveDuelSelection

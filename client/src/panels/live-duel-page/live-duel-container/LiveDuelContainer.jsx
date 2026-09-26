@@ -9,7 +9,6 @@ import LiveDuelSelection from './live-duel-selection/LiveDuelSelection'
 import LiveDuelMatching from './live-duel-matching/LiveDuelMatching'
 import LiveDuelLinkWaiting from './live-duel-link-waiting/LiveDuelLinkWaiting'
 import LiveRoomReal from './live-room-real/LiveRoomReal'
-import LiveRoomAi from './live-room-ai/LiveRoomAi'
 import LiveDuelCreateSlot from './live-duel-create-slot/LiveDuelCreateSlot'
 import LiveDuelSlotsList from './live-duel-slots-list/LiveDuelSlotsList'
 import styles from './LiveDuelContainer.module.css'
@@ -48,6 +47,9 @@ const LiveDuelContainer = () => {
   // Проверяем, находится ли пользователь НЕ на главном экране
   // (чтобы кнопка возврата не дублировалась на стартовой странице)
   const showBackButton = searchStatus !== 'idle'
+
+  /* === ВРЕМЕННЫЙ КОСТЫЛЬ ДЛЯ ТЕСТИРОВАНИЯ === */
+// return <LiveRoomReal /> 
 
   // Фабрика рендеринга экранов в зависимости от статуса матчмейкинга
   const renderCurrentScreen = () => {

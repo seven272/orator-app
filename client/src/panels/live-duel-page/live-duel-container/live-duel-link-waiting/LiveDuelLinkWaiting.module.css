@@ -1,177 +1,285 @@
 .link_waiting_container {
-  max-width: 600px;
+  max-width: 480px;
+  width: 100%;
   margin: 0 auto;
   padding: 40px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-sizing: border-box;
-  background-color: var(--color-bg);
-  min-height: 80vh;
   justify-content: center;
+  box-sizing: border-box;
+  background-color: var(--color-bg-layout);
+  min-height: calc(100vh - 120px);
 }
 
-.pulse_loader {
+/* --- АНИМАЦИЯ СВЯЗИ (ПРЕМИУМ ЛОАДЕР) --- */
+.loader_wrapper {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
-.circle_core {
-  width: 60px;
-  height: 60px;
-  background-color: var(--color-blue-vk);
+.pulse_loader {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--color-blue-vk) 0%, #1a72cb 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
   z-index: 3;
-  box-shadow: 0 4px 15px rgba(38, 136, 235, 0.3);
+  box-shadow: 0 8px 24px rgba(38, 136, 235, 0.35);
+}
+
+.link_icon {
+  font-size: 24px;
+  color: var(--color-white);
+  animation: floatIcon 3s ease-in-out infinite;
 }
 
 .wave_ring {
   position: absolute;
-  width: 100px;
-  height: 100px;
-  border: 2px solid var(--color-secondary);
+  width: 100%;
+  height: 100%;
+  border: 1.5px solid rgba(38, 136, 235, 0.25);
   border-radius: 50%;
-  animation: pulse_wave 2s infinite linear;
+  animation: pulse_glow 2.2s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
   z-index: 1;
-  opacity: 0;
 }
 
-.wave_ring_delayed {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  border: 2px solid var(--color-primary);
-  border-radius: 50%;
-  animation: pulse_wave 2s infinite linear;
-  animation-delay: 1s;
-  z-index: 1;
-  opacity: 0;
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(15deg); }
 }
 
+@keyframes pulse_glow {
+  0% { transform: scale(0.65); opacity: 1; box-shadow: inset 0 0 20px rgba(38, 136, 235, 0.1); }
+  100% { transform: scale(1.4); opacity: 0; box-shadow: inset 0 0 40px rgba(38, 136, 235, 0); }
+}
+
+/* --- ТИПОГРАФИКА И БЭДЖИ --- */
 .matching_title {
-  font: var(--font-xl);
-  color: var(--color-black);
-  margin-bottom: 15px;
+  font: var(--font-title);
+  font-family: var(--font-family-title);
+  color: var(--font-color-dark);
+  margin-bottom: 16px;
   text-align: center;
 }
 
 .timer_badge {
-  font: var(--font-ml);
-  color: var(--color-text-primary);
+  font: var(--font-m);
+  font-family: var(--font-family-subtitle);
+  color: var(--color-text-secondary);
   background-color: var(--color-white);
-  border: 1px solid var(--color-secondary);
-  padding: 8px 16px;
-  border-radius: 20px;
-  margin-bottom: 20px;
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  padding: 10px 20px;
+  border-radius: 30px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.02);
 }
 
 .seconds_count {
-  color: var(--color-red);
-  font: var(--font-l);
+  color: var(--color-blue-vk);
+  font-family: var(--font-family-title);
+  font-weight: 700;
   margin-left: 4px;
 }
 
 .matching_hint {
-  font: var(--font-m);
+  font: var(--font-m-light);
   color: var(--color-text-secondary);
   text-align: center;
   line-height: 1.5;
-  max-width: 100%;
-  margin-bottom: 30px;
+  max-width: 95%;
+  margin-bottom: 24px;
 }
 
+/* --- ПОДДЕРЖИВАЮЩАЯ ПАНЕЛЬ ОЖИДАНИЯ --- */
+.long_wait_box {
+  background-color: var(--color-white);
+  border: 1px solid rgba(178, 215, 255, 0.5);
+  padding: 18px;
+  border-radius: 16px;
+  width: 100%;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+  box-shadow: 0 6px 18px rgba(0, 122, 255, 0.03);
+  animation: slideUp 0.4s ease forwards;
+}
+
+.long_wait_text {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  text-align: center;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* --- ПРЕМИАЛЬНЫЙ КЛИПБОРД БОКС --- */
 .invite_box {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
-  max-width: 480px;
   box-sizing: border-box;
+  margin-bottom: 32px;
 }
 
 .invite_input {
   flex: 1;
   background-color: var(--color-white);
-  border: 1px solid var(--color-secondary);
+  border: 1px solid rgba(178, 215, 255, 0.5);
   color: var(--color-text-primary);
   font: var(--font-m-light);
-  padding: 12px;
-  border-radius: 8px;
+  padding: 14px;
+  border-radius: 14px;
   outline: none;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.01);
+  transition: border-color 0.2s ease;
 }
 
-.copy_button {
-  background-color: var(--color-blue-vk);
-  color: var(--color-white);
-  font: var(--font-submenu);
-  border: none;
-  padding: 0 20px;
-  border-radius: 8px;
+.invite_input:focus {
+  border-color: var(--color-blue-vk);
+}
+
+.invite_actions_layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+}
+
+.btn_vk_share,
+.btn_clipboard_copy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 24px;
+  border-radius: 16px;
   cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    transform 0.1s ease;
+  box-sizing: border-box;
+  width: 100%;
+  font-family: var(--font-family-subtitle);
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
 }
 
-.copy_button:active {
-  transform: scale(0.98);
+/* Кнопка нативного вызова VK Bridge */
+.btn_vk_share {
+  background: linear-gradient(135deg, var(--color-blue-vk) 0%, #1a72cb 100%);
+  color: var(--color-white);
+  border: none;
+  box-shadow: 0 4px 14px rgba(38, 136, 235, 0.2);
 }
 
-/* Зеленое состояние при успешном копировании */
-.copy_button.copied {
-  background-color: #4bb34b;
+.btn_vk_share:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(38, 136, 235, 0.3);
 }
 
-.sub_loader_text {
-  margin-top: 20px;
-  font: var(--font-s);
+/* Кнопка обычного буфера */
+.btn_clipboard_copy {
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  border: 1px solid rgba(178, 215, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.02);
+}
+
+.btn_clipboard_copy:hover {
+  border-color: var(--color-secondary);
+  background-color: var(--color-bg);
   color: var(--color-blue-vk);
-  animation: blink 1.5s infinite ease-in-out;
 }
 
-
-/* --- АНИМАЦИИ --- */
-@keyframes pulse_wave {
-  0% {
-    transform: scale(0.6);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
+.btn_vk_share:active,
+.btn_clipboard_copy:active {
+  transform: translateY(1px);
 }
 
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
+/* Зеленый статус при успешном буферном копировании */
+.btn_clipboard_copy.copied {
+  background-color: var(--color-green);
+  color: var(--color-white);
+  border-color: var(--color-green);
+  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.2);
+}
+
+.preview_link_box {
+  width: 100%;
+  background-color: rgba(0, 122, 255, 0.02);
+  border: 1px dashed rgba(178, 215, 255, 0.6);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.preview_link_label {
+  display: block;
+  font: var(--font-s);
+  font-family: var(--font-family-subtitle);
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.preview_link_text {
+  font: var(--font-m-light);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: all; /* Позволяет пользователю выделить всю ссылку в один клик */
+}
+
+/* --- КНОПКА ОТМЕНЫ --- */
+.action_group {
+  width: 100%;
+}
+
+.btn_cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 14px;
+  cursor: pointer;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: var(--color-white);
+  color: var(--color-text-secondary);
+  font: var(--font-m);
+  font-family: var(--font-family-subtitle);
+  font-weight: 600;
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn_cancel:hover {
+  border-color: var(--color-secondary);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+}
+
+.btn_cancel:active {
+  transform: translateY(1px);
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
-

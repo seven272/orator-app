@@ -15,15 +15,6 @@
   gap: 12px; /* Расстояние между карточками */
 }
 
-.loader, .error {
-  text-align: center;
-  padding: 40px;
-  color: var(--color-text-secondary);
-  background: var(--color-white);
-  border-radius: 20px;
-  max-width: 600px;
-  margin: 20px auto;
-}
 
 .guest_alert_banner {
   width: 100%;
@@ -45,4 +36,62 @@
   0% { opacity: 0.95; }
   50% { opacity: 1; transform: translateY(-0.5px); }
   100% { opacity: 0.95; }
+}
+
+.loader {
+  display: flex;
+  flex-direction: column; /* Элементы располагаются друг под другом */
+  align-items: center;    /* Центрируем спиннер и текст по горизонтали */
+  justify-content: center; /* Центрируем по вертикали */
+  gap: 16px;              /* Удачный, аккуратный отступ между спиннером и текстом */
+  text-align: center;
+  padding: 48px 24px;
+  max-width: 600px;
+  margin: 20px auto;
+  box-sizing: border-box;
+}
+
+/* Фирменный крутящийся спиннер */
+.loader_icon {
+  color: var(--color-primary); /* 🎯 Фирменный синий цвет приложения */
+  font-size: 32px; /* Оптимальный, заметный размер иконки */
+  animation: spin 1s linear infinite; /* Бесконечное плавное вращение */
+  flex-shrink: 0;
+}
+
+/* Текст загрузки */
+.loader_text {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  letter-spacing: -0.1px;
+}
+
+/* Старый класс ошибки оставляем плоским, как и был */
+.error {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-secondary);
+  background: var(--color-white);
+  border-radius: 20px;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+/* 🔄 АНИМАЦИЯ ВРАЩЕНИЯ */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Компактный вид на мобильных экранах */
+@media (max-width: 480px) {
+  .loader {
+    padding: 36px 16px;
+    margin: 12px auto;
+  }
 }

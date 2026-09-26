@@ -196,64 +196,6 @@ const fetchLiveDuelStats = createAsyncThunk(
   },
 )
 
-// Фолбэк на ИИ-бота при тайм-ауте
-const fetchStartLiveDuelAiBot = createAsyncThunk(
-  'liveDuel/fetchStartLiveDuelAiBot',
-  async (roomPayload, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post('/live/start-ai', {
-        roomId: roomPayload.roomId,
-      })
-      return response.data
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message ||
-          'Ошибка при подключении ИИ-бота',
-      )
-    }
-  },
-)
- const fetchSendLiveDuelMessageAiBot = createAsyncThunk(
-  'liveDuel/fetchSendLiveDuelMessageAiBot',
-  async ({ roomId, audioBlob }, { rejectWithValue }) => {
-    try {
-      const formData = new FormData()
-      formData.append('roomId', roomId)
-      
-      if (audioBlob) {
-        formData.append('audio', audioBlob, 'speech.wav') // Передаем эталонный WAV-файл
-      }
-
-      const response = await axiosInstance.post('/live/send-ai-message', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      return response.data // Возвращает { success: true, userText: '...', answer: '...', isFinished: true/false }
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || 'Ошибка сервера при отправке аудиозаписи',
-      )
-    }
-  }
-)
-
-// --- Завершение дуэли и получение вердикта ИИ-судьи ---
- const fetchFinishLiveDuelAiBot = createAsyncThunk(
-  'liveDuel/fetchFinishLiveDuelAiBot',
-  async ({ roomId }, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post('/live/finish-ai', {
-        roomId,
-      })
-      return response.data // Возвращает { success: true, evaluation: {...}, earnedXp: 250, ... }
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || 'Ошибка при получении оценки ИИ-судьи',
-      )
-    }
-  }
-)
 
 // --- СЛАЙС ---
 
@@ -481,54 +423,6 @@ const liveDuelSlice = createSlice({
         state.statsError = action.payload
       })
          // --- Переключение на ИИ-бота ---
-      .addCase(fetchStartLiveDuelAiBot.pending, (state) => {
-        state.loading = true
-        state.error = null
-      })
-      .addCase(fetchStartLiveDuelAiBot.fulfilled, (state, action) => {
-        state.loading = false
-        state.currentRoom = action.payload.room
-        state.aiGreeting = action.payload.aiGreeting
-        state.searchStatus = 'active'
-      })
-      .addCase(fetchStartLiveDuelAiBot.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
-      })
-      // --- отправка сообщений ии боты ---
-      .addCase(fetchSendLiveDuelMessageAiBot.pending, (state) => {
-        state.loading = true
-        state.error = null
-      })
-      .addCase(fetchSendLiveDuelMessageAiBot.fulfilled, (state, action) => {
-        state.loading = false
-        // Здесь мы не перезаписываем всю комнату, так как бэкенд возвращает только точечные данные (answer, isFinished).
-        // Добавление сообщений в массив чата мы сделаем прямо в UI-компоненте или через локальный стейт, 
-        // чтобы сохранить плавность интерфейса. При необходимости можно обновить свойства в currentRoom.
-      })
-      .addCase(fetchSendLiveDuelMessageAiBot.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
-      })
-       // --- Финализация и судейство ИИ ---
-       .addCase(fetchFinishLiveDuelAiBot.pending, (state) => {
-        state.loading = true
-        state.error = null
-      })
-      .addCase(fetchFinishLiveDuelAiBot.fulfilled, (state, action) => {
-        state.loading = false
-        // Переводим статус комнаты в выполненный в глобальном стейте
-        if (state.currentRoom) {
-          state.currentRoom.status = 'completed'
-        }
-     
-      })
-      .addCase(fetchFinishLiveDuelAiBot.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
-      })
-
-
   },
 })
 
@@ -546,8 +440,7 @@ export {
   fetchCheckInviteToken,
   fetchCheckRatingStatus,
   fetchLiveDuelStats,
-  fetchStartLiveDuelAiBot,
-  fetchSendLiveDuelMessageAiBot,
-  fetchFinishLiveDuelAiBot
+
 }
 export default liveDuelSlice.reducer
+ 
