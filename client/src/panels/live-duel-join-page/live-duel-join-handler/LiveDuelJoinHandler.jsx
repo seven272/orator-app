@@ -5,7 +5,7 @@ import {
   fetchCheckInviteToken,
   fetchJoinLiveRoom,
 } from '../../../redux/slices/liveDuelSlice'
-import styles from './LiveDuelJoinHandler.module.css' // Импорт стилей
+import styles from './LiveDuelJoinHandler.module.css' 
 
 const LiveDuelJoinHandler = () => {
   const dispatch = useDispatch() 

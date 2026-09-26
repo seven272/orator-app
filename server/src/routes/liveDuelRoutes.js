@@ -11,6 +11,7 @@ import {
   checkInviteToken,
   checkRatingStatus,
   getLiveDuelStats,
+  updateCallLink
 } from '../controllers/liveDuelController.js'
 
 import { checkAuth } from '../middlewares/authMiddleware.js'
@@ -23,6 +24,7 @@ router.post('/create-room', checkAuth, createRoom)
 router.post('/join-room', checkAuth, joinRoom)
 router.post('/check-status', checkAuth, checkRoomStatus)
 router.post('/submit-rating', checkAuth, submitRating)
+router.post('/update-call-link', checkAuth, updateCallLink)
 
 // --- Календарь и сетка расписания поединков ---
 router.get('/calendar-rooms', checkAuth, getCalendarRooms)

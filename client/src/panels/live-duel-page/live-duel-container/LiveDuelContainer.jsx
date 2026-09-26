@@ -49,7 +49,7 @@ const LiveDuelContainer = () => {
   const showBackButton = searchStatus !== 'idle'
 
   /* === ВРЕМЕННЫЙ КОСТЫЛЬ ДЛЯ ТЕСТИРОВАНИЯ === */
-// return <LiveRoomReal /> 
+  // return <LiveRoomReal />
 
   // Фабрика рендеринга экранов в зависимости от статуса матчмейкинга
   const renderCurrentScreen = () => {
@@ -66,9 +66,6 @@ const LiveDuelContainer = () => {
       case 'slots_list':
         return <LiveDuelSlotsList />
       case 'active':
-        if (currentRoom?.isAiBot) {
-          return <LiveRoomAi />
-        }
         return <LiveRoomReal />
 
       default:

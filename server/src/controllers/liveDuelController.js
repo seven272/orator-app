@@ -69,6 +69,105 @@ const createRoom = async (req, res) => {
 }
 
 //  Подключение Игрока Б (Вход по ссылке-инвайту или через быстрый поиск)
+// const joinRoom = async (req, res) => {
+//   try {
+//     const { inviteToken, roomId } = req.body
+//     const userBId = req.userId
+
+//     let room
+
+//     // 1. Поиск комнаты в зависимости от сценария входных данных
+//     if (inviteToken) {
+//       room = await LiveDuel.findOne({
+//         inviteToken,
+//         status: 'pending',
+//       })
+//     } else if (roomId) {
+//       room = await LiveDuel.findById(roomId)
+//     } else {
+//       // Быстрый поиск: ищем любую свободную комнату, где создатель НЕ текущий пользователь
+//       room = await LiveDuel.findOne({
+//         creationType: 'quick_search',
+//         status: 'pending',
+//         userA: { $ne: userBId },
+//       })
+//     }
+
+//     // 2. Если комната для быстрого поиска не найдена — отдаем пустой room (фронтенд поймет, что нужно создать новую комнату)
+//     if (!room && !inviteToken && !roomId) {
+//       return res.status(200).json({ success: true, room: null })
+//     }
+
+//     // 3. Для инвайтов и конкретных ID отсутствие комнаты — это критическая ошибка
+//     if (!room) {
+//       return res.status(404).json({
+//         success: false,
+//         message: 'Комната не найдена или была удалена',
+//       })
+//     }
+
+//     // 4. ЗАЩИТА: Если Создатель (Игрок А) случайно вызвал joinRoom вместо пуллинга
+//     if (room.userA.toString() === userBId.toString()) {
+//       return res.status(200).json({
+//         success: true,
+//         message: 'Вы уже являетесь создателем этой комнаты',
+//         room,
+//       })
+//     }
+
+//     // 5. ЗАЩИТА: Если Игрок Б пытается зайти в комнату, которая уже занята кем-то другим
+//     if (room.status !== 'pending') {
+//       return res.status(400).json({
+//         success: false,
+//         message:
+//           'Эта комната уже занята другим оратором или завершена',
+//       })
+//     }
+
+//     // 6. УСПЕШНОЕ СОЕДИНЕНИЕ: Заполняем данные Игрока Б и активируем комнату
+//     // const vkCallLink = `https://vk.com/${room._id}` // Генерация ссылки на звонок
+
+//     // === КЛЮЧЕВОЕИЗМЕНЕНИЕ: Достаем реальный vkId Создателя (UserA) ===
+//     const hostUser = await User.findById(room.userA)
+//     let vkCallLink = ''
+
+//     if (hostUser && hostUser.vkId) {
+//       // Сценарий А: Пользователь авторизован через VK — запускаем нативный звонок по его ID
+//       vkCallLink = `https://vk.ru/${hostUser.vkId}`
+//     } else {
+//       // Сценарий Б (Фолбэк): Создатель зашел с сайта (local/google) и не имеет vkId.
+//       // Используем уникальный инстант-хэш комнаты для создания общего веб-звонка,
+//       // доступного как из браузера, так и из приложения VK.
+//       vkCallLink = `https://vk.ru/${room._id.toString()}`
+//     }
+
+//     if (!hostUser || !hostUser.vkId) {
+//       return res.status(400).json({
+//         success: false,
+//         message:
+//           'Не удалось сгенерировать VK Звонок: у создателя комнаты отсутствует привязка к VK',
+//       })
+//     }
+
+//     room.userB = userBId
+//     room.status = 'active'
+//     room.vkCallLink = vkCallLink
+
+//     await room.save()
+
+//     return res.status(200).json({
+//       success: true,
+//       message: 'Пара успешно создана, игра начинается',
+//       room,
+//     })
+//   } catch (error) {
+//     return res
+//       .status(500)
+//       .json({ success: false, message: error.message })
+//   }
+// }
+
+// Подключение Игрока Б (Вход по ссылке-инвайту или через быстрый поиск)
 const joinRoom = async (req, res) => {
   try {
     const { inviteToken, roomId } = req.body
@@ -76,96 +175,72 @@ const joinRoom = async (req, res) => {
 
     let room
 
-    // 1. Поиск комнаты в зависимости от сценария входных данных
+    // 1. Поиск комнаты в зависимости от сценария входных данных 
     if (inviteToken) {
       room = await LiveDuel.findOne({
         inviteToken,
         status: 'pending',
-      })
+      }) 
     } else if (roomId) {
-      room = await LiveDuel.findById(roomId)
+      room = await LiveDuel.findById(roomId) 
     } else {
-      // Быстрый поиск: ищем любую свободную комнату, где создатель НЕ текущий пользователь
+      // Быстрый поиск: ищем свободную комнату, где создатель НЕ текущий пользователь 
       room = await LiveDuel.findOne({
         creationType: 'quick_search',
         status: 'pending',
-        userA: { $ne: userBId },
+        userA: { $ne: userBId }, 
       })
     }
 
-    // 2. Если комната для быстрого поиска не найдена — отдаем пустой room (фронтенд поймет, что нужно создать новую комнату)
     if (!room && !inviteToken && !roomId) {
-      return res.status(200).json({ success: true, room: null })
+      return res.status(200).json({ success: true, room: null }) 
     }
 
-    // 3. Для инвайтов и конкретных ID отсутствие комнаты — это критическая ошибка
     if (!room) {
       return res.status(404).json({
         success: false,
-        message: 'Комната не найдена или была удалена',
+        message: 'Комната не найдена или была удалена', 
       })
     }
 
-    // 4. ЗАЩИТА: Если Создатель (Игрок А) случайно вызвал joinRoom вместо пуллинга
     if (room.userA.toString() === userBId.toString()) {
       return res.status(200).json({
         success: true,
-        message: 'Вы уже являетесь создателем этой комнаты',
+        message: 'Вы уже являетесь создателем этой комнаты', 
         room,
       })
     }
 
-    // 5. ЗАЩИТА: Если Игрок Б пытается зайти в комнату, которая уже занята кем-то другим
     if (room.status !== 'pending') {
       return res.status(400).json({
         success: false,
-        message:
-          'Эта комната уже занята другим оратором или завершена',
+        message: 'Эта комната уже занята другим оратором или завершена', 
       })
     }
 
-    // 6. УСПЕШНОЕ СОЕДИНЕНИЕ: Заполняем данные Игрока Б и активируем комнату
-    // const vkCallLink = `https://vk.com/${room._id}` // Генерация ссылки на звонок
+    // === УСПЕШНОЕ СОЕДИНЕНИЕ ИГРОКА Б ===
+    room.userB = userBId 
+    room.status = 'active' 
+    
+    // ВАЖНО: Ссылка изначально пустая! Её сгенерирует фронтенд Игрока А при входе в LiveRoomReal 
+    room.vkCallLink = '' 
+    room.vkCallId = ''
 
-    // === КЛЮЧЕВОЕИЗМЕНЕНИЕ: Достаем реальный vkId Создателя (UserA) ===
-    const hostUser = await User.findById(room.userA)
-    let vkCallLink = ''
-
-    if (hostUser && hostUser.vkId) {
-      // Сценарий А: Пользователь авторизован через VK — запускаем нативный звонок по его ID
-      vkCallLink = `https://vk.ru/${hostUser.vkId}`
-    } else {
-      // Сценарий Б (Фолбэк): Создатель зашел с сайта (local/google) и не имеет vkId.
-      // Используем уникальный инстант-хэш комнаты для создания общего веб-звонка,
-      // доступного как из браузера, так и из приложения VK.
-      vkCallLink = `https://vk.ru/${room._id.toString()}`
-    }
-
-    if (!hostUser || !hostUser.vkId) {
-      return res.status(400).json({
-        success: false,
-        message:
-          'Не удалось сгенерировать VK Звонок: у создателя комнаты отсутствует привязка к VK',
-      })
-    }
-
-    room.userB = userBId
-    room.status = 'active'
-    room.vkCallLink = vkCallLink
-
-    await room.save()
+    await room.save() 
 
     return res.status(200).json({
       success: true,
-      message: 'Пара успешно создана, игра начинается',
+      message: 'Пара успешно создана, игра начинается', 
       room,
     })
   } catch (error) {
     return res
       .status(500)
-      .json({ success: false, message: error.message })
+      .json({ success: false, message: error.message }) 
   }
 }
+
+
 
 // Новый чистый контроллер только для ПУЛЛИНГА
 const checkRoomStatus = async (req, res) => {
@@ -685,6 +760,32 @@ const getLiveDuelStats = async (req, res) => {
   }
 }
 
+const updateCallLink = async (req, res) => {
+  try {
+    const { roomId, vkCallLink, vkCallId } = req.body
+    const userId = req.userId
+
+    // Находим комнату, где текущий пользователь является создателем (UserA)
+    const room = await LiveDuel.findOne({ _id: roomId, userA: userId })
+    
+    if (!room) {
+      return res.status(404).json({
+        success: false,
+        message: 'Комната не найдена или вы не являетесь её создателем',
+      })
+    }
+
+    room.vkCallLink = vkCallLink
+    if (vkCallId) room.vkCallId = vkCallId
+    
+    await room.save()
+
+    return res.status(200).json({ success: true, room })
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message })
+  }
+}
+
 export {
   createRoom,
   joinRoom,
@@ -697,4 +798,5 @@ export {
   checkInviteToken,
   checkRatingStatus,
   getLiveDuelStats,
+  updateCallLink
 }

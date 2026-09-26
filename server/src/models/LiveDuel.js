@@ -31,8 +31,9 @@ const liveDuelSchema = new mongoose.Schema({
   inviteToken: { type: String, unique: true, sparse: true }, // Для Механики 4 (ссылка)
   scheduledAt: { type: Date, index: true }, // Для Механики 2 (календарь)
 
-  // Ссылка на VK Звонок (генерируется при коннекте двух реальных людей)
-  vkCallLink: { type: String, default: '' },
+  // === ОБНОВЛЕННЫЕ ПОЛЯ ПОД СТАНДАРТ VK CALLS ===
+  vkCallLink: { type: String, default: '' }, // Реальная ссылка из VKWebAppCallStart
+  vkCallId: { type: String, default: '' },   // ID сессии звонка для аналитики
 
   ratingFromA: {
     type: Number,

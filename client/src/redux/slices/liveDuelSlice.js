@@ -196,6 +196,24 @@ const fetchLiveDuelStats = createAsyncThunk(
   },
 )
 
+const fetchUpdateCallLink = createAsyncThunk(
+  'liveDuel/fetchUpdateCallLink',
+  async ({ roomId, vkCallLink, vkCallId }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post('/live/update-call-link', {
+        roomId,
+        vkCallLink,
+        vkCallId,
+      })
+      return res.data // Вернет { success: true, room }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          'Ошибка синхронизации звонка VK',
+      )
+    }
+  },
+)
 
 // --- СЛАЙС ---
 
@@ -422,7 +440,10 @@ const liveDuelSlice = createSlice({
         state.statsLoading = false
         state.statsError = action.payload
       })
-         // --- Переключение на ИИ-бота ---
+      // --- Получение ссылки звонка от вк ---
+      .addCase(fetchUpdateCallLink.fulfilled, (state, action) => {
+        state.currentRoom = action.payload.room // Обновляем комнату актуальной ссылкой звонка
+      })
   },
 })
 
@@ -440,7 +461,6 @@ export {
   fetchCheckInviteToken,
   fetchCheckRatingStatus,
   fetchLiveDuelStats,
-
+  fetchUpdateCallLink
 }
 export default liveDuelSlice.reducer
- 
