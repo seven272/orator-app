@@ -1,4 +1,5 @@
-import dayjs from 'dayjs'
+import fs from 'fs'
+import path from 'path'
 import crypto from 'crypto'
 import mongoose from 'mongoose'
 
@@ -9,53 +10,47 @@ import { checkAchievements } from '../utils/achievementService.js'
 import generateDuelData from '../utils/liveDuelTopicSelector.js'
 import { DUEL_TOPICS } from '../constants/duelTopics.js'
 
-// Вспомогательный хелпер для получения условий "активного" календарного слота
-const getActiveCalendarQuery = (userId) => ({
-  userA: userId,
-  creationType: 'calendar',
-  status: 'pending',
-  scheduledAt: { $gt: new Date() }, // Слот еще не просрочен
-})
+/**
+ * Вспомогательный хелпер удаления файла при ошибках валидации
+ */
+const removeFileOnError = (filePath) => {
+  if (!filePath) return
+  fs.unlink(path.resolve(filePath), (err) => {
+    if (err) {
+      console.error(`[Multer Safety Cleanup] Ошибка удаления файла: ${filePath}`, err)
+    } else {
+      console.log(`[Multer Safety Cleanup] Успешно удален файл после ошибки: ${filePath}`)
+    }
+  })
+}
 
 // Инициализация комнаты (для Быстрого поиска, Ссылки или Календаря)
 const createRoom = async (req, res) => {
   try {
-    // Принимаем параметры в формате camelCase из измененного слайса
-    const { creationType, scheduledAt } = req.body
+    const { creationType } = req.body // Из тела запроса scheduledAt больше не нужен
     const userId = req.userId
 
-    // Если создается календарный слот — проверяем лимит
-    if (creationType === 'calendar') {
-      const activeSlotsCount = await LiveDuel.countDocuments(
-        getActiveCalendarQuery(userId),
-      )
-
-      if (activeSlotsCount >= 3) {
-        return res.status(400).json({
-          success: false,
-          message:
-            'Вы не можете создать более 3-х active запланированных слотов одновременно.',
-        })
-      }
+    // Валидация типов создания (допустимы только моментальный поиск и прямая ссылка)
+    if (!['quick_search', 'direct_link'].includes(creationType)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Недопустимый тип создания комнаты. Календарь больше не поддерживается.'
+      })
     }
 
-    const randomTopic =
-      DUEL_TOPICS[Math.floor(Math.random() * DUEL_TOPICS.length)]
-
-    // Собираем объект roomData строго под новую Mongoose-схему
+    // Собираем объект roomData строго под новую концепцию асинхронных аудио-баттлов
     const roomData = {
       userA: userId,
+      userB: null,
       creationType,
       topic: generateDuelData(),
       status: 'pending',
+      audioTracks: [] // 🚀 Инициализируем пустой массив для будущих аудиосообщений
     }
 
+    // Если создается комната по прямой ссылке — генерируем токен
     if (creationType === 'direct_link') {
       roomData.inviteToken = crypto.randomBytes(8).toString('hex')
-    }
-
-    if (creationType === 'calendar' && scheduledAt) {
-      roomData.scheduledAt = new Date(scheduledAt)
     }
 
     const room = await LiveDuel.create(roomData)
@@ -67,105 +62,6 @@ const createRoom = async (req, res) => {
       .json({ success: false, message: error.message })
   }
 }
-
-//  Подключение Игрока Б (Вход по ссылке-инвайту или через быстрый поиск)
-// const joinRoom = async (req, res) => {
-//   try {
-//     const { inviteToken, roomId } = req.body
-//     const userBId = req.userId
-
-//     let room
-
-//     // 1. Поиск комнаты в зависимости от сценария входных данных
-//     if (inviteToken) {
-//       room = await LiveDuel.findOne({
-//         inviteToken,
-//         status: 'pending',
-//       })
-//     } else if (roomId) {
-//       room = await LiveDuel.findById(roomId)
-//     } else {
-//       // Быстрый поиск: ищем любую свободную комнату, где создатель НЕ текущий пользователь
-//       room = await LiveDuel.findOne({
-//         creationType: 'quick_search',
-//         status: 'pending',
-//         userA: { $ne: userBId },
-//       })
-//     }
-
-//     // 2. Если комната для быстрого поиска не найдена — отдаем пустой room (фронтенд поймет, что нужно создать новую комнату)
-//     if (!room && !inviteToken && !roomId) {
-//       return res.status(200).json({ success: true, room: null })
-//     }
-
-//     // 3. Для инвайтов и конкретных ID отсутствие комнаты — это критическая ошибка
-//     if (!room) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'Комната не найдена или была удалена',
-//       })
-//     }
-
-//     // 4. ЗАЩИТА: Если Создатель (Игрок А) случайно вызвал joinRoom вместо пуллинга
-//     if (room.userA.toString() === userBId.toString()) {
-//       return res.status(200).json({
-//         success: true,
-//         message: 'Вы уже являетесь создателем этой комнаты',
-//         room,
-//       })
-//     }
-
-//     // 5. ЗАЩИТА: Если Игрок Б пытается зайти в комнату, которая уже занята кем-то другим
-//     if (room.status !== 'pending') {
-//       return res.status(400).json({
-//         success: false,
-//         message:
-//           'Эта комната уже занята другим оратором или завершена',
-//       })
-//     }
-
-//     // 6. УСПЕШНОЕ СОЕДИНЕНИЕ: Заполняем данные Игрока Б и активируем комнату
-//     // const vkCallLink = `https://vk.com/${room._id}` // Генерация ссылки на звонок
-
-//     // === КЛЮЧЕВОЕИЗМЕНЕНИЕ: Достаем реальный vkId Создателя (UserA) ===
-//     const hostUser = await User.findById(room.userA)
-//     let vkCallLink = ''
-
-//     if (hostUser && hostUser.vkId) {
-//       // Сценарий А: Пользователь авторизован через VK — запускаем нативный звонок по его ID
-//       vkCallLink = `https://vk.ru/${hostUser.vkId}`
-//     } else {
-//       // Сценарий Б (Фолбэк): Создатель зашел с сайта (local/google) и не имеет vkId.
-//       // Используем уникальный инстант-хэш комнаты для создания общего веб-звонка,
-//       // доступного как из браузера, так и из приложения VK.
-//       vkCallLink = `https://vk.ru/${room._id.toString()}`
-//     }
-
-//     if (!hostUser || !hostUser.vkId) {
-//       return res.status(400).json({
-//         success: false,
-//         message:
-//           'Не удалось сгенерировать VK Звонок: у создателя комнаты отсутствует привязка к VK',
-//       })
-//     }
-
-//     room.userB = userBId
-//     room.status = 'active'
-//     room.vkCallLink = vkCallLink
-
-//     await room.save()
-
-//     return res.status(200).json({
-//       success: true,
-//       message: 'Пара успешно создана, игра начинается',
-//       room,
-//     })
-//   } catch (error) {
-//     return res
-//       .status(500)
-//       .json({ success: false, message: error.message })
-//   }
-// }
 
 // Подключение Игрока Б (Вход по ссылке-инвайту или через быстрый поиск)
 const joinRoom = async (req, res) => {
@@ -214,8 +110,7 @@ const joinRoom = async (req, res) => {
     if (room.status !== 'pending') {
       return res.status(400).json({
         success: false,
-        message:
-          'Эта комната уже занята другим оратором или завершена',
+        message: 'Эта комната уже занята другим оратором или завершена',
       })
     }
 
@@ -223,15 +118,13 @@ const joinRoom = async (req, res) => {
     room.userB = userBId
     room.status = 'active'
 
-    // ВАЖНО: Ссылка изначально пустая! Её сгенерирует фронтенд Игрока А при входе в LiveRoomReal
-    room.vkCallLink = ''
-    room.vkCallId = ''
+    // Логика VK Звонков полностью удалена, поля vkCallLink и vkCallId вырезаны
 
     await room.save()
 
     return res.status(200).json({
       success: true,
-      message: 'Пара успешно создана, игра начинается',
+      message: 'Пара успешно создана, баттл начинается',
       room,
     })
   } catch (error) {
@@ -240,6 +133,7 @@ const joinRoom = async (req, res) => {
       .json({ success: false, message: error.message })
   }
 }
+
 
 // Новый чистый контроллер только для ПУЛЛИНГА
 const checkRoomStatus = async (req, res) => {
@@ -287,9 +181,7 @@ const submitRating = async (req, res) => {
         .json({ success: false, message: 'Комната не найдена' })
     }
 
-    room.status = 'completed'
-
-    // Защита от накрутки наград
+    // Защита от накрутки наград и фиксация оценок
     if (room.userA.toString() === userId.toString()) {
       if (room.ratingFromA !== null) {
         return res.status(400).json({
@@ -316,6 +208,37 @@ const submitRating = async (req, res) => {
       })
     }
 
+    // Если оба пользователя отправили свои оценки — переводим комнату в completed
+    // (Или если это одиночный сценарий, но у нас парный матчмейкинг, поэтому проверяем взаимность)
+    const isBothRated = room.ratingFromA !== null && room.ratingFromB !== null
+    
+    if (isBothRated || !room.userB) {
+      room.status = 'completed'
+    }
+
+    // Сохраняем промежуточные или финальные изменения комнаты
+    await room.save()
+
+    // 🚀 УМНОЕ ЗАНУЛЕНИЕ ПАМЯТИ (Выполняется строго при окончательном завершении баттла)
+    if (room.status === 'completed' && room.audioTracks && room.audioTracks.length > 0) {
+      console.log(`[Server Storage] Старт зануления памяти для комнаты: ${roomId}`)
+      
+      room.audioTracks.forEach((track) => {
+        if (track.fileUrl) {
+          const absolutePath = path.resolve(track.fileUrl)
+          
+          fs.unlink(absolutePath, (err) => {
+            if (err) {
+              console.error(`[Server Storage] Ошибка удаления аудио-трека (${absolutePath}):`, err.message)
+            } else {
+              console.log(`[Server Storage] Временный аудио-файл успешно удален: ${absolutePath}`)
+            }
+          })
+        }
+      })
+    }
+
+    // --- БЛОК ГЕЙМИФИКАЦИИ И НАГРАД ПОЛЬЗОВАТЕЛЯ ---
     const user = await User.findById(userId)
     if (!user) {
       return res
@@ -327,12 +250,7 @@ const submitRating = async (req, res) => {
     const now = new Date()
     const todayMs = new Date(now).setUTCHours(0, 0, 0, 0)
     const lastDate = user.streak.lastCompletedDate
-      ? new Date(user.streak.lastCompletedDate).setUTCHours(
-          0,
-          0,
-          0,
-          0,
-        )
+      ? new Date(user.streak.lastCompletedDate).setUTCHours(0, 0, 0, 0)
       : null
     const oneDayInMs = 86400000
 
@@ -347,18 +265,17 @@ const submitRating = async (req, res) => {
 
     // Вычисление множителя опыта за серию дней
     let multiplier = 1
-    if (user.streak.current >= 3) multiplier = 1.2
-    if (user.streak.current >= 7) multiplier = 1.5
+    if (user.streak.current >= 5) multiplier = 1.2
 
     // Фиксированные базовые награды за живую дуэль
-    const baseRewardXp = 150
-    const baseRewardCoins = 15
+    const baseRewardXp = 50
+    const baseRewardCoins = 5
 
     // Итоговые награды с учетом буста за стрик дней
     const earnedXp = Math.round(baseRewardXp * multiplier)
     const earnedCoins = Math.round(baseRewardCoins * multiplier)
 
-    // Сохраняем опыт в документ комнаты
+    // Обновляем начисленные очки оратора в документе комнаты (для истории)
     if (room.userA.toString() === userId.toString()) {
       room.pointsEarnedA = earnedXp
     } else {
@@ -385,33 +302,26 @@ const submitRating = async (req, res) => {
 
     // Запись статистики для паутинки навыков
     const exAlias = 'live-duel'
-    const fixedDuelScore = 150 // Всегда 250 баллов за факт участия независимо от оценки
+    const fixedDuelScore = 50 // 150 баллов за факт участия
 
     const statIndex = user.stats.exerciseStats.findIndex(
       (ex) => ex.alias === exAlias,
     )
     if (statIndex > -1) {
       user.stats.exerciseStats[statIndex].completionsCount += 1
-      user.stats.exerciseStats[statIndex].totalPoints +=
-        fixedDuelScore
+      user.stats.exerciseStats[statIndex].totalPoints += fixedDuelScore
     } else {
       user.stats.exerciseStats.push({
         alias: exAlias,
-        title: 'Живая дуэль',
+        title: 'Голосовой баттл', // Сменили название под новую концепцию
         totalPoints: fixedDuelScore,
         completionsCount: 1,
       })
     }
 
     // Проверка ачивок
-    const newAwards = checkAchievements(
-      user,
-      false,
-      fixedDuelScore,
-      exAlias,
-    )
-    user.progression.lastAwarded =
-      newAwards && newAwards.length > 0 ? newAwards : []
+    const newAwards = checkAchievements(user, false, fixedDuelScore, exAlias)
+    user.progression.lastAwarded = newAwards && newAwards.length > 0 ? newAwards : []
 
     await user.save()
 
@@ -425,7 +335,7 @@ const submitRating = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Дуэль успешно завершена, награды начислены',
+      message: 'Результаты приняты, награды успешно обновлены.',
       room,
       earnedXp,
       earnedCoins,
@@ -443,125 +353,6 @@ const submitRating = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка в submitRating:', error)
-    return res
-      .status(500)
-      .json({ success: false, message: error.message })
-  }
-}
-
-// Получить список всех запланированных дуэлей (Лента объявлений)
-const getCalendarRooms = async (req, res) => {
-  try {
-    const userId = req.userId // ID текущего юзера
-
-    const rooms = await LiveDuel.find({
-      creationType: 'calendar',
-      status: 'pending',
-      scheduledAt: { $gte: new Date() }, // Только будущие сессии
-      userA: { $ne: userId }, // Исключаем свои собственные созданные слоты
-    })
-      .populate('userA', 'displayName avatar') // Подтягиваем имя и аватар создателя
-      .sort({ scheduledAt: 1 }) // Сортируем от ближайших к дальним
-
-    return res.status(200).json({ success: true, rooms })
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ success: false, message: error.message })
-  }
-}
-
-// Получение личных активных слотов пользователя
-const getMyActiveSlots = async (req, res) => {
-  try {
-    const userId = req.userId
-
-    const slots = await LiveDuel.find({
-      creationType: 'calendar',
-      scheduledAt: { $gte: new Date() }, // Только будущие
-      $or: [
-        // Вариант 1: Слот создан мной (и pending, и active)
-        { userA: userId, status: { $in: ['pending', 'active'] } },
-        // Вариант 2: Я присоединился к чужому слоту (только active)
-        { userB: userId, status: 'active' },
-      ],
-    })
-      .populate('userA', 'displayName avatar') // Подтягиваем имя и аватар Игрока А
-      .populate('userB', 'displayName avatar') // Подтягиваем имя и аватар Игрока Б
-      .sort({ scheduledAt: 1 })
-
-    return res.status(200).json({ success: true, rooms: slots })
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ success: false, message: error.message })
-  }
-}
-
-const updateSlotDate = async (req, res) => {
-  try {
-    // Принимаем параметры в формате camelCase из измененного слайса
-    const { roomId, scheduledAt } = req.body
-    const userId = req.userId
-
-    if (!scheduledAt) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Новая дата обязательна' })
-    }
-
-    // Ищем строго под новые ключи userA
-    const room = await LiveDuel.findOne({
-      _id: roomId,
-      userA: userId,
-      status: 'pending',
-    })
-    if (!room) {
-      return res.status(404).json({
-        success: false,
-        message: 'Слот не найден или уже активен/завершен',
-      })
-    }
-
-    // Записываем новую дату в camelCase поле scheduledAt
-    room.scheduledAt = new Date(scheduledAt)
-    await room.save()
-
-    return res.status(200).json({
-      success: true,
-      room,
-      message: 'Дата слота успешно изменена',
-    })
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ success: false, message: error.message })
-  }
-}
-
-const deleteSlot = async (req, res) => {
-  try {
-    // Параметр из URL (req.params) считываем как roomId
-    const { roomId } = req.params
-    const userId = req.userId
-
-    // Атомарно находим и удаляем запись с учетом ключа userA
-    const room = await LiveDuel.findOneAndDelete({
-      _id: roomId,
-      userA: userId,
-      status: 'pending',
-    })
-    if (!room) {
-      return res.status(404).json({
-        success: false,
-        message: 'Слот не найден или не может быть удален',
-      })
-    }
-
-    return res
-      .status(200)
-      .json({ success: true, message: 'Слот успешно удален' })
-  } catch (error) {
     return res
       .status(500)
       .json({ success: false, message: error.message })
@@ -759,87 +550,110 @@ const getLiveDuelStats = async (req, res) => {
   }
 }
 
-const updateCallLink = async (req, res) => {
+ const uploadAudioTrack = async (req, res) => {
   try {
-    const { roomId, vkCallLink, vkCallId } = req.body
+    const { roomId } = req.body
     const userId = req.userId
 
-    console.log(`\n=== [BACKEND QA] updateCallLink ===`)
-    console.log(`roomId: ${roomId}`)
-    console.log(`userId: ${userId}`)
-    console.log(`vkCallLink: ${vkCallLink ? 'получена' : 'пустая'}`)
-    console.log(`vkCallId: ${vkCallId || 'не передан'}`)
-
-    // Ищем комнату по ID
-    const room = await LiveDuel.findById(roomId)
-
-    if (!room) {
-      console.warn(`[BACKEND QA] Комната ${roomId} не найдена`)
-      return res.status(404).json({
-        success: false,
-        message: 'Комната не найдена',
-      })
-    }
-
-    // Проверяем, что отправитель — участник комнаты
-    const isParticipant =
-      room.userA?.toString() === userId.toString() ||
-      room.userB?.toString() === userId.toString()
-
-    if (!isParticipant) {
-      console.warn(
-        `[BACKEND QA] Пользователь ${userId} не участник комнаты ${roomId}`,
-      )
-      return res.status(403).json({
-        success: false,
-        message: 'Нет прав на обновление ссылки звонка',
-      })
-    }
-
-    // Не перезаписываем, если ссылка уже есть и совпадает
-    if (room.vkCallLink && room.vkCallLink === vkCallLink) {
-      console.log(`[BACKEND QA] Ссылка уже актуальна`)
-      return res.status(200).json({ success: true, room })
-    }
-
-    // Не сохраняем пустую ссылку
-    if (!vkCallLink) {
-      console.warn(
-        `[BACKEND QA] Получен пустой vkCallLink, обновление пропущено`,
-      )
+    // 1. Проверяем, пропустил ли мидлвар Мультера файл
+    if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: 'Ссылка звонка не может быть пустой',
+        message: 'Аудиофайл не найден или не прошел фильтрацию форматов.'
       })
     }
 
-    // Сохраняем
-    room.vkCallLink = vkCallLink
-    if (vkCallId) room.vkCallId = vkCallId
+    // 2. Ищем комнату в базе данных
+    const room = await LiveDuel.findById(roomId)
+    if (!room) {
+      removeFileOnError(req.file.path) // Атомарная зачистка при отсутствии сущности
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Комната не найдена.' 
+      })
+    }
+
+    // 3. Валидация фазы поединка
+    if (room.status !== 'active') {
+      removeFileOnError(req.file.path)
+      return res.status(400).json({
+        success: false,
+        message: 'Баттл не находится в активной фазе обмена репликами.'
+      })
+    }
+
+    // 4. Проверка прав доступа участников
+    const isUserA = room.userA?.toString() === userId.toString()
+    const isUserB = room.userB?.toString() === userId.toString()
+
+    if (!isUserA && !isUserB) {
+      removeFileOnError(req.file.path)
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Вы не являетесь зарегистрированным участником этой дуэли.' 
+      })
+    }
+
+    // 5. Контроль очередности ходов на базе четности массива audioTracks
+    const tracksCount = room.audioTracks ? room.audioTracks.length : 0
+    
+    // Если треков четное количество (0, 2, 4...) — должен ходить Игрок А
+    if (tracksCount % 2 === 0 && !isUserA) {
+      removeFileOnError(req.file.path)
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Нарушение очередности. Сейчас ход Спикера А.' 
+      })
+    }
+    
+    // Если треков нечетное количество (1, 3, 5...) — должен ходить Игрок Б
+    if (tracksCount % 2 !== 0 && !isUserB) {
+      removeFileOnError(req.file.path)
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Нарушение очередности. Сейчас ход Спикера Б.' 
+      })
+    }
+
+    // 6. Формируем fileUrl. Мультер при diskStorage сохраняет локальный путь в req.file.path
+    // Пример: "src/uploads/audio/1726000000000-random-voice.webm"
+    const fileUrl = req.file.path 
+
+    // 7. Пушим трек в массив документов комнаты
+    room.audioTracks.push({
+      sender: userId,
+      fileUrl: fileUrl,
+      timestamp: new Date()
+    })
 
     await room.save()
-    console.log(`[BACKEND QA] Ссылка сохранена для комнаты ${roomId}`)
 
-    return res.status(200).json({ success: true, room })
+    return res.status(200).json({
+      success: true,
+      message: 'Реплика успешно добавлена в баттл.',
+      audioTracks: room.audioTracks
+    })
+
   } catch (error) {
-    console.error('[BACKEND QA] Ошибка updateCallLink:', error)
-    return res
-      .status(500)
-      .json({ success: false, message: error.message })
+    // В случае непредвиденного падения базы или сервера удаляем только что загруженный файл
+    if (req.file && req.file.path) {
+      removeFileOnError(req.file.path)
+    }
+    return res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    })
   }
 }
+
 
 export {
   createRoom,
   joinRoom,
   checkRoomStatus,
   submitRating,
-  getCalendarRooms,
-  getMyActiveSlots,
-  updateSlotDate,
-  deleteSlot,
+  uploadAudioTrack,
   checkInviteToken,
   checkRatingStatus,
   getLiveDuelStats,
-  updateCallLink,
 }

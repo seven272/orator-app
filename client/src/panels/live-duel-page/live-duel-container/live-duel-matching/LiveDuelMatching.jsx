@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { FiLoader, FiArrowLeft, FiShare2 } from 'react-icons/fi'
+import { FiLoader, FiArrowLeft } from 'react-icons/fi'
 
 import {
   fetchCheckRoomStatus,
@@ -66,10 +66,6 @@ const LiveDuelMatching = () => {
     dispatch(resetLiveDuelState())
   }
 
-  const handleGoToCalendar = () => {
-    dispatch(setSearchStatus('slot_create'))
-  }
-
   return (
     <div className={styles.matching_container}>
       {/* Премиальный пульсирующий индикатор поиска */}
@@ -94,7 +90,8 @@ const LiveDuelMatching = () => {
         <div className={styles.timeout_message_box}>
           <p className={styles.timeout_text}>
             Свободные спикеры сейчас заняты в поединках. Система продолжает 
-            фоновый подбор пары, но вы можете зафиксировать удобное время самостоятельно.
+            фоновый подбор пары, но вы можете вернуться в меню и создать 
+            прямую ссылку для баттла с другом.
           </p>
         </div>
       )}
@@ -105,16 +102,6 @@ const LiveDuelMatching = () => {
 
       {/* Управляющие кнопки */}
       <div className={styles.action_group}>
-        {isSearchTimeout && (
-          <button 
-            className={styles.btn_calendar} 
-            onClick={handleGoToCalendar}
-          >
-            <FiShare2 />
-            <span>Предложить свое время</span>
-          </button>
-        )}
-        
         <button 
           className={styles.btn_cancel} 
           onClick={handleCancelSearch}

@@ -8,7 +8,7 @@ import {
   FiArrowLeft,
   FiSend,
 } from 'react-icons/fi'
-import vkBridge from '@vkontakte/vk-bridge' // Импортируем VK Bridge
+import vkBridge from '@vkontakte/vk-bridge'
 
 import {
   fetchCheckRoomStatus,
@@ -31,12 +31,8 @@ const LiveDuelLinkWaiting = () => {
   const roomId = currentRoom?._id
 
   const VK_APP_ID = 'app54762318' 
-  // Ссылка для перехода оппонента
-  // const inviteUrl = currentRoom?.inviteToken
-  //   ? `${window.location.origin}/#/live-duel/join/${currentRoom.inviteToken}`
-  //   : ''
 
-     const inviteUrl = currentRoom?.inviteToken
+  const inviteUrl = currentRoom?.inviteToken
     ? `https://vk.ru/${VK_APP_ID}/#/live-duel/join/${currentRoom.inviteToken}`
     : ''
 
@@ -82,7 +78,6 @@ const LiveDuelLinkWaiting = () => {
   const handleVkShare = () => {
     if (!inviteUrl) return
 
-    // Проверяем, поддерживает ли среда вызовы VK Bridge (чтобы не упасть на обычном сайте)
     if (vkBridge.supports('VKWebAppShare')) {
       vkBridge
         .send('VKWebAppShare', {
@@ -95,7 +90,6 @@ const LiveDuelLinkWaiting = () => {
           console.error('Ошибка при нативном шеринге VK:', error)
         })
     } else {
-      // Фолбэк для веб-версии сайта, если VK Bridge недоступен
       handleCopyLink()
     }
   }
@@ -134,10 +128,11 @@ const LiveDuelLinkWaiting = () => {
         </div>
       ) : (
         <div className={styles.long_wait_box}>
+          {/* 🛠️ Изменено: Терминология обновлена под формат баттлов */}
           <p className={styles.long_wait_text}>
             Ваш оппонент задерживается. Вы можете отправить прямую
             ссылку повторно или подождать еще немного — комната
-            активна до момента подключения.
+            активна до момента подключения к баттлу.
           </p>
         </div>
       )}
@@ -168,7 +163,6 @@ const LiveDuelLinkWaiting = () => {
         </button>
       </div>
 
-      {/* ВЕРНУЛИ ОТОБРАЖЕНИЕ: Компактный информационный виджет ссылки */}
       {inviteUrl && (
         <div className={styles.preview_link_box}>
           <span className={styles.preview_link_label}>

@@ -1,21 +1,17 @@
 import express from 'express'
 import {
-  createRoom,
+ createRoom,
   joinRoom,
   checkRoomStatus,
   submitRating,
-  getCalendarRooms,
-  getMyActiveSlots,
-  updateSlotDate,
-  deleteSlot, 
   checkInviteToken,
   checkRatingStatus,
   getLiveDuelStats,
-  updateCallLink
+  uploadAudioTrack // Новый контроллер
 } from '../controllers/liveDuelController.js'
 
 import { checkAuth } from '../middlewares/authMiddleware.js'
-
+import upload from '../middlewares/upload.js'
 
 const router = express.Router()
 
@@ -24,13 +20,9 @@ router.post('/create-room', checkAuth, createRoom)
 router.post('/join-room', checkAuth, joinRoom)
 router.post('/check-status', checkAuth, checkRoomStatus)
 router.post('/submit-rating', checkAuth, submitRating)
-router.post('/update-call-link', checkAuth, updateCallLink)
 
-// --- Календарь и сетка расписания поединков ---
-router.get('/calendar-rooms', checkAuth, getCalendarRooms)
-router.get('/my-slots', checkAuth, getMyActiveSlots)
-router.put('/update-slot', checkAuth, updateSlotDate)
-router.delete('/delete-slot/:roomId', checkAuth, deleteSlot)
+router.post('/upload-audio', checkAuth, upload.single('audio'), uploadAudioTrack)
+
 
 // --- Инвайты, статусы оценок и дашборд статистики ---
 router.get('/check-invite/:token', checkAuth, checkInviteToken)

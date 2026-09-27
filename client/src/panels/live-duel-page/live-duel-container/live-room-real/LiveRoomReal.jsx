@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import vkBridge from '@vkontakte/vk-bridge'
+import { FiPlay, FiPause, FiUser, FiVolume2 } from 'react-icons/fi'
 
 import {
   resetLiveDuelState,
-  fetchUpdateCallLink,
+  fetchCheckRoomStatus,
 } from '../../../../redux/slices/liveDuelSlice'
 
-// Импортируем декомпозированные компоненты из соседних папок
+// Импортируем дочерние компоненты и новый аудиорекордер
 import LiveRoomHeader from './live-room-header/LiveRoomHeader'
 import LiveRoomTopic from './live-room-topic/LiveRoomTopic'
-import LiveRoomPipGuide from './live-room-pip-guide/LiveRoomPipGuide'
+import LiveRoomAudioRecorder from './live-room-audio-recorder/LiveRoomAudioRecorder'
 import LiveRoomFeedback from './live-room-feedback/LiveRoomFeedback'
 import LiveRoomRewardModal from './live-room-reward-modal/LiveRoomRewardModal'
 
@@ -24,224 +24,187 @@ const LiveRoomReal = () => {
     (state) => state.profile?.user?._id || state.auth?.user?._id,
   )
 
-  // БОЕВЫЕ ТАЙМЕРЫ (в секундах): intro (30с), monologues (120с), blitz (60с)
-  const ROUND_TIMES = {
-    intro: 3,
-    speakerA: 12,
-    speakerB: 12,
-    blitz: 6,
-    feedback: 0,
-  }
-
-  const [currentRound, setCurrentRound] = useState('intro')
-  const [timeLeft, setTimeLeft] = useState(ROUND_TIMES.intro)
-
-  const [showRewardModal, setShowRewardModal] = useState(false)
-  const [rewardsData, setRewardsData] = useState(null)
-
-  const timerRef = useRef(null)
   const roomId = currentRoom?._id
+  const pollingRef = useRef(null)
 
-  const callInitiatedRef = useRef(false)
+  // Локальные состояния для плеера прослушивания реплик
+  const [playingTrackUrl, setPlayingTrackUrl] = useState(null)
+  const audioRef = useRef(null)
 
-  // Определение роли текущего оратора
+  // Определение ролей и позиций сторон
   const isSpeakerA = currentRoom?.userA === currentUserId
   const mySide = isSpeakerA
     ? currentRoom?.topic?.sideA
     : currentRoom?.topic?.sideB
 
-  // 1. Управление жизненным циклом таймеров раундов
+  // Извлекаем массив треков и считаем их количество
+  const audioTracks = currentRoom?.audioTracks || []
+  const tracksCount = audioTracks.length
+
+  // Динамическое определение раунда/состояния баттла
+  let currentRound = 'intro'
+  if (tracksCount === 0 || tracksCount === 1) {
+    currentRound = 'speakerA'
+  } else if (tracksCount === 2 || tracksCount === 3) {
+    currentRound = 'speakerB'
+  } else if (tracksCount >= 4) {
+    currentRound = 'feedback'
+  }
+
+  // Определение активности хода текущего игрока
+  // Если треков четное количество (0, 2) — ходит Спикер А. Если нечетное (1, 3) — ходит Спикер Б.
+  const isMyTurn =
+    currentRound !== 'feedback' &&
+    ((tracksCount % 2 === 0 && isSpeakerA) || (tracksCount % 2 !== 0 && !isSpeakerA))
+
+  // Состояния для премиальной модалки наград
+  const [showRewardModal, setShowRewardModal] = useState(false)
+  const [rewardsData, setRewardsData] = useState(null)
+
+  // 1. Бесконечный живой пуллинг комнаты (каждые 3 секунды) для получения новых аудиозаписей
   useEffect(() => {
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          if (currentRound === 'intro') {
-            setCurrentRound('speakerA')
-            return ROUND_TIMES.speakerA
-          } else if (currentRound === 'speakerA') {
-            setCurrentRound('speakerB')
-            return ROUND_TIMES.speakerB
-          } else if (currentRound === 'speakerB') {
-            setCurrentRound('blitz')
-            return ROUND_TIMES.blitz
-          } else {
-            clearInterval(timerRef.current)
-            setCurrentRound('feedback')
-            return 0
-          }
-        }
-        return prev - 1
-      })
-    }, 1000)
+    if (!roomId || currentRound === 'feedback') return
 
-    return () => clearInterval(timerRef.current)
-  }, [currentRound])
-
-  useEffect(() => {
-    // --- Слушатель событий завершения звонка ---
-    const handleBridgeEvents = (e) => {
-      const { type, data } = e.detail
-      console.log(`[QA] VK Bridge event: ${type}`, data)
-
-      if (
-        type === 'VKWebAppCallLeft' ||
-        type === 'VKWebAppCallFinished'
-      ) {
-        console.log(
-          `[QA] Call ended via ${type}. Switching to feedback.`,
-        )
-        setCurrentRound('feedback')
-      }
-    }
-
-    vkBridge.subscribe(handleBridgeEvents)
-
-    // --- Инициация звонка для Speaker A (один раз) ---
-    if (
-      isSpeakerA &&
-      !currentRoom?.vkCallLink &&
-      !callInitiatedRef.current
-    ) {
-      callInitiatedRef.current = true
-      console.log('[QA] Speaker A: initiating VKWebAppCallStart...')
-
-      if (!vkBridge.supports('VKWebAppCallStart')) {
-        console.error(
-          '[QA] Platform does not support VKWebAppCallStart',
-        )
-        return
-      }
-
-      vkBridge
-        .send('VKWebAppCallStart', {})
-        .then((data) => {
-          console.log('[QA] VKWebAppCallStart success:', data)
-
-          const joinLink = data.join_link
-          if (joinLink) {
-            dispatch(
-              fetchUpdateCallLink({
-                roomId: currentRoom._id,
-                vkCallLink: joinLink, // ← сохраняем join_link
-                vkCallId: data.call_id || '',
-              }),
-            )
-              .unwrap()
-              .then((res) =>
-                console.log('[QA] Backend saved call link', res),
-              )
-              .catch((err) =>
-                console.error(
-                  '[QA] Backend error saving call link',
-                  err,
-                ),
-              )
-          } else {
-            console.warn('[QA] VK returned empty call_link')
+    pollingRef.current = setInterval(() => {
+      dispatch(fetchCheckRoomStatus({ roomId }))
+        .unwrap()
+        .then((res) => {
+          // Если оппонент завершил баттл или прилетели новые треки
+          if (res.room?.status === 'completed' || (res.room?.audioTracks?.length || 0) >= 4) {
+            clearInterval(pollingRef.current)
           }
         })
-        .catch((err) =>
-          console.error(
-            '[QA] VK Bridge error on VKWebAppCallStart',
-            err,
-          ),
-        )
+        .catch((err) => {
+          console.error('Ошибка пуллинга состояния чата:', err)
+        })
+    }, 3000)
+
+    return () => clearInterval(pollingRef.current)
+  }, [roomId, currentRound, dispatch])
+
+  // 2. Управление плеером аудиореплик
+  const handlePlayTrack = (fileUrl) => {
+    if (playingTrackUrl === fileUrl) {
+      audioRef.current.pause()
+      setPlayingTrackUrl(null)
+    } else {
+      setPlayingTrackUrl(fileUrl)
+      // Преобразуем относительный путь сервера в полный URL при необходимости
+      const fullUrl = fileUrl.startsWith('http') ? fileUrl : `/${fileUrl}`
+      
+      if (audioRef.current) {
+        audioRef.current.src = fullUrl
+        audioRef.current.play()
+        audioRef.current.onended = () => setPlayingTrackUrl(null)
+      }
     }
-
-    return () => vkBridge.unsubscribe(handleBridgeEvents)
-  }, [isSpeakerA, currentRoom?._id, dispatch])
-
-  // 3. Нативный метод старта/подключения к звонку
-  const handleOpenVkCall = (evt) => {
-  evt.preventDefault()
-
-  if (!currentRoom?.vkCallLink) {
-    alert('Звонок ещё создаётся. Подождите пару секунд и попробуйте снова.')
-    return
   }
 
-  // Speaker B — подключается через VKWebAppCallJoin
-  if (!isSpeakerA) {
-    if (!vkBridge.supports('VKWebAppCallJoin')) {
-      alert('Ваше приложение не поддерживает звонки. Обновите VK до последней версии.')
-      return
+  // Обновление стейта при успешной отправке трека из дочернего компонента
+  const handleUploadSuccess = () => {
+    if (roomId) {
+      dispatch(fetchCheckRoomStatus({ roomId }))
     }
-
-    vkBridge
-      .send('VKWebAppCallJoin', {
-        join_link: currentRoom.vkCallLink,
-      })
-      .then((data) => {
-        console.log('[QA] VKWebAppCallJoin success:', data)
-        if (data.result) {
-          console.log('[QA] Call join accepted. Check for popup blocker or new tab.')
-        }
-      })
-      .catch((err) => {
-        console.error('[QA] VKWebAppCallJoin FAILED:', err)
-        if (err.error_data?.error_code === 13) {
-          alert('Вы уже в звонке. Закройте предыдущий звонок и попробуйте снова.')
-        } else if (err.error_data?.error_code === 11) {
-          alert('Нет доступа к микрофону. Разрешите доступ в настройках браузера.')
-        } else {
-          alert('Не удалось подключиться к звонку. Код: ' + (err.error_data?.error_code || 'unknown'))
-        }
-      })
-    return
   }
 
-  // Speaker A — уже в звонке после VKWebAppCallStart
-  if (vkBridge.supports('VKWebAppCallJoin')) {
-    vkBridge
-      .send('VKWebAppCallJoin', {
-        join_link: currentRoom.vkCallLink,
-      })
-      .catch((err) => console.error('[QA] Speaker A rejoin failed:', err))
-  }
-}
-
-  const handleCloseRoom = () => {
-    dispatch(resetLiveDuelState())
-  }
-
-  // Колбэк, который вызывается при успешном голосовании в дочернем компоненте
+  // Колбэк успешного завершения голосования
   const handleVoteSuccess = (data) => {
     setRewardsData(data)
-    setShowRewardModal(true) // Показываем модалку!
+    setShowRewardModal(true)
   }
 
   const handleCloseModal = () => {
     setShowRewardModal(false)
-    dispatch(resetLiveDuelState()) // Очищаем стейт дуэлей и выходим в меню
+    dispatch(resetLiveDuelState())
   }
 
   return (
     <div className={styles.duel_room_container}>
-      {/* Шапка и таймер поединка */}
-      <LiveRoomHeader
-        currentRound={currentRound}
-        timeLeft={timeLeft}
-      />
+      {/* Скрытый тег для воспроизведения сообщений из чата */}
+      <audio ref={audioRef} style={{ display: 'none' }} />
 
-      {/* Карточка текущей темы дискуссии */}
+      {/* Статус-бар ходов баттла */}
+      <LiveRoomHeader currentRound={currentRound} timeLeft={0} />
+
+      {/* Карточка темы и тезис текущего оратора */}
       <LiveRoomTopic topic={currentRoom?.topic} mySide={mySide} />
 
-      {/* Переключение экранов: активная игра / финал с оценками */}
-      {currentRound !== 'feedback' ? (
-        <LiveRoomPipGuide
-          currentRound={currentRound}
-          isSpeakerA={isSpeakerA}
-          onOpenVkCall={handleOpenVkCall}
-        />
-      ) : (
-        <LiveRoomFeedback
-          roomId={roomId}
-          currentRoom={currentRoom} // Возвращаем для расчета фолбэков
-          onVoteSuccess={handleVoteSuccess}
-        />
-      )}
+      {/* Блок асинхронного аудиочата */}
+      <div className={styles.chat_timeline_card}>
+        <h4 className={styles.timeline_title}>
+          <FiVolume2 /> История реплик поединка ({tracksCount} из 4)
+        </h4>
+        
+        {tracksCount === 0 ? (
+          <div className={styles.empty_chat_hint}>
+            История пуста. Спикер А должен записать вступительный монолог.
+          </div>
+        ) : (
+          <div className={styles.tracks_list}>
+            {audioTracks.map((track, idx) => {
+              const isTrackFromMe = track.sender === currentUserId
+              return (
+                <div 
+                  key={idx} 
+                  className={`${styles.track_bubble_row} ${isTrackFromMe ? styles.row_my : styles.row_opponent}`}
+                >
+                  <div className={styles.avatar_mini}>
+                    <FiUser />
+                  </div>
+                  <div className={styles.track_bubble}>
+                    <span className={styles.speaker_name_label}>
+                      {isTrackFromMe ? 'Вы' : 'Оппонент'} (Реплика #{idx + 1})
+                    </span>
+                    <button 
+                      className={styles.play_bubble_btn}
+                      onClick={() => handlePlayTrack(track.fileUrl)}
+                    >
+                      {playingTrackUrl === track.fileUrl ? <FiPause /> : <FiPlay />}
+                      <span>{playingTrackUrl === track.fileUrl ? 'Пауза' : 'Слушать аргумент'}</span>
+                    </button>
+                    <span className={styles.track_time}>
+                      {new Date(track.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
 
-      {/* РЕНДЕР МОДАЛКИ: Переносим сюда под управление корневого стейта */}
+      {/* Интерактивная зона действий: Ход / Ожидание ходов / Финал */}
+      <div className={styles.action_zone_wrapper}>
+        {currentRound !== 'feedback' ? (
+          <div className={styles.recorder_status_box}>
+            {isMyTurn ? (
+              <div className={styles.my_turn_active_box}>
+                <div className={styles.turn_alert_text}>👉 Сейчас ваш ход! Запишите аудио-ответ:</div>
+                <LiveRoomAudioRecorder 
+                  roomId={roomId} 
+                  onUploadSuccess={handleUploadSuccess} 
+                />
+              </div>
+            ) : (
+              <div className={styles.opponent_turn_waiting_box}>
+                <div className={styles.spinner_mini}></div>
+                <p className={styles.waiting_text}>
+                  ⏳ Оппонент формулирует мысль. Ожидайте появление аудио-реплики...
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          /* Экран взаимного оценивания после 4 реплик */
+          <LiveRoomFeedback
+            roomId={roomId}
+            currentRoom={currentRoom}
+            onVoteSuccess={handleVoteSuccess}
+          />
+        )}
+      </div>
+
+      {/* Итоговое премиум-окно награждения за баттл */}
       {showRewardModal && rewardsData && (
         <LiveRoomRewardModal
           data={rewardsData}

@@ -18,7 +18,7 @@ const liveDuelSchema = new mongoose.Schema({
   // Тип создания комнаты
   creationType: {
     type: String,
-    enum: ['quick_search', 'direct_link', 'calendar'], // Значения enum оставляем как в БД
+    enum: ['quick_search', 'direct_link'], // Значения enum оставляем как в БД
     required: true,
   },
   // Выбранная тема дискуссии
@@ -29,11 +29,17 @@ const liveDuelSchema = new mongoose.Schema({
   },
   // Специфические поля для разных механик
   inviteToken: { type: String, unique: true, sparse: true }, // Для Механики 4 (ссылка)
-  scheduledAt: { type: Date, index: true }, // Для Механики 2 (календарь)
-
-  // === ОБНОВЛЕННЫЕ ПОЛЯ ПОД СТАНДАРТ VK CALLS ===
-  vkCallLink: { type: String, default: '' }, // Реальная ссылка из VKWebAppCallStart
-  vkCallId: { type: String, default: '' },   // ID сессии звонка для аналитики
+  audioTracks: [
+    {
+      sender: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      fileUrl: { type: String, required: true },
+      timestamp: { type: Date, default: Date.now },
+    },
+  ],
 
   ratingFromA: {
     type: Number,
@@ -58,9 +64,7 @@ const liveDuelSchema = new mongoose.Schema({
     index: true,
   },
 
- 
   createdAt: { type: Date, default: Date.now },
 })
 
 export default mongoose.model('LiveDuel', liveDuelSchema)
- 

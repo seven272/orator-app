@@ -1,11 +1,10 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { FiZap, FiLink, FiCalendar, FiSearch } from 'react-icons/fi'
+import { FiZap, FiLink } from 'react-icons/fi'
 import { FaVk } from 'react-icons/fa'
 import {
   fetchCreateLiveRoom,
   fetchJoinLiveRoom,
-  setSearchStatus,
 } from '../../../../redux/slices/liveDuelSlice'
 import styles from './LiveDuelSelection.module.css'
 
@@ -14,7 +13,7 @@ const LiveDuelSelection = () => {
   const { loading, error } = useSelector((state) => state.liveDuel)
 
   const handleQuickSearch = () => {
-    // 1. Сначала пробуем подключиться к кому-то
+    // 1. Сначала пробуем подключиться к кому-то свободным оратором
     dispatch(fetchJoinLiveRoom({}))
       .unwrap()
       .then((res) => {
@@ -40,23 +39,18 @@ const LiveDuelSelection = () => {
     dispatch(fetchCreateLiveRoom({ creationType: 'direct_link' }))
   }
 
-  const handleGoFormCreateSlot = () => {
-    dispatch(setSearchStatus('slot_create'))
-  }
-
-  const handleGoCalendar = () => {
-    dispatch(setSearchStatus('slots_list'))
-  }
-
   return (
     <div className={styles.selection_container}>
+      {/* 🛠️ Изменено: Видео Дуэли переименованы в Голосовые Баттлы */}
       <h1 className={styles.main_title}>
-        Видео Дуэли <FaVk className={styles.vk_icon} />
+        Голосовые Баттлы <FaVk className={styles.vk_icon} />
       </h1>
+      
+      {/* 🛠️ Изменено: Обновлено описание под асинхронный аудио-формат */}
       <p className={styles.main_description}>
         Парные поединки по ораторскому искусству внутри ВКонтакте.
-        Бросайте вызов сильнейшим оппонентам, защищайте свои убеждения
-        и прокачивайте харизму в живом диалоге.
+        Бросайте вызов оппонентам в удобном формате аудиосообщений, 
+        защищайте свои убеждения и прокачивайте харизму не выходя из чата.
       </p>
 
       {error && <div className={styles.error_banner}>{error}</div>}
@@ -69,7 +63,7 @@ const LiveDuelSelection = () => {
         >
           <FiZap className={styles.btn_icon_flash} />
           <span>
-            {loading ? 'Инициализация...' : 'Быстрый поиск пары'}
+            {loading ? 'Инициализация...' : 'Быстро найти пару'}
           </span>
         </button>
 
@@ -81,24 +75,8 @@ const LiveDuelSelection = () => {
           <FiLink className={styles.btn_icon} />
           <span>Создать ссылку-приглашение</span>
         </button>
-
-        <button
-          className={styles.menu_button_secondary}
-          onClick={handleGoFormCreateSlot}
-          disabled={loading}
-        >
-          <FiCalendar className={styles.btn_icon} />
-          <span>Запланировать встречу</span>
-        </button>
-
-        <button
-          className={styles.menu_button_secondary}
-          onClick={handleGoCalendar}
-          disabled={loading}
-        >
-          <FiSearch className={styles.btn_icon} />
-          <span>Расписание поединков</span>
-        </button>
+        
+        {/* Кнопки календаря и запланированных встреч полностью удалены */}
       </div>
     </div>
   )

@@ -16,6 +16,13 @@ const storage = multer.diskStorage({
         fs.mkdirSync('./src/uploads/avatars')
       }
       cb(null, './src/uploads/avatars/')
+    } else if (file.fieldname === 'audio') {
+      // проверка на наличие папки
+      if (!fs.existsSync('./src/uploads/audio')) {
+        console.log('Папки other не существует, создаю ее')
+        fs.mkdirSync('./src/uploads/audio')
+      }
+      cb(null, './src/uploads/audio/')
     } else if (file.fieldname === 'other') {
       // проверка на наличие папки
       if (!fs.existsSync('./src/uploads/other')) {
@@ -51,6 +58,9 @@ const fileFilter = (req, file, cb) => {
     'audio/wav',
     'audio/mp3',
     'audio/mpeg',
+    'audio/webm',
+    'audio/ogg',
+    'audio/opus'
   ]
 
   if (allowedTypes.includes(file.mimetype)) {

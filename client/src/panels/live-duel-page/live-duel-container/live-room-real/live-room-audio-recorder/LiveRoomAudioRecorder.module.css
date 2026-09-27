@@ -1,0 +1,248 @@
+.recorder_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   🎙️ ФАЗА 1: ПРОЦЕСС ЗАПИСИ АКТИВЕН
+   ========================================== */
+.recording_pulse_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  background-color: rgba(243, 4, 4, 0.05);
+  border: 1px solid rgba(243, 4, 4, 0.15);
+  padding: 24px;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.pulse_dot {
+  width: 16px;
+  height: 16px;
+  background-color: #f30404;
+  border-radius: 50%;
+  animation: recordingPulse 1.4s infinite ease-in-out;
+}
+
+.recording_text {
+  font: var(--font-ml);
+  font-family: var(--font-family-subtitle);
+  color: #f30404;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.btn_stop {
+  background: #f30404;
+  color: var(--color-white);
+  font: var(--font-m);
+  font-family: var(--font-family-title);
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(243, 4, 4, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn_stop:hover {
+  background: #d60303;
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+   ⏳ ФАЗА 2: ОЖИДАНИЕ СТАРТА ЗАПИСИ
+   ========================================== */
+.idle_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hint_text {
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.btn_start {
+  background: linear-gradient(135deg, var(--color-blue-vk) 0%, #1a72cb 100%);
+  color: var(--color-white);
+  font: var(--font-ml);
+  font-family: var(--font-family-title);
+  border: none;
+  padding: 16px;
+  border-radius: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 8px 20px rgba(38, 136, 235, 0.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn_start:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(38, 136, 235, 0.35);
+}
+
+.btn_start:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.mic_icon {
+  animation: staticMicFloat 2s infinite ease-in-out;
+}
+
+/* ==========================================
+   🎧 ФАЗА 3: ПРЕДПРОСЛУШИВАНИЕ И ОТПРАВКА
+   ========================================== */
+.preview_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  background-color: var(--color-white);
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  padding: 20px;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.preview_title {
+  font: var(--font-m);
+  font-family: var(--font-family-title);
+  color: var(--font-color-dark);
+  margin: 0;
+  text-align: center;
+}
+
+.preview_actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.btn_play {
+  background-color: rgba(52, 199, 89, 0.08);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+  color: var(--color-green);
+  font: var(--font-s);
+  font-family: var(--font-family-subtitle);
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease-in-out;
+  flex: 1;
+  justify-content: center;
+}
+
+.btn_play:hover {
+  background-color: rgba(52, 199, 89, 0.15);
+}
+
+.btn_reset {
+  background-color: var(--color-bg-layout);
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  color: var(--color-text-secondary);
+  font: var(--font-s);
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn_reset:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+.btn_send {
+  background: linear-gradient(135deg, #34c759 0%, #28a745 100%);
+  color: var(--color-white);
+  font: var(--font-ml);
+  font-family: var(--font-family-title);
+  border: none;
+  padding: 16px;
+  border-radius: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 8px 20px rgba(52, 199, 89, 0.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn_send:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(52, 199, 89, 0.35);
+}
+
+.btn_send:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ==========================================
+   ⚠️ СЕРВИСНЫЕ БАННЕРЫ И АНИМАЦИИ
+   ========================================== */
+.error_banner {
+  font: var(--font-s);
+  color: #f30404;
+  background-color: rgba(243, 4, 4, 0.05);
+  border: 1px solid rgba(243, 4, 4, 0.15);
+  padding: 14px;
+  border-radius: 12px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1.4;
+}
+
+@keyframes recordingPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(243, 4, 4, 0.4);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 12px rgba(243, 4, 4, 0);
+  }
+}
+
+@keyframes staticMicFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
