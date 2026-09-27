@@ -18,7 +18,7 @@ import styles from './LiveRoomReal.module.css'
 
 const LiveRoomReal = () => {
   const dispatch = useDispatch()
-  
+
   const { currentRoom } = useSelector((state) => state.liveDuel)
   const currentUserId = useSelector(
     (state) => state.profile?.user?._id || state.auth?.user?._id,
@@ -36,11 +36,13 @@ const LiveRoomReal = () => {
   const [currentRound, setCurrentRound] = useState('intro')
   const [timeLeft, setTimeLeft] = useState(ROUND_TIMES.intro)
 
-   const [showRewardModal, setShowRewardModal] = useState(false)
-const [rewardsData, setRewardsData] = useState(null)
+  const [showRewardModal, setShowRewardModal] = useState(false)
+  const [rewardsData, setRewardsData] = useState(null)
 
   const timerRef = useRef(null)
   const roomId = currentRoom?._id
+
+  const callInitiatedRef = useRef(false)
 
   // Определение роли текущего оратора
   const isSpeakerA = currentRoom?.userA === currentUserId
@@ -75,124 +77,104 @@ const [rewardsData, setRewardsData] = useState(null)
     return () => clearInterval(timerRef.current)
   }, [currentRound])
 
-  // 2. Интеграция с нативными звонками и слушателями VK Bridge
-  // useEffect(() => {
-  //   // Игрок А автоматически инициирует создание звонка при старте комнаты
-  //   if (isSpeakerA && !currentRoom?.vkCallLink) {
-  //     if (vkBridge.supports('VKWebAppCallStart')) {
-  //       vkBridge
-  //         .send('VKWebAppCallStart', {})
-  //         .then((data) => {
-  //           if (data.call_link) {
-  //             dispatch(
-  //               fetchUpdateCallLink({
-  //                 roomId: currentRoom._id,
-  //                 vkCallLink: data.call_link,
-  //                 vkCallId: data.call_id || '',
-  //               }),
-  //             )
-  //           }
-  //         })
-  //         .catch((err) => console.error('Ошибка VKWebAppCallStart:', err))
-  //     }
-  //   }
-
-  //   // Слушатель завершения нативной сессии звонка
-  //   const handleBridgeEvents = (e) => {
-  //     const { type } = e.detail
-  //     if (type === 'VKWebAppCallLeft' || type === 'VKWebAppCallFinished') {
-  //       console.log('Поединок завершен на платформе ВК:', type)
-  //       setCurrentRound('feedback')
-  //     }
-  //   }
-
-  //   vkBridge.subscribe(handleBridgeEvents)
-  //   return () => vkBridge.unsubscribe(handleBridgeEvents)
-  // }, [isSpeakerA, currentRoom?._id, currentRoom?.vkCallLink, dispatch])
-  // === ВНУТРИ LiveRoomReal.jsx ===
-
-
-// TEST START
 useEffect(() => {
-  // Игрок А: логируем попытку и результат вызова VKWebAppCallStart
-  if (isSpeakerA && !currentRoom?.vkCallLink) {
-    console.log('%c[QA TEST] Игрок А: Инициализация VKWebAppCallStart...', 'color: #007aff; font-weight: bold;');
-    
-    if (vkBridge.supports('VKWebAppCallStart')) {
-      vkBridge
-        .send('VKWebAppCallStart', {})
-        .then((data) => {
-          console.log('%c[QA TEST] VKWebAppCallStart УСПЕХ. Полученные данные:', 'color: #34c759; font-weight: bold;', data);
-          
-          if (data.call_link) {
-            console.log(`%c[QA TEST] Отправка ссылки звонка на бэкенд для комнаты: ${currentRoom._id}`, 'color: #ffbd12;');
-            
-            // Логируем сам сетевой запрос через Thunk
-            dispatch(fetchUpdateCallLink({
-              roomId: currentRoom._id,
-              vkCallLink: data.call_link,
-              vkCallId: data.call_id || ''
-            }))
-            .unwrap()
-            .then((res) => {
-              console.log('%c[QA TEST] Бэкенд УСПЕШНО сохранил ссылку в MongoDB:', 'color: #34c759;', res);
-            })
-            .catch((backendErr) => {
-              console.error('%c[QA TEST] КРИТИЧЕСКАЯ ОШИБКА БЭКЕНДА при сохранении ссылки:', 'color: #f30404; font-weight: bold;', backendErr);
-            });
-          } else {
-            console.warn('%c[QA TEST] ПРЕДУПРЕЖДЕНИЕ: VK вернул пустой call_link!', 'color: #ffbd12;');
-          }
-        })
-        .catch((err) => {
-          console.error('%c[QA TEST] ОШИБКА VK BRIDGE при вызове VKWebAppCallStart:', 'color: #f30404; font-weight: bold;', err);
-        });
-    } else {
-      console.error('%c[QA TEST] ОШИБКА: Платформа не поддерживает VKWebAppCallStart!', 'color: #f30404;');
+  // --- Слушатель событий завершения звонка ---
+  const handleBridgeEvents = (e) => {
+    const { type, data } = e.detail
+    console.log(`[QA] VK Bridge event: ${type}`, data)
+
+    if (type === 'VKWebAppCallLeft' || type === 'VKWebAppCallFinished') {
+      console.log(`[QA] Call ended via ${type}. Switching to feedback.`)
+      setCurrentRound('feedback')
     }
   }
 
-  // Слушатель событий завершения звонка со стороны ВК
-  const handleBridgeEvents = (e) => {
-    const { type, data } = e.detail;
-    // Логируем абсолютно все входящие события от Bridge для отладки
-    console.log(`%c[QA TEST] Получено событие от VK Bridge: ${type}`, 'color: #8e9bae;', data);
-    
-    if (type === 'VKWebAppCallLeft' || type === 'VKWebAppCallFinished') {
-      console.log(`%c[QA TEST] Триггер финала запущен событием: ${type}. Переключаем раунд на feedback.`, 'color: #ff89bb; font-weight: bold;');
-      setCurrentRound('feedback');
-    }
-  };
+  vkBridge.subscribe(handleBridgeEvents)
 
-  vkBridge.subscribe(handleBridgeEvents);
-  return () => vkBridge.unsubscribe(handleBridgeEvents);
-}, [isSpeakerA, currentRoom?._id, currentRoom?.vkCallLink, dispatch]);
-// TEST FINISH
+  // --- Инициация звонка для Speaker A (один раз) ---
+  if (isSpeakerA && !currentRoom?.vkCallLink && !callInitiatedRef.current) {
+    callInitiatedRef.current = true
+    console.log('[QA] Speaker A: initiating VKWebAppCallStart...')
+
+    if (!vkBridge.supports('VKWebAppCallStart')) {
+      console.error('[QA] Platform does not support VKWebAppCallStart')
+      return
+    }
+
+    vkBridge
+      .send('VKWebAppCallStart', {})
+      .then((data) => {
+        console.log('[QA] VKWebAppCallStart success:', data)
+
+        if (data.call_link) {
+          dispatch(
+            fetchUpdateCallLink({
+              roomId: currentRoom._id,
+              vkCallLink: data.call_link,
+              vkCallId: data.call_id || '',
+            }),
+          )
+            .unwrap()
+            .then((res) => console.log('[QA] Backend saved call link', res))
+            .catch((err) =>
+              console.error('[QA] Backend error saving call link', err),
+            )
+        } else {
+          console.warn('[QA] VK returned empty call_link')
+        }
+      })
+      .catch((err) =>
+        console.error('[QA] VK Bridge error on VKWebAppCallStart', err),
+      )
+  }
+
+  return () => vkBridge.unsubscribe(handleBridgeEvents)
+}, [isSpeakerA, currentRoom?._id, dispatch])
+
 
   // 3. Нативный метод старта/подключения к звонку
   const handleOpenVkCall = (evt) => {
     evt.preventDefault()
 
     if (!currentRoom?.vkCallLink) {
-      alert('Синхронизация звонка оппонентом, пожалуйста, подождите...')
+      alert(
+        'Звонок ещё создаётся. Подождите пару секунд и попробуйте снова.',
+      )
       return
     }
 
-    if (!isSpeakerA && vkBridge.supports('VKWebAppCallJoin')) {
+    // Speaker B — подключается через VKWebAppCallJoin
+    if (!isSpeakerA) {
+      if (!vkBridge.supports('VKWebAppCallJoin')) {
+        alert(
+          'Ваше приложение не поддерживает звонки. Обновите VK до последней версии.',
+        )
+        return
+      }
+
       vkBridge
         .send('VKWebAppCallJoin', {
-          call_link: currentRoom.vkCallLink,
+          join_link: currentRoom.vkCallLink, // ← join_link, не call_link!
         })
         .catch((err) => {
-          console.error('Ошибка VKWebAppCallJoin, фолбэк на OpenURL:', err)
-          vkBridge.send('VKWebAppOpenURL', { url: currentRoom.vkCallLink })
+          console.error('[QA] VKWebAppCallJoin failed:', err)
+          alert(
+            'Не удалось подключиться к звонку. Попробуйте перезагрузить мини-приложение.',
+          )
         })
-    } else {
-      if (vkBridge.supports('VKWebAppOpenURL')) {
-        vkBridge.send('VKWebAppOpenURL', { url: currentRoom.vkCallLink })
-      } else {
-        window.open(currentRoom.vkCallLink, '_blank', 'noopener,noreferrer')
-      }
+      return
+    }
+
+    // Speaker A — уже в звонке после VKWebAppCallStart
+    // Если нужно повторно открыть интерфейс звонка, можно вызвать CallJoin со своей же ссылкой
+    if (vkBridge.supports('VKWebAppCallJoin')) {
+      vkBridge
+        .send('VKWebAppCallJoin', {
+          join_link: currentRoom.vkCallLink,
+        })
+        .catch((err) =>
+          console.error('[QA] Speaker A rejoin failed:', err),
+        )
     }
   }
 
@@ -201,44 +183,49 @@ useEffect(() => {
   }
 
   // Колбэк, который вызывается при успешном голосовании в дочернем компоненте
-const handleVoteSuccess = (data) => {
-  setRewardsData(data)
-  setShowRewardModal(true) // Показываем модалку!
-}
+  const handleVoteSuccess = (data) => {
+    setRewardsData(data)
+    setShowRewardModal(true) // Показываем модалку!
+  }
 
-const handleCloseModal = () => {
-  setShowRewardModal(false)
-  dispatch(resetLiveDuelState()) // Очищаем стейт дуэлей и выходим в меню
-}
+  const handleCloseModal = () => {
+    setShowRewardModal(false)
+    dispatch(resetLiveDuelState()) // Очищаем стейт дуэлей и выходим в меню
+  }
 
   return (
     <div className={styles.duel_room_container}>
       {/* Шапка и таймер поединка */}
-      <LiveRoomHeader currentRound={currentRound} timeLeft={timeLeft} />
+      <LiveRoomHeader
+        currentRound={currentRound}
+        timeLeft={timeLeft}
+      />
 
       {/* Карточка текущей темы дискуссии */}
       <LiveRoomTopic topic={currentRoom?.topic} mySide={mySide} />
 
       {/* Переключение экранов: активная игра / финал с оценками */}
       {currentRound !== 'feedback' ? (
-      <LiveRoomPipGuide
-        currentRound={currentRound}
-        isSpeakerA={isSpeakerA}
-        onOpenVkCall={handleOpenVkCall}
-      />
-    ) : (
-      <LiveRoomFeedback
-        roomId={roomId}
-    currentRoom={currentRoom} // Возвращаем для расчета фолбэков
-    
-    onVoteSuccess={handleVoteSuccess}
-      />
-    )}
+        <LiveRoomPipGuide
+          currentRound={currentRound}
+          isSpeakerA={isSpeakerA}
+          onOpenVkCall={handleOpenVkCall}
+        />
+      ) : (
+        <LiveRoomFeedback
+          roomId={roomId}
+          currentRoom={currentRoom} // Возвращаем для расчета фолбэков
+          onVoteSuccess={handleVoteSuccess}
+        />
+      )}
 
-    {/* РЕНДЕР МОДАЛКИ: Переносим сюда под управление корневого стейта */}
-    {showRewardModal && rewardsData && (
-      <LiveRoomRewardModal data={rewardsData} onClose={handleCloseModal} />
-    )}
+      {/* РЕНДЕР МОДАЛКИ: Переносим сюда под управление корневого стейта */}
+      {showRewardModal && rewardsData && (
+        <LiveRoomRewardModal
+          data={rewardsData}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   )
 }
