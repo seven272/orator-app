@@ -77,60 +77,79 @@ const LiveRoomReal = () => {
     return () => clearInterval(timerRef.current)
   }, [currentRound])
 
-useEffect(() => {
-  // --- Слушатель событий завершения звонка ---
-  const handleBridgeEvents = (e) => {
-    const { type, data } = e.detail
-    console.log(`[QA] VK Bridge event: ${type}`, data)
+  useEffect(() => {
+    // --- Слушатель событий завершения звонка ---
+    const handleBridgeEvents = (e) => {
+      const { type, data } = e.detail
+      console.log(`[QA] VK Bridge event: ${type}`, data)
 
-    if (type === 'VKWebAppCallLeft' || type === 'VKWebAppCallFinished') {
-      console.log(`[QA] Call ended via ${type}. Switching to feedback.`)
-      setCurrentRound('feedback')
-    }
-  }
-
-  vkBridge.subscribe(handleBridgeEvents)
-
-  // --- Инициация звонка для Speaker A (один раз) ---
-  if (isSpeakerA && !currentRoom?.vkCallLink && !callInitiatedRef.current) {
-    callInitiatedRef.current = true
-    console.log('[QA] Speaker A: initiating VKWebAppCallStart...')
-
-    if (!vkBridge.supports('VKWebAppCallStart')) {
-      console.error('[QA] Platform does not support VKWebAppCallStart')
-      return
+      if (
+        type === 'VKWebAppCallLeft' ||
+        type === 'VKWebAppCallFinished'
+      ) {
+        console.log(
+          `[QA] Call ended via ${type}. Switching to feedback.`,
+        )
+        setCurrentRound('feedback')
+      }
     }
 
-    vkBridge
-      .send('VKWebAppCallStart', {})
-      .then((data) => {
-        console.log('[QA] VKWebAppCallStart success:', data)
+    vkBridge.subscribe(handleBridgeEvents)
 
-        if (data.call_link) {
-          dispatch(
-            fetchUpdateCallLink({
-              roomId: currentRoom._id,
-              vkCallLink: data.call_link,
-              vkCallId: data.call_id || '',
-            }),
-          )
-            .unwrap()
-            .then((res) => console.log('[QA] Backend saved call link', res))
-            .catch((err) =>
-              console.error('[QA] Backend error saving call link', err),
+    // --- Инициация звонка для Speaker A (один раз) ---
+    if (
+      isSpeakerA &&
+      !currentRoom?.vkCallLink &&
+      !callInitiatedRef.current
+    ) {
+      callInitiatedRef.current = true
+      console.log('[QA] Speaker A: initiating VKWebAppCallStart...')
+
+      if (!vkBridge.supports('VKWebAppCallStart')) {
+        console.error(
+          '[QA] Platform does not support VKWebAppCallStart',
+        )
+        return
+      }
+
+      vkBridge
+        .send('VKWebAppCallStart', {})
+        .then((data) => {
+          console.log('[QA] VKWebAppCallStart success:', data)
+
+          const joinLink = data.join_link
+          if (joinLink) {
+            dispatch(
+              fetchUpdateCallLink({
+                roomId: currentRoom._id,
+                vkCallLink: joinLink, // ← сохраняем join_link
+                vkCallId: data.call_id || '',
+              }),
             )
-        } else {
-          console.warn('[QA] VK returned empty call_link')
-        }
-      })
-      .catch((err) =>
-        console.error('[QA] VK Bridge error on VKWebAppCallStart', err),
-      )
-  }
+              .unwrap()
+              .then((res) =>
+                console.log('[QA] Backend saved call link', res),
+              )
+              .catch((err) =>
+                console.error(
+                  '[QA] Backend error saving call link',
+                  err,
+                ),
+              )
+          } else {
+            console.warn('[QA] VK returned empty call_link')
+          }
+        })
+        .catch((err) =>
+          console.error(
+            '[QA] VK Bridge error on VKWebAppCallStart',
+            err,
+          ),
+        )
+    }
 
-  return () => vkBridge.unsubscribe(handleBridgeEvents)
-}, [isSpeakerA, currentRoom?._id, dispatch])
-
+    return () => vkBridge.unsubscribe(handleBridgeEvents)
+  }, [isSpeakerA, currentRoom?._id, dispatch])
 
   // 3. Нативный метод старта/подключения к звонку
   const handleOpenVkCall = (evt) => {
