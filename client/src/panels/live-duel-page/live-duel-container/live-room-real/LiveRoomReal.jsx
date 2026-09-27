@@ -153,49 +153,52 @@ const LiveRoomReal = () => {
 
   // 3. Нативный метод старта/подключения к звонку
   const handleOpenVkCall = (evt) => {
-    evt.preventDefault()
+  evt.preventDefault()
 
-    if (!currentRoom?.vkCallLink) {
-      alert(
-        'Звонок ещё создаётся. Подождите пару секунд и попробуйте снова.',
-      )
-      return
-    }
-
-    // Speaker B — подключается через VKWebAppCallJoin
-    if (!isSpeakerA) {
-      if (!vkBridge.supports('VKWebAppCallJoin')) {
-        alert(
-          'Ваше приложение не поддерживает звонки. Обновите VK до последней версии.',
-        )
-        return
-      }
-
-      vkBridge
-        .send('VKWebAppCallJoin', {
-          join_link: currentRoom.vkCallLink, // ← join_link, не call_link!
-        })
-        .catch((err) => {
-          console.error('[QA] VKWebAppCallJoin failed:', err)
-          alert(
-            'Не удалось подключиться к звонку. Попробуйте перезагрузить мини-приложение.',
-          )
-        })
-      return
-    }
-
-    // Speaker A — уже в звонке после VKWebAppCallStart
-    // Если нужно повторно открыть интерфейс звонка, можно вызвать CallJoin со своей же ссылкой
-    if (vkBridge.supports('VKWebAppCallJoin')) {
-      vkBridge
-        .send('VKWebAppCallJoin', {
-          join_link: currentRoom.vkCallLink,
-        })
-        .catch((err) =>
-          console.error('[QA] Speaker A rejoin failed:', err),
-        )
-    }
+  if (!currentRoom?.vkCallLink) {
+    alert('Звонок ещё создаётся. Подождите пару секунд и попробуйте снова.')
+    return
   }
+
+  // Speaker B — подключается через VKWebAppCallJoin
+  if (!isSpeakerA) {
+    if (!vkBridge.supports('VKWebAppCallJoin')) {
+      alert('Ваше приложение не поддерживает звонки. Обновите VK до последней версии.')
+      return
+    }
+
+    vkBridge
+      .send('VKWebAppCallJoin', {
+        join_link: currentRoom.vkCallLink,
+      })
+      .then((data) => {
+        console.log('[QA] VKWebAppCallJoin success:', data)
+        if (data.result) {
+          console.log('[QA] Call join accepted. Check for popup blocker or new tab.')
+        }
+      })
+      .catch((err) => {
+        console.error('[QA] VKWebAppCallJoin FAILED:', err)
+        if (err.error_data?.error_code === 13) {
+          alert('Вы уже в звонке. Закройте предыдущий звонок и попробуйте снова.')
+        } else if (err.error_data?.error_code === 11) {
+          alert('Нет доступа к микрофону. Разрешите доступ в настройках браузера.')
+        } else {
+          alert('Не удалось подключиться к звонку. Код: ' + (err.error_data?.error_code || 'unknown'))
+        }
+      })
+    return
+  }
+
+  // Speaker A — уже в звонке после VKWebAppCallStart
+  if (vkBridge.supports('VKWebAppCallJoin')) {
+    vkBridge
+      .send('VKWebAppCallJoin', {
+        join_link: currentRoom.vkCallLink,
+      })
+      .catch((err) => console.error('[QA] Speaker A rejoin failed:', err))
+  }
+}
 
   const handleCloseRoom = () => {
     dispatch(resetLiveDuelState())
