@@ -764,11 +764,18 @@ const updateCallLink = async (req, res) => {
   try {
     const { roomId, vkCallLink, vkCallId } = req.body
     const userId = req.userId
+ console.log(`\n=== [BACKEND QA] Попытка обновления ссылки звонка ===`)
+    console.log(`Комната (roomId): ${roomId}`)
+    console.log(`Кто отправляет (userId): ${userId}`)
+    console.log(`Ссылка от VK (vkCallLink): ${vkCallLink}`)
+    console.log(`ID сессии VK (vkCallId): ${vkCallId || 'не передан'}`)
+
 
     // Находим комнату, где текущий пользователь является создателем (UserA)
     const room = await LiveDuel.findOne({ _id: roomId, userA: userId })
     
     if (!room) {
+      console.warn(`[BACKEND QA] ПРЕДУПРЕЖДЕНИЕ: Комната ${roomId} не найдена или пользователь ${userId} не является создателем (UserA)!`)
       return res.status(404).json({
         success: false,
         message: 'Комната не найдена или вы не являетесь её создателем',
@@ -778,8 +785,10 @@ const updateCallLink = async (req, res) => {
     room.vkCallLink = vkCallLink
     if (vkCallId) room.vkCallId = vkCallId
     
-    await room.save()
 
+
+    await room.save()
+ console.log(`%c[BACKEND QA] УСПЕХ: Ссылка звонка для комнаты ${roomId} успешно сохранена в MongoDB.`, 'color: #34c759;')
     return res.status(200).json({ success: true, room })
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message })

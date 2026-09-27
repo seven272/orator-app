@@ -1,0 +1,43 @@
+.topic_card {
+  background-color: var(--color-white);
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.02);
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.topic_label {
+  font: var(--font-s);
+  font-family: var(--font-family-subtitle);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0 0 8px 0;
+}
+
+.topic_title {
+  font: var(--font-title);
+  font-family: var(--font-family-title);
+  color: var(--font-color-dark);
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+}
+
+.my_position_box {
+  font: var(--font-m);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-layout);
+  border-left: 3px solid var(--color-blue-vk);
+  padding: 10px 14px;
+  border-radius: 0 10px 10px 0;
+  display: block;
+  line-height: 1.5;
+}
+
+.side_highlight {
+  color: var(--color-blue-vk);
+  font-family: var(--font-family-subtitle);
+  font-weight: 600;
+}

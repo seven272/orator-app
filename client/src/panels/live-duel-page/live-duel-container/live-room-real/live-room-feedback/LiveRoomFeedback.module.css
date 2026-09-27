@@ -1,0 +1,183 @@
+.feedback_block {
+  background-color: var(--color-white);
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.02);
+  box-sizing: border-box;
+  width: 100%;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.feedback_title {
+  font: var(--font-title);
+  font-family: var(--font-family-title);
+  color: var(--font-color-dark);
+  margin: 0 0 8px 0;
+}
+
+.feedback_description {
+  font: var(--font-m-light);
+  color: var(--color-text-secondary);
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.rating_buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.rating_btn {
+  flex: 1;
+  background-color: var(--color-white);
+  border: 1px solid rgba(178, 215, 255, 0.5);
+  color: var(--color-text-primary);
+  font: var(--font-m);
+  font-family: var(--font-family-subtitle);
+  font-weight: 600;
+  padding: 14px 0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rating_btn:hover:not(:disabled) {
+  border-color: var(--color-blue-vk);
+  background-color: var(--color-bg);
+  color: var(--color-blue-vk);
+}
+
+.rating_btn:active:not(:disabled) {
+  background-color: var(--color-blue-vk);
+  color: var(--color-white);
+}
+
+.rating_btn:disabled, 
+.skip_btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.skip_btn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font: var(--font-m);
+  font-family: var(--font-family-subtitle);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px 16px;
+  margin-top: 8px;
+  transition: color 0.2s ease;
+}
+
+.skip_btn:hover:not(:disabled) {
+  color: var(--color-blue-vk);
+}
+
+/* --- СОСТОЯНИЯ ОЖИДАНИЯ ОЦЕНОК --- */
+.success_vote {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 8px 0;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.opponent_rating_info {
+  background-color: var(--color-bg-layout);
+  border-radius: 16px;
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(178, 215, 255, 0.3);
+}
+
+.opponent_rating_info h3 {
+  font: var(--font-m);
+  font-family: var(--font-family-subtitle);
+  color: var(--font-color-dark);
+  margin: 0 0 8px 0;
+}
+
+.stars_display {
+  font: var(--font-xl);
+  font-family: var(--font-family-decor);
+  color: var(--color-yellow);
+  letter-spacing: 2px;
+}
+
+.muted_text {
+  font: var(--font-m-light);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  text-align: center;
+}
+
+.loader_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.loader_box p {
+  font: var(--font-m-light);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 2.5px solid rgba(38, 136, 235, 0.15);
+  border-top-color: var(--color-blue-vk);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+.success_check_icon {
+  color: var(--color-green);
+  filter: drop-shadow(0 4px 10px rgba(52, 199, 89, 0.2));
+  margin-bottom: 4px;
+}
+
+/* --- КНОПКА ЗАВЕРШЕНИЯ --- */
+.leave_room_btn {
+  background: linear-gradient(135deg, var(--color-blue-vk) 0%, #1a72cb 100%);
+  color: var(--color-white);
+  font: var(--font-m);
+  font-family: var(--font-family-subtitle);
+  font-weight: 700;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(38, 136, 235, 0.2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+}
+
+.leave_room_btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(38, 136, 235, 0.3);
+}
+
+.leave_room_btn:active {
+  transform: translateY(1px);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

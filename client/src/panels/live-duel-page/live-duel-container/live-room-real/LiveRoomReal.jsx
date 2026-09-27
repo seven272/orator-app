@@ -1,56 +1,54 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { FiPhoneCall, FiCornerRightDown, FiClock, FiCheckCircle, FiLoader } from 'react-icons/fi'
 import vkBridge from '@vkontakte/vk-bridge'
 
 import {
   resetLiveDuelState,
-  fetchSubmitLiveRating,
-  fetchCheckRatingStatus,
-  fetchUpdateCallLink,     // Наш новый экшен отправки ссылки
-  fetchCheckRoomStatus     // Пуллинг для обновления ссылки у Игрока Б
+  fetchUpdateCallLink,
 } from '../../../../redux/slices/liveDuelSlice'
+
+// Импортируем декомпозированные компоненты из соседних папок
+import LiveRoomHeader from './live-room-header/LiveRoomHeader'
+import LiveRoomTopic from './live-room-topic/LiveRoomTopic'
+import LiveRoomPipGuide from './live-room-pip-guide/LiveRoomPipGuide'
+import LiveRoomFeedback from './live-room-feedback/LiveRoomFeedback'
 import LiveRoomRewardModal from './live-room-reward-modal/LiveRoomRewardModal'
+
 import styles from './LiveRoomReal.module.css'
 
 const LiveRoomReal = () => {
   const dispatch = useDispatch()
-  const { currentRoom, opponentRating, isRatingSubmitted, loading } = useSelector((state) => state.liveDuel)
+  
+  const { currentRoom } = useSelector((state) => state.liveDuel)
   const currentUserId = useSelector(
     (state) => state.profile?.user?._id || state.auth?.user?._id,
   )
 
-  // ПРОДАКШЕН ТАЙМЕРЫ (в секундах): intro (30с), monologues (120с), blitz (60с)
+  // БОЕВЫЕ ТАЙМЕРЫ (в секундах): intro (30с), monologues (120с), blitz (60с)
   const ROUND_TIMES = {
-    intro: 30,
-    speakerA: 120,
-    speakerB: 120,
-    blitz: 60,
-    feedback: 0
+    intro: 3,
+    speakerA: 12,
+    speakerB: 12,
+    blitz: 6,
+    feedback: 0,
   }
 
   const [currentRound, setCurrentRound] = useState('intro')
-  const [timeLeft, setTimeLeft] = useState(ROUND_TIMES.intro) 
-  const [isVoted, setIsVoted] = useState(false)
-  const [isOpponentLeaved, setIsOpponentLeaved] = useState(false) 
+  const [timeLeft, setTimeLeft] = useState(ROUND_TIMES.intro)
 
-  const [showRewardModal, setShowRewardModal] = useState(false)
-  const [rewardsData, setRewardsData] = useState(null)
+   const [showRewardModal, setShowRewardModal] = useState(false)
+const [rewardsData, setRewardsData] = useState(null)
 
   const timerRef = useRef(null)
-  const pollingInterval = useRef(null)
-  const callSyncInterval = useRef(null) // Интервал пуллинга ссылки звонка для Игрока Б
-  const timeoutId = useRef(null)
-
   const roomId = currentRoom?._id
 
-  // Позиция текущего пользователя
+  // Определение роли текущего оратора
   const isSpeakerA = currentRoom?.userA === currentUserId
   const mySide = isSpeakerA
     ? currentRoom?.topic?.sideA
     : currentRoom?.topic?.sideB
 
-  // 1. Жизненный цикл таймеров дискуссии
+  // 1. Управление жизненным циклом таймеров раундов
   useEffect(() => {
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
@@ -77,119 +75,119 @@ const LiveRoomReal = () => {
     return () => clearInterval(timerRef.current)
   }, [currentRound])
 
-  // 2. Инициализация звонка и подписка на события VK Bridge
-  useEffect(() => {
-    // СЦЕНАРИЙ ИГРОКА А: Создание звонка на старте комнаты
-    if (isSpeakerA && roomId && !currentRoom?.vkCallLink) {
-      if (vkBridge.supports('VKWebAppCallStart')) {
-        vkBridge
-          .send('VKWebAppCallStart', {})
-          .then((data) => {
-            if (data.call_link) {
-              dispatch(fetchUpdateCallLink({
-                roomId: roomId,
-                vkCallLink: data.call_link,
-                vkCallId: data.call_id || ''
-              }))
-            }
-          })
-          .catch((err) => console.error('Ошибка VKWebAppCallStart:', err))
-      }
-    }
+  // 2. Интеграция с нативными звонками и слушателями VK Bridge
+  // useEffect(() => {
+  //   // Игрок А автоматически инициирует создание звонка при старте комнаты
+  //   if (isSpeakerA && !currentRoom?.vkCallLink) {
+  //     if (vkBridge.supports('VKWebAppCallStart')) {
+  //       vkBridge
+  //         .send('VKWebAppCallStart', {})
+  //         .then((data) => {
+  //           if (data.call_link) {
+  //             dispatch(
+  //               fetchUpdateCallLink({
+  //                 roomId: currentRoom._id,
+  //                 vkCallLink: data.call_link,
+  //                 vkCallId: data.call_id || '',
+  //               }),
+  //             )
+  //           }
+  //         })
+  //         .catch((err) => console.error('Ошибка VKWebAppCallStart:', err))
+  //     }
+  //   }
 
-    // СЦЕНАРИЙ ИГРОКА Б: Если ссылки еще нет, запускаем пуллинг комнаты каждые 2.5 сек
-    if (!isSpeakerA && roomId && !currentRoom?.vkCallLink) {
-      callSyncInterval.current = setInterval(() => {
-        dispatch(fetchCheckRoomStatus({ roomId }))
-          .unwrap()
-          .then((res) => {
-            // Если ссылка прилетела — глушим интервал пуллинга
-            if (res.room?.vkCallLink) {
-              clearInterval(callSyncInterval.current)
-            }
-          })
-      }, 2500)
-    }
+  //   // Слушатель завершения нативной сессии звонка
+  //   const handleBridgeEvents = (e) => {
+  //     const { type } = e.detail
+  //     if (type === 'VKWebAppCallLeft' || type === 'VKWebAppCallFinished') {
+  //       console.log('Поединок завершен на платформе ВК:', type)
+  //       setCurrentRound('feedback')
+  //     }
+  //   }
 
-    // СЛУШАТЕЛЬ НА ТРУБКУ: Если кто-то вышел из звонка — перекидываем на фидбек
-    const handleBridgeEvents = (e) => {
-      const { type } = e.detail
-      if (type === 'VKWebAppCallLeft' || type === 'VKWebAppCallFinished') {
-        console.log('VK Звонок завершен:', type)
-        setCurrentRound('feedback')
-      }
-    }
+  //   vkBridge.subscribe(handleBridgeEvents)
+  //   return () => vkBridge.unsubscribe(handleBridgeEvents)
+  // }, [isSpeakerA, currentRoom?._id, currentRoom?.vkCallLink, dispatch])
+  // === ВНУТРИ LiveRoomReal.jsx ===
 
-    vkBridge.subscribe(handleBridgeEvents)
-    return () => {
-      vkBridge.unsubscribe(handleBridgeEvents)
-      clearInterval(callSyncInterval.current)
-    }
-  }, [isSpeakerA, roomId, currentRoom?.vkCallLink, dispatch])
 
-  // Очистка интервала пуллинга ссылки, если она успешно подгрузилась в процессе
-  useEffect(() => {
-    if (currentRoom?.vkCallLink && callSyncInterval.current) {
-      clearInterval(callSyncInterval.current)
-    }
-  }, [currentRoom?.vkCallLink])
-
-  // 3. Взаимный пуллинг оценок на финише
-  useEffect(() => {
-    if (isRatingSubmitted && roomId) {
-      pollingInterval.current = setInterval(() => {
-        dispatch(fetchCheckRatingStatus(roomId))
-      }, 2500)
-
-      timeoutId.current = setTimeout(() => {
-        clearInterval(pollingInterval.current)
-        setIsOpponentLeaved(true) 
-      }, 15000)
-    }
-
-    if (opponentRating !== null) {
-      clearInterval(pollingInterval.current)
-      clearTimeout(timeoutId.current)
-    }
-
-    return () => {
-      clearInterval(pollingInterval.current)
-      clearTimeout(timeoutId.current)
-    }
-  }, [isRatingSubmitted, opponentRating, roomId, dispatch])
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`
-  }
-
-  const getRoundTitle = () => {
-    switch (currentRound) {
-      case 'intro': return '🤝 Знакомство и подготовка'
-      case 'speakerA': return '📢 Монолог Спикера А'
-      case 'speakerB': return '📢 Монолог Спикера Б'
-      case 'blitz': return '⚡ Блиц-раунд (Вопросы)'
-      case 'feedback': return '🏆 Выставление оценок'
-      default: return ''
+// TEST START
+useEffect(() => {
+  // Игрок А: логируем попытку и результат вызова VKWebAppCallStart
+  if (isSpeakerA && !currentRoom?.vkCallLink) {
+    console.log('%c[QA TEST] Игрок А: Инициализация VKWebAppCallStart...', 'color: #007aff; font-weight: bold;');
+    
+    if (vkBridge.supports('VKWebAppCallStart')) {
+      vkBridge
+        .send('VKWebAppCallStart', {})
+        .then((data) => {
+          console.log('%c[QA TEST] VKWebAppCallStart УСПЕХ. Полученные данные:', 'color: #34c759; font-weight: bold;', data);
+          
+          if (data.call_link) {
+            console.log(`%c[QA TEST] Отправка ссылки звонка на бэкенд для комнаты: ${currentRoom._id}`, 'color: #ffbd12;');
+            
+            // Логируем сам сетевой запрос через Thunk
+            dispatch(fetchUpdateCallLink({
+              roomId: currentRoom._id,
+              vkCallLink: data.call_link,
+              vkCallId: data.call_id || ''
+            }))
+            .unwrap()
+            .then((res) => {
+              console.log('%c[QA TEST] Бэкенд УСПЕШНО сохранил ссылку в MongoDB:', 'color: #34c759;', res);
+            })
+            .catch((backendErr) => {
+              console.error('%c[QA TEST] КРИТИЧЕСКАЯ ОШИБКА БЭКЕНДА при сохранении ссылки:', 'color: #f30404; font-weight: bold;', backendErr);
+            });
+          } else {
+            console.warn('%c[QA TEST] ПРЕДУПРЕЖДЕНИЕ: VK вернул пустой call_link!', 'color: #ffbd12;');
+          }
+        })
+        .catch((err) => {
+          console.error('%c[QA TEST] ОШИБКА VK BRIDGE при вызове VKWebAppCallStart:', 'color: #f30404; font-weight: bold;', err);
+        });
+    } else {
+      console.error('%c[QA TEST] ОШИБКА: Платформа не поддерживает VKWebAppCallStart!', 'color: #f30404;');
     }
   }
 
-  // Нативное подключение к звонку
+  // Слушатель событий завершения звонка со стороны ВК
+  const handleBridgeEvents = (e) => {
+    const { type, data } = e.detail;
+    // Логируем абсолютно все входящие события от Bridge для отладки
+    console.log(`%c[QA TEST] Получено событие от VK Bridge: ${type}`, 'color: #8e9bae;', data);
+    
+    if (type === 'VKWebAppCallLeft' || type === 'VKWebAppCallFinished') {
+      console.log(`%c[QA TEST] Триггер финала запущен событием: ${type}. Переключаем раунд на feedback.`, 'color: #ff89bb; font-weight: bold;');
+      setCurrentRound('feedback');
+    }
+  };
+
+  vkBridge.subscribe(handleBridgeEvents);
+  return () => vkBridge.unsubscribe(handleBridgeEvents);
+}, [isSpeakerA, currentRoom?._id, currentRoom?.vkCallLink, dispatch]);
+// TEST FINISH
+
+  // 3. Нативный метод старта/подключения к звонку
   const handleOpenVkCall = (evt) => {
     evt.preventDefault()
-    if (!currentRoom?.vkCallLink) return
+
+    if (!currentRoom?.vkCallLink) {
+      alert('Синхронизация звонка оппонентом, пожалуйста, подождите...')
+      return
+    }
 
     if (!isSpeakerA && vkBridge.supports('VKWebAppCallJoin')) {
-      // Игрок Б нативно «врезается» в существующий звонок Игрока А
       vkBridge
-        .send('VKWebAppCallJoin', { call_link: currentRoom.vkCallLink })
+        .send('VKWebAppCallJoin', {
+          call_link: currentRoom.vkCallLink,
+        })
         .catch((err) => {
           console.error('Ошибка VKWebAppCallJoin, фолбэк на OpenURL:', err)
           vkBridge.send('VKWebAppOpenURL', { url: currentRoom.vkCallLink })
         })
     } else {
-      // Игрок А или веб-версия
       if (vkBridge.supports('VKWebAppOpenURL')) {
         vkBridge.send('VKWebAppOpenURL', { url: currentRoom.vkCallLink })
       } else {
@@ -198,161 +196,49 @@ const LiveRoomReal = () => {
     }
   }
 
-  const handleVoteSubmit = (rating) => {
-    if (!currentRoom?._id) return
-    setIsVoted(true)
-
-    dispatch(fetchSubmitLiveRating({ roomId: currentRoom._id, rating }))
-      .unwrap()
-      .then((data) => {
-        setRewardsData({
-          rating,
-          earnedXp: data.earnedXp,
-          earnedCoins: data.earnedCoins,
-          isLevelUp: data.isLevelUp,
-          newLevel: data.stats?.level,
-          achievements: data.newAchievements || [],
-        })
-        setShowRewardModal(true)
-      })
-      .catch((err) => {
-        alert(`Ошибка при сохранении результатов: ${err}`)
-        setIsVoted(false)
-      })
-  }
-
-  const handleCloseModal = () => {
-    setShowRewardModal(false)
+  const handleCloseRoom = () => {
     dispatch(resetLiveDuelState())
   }
+
+  // Колбэк, который вызывается при успешном голосовании в дочернем компоненте
+const handleVoteSuccess = (data) => {
+  setRewardsData(data)
+  setShowRewardModal(true) // Показываем модалку!
+}
+
+const handleCloseModal = () => {
+  setShowRewardModal(false)
+  dispatch(resetLiveDuelState()) // Очищаем стейт дуэлей и выходим в меню
+}
+
   return (
     <div className={styles.duel_room_container}>
-      {/* Шапка с таймером */}
-      <div className={styles.header_card}>
-        <span className={styles.round_badge}>{getRoundTitle()}</span>
-        {currentRound !== 'feedback' && (
-          <h1 className={styles.timer_display}>
-            <FiClock className={styles.clock_icon} />
-            <span>{formatTime(timeLeft)}</span>
-          </h1>
-        )}
-      </div>
+      {/* Шапка и таймер поединка */}
+      <LiveRoomHeader currentRound={currentRound} timeLeft={timeLeft} />
 
-      {/* Карточка темы */}
-      <div className={styles.topic_card}>
-        <h3 className={styles.topic_label}>Тема дискуссии:</h3>
-        <h2 className={styles.topic_title}>«{currentRoom?.topic?.title}»</h2>
-        <div className={styles.my_position_box}>
-          Ваша позиция: <strong className={styles.side_highlight}>{mySide}</strong>
-        </div>
-      </div>
+      {/* Карточка текущей темы дискуссии */}
+      <LiveRoomTopic topic={currentRoom?.topic} mySide={mySide} />
 
-      {/* Активные раунды общения */}
-      {currentRound !== 'feedback' && (
-        <div className={styles.action_block}>
-          <div className={styles.turn_indicator}>
-            {currentRound === 'speakerA' && (
-              <p className={isSpeakerA ? styles.your_turn : styles.opponent_turn}>
-                {isSpeakerA ? '👉 СЕЙЧАС ВАШ ХОД! Говорите аргументированно.' : '⏳ Слушайте оппонента и фиксируйте контраргументы.'}
-              </p>
-            )}
-            {currentRound === 'speakerB' && (
-              <p className={!isSpeakerA ? styles.your_turn : styles.opponent_turn}>
-                {!isSpeakerA ? '👉 СЕЙЧАС ВАШ ХОД! Говорите аргументированно.' : '⏳ Слушайте оппонента и фиксируйте контраргументы.'}
-              </p>
-            )}
-            {currentRound === 'blitz' && (
-              <p className={styles.blitz_turn}>🔥 Свободная дискуссия! Задавайте вопросы и отвечайте взаимно.</p>
-            )}
-          </div>
+      {/* Переключение экранов: активная игра / финал с оценками */}
+      {currentRound !== 'feedback' ? (
+      <LiveRoomPipGuide
+        currentRound={currentRound}
+        isSpeakerA={isSpeakerA}
+        onOpenVkCall={handleOpenVkCall}
+      />
+    ) : (
+      <LiveRoomFeedback
+        roomId={roomId}
+    currentRoom={currentRoom} // Возвращаем для расчета фолбэков
+    
+    onVoteSuccess={handleVoteSuccess}
+      />
+    )}
 
-          {/* ДИНАМИЧЕСКАЯ КНОПКА ЗВОНКА С ЗАЩИТОЙ ОТ ПРЕЖДЕВРЕМЕННОГО КЛИКА */}
-          {!currentRoom?.vkCallLink ? (
-            <div className={styles.sync_loader_badge}>
-              <FiLoader className={styles.sync_spinner} />
-              <span>{isSpeakerA ? 'Инициализация звонка...' : 'Синхронизация видеосвязи...'}</span>
-            </div>
-          ) : (
-            <button onClick={handleOpenVkCall} className={styles.vk_call_btn}>
-              <FiPhoneCall size={18} />
-              <span>Открыть VK Звонок</span>
-            </button>
-          )}
-
-          {/* Премиальная интерактивная инструкция свертывания звонка в PiP */}
-          <div className={styles.pip_instruction_card}>
-            <div className={styles.pip_header}>
-              <div className={styles.pip_pulse_dot}></div>
-              <h4>Как одновременно видеть таймер?</h4>
-            </div>
-            <p className={styles.pip_text}>
-              После старта звонка нажмите кнопку <strong>«Свернуть»</strong> внутри интерфейса VK. 
-              Видео перейдет в плавающее окно, а перед вами откроется таймер текущего раунда дебатов.
-            </p>
-            <div className={styles.pip_animation_container}>
-              <div className={styles.mock_phone}>
-                <div className={styles.mock_video_overlay}>🎙️ Видеозвонок</div>
-                <div className={styles.mock_arrow_stream}>
-                  <FiCornerRightDown className={styles.animated_arrow} />
-                </div>
-                <div className={styles.mock_pip_window}></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Экран взаимного оценивания */}
-      {currentRound === 'feedback' && (
-        <div className={styles.feedback_block}>
-          {!isVoted ? (
-            <>
-              <h3 className={styles.feedback_title}>Как справился ваш оппонент?</h3>
-              <p className={styles.feedback_description}>Оцените структуру аргументов, уверенность речи и навыки контратакапирования.</p>
-              <div className={styles.rating_buttons}>
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <button key={num} className={styles.rating_btn} onClick={() => handleVoteSubmit(num)} disabled={loading}>
-                    {num}
-                  </button>
-                ))}
-              </div>
-              <button className={styles.skip_btn} onClick={() => handleVoteSubmit(null)} disabled={loading}>
-                Пропустить оценку
-              </button>
-            </>
-          ) : (
-            <div className={styles.success_vote}>
-              <div className={styles.loader_box}>
-                {opponentRating === null && !isOpponentLeaved ? (
-                  <>
-                    <div className={styles.spinner}></div>
-                    <p>Ожидаем решение второго оратора...</p>
-                  </>
-                ) : (
-                  <>
-                    <FiCheckCircle size={44} className={styles.success_check_icon} />
-                    <div className={styles.opponent_rating_info}>
-                      {isOpponentLeaved ? (
-                        <p className={styles.muted_text}>Оппонент завершил сессию, не выставив оценку. Награды уже начислены в ваш профиль!</p>
-                      ) : (
-                        <>
-                          <h3>Ваш итоговый рейтинг за бой:</h3>
-                          <div className={styles.stars_display}>{'★'.repeat(opponentRating)}</div>
-                        </>
-                      )}
-                    </div>
-                    <button className={styles.leave_room_btn} onClick={handleCloseModal}>
-                      Вернуться в главное меню
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {showRewardModal && <LiveRoomRewardModal data={rewardsData} onClose={handleCloseModal} />}
+    {/* РЕНДЕР МОДАЛКИ: Переносим сюда под управление корневого стейта */}
+    {showRewardModal && rewardsData && (
+      <LiveRoomRewardModal data={rewardsData} onClose={handleCloseModal} />
+    )}
     </div>
   )
 }
