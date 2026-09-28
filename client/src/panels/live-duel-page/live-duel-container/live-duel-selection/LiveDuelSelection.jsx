@@ -77,7 +77,7 @@ const LiveDuelSelection = () => {
           <div className={styles.btn_content}>
             <span className={styles.btn_title}>Создать ссылку-приглашение</span>
             <span className={styles.btn_description}>
-              Отправьте вызов другу или знакомому. Для участия он должен иметь аккаунт оратора.
+              Отправьте вызов другу или знакомому. Для участия нужно иметь аккаунт оратора.
             </span>
           </div>
         </button>
