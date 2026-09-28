@@ -1,15 +1,33 @@
-import React from 'react'
-import { FiZap, FiAward, FiTrendingUp, FiCheckCircle } from 'react-icons/fi'
+import { useMemo } from 'react'
+import {
+  FiZap,
+  FiAward,
+  FiTrendingUp,
+  FiCheckCircle,
+} from 'react-icons/fi'
 import styles from './LiveRoomRewardModal.module.css'
 
 const LiveRoomRewardModal = ({ data, onClose }) => {
+  // Вычисляем текстовый статус оценки от второго игрока
+  console.log("oценка за дуэль: " + data.opponentRating)
+  const opponentFeedbackText = useMemo(() => {
+    if (!data.opponentRating) {
+      return 'Оппонент еще подсчитывает результаты...'
+    }
+    if (data.opponentRating === 'пропущено') {
+      return 'Оппонент решил завершить дуэль без выставления баллов'
+    }
+    return `Оппонент оценил ваше выступление на ${data.opponentRating} из 5 баллов ⭐`
+  }, [data.opponentRating])
   return (
     <div className={styles.modal_overlay}>
       <div className={styles.modal_content}>
         <div className={styles.modal_header}>
           <h2>Дуэль успешно завершена!</h2>
           <p className={styles.modal_subtitle}>
-            Вы поставили оппоненту {data.rating} из 5 баллов
+            <p className={styles.modal_subtitle}>
+              {opponentFeedbackText}
+            </p>
           </p>
         </div>
 
@@ -17,8 +35,7 @@ const LiveRoomRewardModal = ({ data, onClose }) => {
           <div className={styles.reward_item}>
             <FiZap className={styles.reward_icon_xp} />
             <span className={styles.reward_text}>
-              +{data.earnedXp} XP{' '}
-              <small>(с учетом стрика)</small>
+              +{data.earnedXp} XP <small>(с учетом стрика)</small>
             </span>
           </div>
           <div className={styles.reward_item}>
@@ -58,10 +75,7 @@ const LiveRoomRewardModal = ({ data, onClose }) => {
           </div>
         )}
 
-        <button
-          className={styles.modal_close_btn}
-          onClick={onClose}
-        >
+        <button className={styles.modal_close_btn} onClick={onClose}>
           Отлично
         </button>
       </div>

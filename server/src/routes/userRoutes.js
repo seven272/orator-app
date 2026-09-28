@@ -22,7 +22,7 @@ import verifyVkSignature from "../middlewares/vkLaunchParamsAuth.js";
 const router = new Router()
 
 router.post(
-  '/upload-avatar',
+  '/upload-avatar', 
   checkAuth,
   upload.single('avatar'),
   (req, res) => {

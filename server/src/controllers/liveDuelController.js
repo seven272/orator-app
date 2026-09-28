@@ -17,9 +17,14 @@ const removeFileOnError = (filePath) => {
   if (!filePath) return
   fs.unlink(path.resolve(filePath), (err) => {
     if (err) {
-      console.error(`[Multer Safety Cleanup] Ошибка удаления файла: ${filePath}`, err)
+      console.error(
+        `[Multer Safety Cleanup] Ошибка удаления файла: ${filePath}`,
+        err,
+      )
     } else {
-      console.log(`[Multer Safety Cleanup] Успешно удален файл после ошибки: ${filePath}`)
+      console.log(
+        `[Multer Safety Cleanup] Успешно удален файл после ошибки: ${filePath}`,
+      )
     }
   })
 }
@@ -34,7 +39,8 @@ const createRoom = async (req, res) => {
     if (!['quick_search', 'direct_link'].includes(creationType)) {
       return res.status(400).json({
         success: false,
-        message: 'Недопустимый тип создания комнаты. Календарь больше не поддерживается.'
+        message:
+          'Недопустимый тип создания комнаты. Календарь больше не поддерживается.',
       })
     }
 
@@ -45,7 +51,7 @@ const createRoom = async (req, res) => {
       creationType,
       topic: generateDuelData(),
       status: 'pending',
-      audioTracks: [] // 🚀 Инициализируем пустой массив для будущих аудиосообщений
+      audioTracks: [], // 🚀 Инициализируем пустой массив для будущих аудиосообщений
     }
 
     // Если создается комната по прямой ссылке — генерируем токен
@@ -110,7 +116,8 @@ const joinRoom = async (req, res) => {
     if (room.status !== 'pending') {
       return res.status(400).json({
         success: false,
-        message: 'Эта комната уже занята другим оратором или завершена',
+        message:
+          'Эта комната уже занята другим оратором или завершена',
       })
     }
 
@@ -118,14 +125,17 @@ const joinRoom = async (req, res) => {
     room.userB = userBId
     room.status = 'active'
 
-    // Логика VK Звонков полностью удалена, поля vkCallLink и vkCallId вырезаны
-
     await room.save()
+
+    const populatedRoom = await LiveDuel.findById(room._id)
+      .populate('userA', 'displayName firstName avatar')
+      .populate('userB', 'displayName firstName avatar')
+      .populate('audioTracks.sender', 'displayName firstName avatar')
 
     return res.status(200).json({
       success: true,
       message: 'Пара успешно создана, баттл начинается',
-      room,
+      room: populatedRoom,
     })
   } catch (error) {
     return res
@@ -133,7 +143,6 @@ const joinRoom = async (req, res) => {
       .json({ success: false, message: error.message })
   }
 }
-
 
 // Новый чистый контроллер только для ПУЛЛИНГА
 const checkRoomStatus = async (req, res) => {
@@ -147,6 +156,12 @@ const checkRoomStatus = async (req, res) => {
     }
 
     const room = await LiveDuel.findById(roomId)
+      // Раскрываем данные создателя комнаты (User A)
+      .populate('userA', 'displayName firstName avatar')
+      // Раскрываем данные оппонента (User B)
+      .populate('userB', 'displayName firstName avatar')
+      // 🚀 САМОЕ ВАЖНОЕ: Раскрываем данные автора каждого аудио-трека внутри массива
+      .populate('audioTracks.sender', 'displayName firstName avatar')
 
     if (!room) {
       return res
@@ -181,15 +196,20 @@ const submitRating = async (req, res) => {
         .json({ success: false, message: 'Комната не найдена' })
     }
 
+    // Маркируем факт отправки формы пользователем.
+    // Если rating === null (нажали Пропустить), записываем в базу специальный маркер -1,
+    // чтобы отличить проголосовавшего от того, кто вообще еще не делал выбор (у кого дефолтный null)
+    const finalRatingValue = rating !== null ? rating : -1
+
     // Защита от накрутки наград и фиксация оценок
     if (room.userA.toString() === userId.toString()) {
       if (room.ratingFromA !== null) {
         return res.status(400).json({
           success: false,
-          message: 'Вы уже получили награду за эту дуэль',
+          message: 'Вы уже завершили этот поединок',
         })
       }
-      if (rating) room.ratingFromA = rating
+      room.ratingFromA = finalRatingValue
     } else if (
       room.userB &&
       room.userB.toString() === userId.toString()
@@ -197,41 +217,60 @@ const submitRating = async (req, res) => {
       if (room.ratingFromB !== null) {
         return res.status(400).json({
           success: false,
-          message: 'Вы уже получили награду за эту дуэль',
+          message: 'Вы уже завершили этот поединок',
         })
       }
-      if (rating) room.ratingFromB = rating
+      room.ratingFromB = finalRatingValue
     } else {
       return res.status(403).json({
         success: false,
-        message: 'Вы не являетесь участником этой комнаты',
+        message: 'Вы не участник этой комнаты',
       })
     }
 
-    // Если оба пользователя отправили свои оценки — переводим комнату в completed
-    // (Или если это одиночный сценарий, но у нас парный матчмейкинг, поэтому проверяем взаимность)
-    const isBothRated = room.ratingFromA !== null && room.ratingFromB !== null
-    
-    if (isBothRated || !room.userB) {
+    // 🚀 ЖЕЛЕЗОБЕТОННЫЙ ТРИГГЕР ЗАВЕРШЕНИЯ:
+    // Комната завершена, если оба участника совершили действие (выставили балл ИЛИ нажали "Пропустить", то есть у обоих поля больше не равны дефолтному null)
+    const isAActionDone = room.ratingFromA !== null
+    const isBActionDone = room.userB
+      ? room.ratingFromB !== null
+      : true
+
+    if (isAActionDone && isBActionDone) {
       room.status = 'completed'
     }
 
-    // Сохраняем промежуточные или финальные изменения комнаты
     await room.save()
 
     // 🚀 УМНОЕ ЗАНУЛЕНИЕ ПАМЯТИ (Выполняется строго при окончательном завершении баттла)
-    if (room.status === 'completed' && room.audioTracks && room.audioTracks.length > 0) {
-      console.log(`[Server Storage] Старт зануления памяти для комнаты: ${roomId}`)
-      
+    if (
+      room.status === 'completed' &&
+      room.audioTracks &&
+      room.audioTracks.length > 0
+    ) {
+      console.log(
+        `[Server Storage] Старт зануления памяти для комнаты: ${roomId}`,
+      )
+
       room.audioTracks.forEach((track) => {
         if (track.fileUrl) {
-          const absolutePath = path.resolve(track.fileUrl)
-          
+          // track.fileUrl содержит относительную строку вида "audio/1790591466565-voice.ogg"
+          // Склеиваем корневую папку загрузок и относительный путь из базы данных
+          // На выходе получим точный системный путь: "./src/uploads/audio/1790591466565-voice.ogg"
+          const absolutePath = path.resolve(
+            './src/uploads',
+            track.fileUrl,
+          )
+
           fs.unlink(absolutePath, (err) => {
             if (err) {
-              console.error(`[Server Storage] Ошибка удаления аудио-трека (${absolutePath}):`, err.message)
+              console.error(
+                `[Server Storage] Ошибка удаления аудио-трека (${absolutePath}):`,
+                err.message,
+              )
             } else {
-              console.log(`[Server Storage] Временный аудио-файл успешно удален: ${absolutePath}`)
+              console.log(
+                `[Server Storage] Временный аудио-файл успешно удален: ${absolutePath}`,
+              )
             }
           })
         }
@@ -250,7 +289,12 @@ const submitRating = async (req, res) => {
     const now = new Date()
     const todayMs = new Date(now).setUTCHours(0, 0, 0, 0)
     const lastDate = user.streak.lastCompletedDate
-      ? new Date(user.streak.lastCompletedDate).setUTCHours(0, 0, 0, 0)
+      ? new Date(user.streak.lastCompletedDate).setUTCHours(
+          0,
+          0,
+          0,
+          0,
+        )
       : null
     const oneDayInMs = 86400000
 
@@ -309,7 +353,8 @@ const submitRating = async (req, res) => {
     )
     if (statIndex > -1) {
       user.stats.exerciseStats[statIndex].completionsCount += 1
-      user.stats.exerciseStats[statIndex].totalPoints += fixedDuelScore
+      user.stats.exerciseStats[statIndex].totalPoints +=
+        fixedDuelScore
     } else {
       user.stats.exerciseStats.push({
         alias: exAlias,
@@ -320,8 +365,14 @@ const submitRating = async (req, res) => {
     }
 
     // Проверка ачивок
-    const newAwards = checkAchievements(user, false, fixedDuelScore, exAlias)
-    user.progression.lastAwarded = newAwards && newAwards.length > 0 ? newAwards : []
+    const newAwards = checkAchievements(
+      user,
+      false,
+      fixedDuelScore,
+      exAlias,
+    )
+    user.progression.lastAwarded =
+      newAwards && newAwards.length > 0 ? newAwards : []
 
     await user.save()
 
@@ -399,31 +450,37 @@ const checkRatingStatus = async (req, res) => {
         .json({ success: false, message: 'Комната не найдена' })
     }
 
-    let yourRatingToOpponent = null
-    let opponentRatingToYou = null
+    let rawYourRating = null
+    let rawOpponentRating = null
 
     // Разделяем оценки в зависимости от того, кто спрашивает
     if (room.userA.toString() === currentUserId.toString()) {
-      yourRatingToOpponent = room.ratingFromA
-      opponentRatingToYou = room.ratingFromB
+      rawYourRating = room.ratingFromA
+      rawOpponentRating = room.ratingFromB
     } else if (
       room.userB &&
       room.userB.toString() === currentUserId.toString()
     ) {
-      yourRatingToOpponent = room.ratingFromB
-      opponentRatingToYou = room.ratingFromA
+      rawYourRating = room.ratingFromB
+      rawOpponentRating = room.ratingFromA
     } else {
       return res
         .status(403)
         .json({ success: false, message: 'Доступ запрещен' })
     }
 
+    // 🚀 АДАПТАЦИЯ ДЛЯ ФРОНТЕНДА: Преобразуем маркеры пропуска (-1)
+    // в текстовый статус, при этом обычные оценки (1-5) или отсутствие выбора (null) оставляем как есть
+    const yourRatingToOpponent =
+      rawYourRating === -1 ? 'пропущено' : rawYourRating
+    const opponentRatingToYou =
+      rawOpponentRating === -1 ? 'пропущено' : rawOpponentRating
+
     res.json({
       success: true,
       data: {
-        yourRatingToOpponent, // null или число
-        opponentRatingToYou, // null или число (фронтенд ждет, пока тут появится не null)
-        isAiBot: room.isAiBot,
+        yourRatingToOpponent, // Наша оценка оппоненту (число, null или 'пропущено')
+        opponentRatingToYou, // Оценка оппонента нам (число, null или 'пропущено')
       },
     })
   } catch (error) {
@@ -550,7 +607,7 @@ const getLiveDuelStats = async (req, res) => {
   }
 }
 
- const uploadAudioTrack = async (req, res) => {
+const uploadAudioTrack = async (req, res) => {
   try {
     const { roomId } = req.body
     const userId = req.userId
@@ -559,7 +616,8 @@ const getLiveDuelStats = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: 'Аудиофайл не найден или не прошел фильтрацию форматов.'
+        message:
+          'Аудиофайл не найден или не прошел фильтрацию форматов.',
       })
     }
 
@@ -567,9 +625,9 @@ const getLiveDuelStats = async (req, res) => {
     const room = await LiveDuel.findById(roomId)
     if (!room) {
       removeFileOnError(req.file.path) // Атомарная зачистка при отсутствии сущности
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Комната не найдена.' 
+      return res.status(404).json({
+        success: false,
+        message: 'Комната не найдена.',
       })
     }
 
@@ -578,7 +636,8 @@ const getLiveDuelStats = async (req, res) => {
       removeFileOnError(req.file.path)
       return res.status(400).json({
         success: false,
-        message: 'Баттл не находится в активной фазе обмена репликами.'
+        message:
+          'Баттл не находится в активной фазе обмена репликами.',
       })
     }
 
@@ -588,42 +647,44 @@ const getLiveDuelStats = async (req, res) => {
 
     if (!isUserA && !isUserB) {
       removeFileOnError(req.file.path)
-      return res.status(403).json({ 
-        success: false, 
-        message: 'Вы не являетесь зарегистрированным участником этой дуэли.' 
+      return res.status(403).json({
+        success: false,
+        message:
+          'Вы не являетесь зарегистрированным участником этой дуэли.',
       })
     }
 
     // 5. Контроль очередности ходов на базе четности массива audioTracks
     const tracksCount = room.audioTracks ? room.audioTracks.length : 0
-    
+
     // Если треков четное количество (0, 2, 4...) — должен ходить Игрок А
     if (tracksCount % 2 === 0 && !isUserA) {
       removeFileOnError(req.file.path)
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Нарушение очередности. Сейчас ход Спикера А.' 
+      return res.status(400).json({
+        success: false,
+        message: 'Нарушение очередности. Сейчас ход Спикера А.',
       })
     }
-    
+
     // Если треков нечетное количество (1, 3, 5...) — должен ходить Игрок Б
     if (tracksCount % 2 !== 0 && !isUserB) {
       removeFileOnError(req.file.path)
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Нарушение очередности. Сейчас ход Спикера Б.' 
+      return res.status(400).json({
+        success: false,
+        message: 'Нарушение очередности. Сейчас ход Спикера Б.',
       })
     }
 
     // 6. Формируем fileUrl. Мультер при diskStorage сохраняет локальный путь в req.file.path
     // Пример: "src/uploads/audio/1726000000000-random-voice.webm"
-    const fileUrl = req.file.path 
+    const fileUrl = `audio/${req.file.filename}`
+    console.log(fileUrl)
 
     // 7. Пушим трек в массив документов комнаты
     room.audioTracks.push({
       sender: userId,
       fileUrl: fileUrl,
-      timestamp: new Date()
+      timestamp: new Date(),
     })
 
     await room.save()
@@ -631,21 +692,19 @@ const getLiveDuelStats = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Реплика успешно добавлена в баттл.',
-      audioTracks: room.audioTracks
+      audioTracks: room.audioTracks,
     })
-
   } catch (error) {
     // В случае непредвиденного падения базы или сервера удаляем только что загруженный файл
     if (req.file && req.file.path) {
       removeFileOnError(req.file.path)
     }
-    return res.status(500).json({ 
-      success: false, 
-      message: error.message 
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     })
   }
 }
-
 
 export {
   createRoom,

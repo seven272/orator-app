@@ -6,111 +6,6 @@
   box-sizing: border-box;
 }
 
-.chat_timeline_card {
-  background-color: var(--color-white);
-  border: 1px solid rgba(178, 215, 255, 0.4);
-  border-radius: 16px;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.timeline_title {
-  font: var(--font-m);
-  font-family: var(--font-family-title);
-  color: var(--font-color-dark);
-  margin: 0 0 12px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.empty_chat_hint {
-  font: var(--font-s);
-  color: var(--color-text-secondary);
-  text-align: center;
-  padding: 24px 0;
-  line-height: 1.4;
-}
-
-.tracks_list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-height: 260px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.track_bubble_row {
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
-  width: 100%;
-}
-
-.row_my {
-  flex-direction: row-reverse;
-}
-
-.avatar_mini {
-  width: 32px;
-  height: 32px;
-  background-color: var(--color-bg-layout);
-  border: 1px solid rgba(178, 215, 255, 0.6);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-secondary);
-  flex-shrink: 0;
-}
-
-.track_bubble {
-  background-color: var(--color-bg-layout);
-  border: 1px solid rgba(178, 215, 255, 0.4);
-  border-radius: 14px 14px 14px 2px;
-  padding: 10px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-width: 75%;
-}
-
-.row_my .track_bubble {
-  background-color: rgba(38, 136, 235, 0.06);
-  border-color: rgba(38, 136, 235, 0.15);
-  border-radius: 14px 14px 2px 14px;
-}
-
-.speaker_name_label {
-  font-size: 11px;
-  font-family: var(--font-family-subtitle);
-  color: var(--color-text-secondary);
-}
-
-.play_bubble_btn {
-  background-color: var(--color-white);
-  border: 1px solid rgba(178, 215, 255, 0.6);
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--font-color-dark);
-}
-
-.row_my .play_bubble_btn {
-  border-color: rgba(38, 136, 235, 0.3);
-  color: var(--color-blue-vk);
-}
-
-.track_time {
-  font-size: 10px;
-  color: var(--color-text-secondary);
-  align-self: flex-end;
-}
 
 .action_zone_wrapper {
   width: 100%;
@@ -133,23 +28,6 @@
   color: var(--color-green);
 }
 
-.opponent_turn_waiting_box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 20px;
-  background-color: var(--color-white);
-  border: 1px solid rgba(178, 215, 255, 0.4);
-  border-radius: 16px;
-  text-align: center;
-}
-
-.waiting_text {
-  font: var(--font-s);
-  color: var(--color-text-secondary);
-  margin: 0;
-}
 
 .spinner_mini {
   width: 20px;
@@ -162,4 +40,72 @@
 
 @keyframes miniSpin {
   to { transform: rotate(360deg); }
+}
+
+
+.opponent_turn_waiting_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  background-color: var(--color-white);
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  padding: 32px 24px;
+  border-radius: 16px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+
+/* Пульсирующий горизонтальный лоадер из трех точек */
+.waiting_loader {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader_dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-blue-vk);
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: waitingBounce 1.4s infinite ease-in-out both;
+}
+
+.loader_dot:nth-child(1) { animation-delay: -0.32s; }
+.loader_dot:nth-child(2) { animation-delay: -0.16s; }
+
+/* Текст со считываемым шрифтом и мягким цветом */
+.waiting_text {
+  font: var(--font-s);
+  font-family: var(--font-family-subtitle);
+  color: var(--color-text-secondary);
+  margin: 0;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Элегантная бегущая анимация многоточия в тексте */
+.waiting_text span {
+  animation: textDotFade 1.4s infinite both;
+  opacity: 0;
+}
+
+.waiting_text span:nth-child(1) { animation-delay: 0s; }
+.waiting_text span:nth-child(2) { animation-delay: 0.2s; }
+.waiting_text span:nth-child(3) { animation-delay: 0.4s; }
+
+/* --- АНИМАЦИИ --- */
+@keyframes waitingBounce {
+  0%, 80%, 100% { transform: scale(0.8); opacity: 0.3; }
+  40% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes textDotFade {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
 }

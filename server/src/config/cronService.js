@@ -1,4 +1,6 @@
 import cron from 'node-cron'
+import fs from 'fs'
+import path from 'path'
 import User from '../models/User.js'
 import UserChallenge from '../models/UserChallenge.js'
 import LiveDuel from '../models/LiveDuel.js'
@@ -42,65 +44,91 @@ const initCronJobs = () => {
   )
 
   // 2. МОДИФИЦИРОВАННЫЙ КРОН: Запуск каждые 30 минут для очистки "протухших" комнат дуэлей
-  cron.schedule('*/30 * * * *', async () => {
+  // Запуск каждые 30 минут для оперативной очистки диска сервера
+  cron.schedule('*/5 * * * *', async () => {
     console.log(
-      '⏳ [Cron]: Запуск проверки и очистки неактуальных комнат дуэлей...',
+      '\n⏳ [Cron]: Старт проверки и очистки асинхронных комнат...',
     )
     try {
-      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000)
       const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000)
+      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000)
+      const twoDaysAgo = new Date(
+        Date.now() - 2 * 24 * 60 * 60 * 1000,
+      )
 
-      // ВЕТКА А: Быстрый поиск и Прямые ссылки
-      // Ключи изменены под camelCase: creationType, createdAt
-      const instantRoomsResult = await LiveDuel.updateMany(
+      // ==========================================
+      // ВЕТКА 1: Отмена протухших комнат ожидания (pending)
+      // ==========================================
+      const pendingResult = await LiveDuel.updateMany(
         {
           status: 'pending',
-          creationType: { $in: ['quick_search', 'direct_link'] },
-          createdAt: { $lt: thirtyMinutesAgo },
+          createdAt: { $lt: fifteenMinutesAgo },
         },
         { $set: { status: 'canceled' } },
       )
-
-      // ВЕТКА Б: Календарные слоты
-      // Ключи изменены под camelCase: creationType, scheduledAt
-      const calendarRoomsResult = await LiveDuel.updateMany(
-        {
-          status: 'pending',
-          creationType: 'calendar',
-          scheduledAt: { $lt: fifteenMinutesAgo }, // Время начала дуэли уже позади
-        },
-        { $set: { status: 'canceled' } },
-      )
-
-      // ВЕТКА В: Жесткое удаление абсолютно неактуального мусора (например, отмененных комнат старше 7 дней)
-      const sevenDaysAgo = new Date(
-        Date.now() - 7 * 24 * 60 * 60 * 1000,
-      )
-
-      const cleanTrashResult = await LiveDuel.deleteMany({
-        status: 'canceled', // Удаляем только отмененные. 'completed' НЕ ТРОГАЕМ!
-        createdAt: { $lt: sevenDaysAgo },
+      if (pendingResult.modifiedCount > 0) {
+        console.log(
+          `🧹 [Cron]: Отменено комнат ожидания (pending): ${pendingResult.modifiedCount}`,
+        )
+      }
+      // ==========================================
+      // ВЕТКА 2: Очистка брошенных активных баттлов (active) + Удаление аудио с диска
+      // ==========================================
+      // Находим комнаты, застрявшие в active, которые были созданы более 2 часов назад
+      const abandonedRooms = await LiveDuel.find({
+        status: 'active',
+        createdAt: { $lt: twoHoursAgo },
       })
 
-      if (cleanTrashResult.deletedCount > 0) {
+      if (abandonedRooms.length > 0) {
+        let deletedFilesCount = 0
+
+        for (const room of abandonedRooms) {
+          if (room.audioTracks && room.audioTracks.length > 0) {
+            room.audioTracks.forEach((track) => {
+              if (track.fileUrl) {
+                // Извлекаем относительный путь ("audio/name.ogg") и приводим к абсолютному
+                const absolutePath = path.resolve(
+                  './src/uploads',
+                  track.fileUrl,
+                )
+                if (fs.existsSync(absolutePath)) {
+                  fs.unlink(absolutePath, (err) => {
+                    if (err)
+                      console.error(
+                        `[Cron Storage Error] Не удалось стереть: ${absolutePath}`,
+                        err.message,
+                      )
+                  })
+                  deletedFilesCount++
+                }
+              }
+            })
+          }
+          // Переводим комнату в статус canceled
+          room.status = 'canceled'
+          await room.save()
+        }
         console.log(
-          `🧹 [Cron Log]: Физически удалено старых отмененных комнат: ${cleanTrashResult.deletedCount}`,
+          `✅ [Cron]: Закрыто брошенных баттлов: ${abandonedRooms.length}. Удалено застрявших файлов: ${deletedFilesCount}`,
         )
       }
 
-      const totalCanceled =
-        instantRoomsResult.modifiedCount +
-        calendarRoomsResult.modifiedCount
-
-      if (totalCanceled > 0) {
+      // ==========================================
+      // ВЕТКА 3: Удаление отмененного мусора из MongoDB
+      // ==========================================
+      const cleanTrashResult = await LiveDuel.deleteMany({
+        status: 'canceled',
+        createdAt: { $lt: twoDaysAgo },
+      })
+      if (cleanTrashResult.deletedCount > 0) {
         console.log(
-          `✅ [Cron Log]: Очистка завершена. Отменено комнат: ${totalCanceled} ` +
-            `(Мгновенных/Ссылок: ${instantRoomsResult.modifiedCount}, Календарных: ${calendarRoomsResult.modifiedCount})`,
+          `🧹 [Cron]: Физически стерто документов отмененных комнат из БД: ${cleanTrashResult.deletedCount}`,
         )
       }
     } catch (error) {
       console.error(
-        '❌ [Cron Error]: Ошибка при очистке комнат:',
+        '❌ [Cron Critical Error]: Ошибка при фоновом обслуживании комнат:',
         error,
       )
     }

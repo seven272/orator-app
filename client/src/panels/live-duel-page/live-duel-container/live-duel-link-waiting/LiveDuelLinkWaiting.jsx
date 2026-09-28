@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fi'
 import vkBridge from '@vkontakte/vk-bridge'
 
+import { useVkEnvironment } from '../../../../hooks/useVkEnvironment'
 import {
   fetchCheckRoomStatus,
   setSearchStatus,
@@ -20,9 +21,9 @@ import styles from './LiveDuelLinkWaiting.module.css'
 const LiveDuelLinkWaiting = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-
+  const { isVkEnvironment } = useVkEnvironment()
   const { currentRoom } = useSelector((state) => state.liveDuel)
-  const [timerSeconds, setTimerSeconds] = useState(30)
+  const [timerSeconds, setTimerSeconds] = useState(60)
   const [isLongWaiting, setIsLongWaiting] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
 
@@ -30,11 +31,19 @@ const LiveDuelLinkWaiting = () => {
   const pollingRef = useRef(null)
   const roomId = currentRoom?._id
 
-  const VK_APP_ID = 'app54762318' 
+  const VK_APP_ID = `app${import.meta.env.VITE_VK_APP_ID}` || 'app54762318'
 
-  const inviteUrl = currentRoom?.inviteToken
-    ? `https://vk.ru/${VK_APP_ID}/#/live-duel/join/${currentRoom.inviteToken}`
-    : ''
+  const inviteUrl = useMemo(() => {
+    if (!currentRoom?.inviteToken) return ''
+
+    if (isVkEnvironment) {
+      // Ссылка для открытия строго внутри экосистемы ВКонтакте
+      return `https://vk.ru/${VK_APP_ID}/#/live-duel/join/${currentRoom.inviteToken}`
+    } else {
+      // Ссылка для обычного веб-сайта (локального или продакшн домена)
+      return `${window.location.origin}/#/live-duel/join/${currentRoom.inviteToken}`
+    }
+  }, [currentRoom?.inviteToken, isVkEnvironment])
 
   useEffect(() => {
     if (!roomId) return

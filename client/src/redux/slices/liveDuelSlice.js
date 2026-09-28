@@ -9,7 +9,7 @@ export const fetchSendAudioTrack = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.post(
-        '/live/upload-audio',
+        '/live-duel/upload-audio',
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -30,7 +30,7 @@ export const fetchCreateLiveRoom = createAsyncThunk(
   'liveDuel/fetchCreateLiveRoom',
   async (roomPayload, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post('/live/create-room', {
+      const res = await axiosInstance.post('/live-duel/create-room', {
         creationType: roomPayload.creationType,
       })
       return res.data
@@ -48,7 +48,7 @@ export const fetchJoinLiveRoom = createAsyncThunk(
   'liveDuel/fetchJoinLiveRoom',
   async (joinPayload, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post('/live/join-room', {
+      const res = await axiosInstance.post('/live-duel/join-room', {
         inviteToken: joinPayload?.inviteToken,
         roomId: joinPayload?.roomId,
       })
@@ -67,7 +67,7 @@ export const fetchCheckRoomStatus = createAsyncThunk(
   'liveDuel/fetchCheckRoomStatus',
   async ({ roomId }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post('/live/check-status', {
+      const res = await axiosInstance.post('/live-duel/check-status', {
         roomId: roomId,
       })
       return res.data
@@ -84,7 +84,7 @@ export const fetchSubmitLiveRating = createAsyncThunk(
   'liveDuel/fetchSubmitLiveRating',
   async ({ roomId, rating }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post('/live/submit-rating', {
+      const res = await axiosInstance.post('/live-duel/submit-rating', {
         roomId: roomId,
         rating: rating,
       })
@@ -104,7 +104,7 @@ export const fetchCheckInviteToken = createAsyncThunk(
   async ({ token }, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get(
-        `/live/check-invite/${token}`,
+        `/live-duel/check-invite/${token}`,
       )
       return res.data
     } catch (error) {
@@ -122,7 +122,7 @@ export const fetchCheckRatingStatus = createAsyncThunk(
   async (roomId, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get(
-        `/live/rating-status/${roomId}`,
+        `/live-duel/rating-status/${roomId}`,
       )
       return res.data
     } catch (error) {
@@ -139,7 +139,7 @@ export const fetchLiveDuelStats = createAsyncThunk(
   'liveDuel/fetchLiveDuelStats',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get('/live/dashboard-stats')
+      const res = await axiosInstance.get('/live-duel/dashboard-stats')
       return res.data.data // Возвращаем вложенную структуру данных строго по вашему коду
     } catch (error) {
       return rejectWithValue(

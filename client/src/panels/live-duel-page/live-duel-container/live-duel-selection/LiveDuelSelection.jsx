@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FiZap, FiLink } from 'react-icons/fi'
-import { FaVk } from 'react-icons/fa'
+import { LuSwords } from 'react-icons/lu'
 import {
   fetchCreateLiveRoom,
   fetchJoinLiveRoom,
@@ -13,21 +13,13 @@ const LiveDuelSelection = () => {
   const { loading, error } = useSelector((state) => state.liveDuel)
 
   const handleQuickSearch = () => {
-    // 1. Сначала пробуем подключиться к кому-то свободным оратором
     dispatch(fetchJoinLiveRoom({}))
       .unwrap()
       .then((res) => {
-        // 2. Если комната нашлась (Игрок Б успешно зашел к Игроку А)
         if (res.room) {
-          console.log(
-            'Успешно подключились к существующей комнате:',
-            res.room._id,
-          )
+          console.log('Успешно подключились к существующей комнате:', res.room._id)
         } else {
-          // 3. Если свободных комнат нет (res.room === null) — создаем свою
-          dispatch(
-            fetchCreateLiveRoom({ creationType: 'quick_search' }),
-          )
+          dispatch(fetchCreateLiveRoom({ creationType: 'quick_search' }))
         }
       })
       .catch((err) => {
@@ -41,14 +33,12 @@ const LiveDuelSelection = () => {
 
   return (
     <div className={styles.selection_container}>
-      {/* 🛠️ Изменено: Видео Дуэли переименованы в Голосовые Баттлы */}
       <h1 className={styles.main_title}>
-        Голосовые Баттлы <FaVk className={styles.vk_icon} />
+        Голосовые Баттлы <LuSwords className={styles.vk_icon} />
       </h1>
       
-      {/* 🛠️ Изменено: Обновлено описание под асинхронный аудио-формат */}
       <p className={styles.main_description}>
-        Парные поединки по ораторскому искусству внутри ВКонтакте.
+        Парные поединки по ораторскому искусству с живыми людьми.
         Бросайте вызов оппонентам в удобном формате аудиосообщений, 
         защищайте свои убеждения и прокачивайте харизму не выходя из чата.
       </p>
@@ -56,30 +46,45 @@ const LiveDuelSelection = () => {
       {error && <div className={styles.error_banner}>{error}</div>}
 
       <div className={styles.menu_list}>
+        {/* Кнопка быстрого поиска */}
         <button
           className={styles.menu_button_primary}
           onClick={handleQuickSearch}
           disabled={loading}
         >
-          <FiZap className={styles.btn_icon_flash} />
-          <span>
-            {loading ? 'Инициализация...' : 'Быстро найти пару'}
-          </span>
+          <div className={styles.btn_icon_wrapper}>
+            <FiZap className={styles.btn_icon_flash} />
+          </div>
+          <div className={styles.btn_content}>
+            <span className={styles.btn_title}>
+              {loading ? 'Инициализация...' : 'Быстро найти пару'}
+            </span>
+            <span className={styles.btn_description}>
+              Поединок со случайным пользователем, который тоже в поиске партнера прямо сейчас.
+            </span>
+          </div>
         </button>
 
+        {/* Кнопка создания инвайта */}
         <button
           className={styles.menu_button_secondary}
           onClick={handleDirectLink}
           disabled={loading}
         >
-          <FiLink className={styles.btn_icon} />
-          <span>Создать ссылку-приглашение</span>
+          <div className={styles.btn_icon_wrapper}>
+            <FiLink className={styles.btn_icon} />
+          </div>
+          <div className={styles.btn_content}>
+            <span className={styles.btn_title}>Создать ссылку-приглашение</span>
+            <span className={styles.btn_description}>
+              Отправьте вызов другу или знакомому. Для участия он должен иметь аккаунт оратора.
+            </span>
+          </div>
         </button>
-        
-        {/* Кнопки календаря и запланированных встреч полностью удалены */}
       </div>
     </div>
   )
 }
 
 export default LiveDuelSelection
+
