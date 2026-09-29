@@ -55,7 +55,7 @@ const Footer = () => {
           onClick={() => navigate('/live-duel')}
         >
           <LuSwords size={22} className={styles.btn_icon} />
-          <span className={styles.btn_title}>Видео-дуэли</span>
+          <span className={styles.btn_title}>Живые дуэли</span>
         </li>
 
         {/* 📌 Реальные испытания */}

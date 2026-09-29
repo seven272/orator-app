@@ -39,7 +39,6 @@ import { fetchFinishRandomWord } from './ai-exercises/randomWordSlice'
 import { fetchFinishHistorical } from './ai-exercises/historicalSlice'
 import { fetchSubmitLiveRating } from './liveDuelSlice'
 
-
 // Один универсальный запрос для получения всех данных профиля и дашборда
 const fetchProfileData = createAsyncThunk(
   'profile/fetchProfileData',
@@ -277,10 +276,8 @@ const profileSlice = createSlice({
             data.activePurchasedCourses
           state.user.isPremium = data.isPremium
           state.user.premiumExpiresAt = data.premiumExpiresAt
-          
         }
       })
-
       //Загрузка данных профиля
       .addCase(fetchProfileData.pending, (state) => {
         state.loading = true

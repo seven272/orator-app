@@ -34,7 +34,7 @@ const DropdownMenu = () => {
       alias: 'challenges',
     },
     {
-      title: 'видео-дуэль',
+      title: 'живая дуэль',
       alias: 'live-duel',
     },
     {

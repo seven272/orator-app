@@ -1,0 +1,121 @@
+.alert_overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 80vh;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.alert_card {
+  background-color: var(--color-white);
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  border-radius: 24px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
+}
+
+.icon_ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+/* Ореолы свечения под контекст платформы */
+.glow_vk {
+  background-color: rgba(38, 136, 235, 0.08);
+  border: 1px solid rgba(38, 136, 235, 0.2);
+  color: var(--color-blue-vk);
+}
+
+.glow_site {
+  background-color: rgba(52, 199, 89, 0.08);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+  color: var(--color-green);
+}
+
+.alert_title {
+  font: var(--font-ml);
+  font-family: var(--font-family-title);
+  color: var(--font-color-dark);
+  margin: 0 0 12px 0;
+}
+
+.alert_description {
+  font: var(--font-m);
+  color: var(--font-color-dark);
+  line-height: 1.4;
+  margin: 0 0 16px 0;
+}
+
+.alert_description_sub {
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.actions_stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.base_btn {
+  font: var(--font-m);
+  font-family: var(--font-family-subtitle);
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vk_btn {
+  background: linear-gradient(135deg, var(--color-blue-vk) 0%, #1a72cb 100%);
+  color: var(--color-white);
+  box-shadow: 0 6px 16px rgba(38, 136, 235, 0.2);
+}
+
+.site_btn {
+  background: linear-gradient(135deg, var(--color-blue-vk) 0%, #1a72cb 100%);
+  color: var(--color-white);
+  box-shadow: 0 6px 16px rgba(38, 136, 235, 0.2);
+}
+
+.base_btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.back_btn {
+  background-color: var(--color-bg-layout);
+  border: 1px solid rgba(178, 215, 255, 0.4);
+  color: var(--color-text-secondary);
+}
+
+.back_btn:hover {
+  background-color: #f0f0f0;
+  box-shadow: none;
+}

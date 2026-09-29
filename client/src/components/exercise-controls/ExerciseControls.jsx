@@ -78,73 +78,7 @@ const ExerciseControls = ({
   const cost = exerciseLevel === 2 ? 2 : 1
   const targetLevelKey = `LEVEL_${exerciseLevel}`
 
-  // АСИНХРОННЫЙ ОБРАБОТЧИК: Защищен от повторных нажатий и адаптирован под ВК
-  // const handleStart = async () => {
-  //   if (isEnergyChecking) return
-  //   setIsEnergyChecking(true)
-
-  //   // 🔒 КЕЙС 1: ИЗОЛИРОВАННАЯ ЛОГИКА ДЛЯ ГОСТЕЙ (Списание на фронтенде)
-  //   if (isGuest) {
-  //     let currentEnergy = 3
-
-  //     if (isVkEnvironment) {
-  //       currentEnergy = await getGuestEnergy() // Из облака ВК [INDEX]
-  //     } else {
-  //       currentEnergy = localStorage.getItem('govorix_guest_energy')
-  //         ? parseInt(localStorage.getItem('govorix_guest_energy'), 10)
-  //         : 3
-  //     }
-
-  //     if (currentEnergy < cost) {
-  //       dispatch(openGuestOffer())
-  //       setIsEnergyChecking(false)
-  //       return
-  //     }
-
-  //     // Списываем энергию за раунд ТОЛЬКО для гостей
-  //     const newEnergy = currentEnergy - cost
-  //     if (isVkEnvironment) {
-  //       await setGuestEnergy(newEnergy) // В облако ВК [INDEX]
-  //     } else {
-  //       localStorage.setItem(
-  //         'govorix_guest_energy',
-  //         String(newEnergy),
-  //       )
-  //     }
-
-  //     dispatch(syncGuestEnergy(newEnergy));
-
-  //     onStart();
-  //     setIsEnergyChecking(false);
-  //     return;
-  //   }
-
-  //   // 🔒 КЕЙС 2: ЛОГИКА ДЛЯ АВТОРИЗОВАННЫХ ПОЛЬЗОВАТЕЛЕЙ (Только проверка баланса) [INDEX]
-  //   if (profileUser?.isPremium) {
-  //     onStart()
-  //     setIsEnergyChecking(false)
-  //     return
-  //   }
-
-  //   const allowed = profileUser?.dailyEnergy?.allowed ?? 15
-  //   const used = profileUser?.dailyEnergy?.used ?? 0
-  //   const availableEnergy = Math.max(0, allowed - used)
-
-  //   // Блокировка при пустом баке: разводка Сайт / ВК [INDEX]
-  //   if (availableEnergy < cost) {
-  //     if (isVkEnvironment) {
-  //       dispatch(openViralModal()) // Бесплатная зарядка в ВК [INDEX]
-  //     } else {
-  //       dispatch(openPremiumOffer()) // Окно оплаты на сайте
-  //     }
-  //     setIsEnergyChecking(false)
-  //     return
-  //   }
-
-  //   // Запускаем раунд БЕЗ списания на фронтенде (спишет бэкенд при отправке результатов) [INDEX]
-  //   onStart()
-  //   setIsEnergyChecking(false)
-  // }
+  
   const handleStart = async () => {
     if (isEnergyChecking) return
     setIsEnergyChecking(true)

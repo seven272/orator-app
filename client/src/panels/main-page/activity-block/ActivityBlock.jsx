@@ -29,7 +29,7 @@ const ActivityBlock = () => {
     {
       id: 'duels',
       title: 'ДУЭЛИ',
-      subtitle: 'Видео-дискуссии',
+      subtitle: 'Живые дискуссии',
       type_class: styles.type_duels,
       icon: duelsIcon,
       link: '/live-duel',

@@ -9,6 +9,7 @@ import { getXpThreshold } from '../utils/gamificationProgress.js'
 import { checkAchievements } from '../utils/achievementService.js'
 import generateDuelData from '../utils/liveDuelTopicSelector.js'
 import { DUEL_TOPICS } from '../constants/duelTopics.js'
+import { trackLiveDuel } from '../utils/feedService.js'
 
 /**
  * Вспомогательный хелпер удаления файла при ошибках валидации
@@ -383,6 +384,8 @@ const submitRating = async (req, res) => {
           .map((item) => item.date),
       ),
     ]
+    // пушим новость в живую ленту
+    trackLiveDuel(user._id)
 
     return res.status(200).json({
       success: true,

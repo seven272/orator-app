@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axiosInstance from '../../utils/axiosInstance'
+import { message } from 'antd'
 
 // --- АСИНХРОННЫЕ ЭКШЕНЫ (THUNKS) ---
 
@@ -36,8 +37,7 @@ export const fetchCreateLiveRoom = createAsyncThunk(
       return res.data
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message ||
-          'Ошибка при создании комнаты',
+        error.response?.data || 'Ошибка при создании комнаты',
       )
     }
   },
@@ -55,8 +55,7 @@ export const fetchJoinLiveRoom = createAsyncThunk(
       return res.data
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message ||
-          'Ошибка при подключении к комнате',
+        error.response?.data || 'Ошибка при подключении к комнате',
       )
     }
   },
@@ -67,9 +66,12 @@ export const fetchCheckRoomStatus = createAsyncThunk(
   'liveDuel/fetchCheckRoomStatus',
   async ({ roomId }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post('/live-duel/check-status', {
-        roomId: roomId,
-      })
+      const res = await axiosInstance.post(
+        '/live-duel/check-status',
+        {
+          roomId: roomId,
+        },
+      )
       return res.data
     } catch (error) {
       return rejectWithValue(
@@ -84,10 +86,13 @@ export const fetchSubmitLiveRating = createAsyncThunk(
   'liveDuel/fetchSubmitLiveRating',
   async ({ roomId, rating }, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post('/live-duel/submit-rating', {
-        roomId: roomId,
-        rating: rating,
-      })
+      const res = await axiosInstance.post(
+        '/live-duel/submit-rating',
+        {
+          roomId: roomId,
+          rating: rating,
+        },
+      )
       return res.data
     } catch (error) {
       return rejectWithValue(
@@ -139,7 +144,9 @@ export const fetchLiveDuelStats = createAsyncThunk(
   'liveDuel/fetchLiveDuelStats',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get('/live-duel/dashboard-stats')
+      const res = await axiosInstance.get(
+        '/live-duel/dashboard-stats',
+      )
       return res.data.data // Возвращаем вложенную структуру данных строго по вашему коду
     } catch (error) {
       return rejectWithValue(
@@ -215,8 +222,18 @@ const liveDuelSlice = createSlice({
       })
       .addCase(fetchCreateLiveRoom.rejected, (state, action) => {
         state.loading = false
-        state.error = action.payload
+        state.error = action.payload.error
         state.searchStatus = 'failed'
+        if (
+          action.payload?.isLimitReached &&
+          action.payload.message.includes('лимит')
+        ) {
+          message.warning(
+            action.payload.message ||
+              'Суточный лимит Живых дуэлей исчерпан. Оформите premium статус, чтобы снять ограничения.',
+            5,
+          )
+        }
       })
 
       // --- Подключение к комнате ---
@@ -237,7 +254,17 @@ const liveDuelSlice = createSlice({
       .addCase(fetchJoinLiveRoom.rejected, (state, action) => {
         state.loading = false
         state.searchStatus = 'failed'
-        state.error = action.payload
+        state.error = action.payload.error
+        if (
+          action.payload?.isLimitReached &&
+          action.payload?.message.includes('лимит')
+        ) {
+          message.warning(
+            action.payload.message ||
+              'Суточный лимит Живых дуэлей исчерпан. Оформите premium статус, чтобы снять ограничения.',
+            5,
+          )
+        }
       })
 
       // --- Проверка статуса комнаты (Пуллинг) ---

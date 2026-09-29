@@ -67,7 +67,7 @@ const generateWeeklySuperPrize = async (user) => {
     if (Math.random() > 0.5) {
       return {
         type: 'coins',
-        amount: 1000,
+        amount: 1000, 
         title: '1 000 жетонов оратора',
       }
     } else {

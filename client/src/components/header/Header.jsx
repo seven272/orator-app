@@ -23,7 +23,7 @@ import logoImg from '../../assets/images/design/logo.png'
 
 const Header = () => {
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const dispatch = useDispatch() 
 
   // Извлечение глобального стейта пользователей
   const { user: profileUser } = useSelector((state) => state.profile)

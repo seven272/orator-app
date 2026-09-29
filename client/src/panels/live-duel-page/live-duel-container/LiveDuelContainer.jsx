@@ -1,18 +1,23 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
 import {
   resetLiveDuelState,
   setSearchStatus,
 } from '../../../redux/slices/liveDuelSlice'
-
+import {
+  checkIsAuth,
+} from '../../../redux/slices/authSlice'
 import LiveDuelSelection from './live-duel-selection/LiveDuelSelection'
 import LiveDuelMatching from './live-duel-matching/LiveDuelMatching'
 import LiveDuelLinkWaiting from './live-duel-link-waiting/LiveDuelLinkWaiting'
 import LiveRoomReal from './live-room-real/LiveRoomReal'
+import LiveDuelGuestAlert from './live-duel-guest-alert/LiveDuelGuestAlert'
 import styles from './LiveDuelContainer.module.css'
 
 const LiveDuelContainer = () => {
   const dispatch = useDispatch()
+  const isAuth = useSelector(checkIsAuth)
   const { searchStatus, currentRoom } = useSelector(
     (state) => state.liveDuel,
   )
@@ -20,6 +25,7 @@ const LiveDuelContainer = () => {
   // СИНХРОНИЗАЦИЯ: Если мы были в поиске, но пуллинг обновил статус комнаты в базе на 'active'
   useEffect(() => {
     if (
+      isAuth &&
       searchStatus === 'searching' &&
       currentRoom?.status === 'active'
     ) {
@@ -28,7 +34,7 @@ const LiveDuelContainer = () => {
       )
       dispatch(setSearchStatus('active'))
     }
-  }, [currentRoom?.status, searchStatus, dispatch])
+  }, [currentRoom?.status, searchStatus, isAuth, dispatch])
 
   // Очищаем состояние дуэлей при выходе пользователя с этого экрана
   useEffect(() => {
@@ -44,6 +50,14 @@ const LiveDuelContainer = () => {
 
   // Проверяем, находится ли пользователь НЕ на главном экране
   const showBackButton = searchStatus !== 'idle'
+
+   if (!isAuth) {
+    return (
+      <div className={styles.container_wrapper}>
+        <LiveDuelGuestAlert />
+      </div>
+    )
+  }
 
   // Фабрика рендеринга экранов в зависимости от статуса матчмейкинга
   const renderCurrentScreen = () => {

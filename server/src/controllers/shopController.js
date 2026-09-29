@@ -13,7 +13,7 @@ const getShopItems = async (req, res) => {
     console.log(error)
     res.status(500).json({ message: 'Ошибка при получении товаров' })
   }
-}
+} 
 
 // 2. Купить товар
 const buyItem = async (req, res) => {

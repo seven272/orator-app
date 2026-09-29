@@ -31,14 +31,12 @@ const LiveDuelLinkWaiting = () => {
   const pollingRef = useRef(null)
   const roomId = currentRoom?._id
 
-  const VK_APP_ID = `app${import.meta.env.VITE_VK_APP_ID}` || 'app54762318'
-
   const inviteUrl = useMemo(() => {
     if (!currentRoom?.inviteToken) return ''
 
     if (isVkEnvironment) {
       // Ссылка для открытия строго внутри экосистемы ВКонтакте
-      return `https://vk.ru/${VK_APP_ID}/#/live-duel/join/${currentRoom.inviteToken}`
+      return `https://vk.ru/app54762318/#/live-duel/join/${currentRoom.inviteToken}`
     } else {
       // Ссылка для обычного веб-сайта (локального или продакшн домена)
       return `${window.location.origin}/#/live-duel/join/${currentRoom.inviteToken}`

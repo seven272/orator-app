@@ -177,6 +177,27 @@ const FeedList = () => {
             </>
           ),
         }
+
+      case 'LIVE_DUEL': {
+        // 1. Заранее рассчитываем случайный флаг для этой карточки новостей
+        const isFirstVariant = Math.random() > 0.5
+
+        return {
+          icon: '⚔️',
+          text: (
+            <>
+              Завершил{' '}
+              <span className={styles.highlight_rank}>
+                «{meta?.eventTargetName || 'Голосовой баттл'}»
+              </span>{' '}
+              .
+              {isFirstVariant
+                ? ' Слава ораторам! Прокачивайте харизму.'
+                : ' Жаркий поединок аргументов подошел к концу!'}
+            </>
+          ),
+        }
+      }
       default:
         return {
           icon: '📢',

@@ -23,7 +23,8 @@ const feedEventSchema = new mongoose.Schema(
         'COURSE_STARTED', //Началло курса
         'COURSE_COMPLETED', //Завершение курса
         'SHOP_PURCHASE', // Покупка в магазине
-        'WEEKLY_PRIZE' // Приз недели
+        'WEEKLY_PRIZE', // Приз недели
+        'LIVE_DUEL' //Живая дуэль
       ],
       required: true,
     },

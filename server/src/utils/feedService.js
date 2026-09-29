@@ -137,22 +137,31 @@ const trackShopPurchase = async (userId, itemTitle) => {
 }
 
 // Отслеживает высокие баллы, круглые юбилеи прохождений и недельные стрики
- const trackStreakAndMilestones = async ({ userId, exerciseAlias, exerciseTitle, score, userStats, streakDays }) => {
+const trackStreakAndMilestones = async ({
+  userId,
+  exerciseAlias,
+  exerciseTitle,
+  score,
+  userStats,
+  streakDays,
+}) => {
   try {
     // 1. Проверка ударного режима (стрика): публикуем каждые 7 дней
     if (streakDays > 0 && streakDays % 7 === 0) {
       await FeedEvent.create({
         user: userId,
         type: 'STREAK_WEEK',
-        meta: { streakDays }
-      });
+        meta: { streakDays },
+      })
     }
 
     // Ищем статистику по конкретному упражнению
-    const exerciseStat = userStats.find(stat => stat.alias === exerciseAlias);
-    if (!exerciseStat) return;
+    const exerciseStat = userStats.find(
+      (stat) => stat.alias === exerciseAlias,
+    )
+    if (!exerciseStat) return
 
-    const currentCompletions = exerciseStat.completionsCount;
+    const currentCompletions = exerciseStat.completionsCount
 
     // 2. Проверка высокого балла от ИИ
     if (score && score > 80) {
@@ -161,9 +170,9 @@ const trackShopPurchase = async (userId, itemTitle) => {
         type: 'EXERCISE_TOP_SCORE',
         meta: {
           exerciseTitle,
-          score
-        }
-      });
+          score,
+        },
+      })
     }
 
     // 3. Проверка юбилея прохождений (кратно 5)
@@ -173,17 +182,16 @@ const trackShopPurchase = async (userId, itemTitle) => {
         type: 'EXERCISE_MILESTONE',
         meta: {
           exerciseTitle,
-          completionsCount: currentCompletions
-        }
-      });
+          completionsCount: currentCompletions,
+        },
+      })
     }
   } catch (error) {
-    console.error('Ошибка трекинга милстоунов в feedService:', error);
+    console.error('Ошибка трекинга милстоунов в feedService:', error)
   }
-};
+}
 
-
- // Публикация в ленту информации о полученных ачивках
+// Публикация в ленту информации о полученных ачивках
 const trackNewAchievements = async (userId, achievementsArray) => {
   try {
     // Если пользователь за один раз получил несколько ачивок, пушим их по отдельности
@@ -192,30 +200,29 @@ const trackNewAchievements = async (userId, achievementsArray) => {
         user: userId,
         type: 'ACHIEVEMENT_UNLOCKED',
         meta: {
-          eventTargetName: award.title // Передаем красивое название ("Мастер споров") в универсальное поле
-        }
-      });
+          eventTargetName: award.title, // Передаем красивое название ("Мастер споров") в универсальное поле
+        },
+      })
     }
   } catch (error) {
-    console.error('Ошибка публикации ачивки в ленту:', error);
+    console.error('Ошибка публикации ачивки в ленту:', error)
   }
-};
+}
 
-
- // Публикация о повышении уровня (Level Up)
+// Публикация о повышении уровня (Level Up)
 const trackLevelUpEvent = async (userId, newLevel) => {
   try {
     await FeedEvent.create({
       user: userId,
       type: 'RANK_UP',
       meta: {
-        newRank: `${newLevel} уровня`
-      }
-    });
+        newRank: `${newLevel} уровня`,
+      },
+    })
   } catch (error) {
-    console.error('Ошибка публикации левелапа в ленту:', error);
+    console.error('Ошибка публикации левелапа в ленту:', error)
   }
-};
+}
 
 //  Сундук с призыми
 const trackWeeklyPrize = async (userId, itemTitle) => {
@@ -229,6 +236,24 @@ const trackWeeklyPrize = async (userId, itemTitle) => {
     console.error(error)
   }
 }
+//  Сундук с призыми
+const trackLiveDuel = async (userId) => {
+  const isFirstVariant = Math.random() > 0.5
+  try {
+    await FeedEvent.create({
+      user: userId,
+      type: 'LIVE_DUEL',
+      meta: {
+        eventTargetName: isFirstVariant
+          ? 'Голосовой баттл'
+          : 'Живую дуэль',
+      },
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 
 
 export {
@@ -240,5 +265,6 @@ export {
   trackStreakAndMilestones,
   trackNewAchievements,
   trackLevelUpEvent,
-  trackWeeklyPrize
+  trackWeeklyPrize,
+  trackLiveDuel,
 }
