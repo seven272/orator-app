@@ -126,6 +126,25 @@ const initCronJobs = () => {
           `🧹 [Cron]: Физически стерто документов отмененных комнат из БД: ${cleanTrashResult.deletedCount}`,
         )
       }
+
+       // ==========================================
+      // ВЕТКА 4: Очистка массива аудифйлов в завершенных дуэлях
+      // ==========================================
+      // Находим завершенные комнаты старше 2 дней, у которых массив аудио еще не очищен
+      const optimizeCompletedResult = await LiveDuel.updateMany(
+        {
+          status: 'completed',
+          createdAt: { $lt: twoDaysAgo },
+          audioTracks: { $exists: true, $not: { size: 0 } } // Оптимизируем только те, где есть данные
+        },
+        { 
+          $set: { audioTracks: [] } // Полностью зануляем массив треков, сжимая документ до минимума
+        }
+      )
+      
+      if (optimizeCompletedResult.modifiedCount > 0) {
+        console.log(`💎 [Cron Оптимизация]: Сжато старых завершенных комнат (массивы аудио очищены): ${optimizeCompletedResult.modifiedCount}`)
+      }
     } catch (error) {
       console.error(
         '❌ [Cron Critical Error]: Ошибка при фоновом обслуживании комнат:',
