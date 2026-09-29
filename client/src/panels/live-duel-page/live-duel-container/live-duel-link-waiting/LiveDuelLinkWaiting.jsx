@@ -145,19 +145,22 @@ const LiveDuelLinkWaiting = () => {
       )}
 
       <p className={styles.matching_hint}>
-        Отправьте приглашение собеседнику в ВКонтакте или скопируйте
-        прямую ссылку.
+        {isVkEnvironment
+          ? 'Отправьте приглашение собеседнику в ВКонтакте или скопируйте прямую ссылку.'
+          : 'Отправьте приглашение собеседнику скопировав ссылку на дуэль.'}
       </p>
 
       {/* Блок премиальных кнопок отправки / копирования */}
       <div className={styles.invite_actions_layout}>
-        <button
-          className={styles.btn_vk_share}
-          onClick={handleVkShare}
-        >
-          <FiSend size={18} />
-          <span>Поделиться в VK</span>
-        </button>
+        {isVkEnvironment && (
+          <button
+            className={styles.btn_vk_share}
+            onClick={handleVkShare}
+          >
+            <FiSend size={18} />
+            <span>Поделиться через VK</span>
+          </button>
+        )}
 
         <button
           className={`${styles.btn_clipboard_copy} ${isCopied ? styles.copied : ''}`}

@@ -135,7 +135,7 @@ const initCronJobs = () => {
         {
           status: 'completed',
           createdAt: { $lt: twoDaysAgo },
-          audioTracks: { $exists: true, $not: { size: 0 } } // Оптимизируем только те, где есть данные
+          audioTracks: {  $exists: true, $ne: [] } // Оптимизируем только те, где есть данные
         },
         { 
           $set: { audioTracks: [] } // Полностью зануляем массив треков, сжимая документ до минимума

@@ -1,13 +1,13 @@
 import express from 'express'
 import {
- createRoom,
+  createRoom,
   joinRoom,
   checkRoomStatus,
   submitRating,
   checkInviteToken,
   checkRatingStatus,
   getLiveDuelStats,
-  uploadAudioTrack // Новый контроллер
+  uploadAudioTrack, // Новый контроллер
 } from '../controllers/liveDuelController.js'
 
 import { checkAuth } from '../middlewares/authMiddleware.js'
@@ -18,12 +18,16 @@ const router = express.Router()
 
 // --- Живые дуэли между реальными пользователями ---
 router.post('/create-room', checkAuth, checkDuelLimits, createRoom)
-router.post('/join-room', checkAuth,checkDuelLimits, joinRoom)
+router.post('/join-room', checkAuth, checkDuelLimits, joinRoom)
 router.post('/check-status', checkAuth, checkRoomStatus)
 router.post('/submit-rating', checkAuth, submitRating)
 
-router.post('/upload-audio', checkAuth, upload.single('audio'), uploadAudioTrack)
-
+router.post(
+  '/upload-audio',
+  checkAuth,
+  upload.single('audio'),
+  uploadAudioTrack,
+)
 
 // --- Инвайты, статусы оценок и дашборд статистики ---
 router.get('/check-invite/:token', checkAuth, checkInviteToken)

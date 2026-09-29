@@ -184,7 +184,7 @@ const FeedList = () => {
 
         return {
           icon: '⚔️',
-          text: (
+          text: ( 
             <>
               Завершил{' '}
               <span className={styles.highlight_rank}>

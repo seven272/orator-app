@@ -8,11 +8,13 @@ import {
   setSearchStatus,
   resetLiveDuelState,
 } from '../../../../redux/slices/liveDuelSlice'
+
 import styles from './LiveDuelMatching.module.css'
 
 const LiveDuelMatching = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+ 
   
   const { currentRoom } = useSelector((state) => state.liveDuel)
   const [timerSeconds, setTimerSeconds] = useState(60)
