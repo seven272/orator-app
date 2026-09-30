@@ -12,6 +12,7 @@ import liveDuelSlice from './slices/liveDuelSlice'
 import courseSlice from './slices/courseSlice'
 import feedSlice from './slices/feedSlice'
 import vkSlice from './slices/vkSlice'
+import paymentSlice from './slices/paymentSlice'
 //слайсы ИИ тренажеров
 import aiSlices from './slices/ai-exercises/index'
 
@@ -29,6 +30,7 @@ const store = configureStore({
     course: courseSlice,
     feed: feedSlice,
     vk: vkSlice,
+    payment: paymentSlice,
     //ИИ тренажеры
     ...aiSlices,
   },

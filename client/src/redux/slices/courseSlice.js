@@ -30,7 +30,7 @@ const fetchCourseProgress = createAsyncThunk(
     try {
       const res = await axiosInstance.get(
         `/courses/progress/${courseCode}`,
-      ) 
+      )
       return res.data // Возвращает { status: 'active'|'not_started', progress: {...} }
     } catch (error) {
       return rejectWithValue(error.response.data)
@@ -169,12 +169,17 @@ const fetchActivateFakeCourse = createAsyncThunk(
   'course/fetchActivateFakeCourse',
   async (courseCode, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post('/courses/fake-buy', { courseCode })
+      const res = await axiosInstance.post('/courses/fake-buy', {
+        courseCode,
+      })
       return res.data // Ждем { success: true, activePurchasedCourses: [...] }
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Ошибка при оплате интенсива')
+      return rejectWithValue(
+        error.response?.data?.message ||
+          'Ошибка при оплате интенсива',
+      )
     }
-  }
+  },
 )
 
 const courseSlice = createSlice({
@@ -249,9 +254,13 @@ const courseSlice = createSlice({
       .addCase(fetchCourseProgress.fulfilled, (state, action) => {
         state.courseStatus = 'succeeded'
         state.status = action.payload.status
-       if (action.payload.status === 'active' && action.payload.progress) {
+        if (
+          action.payload.status === 'active' &&
+          action.payload.progress
+        ) {
           state.progressData = action.payload.progress
-          state.currentBlockIndex = action.payload.progress.currentBlockIndex
+          state.currentBlockIndex =
+            action.payload.progress.currentBlockIndex
         } else {
           state.progressData = null
           state.currentBlockIndex = -1
@@ -393,10 +402,10 @@ const courseSlice = createSlice({
       .addCase(fetchRestartCourse.fulfilled, (state, action) => {
         state.courseStatus = 'succeeded'
         state.status = 'not_started' // Переводим курс в статус "не начат"
-        state.progressData = null    // Полностью очищаем стейт текущего прохождения
+        state.progressData = null // Полностью очищаем стейт текущего прохождения
         state.currentBlockIndex = -1
-        
-        // Локально закидываем свежую запись в архивы, чтобы карточка в каталоге 
+
+        // Локально закидываем свежую запись в архивы, чтобы карточка в каталоге
         // сразу перерисовала кнопку на «Пройти повторно» без перезагрузки всей страницы
         if (action.payload.archiveRecord) {
           state.archives.unshift(action.payload.archiveRecord)
@@ -413,7 +422,7 @@ const courseSlice = createSlice({
       })
       .addCase(fetchGetArchiveCourses.fulfilled, (state, action) => {
         state.courseStatus = 'succeeded'
-console.log( action.payload.archives)
+        console.log(action.payload.archives)
         state.archives = action.payload.archives || []
         state.error = null
       })
@@ -467,6 +476,6 @@ export {
   fetchUnlockExamWithCoins,
   fetchRestartCourse,
   fetchGetArchiveCourses,
-  fetchActivateFakeCourse
+  fetchActivateFakeCourse,
 }
 export default courseSlice.reducer

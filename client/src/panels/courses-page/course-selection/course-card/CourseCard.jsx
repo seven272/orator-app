@@ -1,19 +1,16 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { message } from 'antd'
 
-import { fetchActivateFakeCourse } from '../../../../redux/slices/courseSlice'
-import CourseCheckoutModal from '../course-checkout-modal/CourseCheckoutModal'
+import CourseCheckoutModal from '../../../../components/modal/course-checkout-modal/CourseCheckoutModal'
 import styles from './CourseCard.module.css'
 
 const CourseCard = ({ course, isLastOdd, isPurchased }) => {
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+
 
   // Локальные стейты для управления модалкой оплаты внутри этой карточки
   const [openCheckout, setOpenCheckout] = useState(false)
-  const [isBuying, setIsBuying] = useState(false)
+ 
 
   // Главный хэндлер клика по кнопке действия
   const handleActionClick = (e) => {
@@ -26,20 +23,7 @@ const CourseCard = ({ course, isLastOdd, isPurchased }) => {
   }
 
   // Хэндлер подтверждения покупки внутри модального окна
-  const handleConfirmPurchase = async () => {
-    setIsBuying(true)
-    try {
-      await dispatch(fetchActivateFakeCourse(course.code)).unwrap()
-      message.success(
-        `Интенсив "${course.title}" успешно разблокирован!`,
-      )
-      setOpenCheckout(false)
-    } catch (err) {
-      message.error(err || 'Не удалось активировать интенсив')
-    } finally {
-      setIsBuying(false)
-    }
-  }
+
 
   return (
     <>
@@ -87,8 +71,8 @@ const CourseCard = ({ course, isLastOdd, isPurchased }) => {
         active={openCheckout}
         onClose={() => setOpenCheckout(false)}
         courseTitle={course.title}
-        isBuying={isBuying}
-        onConfirm={handleConfirmPurchase}
+        courseCode={course.code}
+       
       />
     </>
   )

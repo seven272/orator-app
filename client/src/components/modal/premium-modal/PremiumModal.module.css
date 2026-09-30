@@ -39,7 +39,9 @@
   align-items: center;
   justify-content: center;
   padding: 4px;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
   z-index: 10;
 }
 
@@ -181,9 +183,58 @@
   border-radius: 6px;
 }
 
+.current_price {
+  font-family: var(--font-family-title);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-green);
+}
+
+.buttons_container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.lock_icon {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.warning {
+  font-size: 11px;
+  color: var(--color-grey);
+  text-align: center;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.dev_fake_btn {
+  background: #222;
+  color: #fff;
+  font-size: 11px;
+  padding: 6px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.dev_fake_btn:hover {
+  opacity: 0.8;
+}
+
 /* 🔥 ЭЛИТНАЯ ЗОЛОТАЯ КНОПКА ПОДКЛЮЧЕНИЯ */
 .activate_btn {
-  background: linear-gradient(135deg, var(--color-bg-orange) 0%, var(--color-yellow) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-orange) 0%,
+    var(--color-yellow) 100%
+  );
   border: 1px solid var(--color-border);
   color: var(--font-color-dark);
   font-family: var(--font-family-decor);
@@ -191,11 +242,14 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   height: 44px;
+  width: 100%;
   border-radius: 22px;
   font-weight: 700;
   cursor: pointer;
   outline: none;
-  transition: filter 0.2s ease, transform 0.1s ease;
+  transition:
+    filter 0.2s ease,
+    transform 0.1s ease;
   box-shadow: 0 4px 14px rgba(255, 189, 18, 0.25);
 }
 
@@ -221,8 +275,14 @@
    АНИМАЦИИ И МОБИЛЬНЫЙ МЕДИА-ЗАПРОС
    ========================================================================== */
 @keyframes slideUpModal {
-  from { transform: translateY(15px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(15px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @media screen and (max-width: 576px) {

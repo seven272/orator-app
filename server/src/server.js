@@ -1,4 +1,4 @@
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0' //убрать в продакшене, и установить сетрификаты Миецифры
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1' //ставим 0 чтобы убрать, ставим 1 чтобы включить сертификаты.убрать в продакшене, и установить сетрификаты Миецифры
 import express from 'express'
 import path from 'path'
 import cors from 'cors'
@@ -20,6 +20,7 @@ import liveDuelRoutes from './routes/liveDuelRoutes.js'
 import courseRoutes from './routes/courseRoutes.js'
 import feedRoutes from './routes/feedRouter.js'
 import vkRoutes from './routes/vkRoutes.js'
+import paymentRoutes from './routes/paymentRoutes.js'
 
 dotenv.config()
 
@@ -45,10 +46,11 @@ app.use('/api/leaderboard', leaderboardRoutes)
 app.use('/api/shop', shopRoutes)
 app.use('/api/challenges', challengeRoutes)
 app.use('/api/admin', adminRoutes)
-app.use('/api/live-duel/', liveDuelRoutes)
+app.use('/api/live-duel', liveDuelRoutes)
 app.use('/api/courses', courseRoutes)
 app.use('/api/feed', feedRoutes)
 app.use('/api/vk', vkRoutes)
+app.use('/api/pay', paymentRoutes)
 
 const start = async () => {
   try {

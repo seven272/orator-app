@@ -2,25 +2,16 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { message } from 'antd'
 import AvatarOrPlaceholder from '../../../../../components/avatar-or-placeholder/AvatarOrPlaceholder'
-import { fetchActivateFakePremium } from '../../../../../redux/slices/profileSlice'
+import { openPremiumModal } from '../../../../../redux/slices/profileSlice'
 import styles from './ProfileUserInfo.module.css' // Используем общий файл стилей
 
 const ProfileUserInfo = ({ user, isPremium, premiumExpiresAt }) => {
   const dispatch = useDispatch()
   const [isPremiumLoading, setIsPremiumLoading] = useState(false)
 
-  const handleBuyPremium = async () => {
-    setIsPremiumLoading(true)
-    try {
-      await dispatch(fetchActivateFakePremium()).unwrap()
-      message.success('Премиум-статус успешно активирован!')
-    } catch (err) {
-      message.error(err || 'Не удалось активировать Премиум')
-    } finally {
-      setIsPremiumLoading(false)
-    }
+  const handleOpenPayment = () => {
+    dispatch(openPremiumModal())
   }
-
   return (
     <div className={styles.top_profile_row}>
       <div className={styles.avatar_wrapper}>
@@ -63,7 +54,7 @@ const ProfileUserInfo = ({ user, isPremium, premiumExpiresAt }) => {
           <button
             type="button"
             className={styles.premium_buy_btn}
-            onClick={handleBuyPremium}
+            onClick={handleOpenPayment}
             disabled={isPremiumLoading}
           >
             {isPremiumLoading ? 'Секунду...' : 'Подключить Premium'}

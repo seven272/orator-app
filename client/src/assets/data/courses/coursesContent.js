@@ -45,7 +45,7 @@ import imgCourse11 from '../../images/courses/course11.png'
 
 const COURSES_STATIC_CONTENT = {
   pitch_master: {
-    code: 'pitch_master',
+    code: 'pitch_master', 
     title: 'Питч на миллион',
     description:
       'Освойте жесткую аргументацию, избавьтесь от воды в речи и научитесь продавать свои идеи инвесторам за 3 минуты.',
