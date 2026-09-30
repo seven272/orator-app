@@ -15,7 +15,7 @@ const createPaymentYookassa = async (req, res) => {
     const userId = req.userId // Извлечено из checkAuth
     const { typeOrder, itemCode, isVk } = req.body // typeOrder: 'premium_subscription' или 'course_purchase'
     // Динамически определяем, куда вернуть пользователя после успешного шлюза ЮKassa
-console.log(req.body)
+    console.log(req.body)
     let product = null
     let description = ''
 
@@ -52,11 +52,23 @@ console.log(req.body)
 
     const idempotenceKey = uuidv4()
 
-    console.log(idempotenceKey)
+    console.log('idempotenceKey ' + idempotenceKey)
 
-    const auth = Buffer.from(
-      `${process.env.YOOKASSA_SHOP_ID}:${process.env.YOOKASSA_SECRET_KEY}`,
-    ).toString('base64')
+    // 🔍 Временный дебаг-лог (проверьте, что выводится в терминал)
+    console.log('SHOP_ID:', process.env.YOOKASSA_SHOP_ID)
+    console.log(
+      'SECRET_KEY ТИП:',
+      typeof process.env.YOOKASSA_SECRET_KEY,
+      'ДЛИНА:',
+      process.env.YOOKASSA_SECRET_KEY?.length,
+    )
+
+    const shopId = String(process.env.YOOKASSA_SHOP_ID).trim()
+    const secretKey = String(process.env.YOOKASSA_SECRET_KEY).trim()
+
+    const auth = Buffer.from(`${shopId}:${secretKey}`).toString(
+      'base64',
+    )
 
     // 2. Создаем запись о заказе в БД со статусом "created"
     const order = await Order.create({
