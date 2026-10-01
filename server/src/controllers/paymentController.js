@@ -80,7 +80,9 @@ const createPaymentYookassa = async (req, res) => {
       status: 'created',
     })
 
-    console.log(order)
+    if (order) {
+      console.log('Заказ в БД успешно создан')
+    }
 
     // 3. Запрос к API ЮKassa
     const response = await axios.post(
@@ -129,6 +131,8 @@ const createPaymentYookassa = async (req, res) => {
 const handleWebhookYookassa = async (req, res) => {
   try {
     const { event, object } = req.body
+    console.log('handleWebhookYookassa event ' + event)
+    console.log('handleWebhookYookassa object ' + object)
 
     if (event === 'payment.succeeded') {
       const { mongoOrderId, dbUserId, typeOrder, itemCode } =
