@@ -192,6 +192,7 @@ const handleWebhookYookassa = async (req, res) => {
 const checkOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params
+    console.log("checkOrderStatus " + orderId)
 
     // Находим заказ в нашей БД
     const order = await Order.findOne({ orderId })
