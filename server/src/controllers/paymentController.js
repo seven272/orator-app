@@ -192,7 +192,11 @@ const handleWebhookYookassa = async (req, res) => {
 const checkOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params
-    console.log("checkOrderStatus " + orderId)
+        // 💡 ДОБАВИТЬ СЮДА: Принудительный сброс кэша для Traefik и браузеров
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    res.setHeader('Pragma', 'no-cache')
+    res.setHeader('Expires', '0')
+    res.setHeader('Surrogate-Control', 'no-store')
 
     // Находим заказ в нашей БД
     const order = await Order.findOne({ orderId })

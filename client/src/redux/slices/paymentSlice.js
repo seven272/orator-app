@@ -32,9 +32,7 @@ const fetchCheckOrderStatus = createAsyncThunk(
   async (orderId, { rejectWithValue }) => {
     try {
       // Делаем гет-запрос на бэкенд (роут создадим на следующем шаге бэкенда при необходимости)
-      const response = await axiosInstance.get(
-        `/pay/order-status/${orderId}`,
-      )
+     const response = await axiosInstance.get(`/pay/order-status/${orderId}?_t=${Date.now()}`)
       // Ожидаем от бэкенда: { success: true, status: 'completed'|'created'|'failed', typeOrder, itemCode }
       return response.data
     } catch (error) {
