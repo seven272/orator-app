@@ -36,7 +36,9 @@
   background-color: var(--color-white);
   transform: translateY(15px);
   opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
@@ -81,9 +83,17 @@
 
 .checkout_main_title {
   font: var(--font-title);
-  color: var(--color-bg-dark);
+  color: var(--color-grey-dark);
   margin: 0 0 10px 0;
   font-size: 1.3rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon_title {
+  color: var(--color-primary);
 }
 
 .checkout_hint {
@@ -101,18 +111,40 @@
 }
 
 /* Блок преимуществ */
+/* Переработанный блок преимуществ */
 .checkout_benefits {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px; /* Увеличили расстояние для лучшей читаемости */
   font-size: 12px;
   color: var(--color-grey-dark);
   margin-bottom: 20px;
   background-color: var(--color-bg-layout);
-  padding: 10px;
-  border-radius: 8px;
+  padding: 14px 16px;
+  border-radius: 12px;
 }
 
+/* Строка преимущества с выравниванием по центру иконки */
+.benefit_row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.4;
+}
+
+/* Выделение жирным важных частей */
+.benefit_row strong {
+  color: var(--color-bg-dark);
+  font-weight: 600;
+}
+
+/* Стиль для эмодзи-иконок */
+.benefit_emoji {
+  font-size: 14px;
+  user-select: none;
+  flex-shrink: 0;
+  margin-top: 1px; /* Легкое смещение для идеального выравнивания по первой строке текста */
+}
 /* Строка с ценой */
 .checkout_price_tag {
   display: flex;
@@ -208,7 +240,6 @@
   margin-top: 8px;
   line-height: 1.45;
 }
-
 
 /* Мобильный адаптив для переноса цен на мелких дисплеях */
 @media screen and (max-width: 480px) {

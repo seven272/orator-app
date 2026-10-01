@@ -42,7 +42,7 @@ import imgCourse8 from '../../images/courses/course8.png'
 import imgCourse9 from '../../images/courses/course9.png'
 import imgCourse10 from '../../images/courses/course10.png'
 import imgCourse11 from '../../images/courses/course11.png'
-
+ 
 const COURSES_STATIC_CONTENT = {
   pitch_master: {
     code: 'pitch_master', 

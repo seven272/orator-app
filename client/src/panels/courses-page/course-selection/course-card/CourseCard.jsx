@@ -62,7 +62,7 @@ const CourseCard = ({ course, isLastOdd, isPurchased }) => {
         >
           {isPurchased
             ? 'Перейти к обучению'
-            : 'Купить интенсив (0 ₽)'}
+            : 'Оформить'}
         </button>
       </div>
 

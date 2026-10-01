@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import UserModal from './user-modal/UserModal.jsx'
-import {
-  fetchToggleUserPremium,
-  fetchAdminUsers,
-} from '../../../redux/slices/adminSlice.js'
+import { fetchAdminUsers } from '../../../redux/slices/adminSlice.js'
 import styles from './UsersManagement.module.css'
 
 const UsersManagement = () => {
@@ -17,6 +14,7 @@ const UsersManagement = () => {
   const [search_query, setSearchQuery] = useState('')
   const [page, setPage] = useState(1)
   const [selected_user, setSelectedUser] = useState(null)
+  const [isOpenModal, setIsOpenModal] = useState(false)
 
   useEffect(() => {
     dispatch(fetchAdminUsers({ page, search: search_query }))
@@ -27,18 +25,14 @@ const UsersManagement = () => {
     setPage(1)
   }
 
-  const handlePremiumToggle = async (user_id) => {
-    try {
-      const result = await dispatch(
-        fetchToggleUserPremium(user_id),
-      ).unwrap()
-      // Обновляем локальный стейт открытой модалки, чтобы кнопка сразу поменяла цвет
-      setSelectedUser((prev) =>
-        prev ? { ...prev, isPremium: result.isPremium } : null,
-      )
-    } catch (err) {
-      alert(err || 'Не удалось изменить статус')
-    }
+  const handleCloseModal = () => {
+    setSelectedUser(null)
+    setIsOpenModal(false)
+  }
+
+  const handleOpenModal = (user) => {
+    setSelectedUser(user)
+    setIsOpenModal(true)
   }
 
   return (
@@ -69,7 +63,7 @@ const UsersManagement = () => {
             <div
               key={user._id}
               className={styles.user_item}
-              onClick={() => setSelectedUser(user)}
+              onClick={() => handleOpenModal(user)}
             >
               <div className={styles.user_info_main}>
                 <span className={styles.user_name}>
@@ -126,8 +120,8 @@ const UsersManagement = () => {
           user={selected_user}
           currentPage={page}
           searchQuery={search_query}
-          onClose={() => setSelectedUser(null)}
-          onTogglePremium={handlePremiumToggle}
+          onClose={handleCloseModal}
+          activeModal={isOpenModal}
         />
       )}
     </div>

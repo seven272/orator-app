@@ -177,78 +177,144 @@ const getStatistics = async (req, res) => {
 
 const getUserList = async (req, res) => {
   try {
-    const limit = 10 // Строго по 10 пользователей на страницу
+    const limit = 10
     const page = parseInt(req.query.page) || 1
     const search = req.query.search || ''
 
-    // Формируем динамический фильтр для поиска
-    let query_filter = {}
+    let queryFilter = {}
     if (search) {
-      // Проверяем, является ли поисковый запрос валидным ObjectId MongoDB
-      const is_object_id = search.match(/^[0-9a-fA-F]{24}$/)
+      const isObjectId = search.match(/^[0-9a-fA-F]{24}\$/)
 
-      if (is_object_id) {
-        // Если ввели точный ID — ищем строго по нему
-        query_filter = { _id: search }
+      if (isObjectId) {
+        queryFilter = { _id: search }
+      } else if (search.startsWith('vk:')) {
+        // Удобный префикс для поиска строго по vkId (например ввели vk:12345)
+        const pureVkId = search.replace('vk:', '').trim()
+        queryFilter = { vkId: pureVkId }
       } else {
-        // Иначе ищем по displayName (регистронезависимо через регулярное выражение)
-        query_filter = {
-          displayName: { $regex: search, $options: 'i' },
+        // Поиск по displayName или прямому совпадению vkId
+        queryFilter = {
+          $or: [
+            { displayName: { $regex: search, $options: 'i' } },
+            { vkId: search },
+          ],
         }
       }
     }
 
-    // Считаем общее количество найденных документов для правильного рассчета страниц
-    const total_found_users = await User.countDocuments(query_filter)
-    const total_pages = Math.ceil(total_found_users / limit)
+    const totalFoundUsers = await User.countDocuments(queryFilter)
+    const totalPages = Math.ceil(totalFoundUsers / limit)
 
-    // Достаем нужную порцию данных
+    // 💡 Расширили проекцию: добавили vkId, registeredFrom, activePurchasedCourses, premiumExpiresAt
     const users = await User.find(
-      query_filter,
-      'displayName email progression.level progression.coins isPremium stats.lifetimeXp',
+      queryFilter,
+      'displayName email progression.level progression.coins isPremium premiumExpiresAt stats.lifetimeXp vkId registeredFrom activePurchasedCourses',
     )
-      .sort({ 'stats.lifetimeXp': -1 }) // Лидерборд-сортировка
-      .skip((page - 1) * limit) // Пропускаем пользователей предыдущих страниц
-      .limit(limit) // Ограничиваем выдачу
+      .sort({ 'stats.lifetimeXp': -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
 
     res.status(200).json({
       success: true,
       users,
-      total_pages,
+      total_pages: totalPages,
       current_page: page,
     })
   } catch (error) {
-    console.log(error)
+    console.error(error)
     res.status(500).json({
       success: false,
-      message: 'Ошибка при получении списка пользователей',
+      message: 'Ошибка получения списка пользователей',
     })
   }
 }
 
-const togglePremiumUser = async (req, res) => {
+const updatePremiumUserAdmin = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
+    const { id } = req.params
+    const { duration } = req.body // '1h', '1m', '6m', '1y', 'revoke'
+   
+    const user = await User.findById(id)
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: 'Пользователь не найден' })
     }
 
-    // Инвертируем текущее состояние премиума
-    user.isPremium = !user.isPremium
+    if (duration === 'revoke') {
+      user.isPremium = false
+      user.premiumExpiresAt = null
+    } else {
+      const expiresAt = new Date()
+      if (duration === '1h')
+        expiresAt.setHours(expiresAt.getHours() + 1)
+      else if (duration === '1m')
+        expiresAt.setMonth(expiresAt.getMonth() + 1)
+      else if (duration === '6m')
+        expiresAt.setMonth(expiresAt.getMonth() + 6)
+      else if (duration === '1y')
+        expiresAt.setFullYear(expiresAt.getFullYear() + 1)
+      else {
+        return res.status(400).json({
+          success: false,
+          message: 'Неверный формат длительности',
+        })
+      }
+
+      user.isPremium = true
+      user.premiumExpiresAt = expiresAt
+    }
+
     await user.save()
 
     res.status(200).json({
       success: true,
-      message: `Премиум статус изменен на ${user.isPremium}`,
+      message: 'Премиум статус успешно обновлен',
       isPremium: user.isPremium,
+      premiumExpiresAt: user.premiumExpiresAt,
     })
   } catch (error) {
-    console.log(error)
+    console.error(error)
     res.status(500).json({
       success: false,
-      message: 'Ошибка при изменении статуса',
+      message: 'Ошибка обновления премиум-статуса',
+    })
+  }
+}
+const addCourseToUserAdmin = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { courseCode } = req.body
+
+    if (!courseCode) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Код курса не передан' })
+    }
+
+    // Добавляем курс атомарно через \$addToSet (защита от дубликатов)
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $addToSet: { activePurchasedCourses: courseCode } },
+      { new: true },
+    )
+
+    if (!updatedUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Пользователь не найден' })
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Курс "${courseCode}" успешно добавлен`,
+      activePurchasedCourses: updatedUser.activePurchasedCourses,
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({
+      success: false,
+      message: 'Ошибка при добавлении курса',
     })
   }
 }
@@ -349,7 +415,8 @@ const toggleStatusMerch = async (req, res) => {
 export {
   getStatistics,
   getUserList,
-  togglePremiumUser,
+  updatePremiumUserAdmin,
+  addCourseToUserAdmin,
   deleteUser,
   getMerchOrders,
   toggleStatusMerch,

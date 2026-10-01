@@ -1,4 +1,3 @@
-/* --- МОДАЛЬНОЕ ОКНО (Затемнение заднего фона) --- */
 .modal_overlay {
   position: fixed;
   top: 0;
@@ -6,9 +5,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(
-    2px
-  ); /* легкое размытие заднего фона для фокуса */
+  backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,128 +13,241 @@
   padding: 16px;
 }
 
-/* Контентная часть карточки пользователя */
 .modal_content {
   background: #ffffff;
   width: 100%;
-  max-width: 450px; /* Идеально для встраивания в мобильный экран */
+  max-width: 480px;
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   position: relative;
   box-sizing: border-box;
-  animation: slide_up 0.2s ease-out; /* плавная анимация появления */
+  animation: slide_up 0.2s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal_title {
   font-size: 18px;
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: #111111;
   padding-right: 24px;
 }
 
-/* Кнопка закрытия (крестик) */
 .modal_close_btn {
   position: absolute;
   top: 20px;
   right: 20px;
   background: none;
   border: none;
-  font-size: 24px;
-  cursor: pointer;
+  font-size: 34px;
   color: #aaaaaa;
   line-height: 1;
   padding: 0;
+  cursor: pointer;
 }
 
 .modal_close_btn:hover {
   color: #333333;
 }
 
-/* Строки с параметрами внутри карточки */
+/* 💡 Стили локального блока уведомлений */
+.admin_alert_box {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  box-sizing: border-box;
+  animation: slide_up 0.15s ease-out;
+  text-align: center;
+}
+
+/* Зеленый успех */
+.alert_success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Красная ошибка */
+.alert_error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Желтое предупреждение */
+.alert_warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+
 .detail_row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  font-size: 14px;
+  padding: 10px 0;
+  font-size: 13px;
   border-bottom: 1px dashed #e9ecef;
-}
-
-.detail_row:last-of-type {
-  border-bottom: none;
-  margin-bottom: 12px;
 }
 
 .row_meta_text {
   color: #666666;
-  max-width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; /* красивое обрезание длинных email */
+  font-size: 12px;
+  font-family: monospace;
 }
 
-/* Базовые стили для кнопки изменения премиума */
-.premium_action_btn {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 10px;
+/* Секция тегов курсов */
+.courses_section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 0;
+  border-bottom: 1px dashed #e9ecef;
+}
+
+.section_subtitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.course_tags_wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.course_badge_tag {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.empty_tags_text {
+  font-size: 12px;
+  color: #adb5bd;
+  font-style: italic;
+}
+
+/* Админ-блоки управления */
+.admin_control_block {
+  margin-top: 14px;
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-sizing: border-box; /* Гарантирует, что падинги не раздувают блок наружу */
+}
+
+.control_label_title {
+  display: block;
+  font-size: 12px;
   font-weight: 700;
-  font-size: 15px;
+  color: #212529;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Исправленный ряд действий: на мелких экранах кнопка уйдет вниз, а не вылезет за поля */
+.control_action_row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap; /* Позволяет кнопке переноситься на новую строку при нехватке места */
+}
+
+.admin_select_input {
+  flex: 1;
+  min-width: 180px; /* Защита селектора от чрезмерного сжатия */
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 0 8px;
+  font-size: 13px;
+  background-color: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.action_submit_btn {
+  padding: 0 20px;
+  height: 38px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  flex-grow: 1; /* Кнопка растянется на всю ширину, если перенесется вниз */
+  min-width: 90px; /* Кнопка сохранит читаемость текста */
+  box-sizing: border-box;
+}
+
+.premium_revoke_full_btn {
+  width: 100%;
+  height: 38px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 4px;
+  box-sizing: border-box;
+}
+
+.btn_grant {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+.btn_revoke {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.btn_course_add {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.action_submit_btn:hover, .premium_revoke_full_btn:hover {
+  opacity: 0.9;
+}
+.delete_action_btn {
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
   cursor: pointer;
   margin-top: 16px;
-  transition:
-    transform 0.1s ease,
-    opacity 0.2s ease;
+  transition: background 0.2s;
 }
 
-.premium_action_btn:active {
-  transform: scale(0.98);
+.delete_action_btn:hover {
+  background: #fdf2f2;
 }
 
-/* Кнопка активации статуса */
-.btn_grant {
-  background-color: #4caf50;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
-}
-
-/* Кнопка деактивации статуса */
-.btn_revoke {
-  background-color: #e53935;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.2);
-}
-
-/* Анимация плавного выезда модалки снизу вверх */
 @keyframes slide_up {
   from {
-    transform: translateY(20px);
+    transform: translateY(15px);
     opacity: 0;
   }
   to {
     transform: translateY(0);
     opacity: 1;
   }
-}
-
-/* Кнопка опасного удаления */
-.delete_action_btn {
-  width: 100%;
-  padding: 12px;
-  background: none;
-  border: 1px solid #dc3545;
-  color: #dc3545;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.2s;
-}
-
-.delete_action_btn:hover {
-  background: #fdf2f2;
 }

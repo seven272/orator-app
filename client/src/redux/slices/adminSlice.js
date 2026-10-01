@@ -14,7 +14,7 @@ const fetchAdminAnalytics = createAsyncThunk(
         error.res?.data?.message || 'Не удалось загрузить аналитику',
       )
     }
-  }, 
+  },
 )
 
 const fetchAdminUsers = createAsyncThunk(
@@ -34,19 +34,43 @@ const fetchAdminUsers = createAsyncThunk(
   },
 )
 
-const fetchToggleUserPremium = createAsyncThunk(
-  'admin/fetchToggleUserPremium',
-  async (userId, { rejectWithValue }) => {
-    console.log(userId)
+const fetchUpdateUserPremium = createAsyncThunk(
+  'admin/fetchUpdateUserPremium',
+  async ({ userId, duration }, { rejectWithValue }) => {
+    console.log(duration)
     try {
       const res = await axiosInstance.post(
-        `/admin/toggle-premium/${userId}`,
+        `/admin/update-premium/${userId}`,
+        { duration },
       )
-      console.log(res.data)
-      return { userId, isPremium: res.data.isPremium }
+      return {
+        userId,
+        isPremium: res.data.isPremium,
+        premiumExpiresAt: res.data.premiumExpiresAt,
+      }
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || 'Ошибка изменения премиума',
+      )
+    }
+  },
+)
+
+const fetchAdminAddCourse = createAsyncThunk(
+  'admin/fetchAdminAddCourse',
+  async ({ userId, courseCode }, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post(
+        `/admin/add-course/${userId}`,
+        { courseCode },
+      )
+      return {
+        userId,
+        activePurchasedCourses: res.data.activePurchasedCourses,
+      }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || 'Ошибка добавления курса',
       )
     }
   },
@@ -136,12 +160,19 @@ const adminSlice = createSlice({
         state.current_page = action.payload.current_page
       })
       // toggle premium user
-      .addCase(fetchToggleUserPremium.fulfilled, (state, action) => {
-        const { userId, isPremium } = action.payload
-        // Локально обновляем статус юзера в массиве, чтобы не перезапрашивать весь список с сервера
+      .addCase(fetchUpdateUserPremium.fulfilled, (state, action) => {
+        const { userId, isPremium, premiumExpiresAt } = action.payload
         const user = state.users.find((u) => u._id === userId)
         if (user) {
           user.isPremium = isPremium
+          user.premiumExpiresAt = premiumExpiresAt
+        }
+      })
+      .addCase(fetchAdminAddCourse.fulfilled, (state, action) => {
+        const { userId, activePurchasedCourses } = action.payload
+        const user = state.users.find((u) => u._id === userId)
+        if (user) {
+          user.activePurchasedCourses = activePurchasedCourses
         }
       })
       // Удаление пользователя из локального стейта без перезагрузки страницы
@@ -167,7 +198,8 @@ const adminSlice = createSlice({
 export const { clearAdminState } = adminSlice.actions
 export {
   fetchAdminAnalytics,
-  fetchToggleUserPremium,
+  fetchUpdateUserPremium,
+  fetchAdminAddCourse,
   fetchAdminUsers,
   fetchDeleteUserById,
   fetchAdminMerchOrders,

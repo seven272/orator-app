@@ -187,7 +187,7 @@
   font-family: var(--font-family-title);
   font-size: 16px;
   font-weight: 800;
-  color: var(--color-green);
+  color: var(--color-primary);
 }
 
 .buttons_container {
@@ -210,20 +210,7 @@
   line-height: 1.4;
 }
 
-.dev_fake_btn {
-  background: #222;
-  color: #fff;
-  font-size: 11px;
-  padding: 6px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
 
-.dev_fake_btn:hover {
-  opacity: 0.8;
-}
 
 /* 🔥 ЭЛИТНАЯ ЗОЛОТАЯ КНОПКА ПОДКЛЮЧЕНИЯ */
 .activate_btn {
@@ -271,6 +258,50 @@
   transform: none;
 }
 
+/* Контейнер для переключателей тарифов */
+.tariff_tabs_container {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin: 16px 0 8px 0;
+  background-color: var(--color-bg-layout);
+  padding: 4px;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+/* Базовый стиль кнопки тарифа */
+.tariff_tab_btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  height: 38px;
+  font-family: var(--font-family-regular);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  white-space: nowrap;
+}
+
+/* Активное состояние кнопки тарифа (Элегантный темный или синий акцент) */
+.tariff_tab_btn_active {
+  background-color: var(--color-white);
+  color: var(--color-bg-dark);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Адаптив под совсем маленькие экраны */
+@media screen and (max-width: 360px) {
+  .tariff_tab_btn {
+    font-size: 11px;
+  }
+}
+
+
 /* ==========================================================================
    АНИМАЦИИ И МОБИЛЬНЫЙ МЕДИА-ЗАПРОС
    ========================================================================== */
@@ -297,7 +328,7 @@
 
 @media screen and (max-width: 400px) {
   .price_box {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     gap: 8px;
   }
@@ -305,3 +336,15 @@
     align-self: flex-end;
   }
 }
+
+@media screen and (max-width: 350px) {
+  .price_box {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .price_row {
+    align-self: center;
+  }
+}
+
