@@ -4,7 +4,7 @@ import Order from '../models/Order.js'
 import User from '../models/User.js'
 import {
   PREMIUM_PRODUCTS,
-  COURSE_PRODUCTS,
+  COURSE_PRODUCTS, 
 } from '../constants/paymentProducts.js'
 
 const YOOKASSA_API_URL = 'https://api.yookassa.ru/v3/payments'
@@ -111,6 +111,9 @@ const createPaymentYookassa = async (req, res) => {
       },
     )
 
+    console.log('ниже ответ от юкассы')
+    console.log(response.data.confirmation.confirmation_url)
+    
     res.status(200).json({
       success: true,
       confirmationUrl: response.data.confirmation.confirmation_url,
