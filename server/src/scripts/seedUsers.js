@@ -4,235 +4,219 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
+
 const testUsers = [
   {
-    displayName: 'Алексей Оратор',
-    email: 'alex@test.com',
+    displayName: 'Алексей#8412', // 🔄 50%: Системный никнейм (Имя#ID)
+    email: 'alexey@test.ru',
     isPremium: true,
-    avatar: 'https://dicebear.com',
+    avatar: 'https://img.magnific.com/free-photo/funny-image-with-dog_23-2151179419.jpg?semt=ais_hybrid&w=740&q=80',
     progression: { level: 8, xp: 450, coins: 120 },
     streak: { current: 14 },
-    weeklyXp: 850, 
+    weeklyXp: 850,
     stats: {
       totalExercises: 45,
       lifetimeXp: 12450, // 🥇 1-е место в глобальном топе
-      exerciseStats: [{ alias: 'ai-debate', title: 'Дебат-клуб', totalPoints: 4500, completionsCount: 15 }]
-    }
+      exerciseStats: [
+        {
+          alias: 'ai-debate',
+          title: 'Дебат-клуб',
+          totalPoints: 4500,
+          completionsCount: 15,
+        },
+      ],
+    },
   },
   {
-    displayName: 'Анна Лингвист',
-    email: 'anna@test.com',
+    displayName: 'krasava_99', // 🔄 50%: Самописный/придуманный никнейм
+    email: 'krasava@test.ru',
     isPremium: true,
-    avatar: 'https://dicebear.com',
+    avatar: '', // 🖼️ Действующий аватар
     progression: { level: 7, xp: 120, coins: 140 },
     streak: { current: 9 },
     weeklyXp: 490,
     stats: {
       totalExercises: 32,
       lifetimeXp: 8900, // 🥈 2-е место в глобальном топе
-      exerciseStats: [{ alias: 'tongue-twister', title: 'Битва дикции', totalPoints: 3100, completionsCount: 10 }]
-    }
+      exerciseStats: [
+        {
+          alias: 'tongue-twister',
+          title: 'Битва дикции',
+          totalPoints: 3100,
+          completionsCount: 10,
+        },
+      ],
+    },
   },
   {
-    displayName: 'Мария Дебаты',
-    email: 'maria@test.com',
+    displayName: 'Анна#2045', // Системный никнейм
+    email: 'anna@test.ru',
     isPremium: false,
-    avatar: 'https://dicebear.com',
+    avatar: 'https://esx.esxscloud.com/liveme/poster/540x540/b06904f3f32d3dff17ff2d2b76753d8e_icon.jpeg', // 🖼️ Действующий аватар
     progression: { level: 6, xp: 200, coins: 50 },
     streak: { current: 5 },
     weeklyXp: 620,
     stats: {
       totalExercises: 24,
       lifetimeXp: 6150, // 🥉 3-е место в глобальном топе
-      exerciseStats: [{ alias: 'joke-master', title: 'Импровизатор анекдотов', totalPoints: 2150, completionsCount: 8 }]
-    }
+      exerciseStats: [
+        {
+          alias: 'joke-master',
+          title: 'Импровизатор анекдотов',
+          totalPoints: 2150,
+          completionsCount: 8,
+        },
+      ],
+    },
   },
   {
-    displayName: 'Дмитрий Сторителлер',
-    email: 'dima@test.com',
+    displayName: 'Troll_Rhetoric', // Самописный никнейм
+    email: 'troll@test.ru',
     isPremium: false,
-    avatar: 'dicebear.com', // Проверка фоллбэка на букву "Д" в UI
-    progression: { level: 5, xp: 800, coins: 90 },
+    avatar: '',
+    progression: { level: 5, xp: 310, coins: 80 },
     streak: { current: 7 },
-    weeklyXp: 510,
+    weeklyXp: 410,
     stats: {
-      totalExercises: 18,
-      lifetimeXp: 4900,
-      exerciseStats: [{ alias: 'association', title: 'Словесный мост', totalPoints: 1900, completionsCount: 5 }]
-    }
+      totalExercises: 19,
+      lifetimeXp: 4900, // 4-е место
+      exerciseStats: [
+        {
+          alias: 'ai-debate',
+          title: 'Дебат-клуб',
+          totalPoints: 1800,
+          completionsCount: 6,
+        },
+      ],
+    },
   },
   {
-    displayName: 'Елена Харизма',
-    email: 'elena@test.com',
+    displayName: 'Дмитрий#5011', // Системный никнейм
+    email: 'dmitry@test.ru',
+    isPremium: true,
+    avatar: '',
+    progression: { level: 5, xp: 90, coins: 95 },
+    streak: { current: 4 },
+    weeklyXp: 380,
+    stats: {
+      totalExercises: 16,
+      lifetimeXp: 4200, // 5-е место
+      exerciseStats: [
+        {
+          alias: 'joke-master',
+          title: 'Импровизатор анекдотов',
+          totalPoints: 1200,
+          completionsCount: 4,
+        },
+      ],
+    },
+  },
+  {
+    displayName: 'Speaker_Pro', // Самописный никнейм
+    email: 'speakerpro@test.ru',
     isPremium: false,
-    avatar: 'https://dicebear.com',
-    progression: { level: 5, xp: 310, coins: 40 },
+    avatar: '',
+    progression: { level: 4, xp: 410, coins: 30 },
     streak: { current: 3 },
     weeklyXp: 310,
     stats: {
-      totalExercises: 15,
-      lifetimeXp: 4200,
-      exerciseStats: [{ alias: 'description', title: 'Ода предмету', totalPoints: 1200, completionsCount: 4 }]
-    }
+      totalExercises: 12,
+      lifetimeXp: 3150, // 6-е место
+      exerciseStats: [
+        {
+          alias: 'tongue-twister',
+          title: 'Битва дикции',
+          totalPoints: 950,
+          completionsCount: 3,
+        },
+      ],
+    },
   },
   {
-    displayName: 'Иван Ледокол',
-    email: 'ivan@test.com',
+    displayName: 'Мария#1094', // Системный никнейм
+    email: 'maria@test.ru',
     isPremium: false,
-    avatar: 'https://dicebear.com',
-    progression: { level: 4, xp: 650, coins: 30 },
-    streak: { current: 4 },
-    weeklyXp: 450,
-    stats: {
-      totalExercises: 14,
-      lifetimeXp: 4100,
-      exerciseStats: [{ alias: 'logic-chain', title: 'Логическая цепь', totalPoints: 1100, completionsCount: 4 }]
-    }
-  },
-  {
-    displayName: 'Павел Риторика',
-    email: 'pavel@test.com',
-    isPremium: false,
-    avatar: 'dicebear.com', // Проверка фоллбэка на букву "П"
-    progression: { level: 4, xp: 150, coins: 15 },
-    streak: { current: 2 },
-    weeklyXp: 280,
-    stats: {
-      totalExercises: 11,
-      lifetimeXp: 3100,
-      exerciseStats: [{ alias: 'toast-master', title: 'Мастер тостов', totalPoints: 900, completionsCount: 3 }]
-    }
-  },
-  {
-    displayName: 'Ольга Публика',
-    email: 'olga@test.com',
-    isPremium: true,
-    avatar: 'https://dicebear.com',
-    progression: { level: 3, xp: 900, coins: 75 },
-    streak: { current: 1 },
+    avatar: 'https://i.pinimg.com/originals/2d/1f/25/2d1f25dc103b92b2d85e89a648df0ea9.jpg?nii=t',
+    progression: { level: 4, xp: 150, coins: 40 },
+    streak: { current: 0 },
     weeklyXp: 210,
     stats: {
       totalExercises: 10,
-      lifetimeXp: 2950,
-      exerciseStats: [{ alias: 'ai-icebreaker', title: 'Ледокол', totalPoints: 750, completionsCount: 3 }]
-    }
+      lifetimeXp: 2800, // 7-е место
+      exerciseStats: [
+        {
+          alias: 'ai-debate',
+          title: 'Дебат-клуб',
+          totalPoints: 800,
+          completionsCount: 3,
+        },
+      ],
+    },
   },
   {
-    displayName: 'Сергей Аргумент',
-    email: 'sergey@test.com',
+    displayName: 'Cyber_Cicero', // Самописный никнейм
+    email: 'cicero@test.ru',
     isPremium: false,
-    avatar: 'https://dicebear.com',
-    progression: { level: 3, xp: 420, coins: 20 },
-    streak: { current: 6 },
+    avatar: 'https://masterpiecer-images.s3.yandex.net/5fb1f4a85c165ea:upscaled',
+    progression: { level: 3, xp: 220, coins: 20 },
+    streak: { current: 2 },
     weeklyXp: 180,
     stats: {
-      totalExercises: 9,
-      lifetimeXp: 2650,
-      exerciseStats: [{ alias: 'ai-debate', title: 'Дебат-клуб', totalPoints: 1200, completionsCount: 4 }]
-    }
+      totalExercises: 7,
+      lifetimeXp: 1950, // 8-е место
+      exerciseStats: [
+        {
+          alias: 'joke-master',
+          title: 'Импровизатор анекдотов',
+          totalPoints: 600,
+          completionsCount: 2,
+        },
+      ],
+    },
   },
   {
-    displayName: 'Константин Спич',
-    email: 'kostya@test.com',
+    displayName: 'Елена#3372', // Системный никнейм
+    email: 'elena@test.ru',
     isPremium: false,
-    avatar: 'dicebear.com', // Проверка фоллбэка на букву "К"
-    progression: { level: 3, xp: 100, coins: 5 },
-    streak: { current: 0 },
-    weeklyXp: 90,
-    stats: {
-      totalExercises: 8,
-      lifetimeXp: 2350,
-      exerciseStats: [{ alias: 'taboo', title: 'Словесное табу', totalPoints: 1100, completionsCount: 3 }]
-    }
-  },
-  {
-    displayName: 'Наталья Слово',
-    email: 'natasha@test.com',
-    isPremium: false,
-    avatar: 'https://dicebear.com',
-    progression: { level: 2, xp: 850, coins: 10 },
-    streak: { current: 5 },
-    weeklyXp: 150,
-    stats: {
-      totalExercises: 6,
-      lifetimeXp: 2100,
-      exerciseStats: [{ alias: 'fear-explosive', title: 'Громкий вызов', totalPoints: 600, completionsCount: 2 }]
-    }
-  },
-  {
-    displayName: 'Татьяна Тезис',
-    email: 'tanya@test.com',
-    isPremium: false,
-    avatar: 'https://dicebear.com',
-    progression: { level: 2, xp: 300, coins: 0 },
-    streak: { current: 2 },
-    weeklyXp: 40,
-    stats: {
-      totalExercises: 5,
-      lifetimeXp: 1900,
-      exerciseStats: [{ alias: 'science-translator', title: 'Просто о сложном', totalPoints: 900, completionsCount: 3 }]
-    }
-  },
-  {
-    displayName: 'Владимир Новичок',
-    email: 'vova@test.com',
-    isPremium: false,
-    avatar: 'https://dicebear.com',
-    progression: { level: 2, xp: 100, coins: 2 },
+    avatar: '',
+    progression: { level: 2, xp: 80, coins: 15 },
     streak: { current: 1 },
-    weeklyXp: 110,
+    weeklyXp: 120,
     stats: {
       totalExercises: 4,
-      lifetimeXp: 1400,
-      exerciseStats: [{ alias: 'king-failure', title: 'Король провала', totalPoints: 500, completionsCount: 2 }]
-    }
+      lifetimeXp: 1100, // 9-е место
+      exerciseStats: [
+        {
+          alias: 'tongue-twister',
+          title: 'Битва дикции',
+          totalPoints: 300,
+          completionsCount: 1,
+        },
+      ],
+    },
   },
   {
-    displayName: 'Михаил Экспромт',
-    email: 'misha@test.com',
-    isPremium: true,
-    avatar: 'dicebear.com', // Проверка фоллбэка на букву "М"
-    progression: { level: 1, xp: 750, coins: 8 },
-    streak: { current: 3 },
-    weeklyXp: 300,
-    stats: {
-      totalExercises: 3,
-      lifetimeXp: 750,
-      exerciseStats: [{ alias: 'synonyms', title: 'Синонимайзер', totalPoints: 750, completionsCount: 3 }]
-    }
-  },
-  {
-    displayName: 'Евгений Голос',
-    email: 'zhenya@test.com',
+    displayName: 'Veni_Vidi_Vici', // Самописный никнейм
+    email: 'vvv@test.ru',
     isPremium: false,
-    avatar: 'https://dicebear.com',
-    progression: { level: 1, xp: 150, coins: 0 },
-    streak: { current: 0 },
-    weeklyXp: 150,
+    avatar: '',
+    progression: { level: 1, xp: 40, coins: 5 },
+    streak: { current: 1 },
+    weeklyXp: 40,
     stats: {
-      totalExercises: 1,
-      lifetimeXp: 150,
-      exerciseStats: [{ alias: 'tongue-twister', title: 'Битва дикции', totalPoints: 150, completionsCount: 1 }]
-    }
+      totalExercises: 2,
+      lifetimeXp: 440, // 10-е место
+      exerciseStats: [
+        {
+          alias: 'ai-debate',
+          title: 'Дебат-клуб',
+          totalPoints: 150,
+          completionsCount: 1,
+        },
+      ],
+    },
   },
-   {
-    displayName: 'Евгений Тест1',
-    email: 'zhenya@test.com',
-    isPremium: false,
-    avatar: 'https://dicebear.com',
-    progression: { level: 1, xp: 150, coins: 0 },
-    streak: { current: 0 },
-    weeklyXp: 150,
-    stats: {
-      totalExercises: 1,
-      lifetimeXp: 150,
-      exerciseStats: [{ alias: 'tongue-twister', title: 'Битва дикции', totalPoints: 150, completionsCount: 1 }]
-    }
-  }
 ]
-
-
-
 
 const seedUsers = async () => {
   try {
@@ -243,16 +227,15 @@ const seedUsers = async () => {
       email: { $in: testUsers.map((u) => u.email) },
     })
 
-    // Генерируем аватарки на основе имен
-    const usersWithAvatars = testUsers.map((user) => ({
+    // Генерируем пароль
+    const usersPassword = testUsers.map((user) => ({
       ...user,
       password: 'hashed_password_123', // Заглушка
-      avatar: `dicebear.com{encodeURIComponent(user.displayName)}`,
     }))
 
-    await User.insertMany(usersWithAvatars)
+    await User.insertMany(usersPassword)
     console.log(
-      '✅ 15 тестовых пользователей успешно добавлены в базу данных!',
+      `✅ ${testUsers.length} тестовых пользователей успешно добавлены в базу данных!`,
     )
     process.exit()
   } catch (err) {
