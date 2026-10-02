@@ -70,8 +70,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  opacity: 0.65; /* Делаем текст неброским, полупрозрачным */
-  font-family: var(--font-family-light);
+  opacity: 0.95; /* Делаем текст неброским, полупрозрачным */
+  font-family: var(--font-family-substring);
   font-size: 10px;
   color: var(--color-white);
 }
@@ -80,11 +80,11 @@
   cursor: pointer;
   text-decoration: none;
   /* font-weight: 600;  */
-  transition: opacity 0.2s;
+  /* transition: opacity 0.2s; */
 }
 
 .legal_link:hover {
-  text-decoration: underline;
+  text-decoration: none;
   opacity: 1; /* Подсвечивается при наведении */
 }
 

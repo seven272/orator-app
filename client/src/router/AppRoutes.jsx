@@ -26,6 +26,7 @@ import SelectedCoursePage from '../panels/selected-course-page/SelectedCoursePag
 import NotFoundPage from '../panels/not-found-page/NotFoundPage'
 import ForbiddenPage from '../panels/forbidden-page/ForbiddenPage'
 import ProtectedRoute from '../components/protected-route/ProtectedRoute'
+import OfferPage from '../panels/offer-page/OfferPage'
 
 const router = createHashRouter([
   {
@@ -77,6 +78,7 @@ const router = createHashRouter([
                 element: <LiveDuelJoinPage />,
               },
               { path: 'courses', element: <CoursesPage /> },
+              { path: 'offer', element: <OfferPage /> },
               {
                 path: 'course/:courseCode',
                 element: <SelectedCoursePage />,
