@@ -15,13 +15,15 @@ const createPaymentYookassa = async (req, res) => {
     const userId = req.userId // Извлечено из checkAuth
     const { typeOrder, itemCode, isVk } = req.body // typeOrder: 'premium_subscription' или 'course_purchase'
     // Динамически определяем, куда вернуть пользователя после успешного шлюза ЮKassa
-    console.log(req.body)
+
     let product = null
     let description = ''
 
+    const targetPage = typeOrder === 'premium_subscription' ? 'profile' : 'courses'
+
     const returnUrl = isVk
-      ? 'https://vk.ru/app54762318'
-      : 'https://govorix.ru'
+      ? `https://vk.ru/app54762318/${targetPage}`
+      : `https://govorix.ru/${targetPage}`
 
     // 1. Валидация продукта и формирование описания
     if (typeOrder === 'premium_subscription') {
@@ -51,18 +53,6 @@ const createPaymentYookassa = async (req, res) => {
     }
 
     const idempotenceKey = uuidv4()
-
-    console.log('idempotenceKey ' + idempotenceKey)
-
-    // 🔍 Временный дебаг-лог (проверьте, что выводится в терминал)
-    console.log('SHOP_ID:', process.env.YOOKASSA_SHOP_ID)
-    console.log(
-      'SECRET_KEY ТИП:',
-      typeof process.env.YOOKASSA_SECRET_KEY,
-      'ДЛИНА:',
-      process.env.YOOKASSA_SECRET_KEY?.length,
-    )
-
     const shopId = String(process.env.YOOKASSA_SHOP_ID).trim()
     const secretKey = String(process.env.YOOKASSA_SECRET_KEY).trim()
 
@@ -79,10 +69,6 @@ const createPaymentYookassa = async (req, res) => {
       amount: parseFloat(product.price),
       status: 'created',
     })
-
-    if (order) {
-      console.log('Заказ в БД успешно создан')
-    }
 
     // 3. Запрос к API ЮKassa
     const response = await axios.post(
@@ -111,9 +97,6 @@ const createPaymentYookassa = async (req, res) => {
       },
     )
 
-    console.log('ниже ответ от юкассы')
-    console.log(response.data.confirmation.confirmation_url)
-    
     res.status(200).json({
       success: true,
       confirmationUrl: response.data.confirmation.confirmation_url,
@@ -134,8 +117,7 @@ const createPaymentYookassa = async (req, res) => {
 const handleWebhookYookassa = async (req, res) => {
   try {
     const { event, object } = req.body
-    console.log('handleWebhookYookassa event ' + event)
-    console.log('handleWebhookYookassa object ' + object)
+    
 
     if (event === 'payment.succeeded') {
       const { mongoOrderId, dbUserId, typeOrder, itemCode } =
@@ -168,19 +150,13 @@ const handleWebhookYookassa = async (req, res) => {
           premiumExpiresAt: expiresAt,
         })
 
-        console.log(
-          `[PAYMENT SUCCESS] User ${dbUserId} upgraded to Premium until ${expiresAt}`,
-        )
       } else if (typeOrder === 'course_purchase') {
         await User.findByIdAndUpdate(dbUserId, {
           $addToSet: { activePurchasedCourses: itemCode }, // addToSet защищает от дублирования кода курса
         })
-        console.log(
-          `[PAYMENT SUCCESS] User ${dbUserId} unlocked course ${itemCode}`,
-        )
+      
       }
     }
-
     // ЮKassa всегда ожидает 200 OK
     res.status(200).send('OK')
   } catch (error) {
@@ -189,38 +165,6 @@ const handleWebhookYookassa = async (req, res) => {
   }
 }
 
-// const checkOrderStatus = async (req, res) => {
-//   try {
-//     const { orderId } = req.params
-//         // 💡 ДОБАВИТЬ СЮДА: Принудительный сброс кэша для Traefik и браузеров
-//     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
-//     res.setHeader('Pragma', 'no-cache')
-//     res.setHeader('Expires', '0')
-//     res.setHeader('Surrogate-Control', 'no-store')
-
-//     // Находим заказ в нашей БД
-//     const order = await Order.findOne({ orderId })
-
-//     if (!order) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: 'Заказ не найден' })
-//     }
-
-//     // Возвращаем статус заказа и метаданные, чтобы фронтенд распределил бенефиты в Redux
-//     res.status(200).json({
-//       success: true,
-//       status: order.status, // 'created', 'completed', 'failed'
-//       typeOrder: order.typeOrder, // 'premium_subscription' или 'course_purchase'
-//       itemCode: order.itemCode, // код подписки или курс (например, 'sales_master')
-//     })
-//   } catch (error) {
-//     console.error('Check Order Status Error:', error.message)
-//     res
-//       .status(500)
-//       .json({ message: 'Ошибка при проверке статуса платежа' })
-//   }
-// }
 
 const fakeBuyPremium = async (req, res) => {
   try {
@@ -289,5 +233,4 @@ const fakeBuyCourse = async (req, res) => {
 export {
   createPaymentYookassa,
   handleWebhookYookassa,
-  // checkOrderStatus,
 }

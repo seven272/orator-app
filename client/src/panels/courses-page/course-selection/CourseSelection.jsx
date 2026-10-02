@@ -7,7 +7,7 @@ import CourseCard from './course-card/CourseCard'
 import styles from './CourseSelection.module.css'
 
 const CourseSelection = () => {
-  const activePurchasedCourses =
+  const activePurchasedCourses =  
     useSelector(
       (state) => state.profile.user.activePurchasedCourses,
     ) || []

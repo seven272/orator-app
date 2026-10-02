@@ -1,13 +1,11 @@
-import { useEffect } from 'react'
+
 import { useSelector, useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import { Modal as AntdModal } from 'antd' // Импортируем Modal из antd с алиасом, чтобы не путать с вашим UI Modal
 import { ExclamationCircleFilled } from '@ant-design/icons' // Опционально: красивая иконка предупреждения
 
 import {
   fetchLogoutUser,
   clearMergeConflict,
-  checkIsAuth,
 } from '../../../redux/slices/authSlice'
 import Modal from '../../../UI/modal/Modal'
 import AccountMergeContent from './account-merge-content/AccountMergeContent'
@@ -22,7 +20,6 @@ import styles from './UserProfile.module.css'
 
 const UserProfile = () => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const { isVkEnvironment } = useVkEnvironment()
 
    // Контролирует 3 дня кулдауна через VK Storage строго на экране Профиля [INDEX]
@@ -31,8 +28,6 @@ const UserProfile = () => {
   const { user, isLoading, error, mergeConflict } = useSelector(
     (state) => state.auth,
   )
-  const isAuth = useSelector(checkIsAuth)
-
   // 🛠️ Функция подтверждения выхода через Ant Design
   const showLogoutConfirm = () => {
     AntdModal.confirm({
@@ -54,12 +49,6 @@ const UserProfile = () => {
     })
   }
 
-  // 🔒 Защита роута
-  useEffect(() => {
-    if (!isLoading && !isAuth) {
-      navigate('/auth', { replace: true })
-    }
-  }, [isAuth, isLoading, navigate])
 
   if (isLoading && !user) return null
 

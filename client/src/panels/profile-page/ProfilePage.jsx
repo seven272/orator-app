@@ -1,13 +1,20 @@
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import UserProfile from './user-profile/UserProfile'
 import { checkIsAuth } from '../../redux/slices/authSlice'
+import { fetchProfileData } from '../../redux/slices/profileSlice'
 
 const ProfilePage = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const isAuth = useSelector(checkIsAuth)
   const { isLoading } = useSelector((state) => state.auth)
+
+
+  useEffect(() => {
+dispatch(fetchProfileData())
+  }, [dispatch])
 
   useEffect(() => {
     if (!isLoading && !isAuth) {

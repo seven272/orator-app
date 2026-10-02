@@ -278,7 +278,7 @@ const profileSlice = createSlice({
           state.user.premiumExpiresAt = data.premiumExpiresAt
         }
       })
-      //Загрузка данных профиля
+      //Загрузка данных профиля 
       .addCase(fetchProfileData.pending, (state) => {
         state.loading = true
         state.error = null
