@@ -14,16 +14,20 @@ const DropdownMenu = () => {
       alias: 'main',
     },
     {
-      title: 'магазин',
-      alias: 'shop',
+      title: 'статистика',
+      alias: 'dashboard',
     },
     {
-      title: 'все упражнения',
+      title: 'тренажеры',
       alias: 'exercises-all',
     },
     {
-      title: 'ежедневные упражнения',
-      alias: 'exercises-daily',
+      title: 'курсы',
+      alias: 'courses',
+    },
+    {
+      title: 'живая дуэль',
+      alias: 'live-duel',
     },
     {
       title: 'рейтинг и лента',
@@ -34,20 +38,8 @@ const DropdownMenu = () => {
       alias: 'challenges',
     },
     {
-      title: 'живая дуэль',
-      alias: 'live-duel',
-    },
-    {
-      title: 'курсы',
-      alias: 'courses',
-    },
-    {
-      title: 'админ',
-      alias: 'admin',
-    },
-    {
-      title: '404',
-      alias: 'notfound',
+      title: 'магазин',
+      alias: 'shop',
     },
   ]
 
@@ -56,14 +48,12 @@ const DropdownMenu = () => {
     const categories = [
       '/',
       'shop',
-      'notfound',
       'exercises-all',
-      'exercises-daily',
       'community',
       'challenges',
       'live-duel',
       'courses',
-      'admin',
+      'dashboard',
     ]
 
     if (categories.includes(key)) {
