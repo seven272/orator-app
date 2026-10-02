@@ -22,8 +22,8 @@ const createPaymentYookassa = async (req, res) => {
     const targetPage = typeOrder === 'premium_subscription' ? 'profile' : 'courses'
 
     const returnUrl = isVk
-      ? `https://vk.ru/app54762318/${targetPage}`
-      : `https://govorix.ru/${targetPage}`
+      ? `https://vk.ru/app54762318/#/${targetPage}`
+      : `https://govorix.ru/#/${targetPage}`
 
     // 1. Валидация продукта и формирование описания
     if (typeOrder === 'premium_subscription') {
