@@ -13,7 +13,6 @@ import {
   clearPaymentState,
 } from '../../../redux/slices/paymentSlice'
 import { useVkEnvironment } from '../../../hooks/useVkEnvironment'
-import { usePaymentPolling } from '../../../hooks/usePaymentPolling'
 import { PREMIUM_TARIFFS } from '../../../constants/premiumTariffs'
 import styles from './PremiumModal.module.css'
 
@@ -41,7 +40,7 @@ const PREMIUM_BENEFITS = [
 const PremiumModal = () => {
   const dispatch = useDispatch()
   const { isVkEnvironment, vkPlatform } = useVkEnvironment()
-  const { orderStatus } = useSelector((state) => state.payment)
+ 
   const isPremiumModalOpen = useSelector(
     (state) => state.profile.isPremiumModalOpen,
   )
@@ -57,15 +56,8 @@ const PremiumModal = () => {
   const canShowBuyButton = !isVkEnvironment || isPaymentAllowedInVk
   const canShowWarningText = false
 
-    // изолированный хук поллинга
-  const { stopPolling } = usePaymentPolling(
-    isPremiumModalOpen,
-    activeTariffCode,
-    () => {
-      message.success('Premium статус успешно активирован!')
-      dispatch(closePremiumModal())
-    }, 
-  )
+   
+ 
 
   useEffect(() => {
     document.body.style.overflow = isPremiumModalOpen ? 'hidden' : ''
@@ -87,7 +79,6 @@ const PremiumModal = () => {
   }, [isPremiumModalOpen])
 
   const handleClose = () => {
-    stopPolling()
     setLoading(false)
     dispatch(clearPaymentState())
     dispatch(closePremiumModal())
@@ -96,13 +87,15 @@ const PremiumModal = () => {
   const handleBuyYookassa = async () => {
     setLoading(true)
     try {
-      const { confirmationUrl } = await dispatch(
+      const  confirmationUrl  = await dispatch(
         fetchPaymentLink({
           typeOrder: 'premium_subscription',
           itemCode: currentTariff.itemCode,
           isVk: isVkEnvironment,
         }),
       ).unwrap()
+
+      handleClose()
 
       if (isVkEnvironment) {
         await bridge
@@ -194,9 +187,7 @@ const PremiumModal = () => {
               onClick={handleBuyYookassa}
               disabled={loading}
             >
-              {loading && orderStatus === 'created'
-                ? 'Ожидание оплаты...'
-                : loading
+              {loading
                   ? 'Загрузка...'
                   : `Оформить за ${currentTariff.price} ₽`}
             </button>

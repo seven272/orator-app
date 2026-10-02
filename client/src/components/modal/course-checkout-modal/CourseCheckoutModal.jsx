@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { message } from 'antd'
 import bridge from '@vkontakte/vk-bridge'
 import { TbLock } from 'react-icons/tb'
@@ -10,7 +10,6 @@ import {
   clearPaymentState,
 } from '../../../redux/slices/paymentSlice'
 import { useVkEnvironment } from '../../../hooks/useVkEnvironment'
-import { usePaymentPolling } from '../../../hooks/usePaymentPolling'
 import styles from './CourseCheckoutModal.module.css'
 
 const CourseCheckoutModal = ({
@@ -21,29 +20,13 @@ const CourseCheckoutModal = ({
 }) => {
   const dispatch = useDispatch()
   const [isBuying, setIsBuying] = useState(false)
-
-  // 1. Сначала извлекаем данные окружения и Редакса
-  const { orderStatus } = useSelector((state) => state.payment)
   const { isVkEnvironment, vkPlatform } = useVkEnvironment()
-
   const isPaymentAllowedInVk = ['desktop_web', 'mobile_web'].includes(
     vkPlatform,
   )
   const canShowBuyButton = !isVkEnvironment || isPaymentAllowedInVk
   const canShowWarningText = false
 
-  // 2. И только ПОСЛЕ этого передаем параметры в наш универсальный хук поллинга!
-  const { stopPolling } = usePaymentPolling(
-    active,
-    courseCode,
-    () => {
-      setIsBuying(false)
-      message.success(
-        `Интенсив "${courseTitle}" успешно разблокирован!`,
-      )
-      onClose() // Бесшовно закрываем окно при успехе, курсы обновятся через extraReducers
-    },
-  )
 
   // Блокируем скролл страницы при открытии окна
   useEffect(() => {
@@ -55,7 +38,6 @@ const CourseCheckoutModal = ({
 
   // Чистый и безопасный метод закрытия (UX-френдли, без блокировок зависшим loading)
   const handleClose = () => {
-    stopPolling()
     setIsBuying(false)
     dispatch(clearPaymentState())
     onClose()
@@ -66,13 +48,15 @@ const CourseCheckoutModal = ({
     setIsBuying(true)
 
     try {
-      const { confirmationUrl } = await dispatch(
+      const  confirmationUrl  = await dispatch(
         fetchPaymentLink({
           typeOrder: 'course_purchase',
           itemCode: courseCode,
           isVk: isVkEnvironment,
         }),
       ).unwrap()
+
+      handleClose()
 
       if (isVkEnvironment) {
         await bridge
@@ -178,9 +162,7 @@ const CourseCheckoutModal = ({
                 onClick={handlePaymentSubmit}
                 disabled={isBuying}
               >
-                {isBuying && orderStatus === 'created'
-                  ? 'Ожидание оплаты...'
-                  : isBuying
+                {isBuying
                     ? 'Загрузка...'
                     : 'Оплатить'}
               </button>

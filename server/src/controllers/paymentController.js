@@ -117,7 +117,7 @@ const createPaymentYookassa = async (req, res) => {
     res.status(200).json({
       success: true,
       confirmationUrl: response.data.confirmation.confirmation_url,
-      orderId: idempotenceKey,
+      
     })
   } catch (error) {
     console.error(
@@ -189,38 +189,38 @@ const handleWebhookYookassa = async (req, res) => {
   }
 }
 
-const checkOrderStatus = async (req, res) => {
-  try {
-    const { orderId } = req.params
-        // 💡 ДОБАВИТЬ СЮДА: Принудительный сброс кэша для Traefik и браузеров
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
-    res.setHeader('Pragma', 'no-cache')
-    res.setHeader('Expires', '0')
-    res.setHeader('Surrogate-Control', 'no-store')
+// const checkOrderStatus = async (req, res) => {
+//   try {
+//     const { orderId } = req.params
+//         // 💡 ДОБАВИТЬ СЮДА: Принудительный сброс кэша для Traefik и браузеров
+//     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+//     res.setHeader('Pragma', 'no-cache')
+//     res.setHeader('Expires', '0')
+//     res.setHeader('Surrogate-Control', 'no-store')
 
-    // Находим заказ в нашей БД
-    const order = await Order.findOne({ orderId })
+//     // Находим заказ в нашей БД
+//     const order = await Order.findOne({ orderId })
 
-    if (!order) {
-      return res
-        .status(404)
-        .json({ success: false, message: 'Заказ не найден' })
-    }
+//     if (!order) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: 'Заказ не найден' })
+//     }
 
-    // Возвращаем статус заказа и метаданные, чтобы фронтенд распределил бенефиты в Redux
-    res.status(200).json({
-      success: true,
-      status: order.status, // 'created', 'completed', 'failed'
-      typeOrder: order.typeOrder, // 'premium_subscription' или 'course_purchase'
-      itemCode: order.itemCode, // код подписки или курс (например, 'sales_master')
-    })
-  } catch (error) {
-    console.error('Check Order Status Error:', error.message)
-    res
-      .status(500)
-      .json({ message: 'Ошибка при проверке статуса платежа' })
-  }
-}
+//     // Возвращаем статус заказа и метаданные, чтобы фронтенд распределил бенефиты в Redux
+//     res.status(200).json({
+//       success: true,
+//       status: order.status, // 'created', 'completed', 'failed'
+//       typeOrder: order.typeOrder, // 'premium_subscription' или 'course_purchase'
+//       itemCode: order.itemCode, // код подписки или курс (например, 'sales_master')
+//     })
+//   } catch (error) {
+//     console.error('Check Order Status Error:', error.message)
+//     res
+//       .status(500)
+//       .json({ message: 'Ошибка при проверке статуса платежа' })
+//   }
+// }
 
 const fakeBuyPremium = async (req, res) => {
   try {
@@ -289,5 +289,5 @@ const fakeBuyCourse = async (req, res) => {
 export {
   createPaymentYookassa,
   handleWebhookYookassa,
-  checkOrderStatus,
+  // checkOrderStatus,
 }
