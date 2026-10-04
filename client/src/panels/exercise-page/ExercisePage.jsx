@@ -4,7 +4,7 @@ import {
   useSearchParams,
 } from 'react-router-dom'
 
-import { All_EXERCISES } from '../../assets/mocks/exercises'
+import { All_EXERCISES } from '../../assets/data/exercises/exercises'
 import styles from './ExercisePage.module.css'
 import ExerciseRenderer from '../../components/exercise-renderer/ExerciseRenderer'
 

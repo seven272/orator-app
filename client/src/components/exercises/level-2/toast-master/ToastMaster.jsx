@@ -5,14 +5,14 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
 import { PiTimer } from 'react-icons/pi'
 
-import { toastScenarios } from '../../../../assets/mocks/similarWords'
+import { toastScenarios } from '../../../../assets/data/exercises/level2/toast-master/data' 
 import { useAudioRecorder } from '../../../../hooks/useAudioRecorder'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask' 
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
-import styles from './ToastMaster.module.css'
+import styles from './ToastMaster.module.css' 
 
 const STATUS = {
   IDLE: 'idle',

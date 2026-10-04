@@ -4,8 +4,8 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './TribuneAi.module.css'
-import aiTribuneScenarios from '../../../../assets/data/scenarios/tribuneScenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import aiTribuneScenarios from '../../../../assets/data/exercises/level3/ai-tribune/tribuneScenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import TribuneIdle from './tribune-idle/TribuneIdle'
 import TribuneProcess from './tribune-process/TribuneProcess'
 import TribuneResult from './tribune-result/TribuneResult'
@@ -24,7 +24,7 @@ import {
 } from '../../../../redux/slices/ai-exercises/tribuneSlice'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
- 
+
 const TOTAL_ROUNDS = 1
 const TIME_ROUND = 40
 

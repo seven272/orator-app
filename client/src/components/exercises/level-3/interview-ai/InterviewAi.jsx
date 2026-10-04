@@ -4,14 +4,14 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './InterviewAi.module.css'
-import aiInterviewSnenarios from '../../../../assets/data/scenarios/interviewSnenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import aiInterviewSnenarios from '../../../../assets/data/exercises/level3/ai-interview/interviewSnenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import InterviewIdle from './interview-idle/InterviewIdle'
 import InterviewProcess from './interview-process/InterviewProcess'
 import InterviewResult from './interview-result/InterviewResult'
 import { useSpeechSber } from '../../../../hooks/useSpeechSber'
 import {
-  SCREEN_STATUS, 
+  SCREEN_STATUS,
   AI_STATUS,
 } from '../../../../constants/exercises'
 

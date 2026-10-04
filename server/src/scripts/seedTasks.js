@@ -60,6 +60,26 @@ const ALL_EXERCISES = [
     premium: false,
     skill: 'убедительность',
   },
+  {
+    alias: 'word-zoom',
+    title: 'Словесный зум',
+    description:
+      'Сузь абстрактное понятие до предмета на заданную букву',
+    reward: 30,
+    level: 1,
+    premium: false,
+    skill: 'находчивость',
+  },
+  {
+    alias: 'speech-pace',
+    title: 'Метроном',
+    description:
+      'Читай текст, подстраиваясь под меняющийся темп метронома',
+    reward: 30,
+    level: 1,
+    premium: false,
+    skill: 'техника речи',
+  },
 
   // LEVEL 2
   {
@@ -133,6 +153,16 @@ const ALL_EXERCISES = [
     level: 2,
     premium: false,
     skill: 'харизма и юмор',
+  },
+  {
+    alias: 'argument-speed',
+    title: 'Пулемет аргументов',
+    description:
+      'Выдай максимальное количество аргументов за ограниченное время',
+    reward: 50,
+    level: 2,
+    premium: false,
+    skill: 'убедительность',
   },
 
   // LEVEL 3 (AI)

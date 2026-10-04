@@ -7,8 +7,8 @@ import {
   SCREEN_STATUS,
   AI_STATUS,
 } from '../../../../constants/exercises'
-import aiDebateSnenarios from '../../../../assets/data/scenarios/debateSnenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import aiDebateSnenarios from '../../../../assets/data/exercises/level3/ai-debate/debateSnenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import DebateIdle from './debate-idle/DebateIdle'
 import DebateProcess from './debate-process/DebateProcess'
 import DebateResult from './debate-result/DebateResult'

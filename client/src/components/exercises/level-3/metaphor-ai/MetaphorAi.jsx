@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import styles from './MetaphorAi.module.css'
 
 // Импортируем массив тестовых сценариев переводчика
-import  metaphorScenarios  from '../../../../assets/data/scenarios/metaphorScenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import metaphorScenarios from '../../../../assets/data/exercises/level3/ai-metaphor/metaphorScenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 
 // Будущие дочерние компоненты переводчика
 import MetaphorIdle from './metaphor-idle/MetaphorIdle'
@@ -14,7 +14,10 @@ import MetaphorProcess from './metaphor-process/MetaphorProcess'
 import MetaphorResult from './metaphor-result/MetaphorResult'
 
 import { useSpeechSber } from '../../../../hooks/useSpeechSber'
-import { SCREEN_STATUS, AI_STATUS } from '../../../../constants/exercises'
+import {
+  SCREEN_STATUS,
+  AI_STATUS,
+} from '../../../../constants/exercises'
 
 // Импортируем экшены из созданного metaphorSlice
 import {
@@ -32,7 +35,8 @@ const TOTAL_ROUNDS = 3
 const TIME_ROUND = 20
 
 const MetaphorAi = ({ alias, isDaily }) => {
-  const { startListening, stopListening, resetTranscript } = useSpeechSber()
+  const { startListening, stopListening, resetTranscript } =
+    useSpeechSber()
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -44,7 +48,8 @@ const MetaphorAi = ({ alias, isDaily }) => {
 
   // --- REDUX СТEЙТ ---
   const exerciseState = useSelector((state) => state.metaphor)
-  const { messages, exStatus, aiStatus, understanding } = exerciseState
+  const { messages, exStatus, aiStatus, understanding } =
+    exerciseState
   const isLoading = exStatus === 'loading'
 
   // Инициализация случайного сценария при загрузке
@@ -78,15 +83,17 @@ const MetaphorAi = ({ alias, isDaily }) => {
 
     stopListening((readyBlob) => {
       if (!readyBlob || readyBlob.size === 0) {
-        console.warn('Микрофон выдал пустой буфер в тренажере переводчика')
+        console.warn(
+          'Микрофон выдал пустой буфер в тренажере переводчика',
+        )
         return
       }
       dispatch(setMetaphorAiStatus(AI_STATUS.AI_THINKING))
-      dispatch(
-        fetchResponseMetaphor({ audioBlob: readyBlob }),
-      ).then(() => {
-        resetTranscript()
-      })
+      dispatch(fetchResponseMetaphor({ audioBlob: readyBlob })).then(
+        () => {
+          resetTranscript()
+        },
+      )
     })
   }
 
@@ -120,8 +127,10 @@ const MetaphorAi = ({ alias, isDaily }) => {
   return (
     <div className={styles.main_metaphor}>
       <h2 className={styles.title}>Трудный переводчик</h2>
-      <p className={styles.descr}>Прояви находчивость и объясни заумный термин на понятном языке</p>
-      
+      <p className={styles.descr}>
+        Прояви находчивость и объясни заумный термин на понятном языке
+      </p>
+
       <div className={styles.screen}>
         {screenStatus === SCREEN_STATUS.IDLE && (
           <MetaphorIdle
@@ -155,7 +164,10 @@ const MetaphorAi = ({ alias, isDaily }) => {
       </div>
 
       <Modal active={showModal} onClose={() => setShowModal(false)}>
-        <TheoryContent alias={alias} onClose={() => setShowModal(false)} />
+        <TheoryContent
+          alias={alias}
+          onClose={() => setShowModal(false)}
+        />
       </Modal>
     </div>
   )

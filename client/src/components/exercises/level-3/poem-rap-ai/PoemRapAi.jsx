@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
-import styles from './PoemRapAi.module.css' 
-import poemRapScenarios from '../../../../assets/data/scenarios/poemRapScenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import styles from './PoemRapAi.module.css'
+import poemRapScenarios from '../../../../assets/data/exercises/level3/ai-poem-rap/poemRapScenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import PoemRapIdle from './poem-rap-idle/PoemRapIdle'
 import PoemRapProcess from './poem-rap-process/PoemRapProcess'
 import PoemRapResult from './poem-rap-result/PoemRapResult'
@@ -58,7 +58,7 @@ const PoemRapAi = ({ alias, isDaily }) => {
     )
     setRandomRap(selectedItem)
     setPoolRap(newPool)
-    
+
     // Чистим стейт при размонтировании экрана для предотвращения утечек памяти
     return () => {
       dispatch(resetPoemRapState())
@@ -108,7 +108,10 @@ const PoemRapAi = ({ alias, isDaily }) => {
         setScreenStatus(SCREEN_STATUS.FINISHED)
       })
       .catch((err) => {
-        console.error('Ошибка при расчете рэп-вердикта от ИИ-продюсера:', err)
+        console.error(
+          'Ошибка при расчете рэп-вердикта от ИИ-продюсера:',
+          err,
+        )
         setScreenStatus(SCREEN_STATUS.FINISHED)
       })
   }
@@ -130,7 +133,7 @@ const PoemRapAi = ({ alias, isDaily }) => {
 
   const handleCloseExercise = () => {
     dispatch(resetPoemRapState())
-   navigate('/exercises/level3') // Возврат на экран уровней
+    navigate('/exercises/level3') // Возврат на экран уровней
   }
 
   const handleRestartExercise = () => {
@@ -144,7 +147,8 @@ const PoemRapAi = ({ alias, isDaily }) => {
     <div className={styles.main_poem_rap}>
       <h2 className={styles.title}>Рэп-манифест</h2>
       <p className={styles.descr}>
-        Преврати классические стихи в качающий хип-хоп трек и поймай внутренний ритм
+        Преврати классические стихи в качающий хип-хоп трек и поймай
+        внутренний ритм
       </p>
 
       <div className={styles.screen}>

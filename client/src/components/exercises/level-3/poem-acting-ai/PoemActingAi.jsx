@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
-import styles from './PoemActingAi.module.css' 
-import poemActingScenarios from '../../../../assets/data/scenarios/poemActingScenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import styles from './PoemActingAi.module.css'
+import poemActingScenarios from '../../../../assets/data/exercises/level3/ai-poem-acting/poemActingScenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import PoemActingIdle from './poem-acting-idle/PoemActingIdle'
 import PoemActingProcess from './poem-acting-process/PoemActingProcess'
 import PoemActingResult from './poem-acting-result/PoemActingResult'
@@ -58,7 +58,7 @@ const PoemActingAi = ({ alias, isDaily }) => {
     )
     setRandomActing(selectedItem)
     setPoolActing(newPool)
-    
+
     // Сброс стейта при уходе, чтобы не засорять Redux-хранилище
     return () => {
       dispatch(resetPoemActingState())
@@ -141,7 +141,8 @@ const PoemActingAi = ({ alias, isDaily }) => {
     <div className={styles.main_poem_acting}>
       <h2 className={styles.title}>Мастер дубляжа</h2>
       <p className={styles.descr}>
-        Примерь на себя неожиданные роли и прокачай харизму через стихи
+        Примерь на себя неожиданные роли и прокачай харизму через
+        стихи
       </p>
 
       <div className={styles.screen}>
@@ -163,7 +164,7 @@ const PoemActingAi = ({ alias, isDaily }) => {
             messages={messages}
             timeLimit={TIME_ROUND}
             aiStatus={aiStatus}
-             audioBlob={audioBlob}
+            audioBlob={audioBlob}
             onStopRecording={handleStopRecording}
             onStartRecording={handleStartRecording}
             onFinishActing={handleFinishActing}

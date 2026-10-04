@@ -6,7 +6,7 @@ import { MdKeyboardArrowRight, MdExpandMore } from 'react-icons/md'
 
 import ExercisePreview from '../../components/exercise-preview/ExercisePreview'
 import styles from './ExercisesLevelPage.module.css'
-import { All_EXERCISES } from '../../assets/mocks/exercises'
+import { All_EXERCISES } from '../../assets/data/exercises/exercises'
 import TheoryContent from '../../components/theory-content/TheoryContent'
 import Modal from '../../UI/modal/Modal'
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { THEORY_DATA } from '../../assets/mocks/theoryData'
+import { THEORY_DATA } from '../../assets/data/exercises/theoryData'
 import styles from './TheoryContent.module.css'
 
 const TheoryContent = ({ alias, onClose }) => {
@@ -8,8 +8,10 @@ const TheoryContent = ({ alias, onClose }) => {
 
   if (!content) {
     return (
-     <div className={styles.container}>
-        <p className={styles.text}>Информация для этого упражнения скоро появится.</p>
+      <div className={styles.container}>
+        <p className={styles.text}>
+          Информация для этого упражнения скоро появится.
+        </p>
       </div>
     )
   }

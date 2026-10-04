@@ -4,8 +4,8 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './AlibiAi.module.css'
-import { alibiScenarios } from '../../../../assets/data/scenarios/alibiScenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import { alibiScenarios } from '../../../../assets/data/exercises/level3/ai-alibi/alibiScenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import AlibiIdle from './alibi-idle/AlibiIdle'
 import AlibiProcess from './alibi-process/AlibiProcess'
 import AlibiResult from './alibi-result/AlibiResult'
@@ -20,7 +20,7 @@ import {
   resetAlibiState,
   fetchStartAlibi,
   fetchResponseAlibi,
-  fetchFinishAlibi
+  fetchFinishAlibi,
 } from '../../../../redux/slices/ai-exercises/alibiSlice'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
@@ -40,10 +40,9 @@ const AlibiAi = ({ alias, isDaily }) => {
   const [showModal, setShowModal] = useState(false)
 
   // --- СОСТОЯНИЕ ИЗ REDUX (ГЛОБАЛЬНОЕ) ---
- const exerciseState = useSelector((state) => state.alibi) 
-const { messages, exStatus, aiStatus, credibility } = exerciseState 
-const isLoading = exStatus === 'loading'
-
+  const exerciseState = useSelector((state) => state.alibi)
+  const { messages, exStatus, aiStatus, credibility } = exerciseState
+  const isLoading = exStatus === 'loading'
 
   // Инициализация темы разговора
   useEffect(() => {
@@ -136,7 +135,9 @@ const isLoading = exStatus === 'loading'
   return (
     <div className={styles.main_alibi}>
       <h2 className={styles.title}>Железное алиби</h2>
-      <p className={styles.descr}>Убеди прокурора в своей невиновности</p>
+      <p className={styles.descr}>
+        Убеди прокурора в своей невиновности
+      </p>
 
       <div className={styles.screen}>
         {screenStatus === SCREEN_STATUS.IDLE && (

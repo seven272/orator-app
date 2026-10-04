@@ -5,13 +5,16 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './HistoricalAi.module.css'
 // Импортируем нашу базу из 20 сценариев, которую создали ранее
-import aiHistoricalScenarios from '../../../../assets/data/scenarios/historicalScenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import aiHistoricalScenarios from '../../../../assets/data/exercises/level3/ai-historical-battle/historicalScenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import HistoricalIdle from './historical-idle/HistoricalIdle'
 import HistoricalProcess from './historical-process/HistoricalProcess'
 import HistoricalResult from './historical-result/HistoricalResult'
 import { useSpeechSber } from '../../../../hooks/useSpeechSber'
-import { SCREEN_STATUS, AI_STATUS } from '../../../../constants/exercises'
+import {
+  SCREEN_STATUS,
+  AI_STATUS,
+} from '../../../../constants/exercises'
 
 import {
   setHistoricalAiStatus,
@@ -28,7 +31,12 @@ const TOTAL_ROUNDS = 1
 const TIME_ROUND = 90 // Лимит увеличен до 90 секунд (1.5 минуты)
 
 const HistoricalAi = ({ alias, isDaily }) => {
-  const { startListening, stopListening, audioBlob, resetTranscript } = useSpeechSber()
+  const {
+    startListening,
+    stopListening,
+    audioBlob,
+    resetTranscript,
+  } = useSpeechSber()
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -43,7 +51,10 @@ const HistoricalAi = ({ alias, isDaily }) => {
 
   // Инициализация случайного исторического сценария
   useEffect(() => {
-    const { selectedItem, newPool } = getRandomObjTask([], aiHistoricalScenarios)
+    const { selectedItem, newPool } = getRandomObjTask(
+      [],
+      aiHistoricalScenarios,
+    )
     setRandomScenario(selectedItem)
     setPoolScenarios(newPool)
     return () => {
@@ -87,13 +98,19 @@ const HistoricalAi = ({ alias, isDaily }) => {
         setScreenStatus(SCREEN_STATUS.FINISHED)
       })
       .catch((err) => {
-        console.error('Ошибка получения аналитики великих речей:', err)
+        console.error(
+          'Ошибка получения аналитики великих речей:',
+          err,
+        )
         setScreenStatus(SCREEN_STATUS.FINISHED)
       })
   }
 
   const handleRefreshTopic = () => {
-    const { selectedItem, newPool } = getRandomObjTask(poolScenarios, aiHistoricalScenarios)
+    const { selectedItem, newPool } = getRandomObjTask(
+      poolScenarios,
+      aiHistoricalScenarios,
+    )
     setRandomScenario(selectedItem)
     setPoolScenarios(newPool)
     dispatch(resetHistoricalState())
@@ -114,7 +131,9 @@ const HistoricalAi = ({ alias, isDaily }) => {
   return (
     <div className={styles.main_historical}>
       <h2 className={styles.title}>Эхо Истории</h2>
-      <p className={styles.descr}>Примени приемы великих ораторов в реальной жизни</p>
+      <p className={styles.descr}>
+        Примени приемы великих ораторов в реальной жизни
+      </p>
 
       <div className={styles.screen}>
         {screenStatus === SCREEN_STATUS.IDLE && (
@@ -133,7 +152,7 @@ const HistoricalAi = ({ alias, isDaily }) => {
             messages={messages}
             timeLimit={TIME_ROUND}
             aiStatus={aiStatus}
-            audioBlob={audioBlob} 
+            audioBlob={audioBlob}
             onStopRecording={handleStopRecording}
             onStartRecording={handleStartRecording}
             onFinishHistorical={handleFinishHistorical}
@@ -150,7 +169,10 @@ const HistoricalAi = ({ alias, isDaily }) => {
       </div>
 
       <Modal active={showModal} onClose={() => setShowModal(false)}>
-        <TheoryContent alias={alias} onClose={() => setShowModal(false)} />
+        <TheoryContent
+          alias={alias}
+          onClose={() => setShowModal(false)}
+        />
       </Modal>
     </div>
   )

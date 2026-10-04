@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector , useDispatch} from 'react-redux'
 import { FaCheckSquare } from 'react-icons/fa'
 
-import { All_EXERCISES } from '../../../../assets/mocks/exercises'
+import { All_EXERCISES } from '../../../../assets/data/exercises/exercises' 
 import styles from './DailyTaskCard.module.css'
 import {
   checkIsVkGuest,

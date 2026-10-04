@@ -5,8 +5,8 @@ import { PiTimer } from 'react-icons/pi'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
 
 import styles from './Synonyms.module.css'
-import { getRandomWord } from '../../../../utils/getRandomValues'
-import { similarWords } from '../../../../assets/mocks/similarWords'
+import { getRandomWord } from '../../../../assets/data/exercises/utils/getRandomValues'
+import { synonymNouns } from '../../../../assets/data/exercises/level1/synonyms/data' 
 import { useSpeech } from '../../../../hooks/useSpeech'
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
@@ -44,7 +44,7 @@ const Synonyms = ({ alias, isDaily }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [xp, setXp] = useState(0)
-  const wordGenerator = useMemo(() => getRandomWord(similarWords), [])
+  const wordGenerator = useMemo(() => getRandomWord(synonymNouns), [])
   const [randomWord, setRandomWord] = useState(() => wordGenerator())
   const [status, setStatus] = useState(STATUS.IDLE) // idle, counting, running, finished
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME)

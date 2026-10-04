@@ -3,10 +3,10 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { PiTimer } from 'react-icons/pi'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
- 
+  
 import styles from './Association.module.css'
-import { getRandomPairWords } from '../../../../utils/getRandomValues'
-import { similarWords } from '../../../../assets/mocks/similarWords'
+import { getRandomPairWords } from '../../../../assets/data/exercises/utils/getRandomValues'
+import { similarWords } from '../../../../assets/data/exercises/level1/assosiation/data' 
 import { useSpeech } from '../../../../hooks/useSpeech'
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'

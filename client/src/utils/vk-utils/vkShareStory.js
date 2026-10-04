@@ -2,9 +2,9 @@
 import bridge from '@vkontakte/vk-bridge'
 import { convertBase64FromUrl } from '../convertToBase64'
 import ImgBlob from '../../assets/images/other/vk_story.jpeg'
-import ImgBlobLevelUp from '../../assets/images/other/vk_story_level.jpeg';
+import ImgBlobLevelUp from '../../assets/images/other/vk_story_level.jpeg'
 
-import { All_EXERCISES } from '../../assets/mocks/exercises'
+import { All_EXERCISES } from '../../assets/data/exercises/exercises'
 
 //Размещение результатов тренажеров 1 и 2 уровня в Истории ВКонтакте
 const shareExerciseResultToStory = async (exercise) => {
@@ -107,7 +107,6 @@ const shareAiExerciseResultToStory = async (exAlias, verdict) => {
   }
 
   const { title } = currentExercise
-  
 
   try {
     // Используем премиальный ИИ-шаблон (кибер-птица в золотой рамке)
@@ -118,8 +117,6 @@ const shareAiExerciseResultToStory = async (exAlias, verdict) => {
 
     // Формируем тексты для трех уровней стикеров
     const textTop = `🏆 Успех в ИИ-тренажере «${title}»!`
-
-  
 
     const textBottom = `👨‍🎓 Судьи оценили мою речь на ${verdict.totalScore} из 100 баллов! Попробуй побить?`
 
@@ -150,7 +147,7 @@ const shareAiExerciseResultToStory = async (exAlias, verdict) => {
             },
           },
         },
-      
+
         // НИЖНИЙ СТИКЕР: Итоговый балл и вызов друзьям
         {
           sticker_type: 'native',
@@ -181,13 +178,13 @@ const shareAiExerciseResultToStory = async (exAlias, verdict) => {
 //повышение уровня
 const shareLevelUpToStory = async (newLevel) => {
   try {
-    const imgBase64 = await convertBase64FromUrl(ImgBlobLevelUp);
-    
+    const imgBase64 = await convertBase64FromUrl(ImgBlobLevelUp)
+
     // Реферальная ссылка перехода с точным уровнем
-    const urlApp = `https://vk.ru/app54762318`;
-    
-    const textTop = `🎉 Новое достижение в GovoriX!`;
-    const textBottom = `👑 Я достиг ${newLevel} уровня ораторского мастерства!`;
+    const urlApp = `https://vk.ru/app54762318`
+
+    const textTop = `🎉 Новое достижение в GovoriX!`
+    const textBottom = `👑 Я достиг ${newLevel} уровня ораторского мастерства!`
 
     const data = await bridge.send('VKWebAppShowStoryBox', {
       background_type: 'image',
@@ -232,13 +229,20 @@ const shareLevelUpToStory = async (newLevel) => {
           },
         },
       ],
-    });
+    })
 
-    return { success: !!data };
+    return { success: !!data }
   } catch (error) {
-    console.error('Ошибка публикации истории повышения уровня:', error);
-    return { success: false, error };
+    console.error(
+      'Ошибка публикации истории повышения уровня:',
+      error,
+    )
+    return { success: false, error }
   }
-};
+}
 
-export { shareExerciseResultToStory, shareAiExerciseResultToStory, shareLevelUpToStory }
+export {
+  shareExerciseResultToStory,
+  shareAiExerciseResultToStory,
+  shareLevelUpToStory,
+}

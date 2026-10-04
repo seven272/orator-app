@@ -4,8 +4,8 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './PoemTongueAi.module.css' // Стилизуется по аналогии с TribuneAi
-import poemTongueScenarios from '../../../../assets/data/scenarios/poemTongueScenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import poemTongueScenarios from '../../../../assets/data/exercises/level3/ai-poem-tongue/poemTongueScenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import PoemTongueIdle from './poem-tongue-idle/PoemTongueIdle'
 import PoemTongueProcess from './poem-tongue-process/PoemTongueProcess'
 import PoemTongueResult from './poem-tongue-result/PoemTongueResult'
@@ -14,7 +14,7 @@ import {
   SCREEN_STATUS,
   AI_STATUS,
 } from '../../../../constants/exercises'
- 
+
 import {
   setPoemTongueAiStatus,
   resetPoemTongueState,
@@ -58,7 +58,7 @@ const PoemTongueAi = ({ alias, isDaily }) => {
     )
     setRandomTongue(selectedItem)
     setPoolTongue(newPool)
-    
+
     // Чистим стейт при размонтировании экрана, защищая от утечек памяти
     return () => {
       dispatch(resetPoemTongueState())
@@ -108,7 +108,10 @@ const PoemTongueAi = ({ alias, isDaily }) => {
         setScreenStatus(SCREEN_STATUS.FINISHED)
       })
       .catch((err) => {
-        console.error('Ошибка при расчете логопедического вердикта:', err)
+        console.error(
+          'Ошибка при расчете логопедического вердикта:',
+          err,
+        )
         setScreenStatus(SCREEN_STATUS.FINISHED)
       })
   }
@@ -166,7 +169,7 @@ const PoemTongueAi = ({ alias, isDaily }) => {
             messages={messages}
             timeLimit={TIME_ROUND}
             aiStatus={aiStatus}
-              audioBlob={audioBlob}
+            audioBlob={audioBlob}
             onStopRecording={handleStopRecording}
             onStartRecording={handleStartRecording}
             onFinishTongue={handleFinishTongue}

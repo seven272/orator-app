@@ -20,7 +20,7 @@ import {
 import { openViralModal } from '../../redux/slices/vkSlice'
 
 // Импортируем конфигурационный массив со структурой всех тренажеров
-import { All_EXERCISES } from '../../assets/mocks/exercises'
+import { All_EXERCISES } from '../../assets/data/exercises/exercises'
 import { useVkEnvironment } from '../../hooks/useVkEnvironment'
 import { shareExerciseResultToStory } from '../../utils/vk-utils/vkShareStory'
 import { getGuestEnergy } from '../../utils/vk-utils/vkStorageEnergy'
@@ -78,7 +78,6 @@ const ExerciseControls = ({
   const cost = exerciseLevel === 2 ? 2 : 1
   const targetLevelKey = `LEVEL_${exerciseLevel}`
 
-  
   const handleStart = async () => {
     if (isEnergyChecking) return
     setIsEnergyChecking(true)

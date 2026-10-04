@@ -5,8 +5,8 @@ import { PiTimer } from 'react-icons/pi'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
 
 import styles from './TongueTwister.module.css'
-import { getRandomWord } from '../../../../utils/getRandomValues'
-import { randomTwisters } from '../../../../assets/mocks/similarWords'
+import { getRandomWord } from '../../../../assets/data/exercises/utils/getRandomValues'
+import { randomTwisters } from '../../../../assets/data/exercises/level1/tongue-twister/data' 
 import { useSpeech } from '../../../../hooks/useSpeech' //п1
 import {
   calculateAccuracy,

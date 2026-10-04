@@ -5,11 +5,8 @@ import { PiTimer } from 'react-icons/pi'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
 
 import styles from './Emotion.module.css'
-import { getRandomWord } from '../../../../utils/getRandomValues'
-import {
-  emotions,
-  neutralPhrases,
-} from '../../../../assets/mocks/similarWords'
+import { getRandomWord } from '../../../../assets/data/exercises/utils/getRandomValues'
+import { emotions, neutralPhrases } from '../../../../assets/data/exercises/level1/emotion/data'
 import { useSpeech } from '../../../../hooks/useSpeech'
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'

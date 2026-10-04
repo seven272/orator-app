@@ -1,8 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axiosInstance from '../../utils/axiosInstance'
 import { syncGuestEnergy } from './profileSlice'
-import { All_EXERCISES } from '../../assets/mocks/exercises'
-import { getGuestEnergy, setGuestEnergy } from '../../utils/vk-utils/vkStorageEnergy'
+import { All_EXERCISES } from '../../assets/data/exercises/exercises'
+import {
+  getGuestEnergy,
+  setGuestEnergy,
+} from '../../utils/vk-utils/vkStorageEnergy'
 
 // Экшен для отправки результата упражнения
 const fetchCompleteExercise = createAsyncThunk(
@@ -20,19 +23,23 @@ const fetchCompleteExercise = createAsyncThunk(
 
       // Списание энергии у неавторизованных гостей сайта / гостей ВК
       const { auth } = getState()
-      const isGuestMode = !auth.user || auth.isVkGuest 
+      const isGuestMode = !auth.user || auth.isVkGuest
 
       if (isGuestMode) {
         const allExercisesFlat = Object.values(All_EXERCISES).flat()
-        const curentEx = allExercisesFlat.find((ex) => ex.alias === exAlias)
-        
+        const curentEx = allExercisesFlat.find(
+          (ex) => ex.alias === exAlias,
+        )
+
         if (!curentEx) {
-          console.error(`Тренажер ${exAlias} не найден для расчета стоимости энергии`);
-          return res.data;
+          console.error(
+            `Тренажер ${exAlias} не найден для расчета стоимости энергии`,
+          )
+          return res.data
         }
 
         const cost = curentEx.level === 2 ? 2 : 1 // Уровень 2 стоит 2⚡, Уровень 1 стоит 1⚡
-        
+
         // Определяем среду ВКонтакте по параметрам URL запуска [INDEX]
         const isVkEnv = window.location.search.includes('vk_user_id')
         let newEnergy = 0
@@ -44,18 +51,26 @@ const fetchCompleteExercise = createAsyncThunk(
           await setGuestEnergy(newEnergy) // Записываем обратно в облако [INDEX]
         } else {
           // 💻 КЕЙС САЙТА: Работаем синхронно с классическим localStorage
-          const currentGuestEnergy = localStorage.getItem('govorix_guest_energy')
-            ? parseInt(localStorage.getItem('govorix_guest_energy'), 10)
+          const currentGuestEnergy = localStorage.getItem(
+            'govorix_guest_energy',
+          )
+            ? parseInt(
+                localStorage.getItem('govorix_guest_energy'),
+                10,
+              )
             : 3
           newEnergy = Math.max(0, currentGuestEnergy - cost)
-          localStorage.setItem('govorix_guest_energy', String(newEnergy))
+          localStorage.setItem(
+            'govorix_guest_energy',
+            String(newEnergy),
+          )
         }
 
         // 🔥 Мгновенно пушим единственный финальный остаток в Редакс для реактивного UI! [INDEX]
         dispatch(syncGuestEnergy(newEnergy))
       }
 
-      return res.data 
+      return res.data
     } catch (error) {
       if (error.response?.data?.code === 'ENERGY_EXHAUSTED') {
         return rejectWithValue({

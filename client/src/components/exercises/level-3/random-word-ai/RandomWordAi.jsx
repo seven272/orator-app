@@ -4,8 +4,8 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './RandomWordAi.module.css'
-import randomWordScenarios from '../../../../assets/data/scenarios/randomWordScenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import randomWordScenarios from '../../../../assets/data/exercises/level3/ai-random-word/randomWordScenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import RandomWordIdle from './random-word-idle/RandomWordIdle'
 import RandomWordProcess from './random-word-process/RandomWordProcess'
 import RandomWordResult from './random-word-result/RandomWordResult'
@@ -58,7 +58,7 @@ const RandomWordAi = ({ alias, isDaily }) => {
     )
     setRandomScenario(selectedItem)
     setPoolScenarios(newPool)
-    
+
     // Чистим стейт при размонтировании экрана, защищая от утечек памяти
     return () => {
       dispatch(resetRandomWordState())
@@ -108,7 +108,10 @@ const RandomWordAi = ({ alias, isDaily }) => {
         setScreenStatus(SCREEN_STATUS.FINISHED)
       })
       .catch((err) => {
-        console.error('Ошибка при расчете вердикта импровизации:', err)
+        console.error(
+          'Ошибка при расчете вердикта импровизации:',
+          err,
+        )
         setScreenStatus(SCREEN_STATUS.FINISHED)
       })
   }
@@ -144,7 +147,8 @@ const RandomWordAi = ({ alias, isDaily }) => {
     <div className={styles.main_word}>
       <h2 className={styles.title}>Слово из шляпы</h2>
       <p className={styles.descr}>
-        Прокачай харизму и скорость мышления, интегрируя абсурдные слова в речь
+        Прокачай харизму и скорость мышления, интегрируя абсурдные
+        слова в речь
       </p>
 
       <div className={styles.screen}>

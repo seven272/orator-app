@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import styles from './KnockoutAi.module.css'
 
 // Импортируем массив комедийных сценариев
-import knockoutScenarios from '../../../../assets/data/scenarios/knockoutScenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import knockoutScenarios from '../../../../assets/data/exercises/level3/ai-knockout/knockoutScenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 
 // Будущие дочерние компоненты стендапа
 import KnockoutIdle from './knockout-idle/KnockoutIdle'
@@ -38,7 +38,7 @@ const KnockoutAi = ({ alias, isDaily }) => {
   const { startListening, stopListening, resetTranscript } =
     useSpeechSber()
   const dispatch = useDispatch()
-    const navigate = useNavigate()
+  const navigate = useNavigate()
 
   // --- UI СОСТОЯНИЕ ---
   const [randomSituation, setRandomSituation] = useState(null)

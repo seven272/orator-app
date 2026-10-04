@@ -5,15 +5,15 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
 import { PiTimer } from 'react-icons/pi'
 import { useNavigate } from 'react-router-dom'
-import { tabooScenarios } from '../../../../assets/mocks/similarWords'
+import { tabooScenarios } from '../../../../assets/data/exercises/level2/taboo/data'  
 import { useAudioRecorder } from '../../../../hooks/useAudioRecorder'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask' 
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
 import styles from './Taboo.module.css'
-
+ 
 const STATUS = {
   IDLE: 'idle',
   RUNNING: 'running',

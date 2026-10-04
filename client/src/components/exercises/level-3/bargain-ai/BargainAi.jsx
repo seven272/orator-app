@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import styles from './BargainAi.module.css'
 
 // Подключаем сценарии для торга
-import bargainScenarios from '../../../../assets/data/scenarios/bargainScenarios'
-import { getRandomObjTask } from '../../../../utils/getRandomObjTask'
+import bargainScenarios from '../../../../assets/data/exercises/level3/ai-bargain/bargainScenarios'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 
 // Будущие дочерние компоненты торга
 import BargainIdle from './bargain-idle/BargainIdle'

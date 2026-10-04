@@ -5,13 +5,13 @@ import { PiTimer } from 'react-icons/pi'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
 
 import styles from './Description.module.css'
-import { getRandomWord } from '../../../../utils/getRandomValues'
-import { randomItems } from '../../../../assets/mocks/similarWords'
+import { getRandomWord } from '../../../../assets/data/exercises/utils/getRandomValues'
+import { randomItems } from '../../../../assets/data/exercises/level1/description/data' 
 import { useSpeech } from '../../../../hooks/useSpeech'
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import TheoryContent from '../../../theory-content/TheoryContent'
-import Modal from '../../../../UI/modal/Modal'
+import Modal from '../../../../UI/modal/Modal' 
 
 const STATUS = {
   IDLE: 'idle',

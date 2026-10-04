@@ -2,7 +2,7 @@ import React, { useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { All_EXERCISES } from '../../../assets/mocks/exercises'
+import { All_EXERCISES } from '../../../assets/data/exercises/exercises' 
 import { fetchFeedEvents } from '../../../redux/slices/feedSlice' // 🔔 ДОБАВЛЕНО: Импорт экшена загрузки пульса
 import styles from './PromoBannerBlock.module.css'
 import birdImage from '../../../assets/images/design/3d_bird.png'

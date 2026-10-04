@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-import { All_EXERCISES } from '../../../assets/mocks/exercises'
+import { All_EXERCISES } from '../../../assets/data/exercises/exercises' 
 import styles from './DailyChallengesBlock.module.css'
 
 const DailyChallengesBlock = () => {

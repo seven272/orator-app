@@ -1,0 +1,282 @@
+.main_zoom {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font: var(--font-l);
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: 6px;
+}
+
+.descr {
+  font: var(--font-m);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.screen {
+  width: 100%;
+  height: auto;
+  min-height: 280px; /* Немного увеличили для вертикальной структуры задания */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8fafc;
+  background-image: none;
+  border-radius: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.screen_idle {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 16px;
+  padding: 0 10px;
+}
+
+.text_start {
+  font: var(--font-l);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--color-primary);
+}
+
+.warning {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font: var(--font-s);
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 17px;
+  max-width: 85%;
+}
+
+.screen_running {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.timer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 8px;
+  font: var(--font-l);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--color-red);
+}
+
+/* 🎯 Блок отображения задания (Вертикальный Зум) */
+.task_container {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 12px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* Плашка абстрактного понятия */
+.concept_block {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 18px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-white);
+  border: 2px solid rgba(38, 136, 235, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(38, 136, 235, 0.03);
+}
+
+.label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.concept_text {
+  font: var(--font-ml);
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+}
+
+/* Переходная стрелочка/подсказка */
+.arrow_down {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+  text-align: center;
+}
+
+/* 🔥 Супер-акцентный блок для целевой буквы */
+.letter_block {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, var(--color-primary), #1d72d2);
+  border-radius: 24px;
+  box-shadow: 0 10px 25px rgba(38, 136, 235, 0.3);
+  transform: scale(1);
+  animation: pulseLetter 2s infinite ease-in-out;
+}
+
+.letter_text {
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--color-white);
+  line-height: 1;
+}
+
+/* Живой транскрипт */
+.live_transcript {
+  width: 100%;
+  padding: 0 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 24px;
+  color: var(--color-text-dark);
+  font: var(--font-m);
+  font-style: italic;
+  min-height: 20px;
+}
+
+.note {
+  margin-top: 20px;
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-green);
+}
+
+.screen_finished {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 12px;
+}
+
+.finished_question {
+  text-align: center;
+  color: var(--color-text-dark);
+  font: var(--font-ml);
+  font-weight: 700;
+}
+
+.finished_block_result {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 12px;
+}
+
+.finished_text {
+  font: var(--font-ml);
+  font-weight: 700;
+  color: var(--color-text-dark);
+  text-align: center;
+}
+
+.finished_xp {
+  color: var(--color-green);
+  font: var(--font-l);
+  text-align: center;
+  margin: 4px 0;
+}
+
+.finished_answer {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font: var(--font-m);
+  max-width: 90%;
+  line-height: 18px;
+}
+
+.btn_theory {
+  appearance: none;
+  background: var(--color-white);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 8px auto 0 auto;
+  padding: 8px 16px;
+  color: var(--color-text-secondary);
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.btn_theory:active {
+  transform: scale(0.97);
+  background-color: #f1f5f9;
+}
+
+.theory_icon {
+  color: var(--color-primary);
+}
+
+/* Анимация пульсации для буквы, чтобы привлекать внимание, но не раздражать */
+@keyframes pulseLetter {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 10px 25px rgba(38, 136, 235, 0.3);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 12px 30px rgba(38, 136, 235, 0.45);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 10px 25px rgba(38, 136, 235, 0.3);
+  }
+}

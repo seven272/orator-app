@@ -1,6 +1,7 @@
 const SKILLS_MAP = {
   'техника речи': [
     'tongue-twister', // Битва дикции
+    'speech-pace', //Метроном
     'fear-explosive', // Громкий вызов (громкость голоса)
     'ai-poem-tongue', // Тяжелая дикция
     'ai-poem-rap', //Рэп-манифест
@@ -11,6 +12,7 @@ const SKILLS_MAP = {
     'synonyms', // Синонимайзер (богатство языка)
     'description', // Ода предмету (безостановочная речь)
     'taboo', // Словесное табу (обход запретных слов)
+    'word-zoom', // Словесный зум
     'ai-metaphor', // Трудный переводчик
     'ai-stop-word', //Анти-слова
     'ai-random-word', //Слово из шляпы
@@ -28,6 +30,7 @@ const SKILLS_MAP = {
     'speaking-thread', // Нить разговора
     'jargon-task', // Блатной базар (ответ на провокации)
     'science-translator', // Просто о сложном
+    'argument-speed', //Пулемет аргументов
     'ai-debate', // Дебат-клуб (с ИИ)
     'ai-tribune', // Трибуна
     'ai-alibi', // Железное алиби

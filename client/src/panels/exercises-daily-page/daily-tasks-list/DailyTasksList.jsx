@@ -5,7 +5,7 @@ import { fetchDailyTasks } from '../../../redux/slices/dailySlice'
 import { ImSpinner10 } from "react-icons/im";
 import DailyTaskCard from './daily-task-card/DailyTaskCard'
 
-import { All_EXERCISES } from '../../../assets/mocks/exercises'
+import { All_EXERCISES } from '../../../assets/data/exercises/exercises'; 
 import styles from './DailyTasksList.module.css'
 
 const DailyTasksList = () => {
