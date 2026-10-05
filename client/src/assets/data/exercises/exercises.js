@@ -7,6 +7,8 @@ import IconEx5 from '../../images/card-icons/emotion.png'
 import IconEx6 from '../../images/card-icons/logic-chain.png'
 import IconEx30 from '../../images/card-icons/word-zoom.png'
 import IconEx32 from '../../images/card-icons/speech-pace.png'
+import IconEx33 from '../../images/card-icons/breath-control.png'
+import IconEx34 from '../../images/card-icons/antonym-clash.png'
 //LEVEL 2
 import IconEx7 from '../../images/card-icons/jargon-task.png'
 import IconEx8 from '../../images/card-icons/speaking-thread.png'
@@ -17,6 +19,8 @@ import IconEx12 from '../../images/card-icons/science-translator.png'
 import IconEx13 from '../../images/card-icons/fear-explosive.png'
 import IconEx14 from '../../images/card-icons/king-failure.png'
 import IconEx31 from '../../images/card-icons/argument-speed.png'
+import IconEx35 from '../../images/card-icons/poetry-glitch.png'
+
 
 //LEVEL 3
 import IconEx15 from '../../images/card-icons/ai-debate.png'
@@ -135,6 +139,32 @@ const All_EXERCISES = {
       minLevel: 1,
       premium: false,
     },
+    {
+      id: 'lev1-9',
+      alias: 'breath-control',
+      title: 'Выдох-Контроль',
+      description:
+        'Прочитай длинный текст или стихотворение на одном дыхании',
+      reward: 30,
+      icon: IconEx33,
+      skill: 'техника речи',
+      level: 1,
+      minLevel: 1,
+      premium: false,
+    },
+    {
+      id: 'lev1-10',
+      alias: 'antonym-clash',
+      title: 'Риторический перевёртыш',
+      description:
+        'Перескажи текст, мгновенно меняя все ключевые слова на антонимы',
+      reward: 50,
+      icon: IconEx34,
+      skill: 'находчивость',
+      level: 1,
+      minLevel: 1,
+      premium: false,
+    },
   ],
   level2: [
     {
@@ -245,6 +275,19 @@ const All_EXERCISES = {
       reward: 50,
       icon: IconEx31, // Замените на вашу иконку после генерации
       skill: 'убедительность',
+      level: 2,
+      minLevel: 1,
+      premium: false,
+    },
+    {
+      id: 'lev2-10',
+      alias: 'poetry-glitch',
+      title: 'Поэтический сбой',
+      description:
+        'Выразительно прочитай стих и с ходу придумай рифмованный финал',
+      reward: 50,
+      icon: IconEx35,
+      skill: 'харизма и юмор',
       level: 2,
       minLevel: 1,
       premium: false,

@@ -6,6 +6,7 @@ import { tongueTwisterTheory } from './level1/tongue-twister/theory'
 import { logicChainTheory } from './level1/logic-chain/theory'
 import { synonymsTheory } from './level1/synonyms/theory'
 import { emotionTheory } from './level1/emotion/theory'
+import { speechPaceTheory } from './level1/speech-pace/theory'
 //level 2
 import { jargonTaskTheory } from './level2/jargon-task/theory'
 import { speakingThreadTheory } from './level2/speaking-thread/theory'
@@ -42,6 +43,7 @@ const THEORY_DATA = {
   'tongue-twister': tongueTwisterTheory,
   synonyms: synonymsTheory,
   emotion: emotionTheory,
+  'speech-pace': speechPaceTheory,
 
   // level 2
   'jargon-task': jargonTaskTheory,

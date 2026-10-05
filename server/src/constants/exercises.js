@@ -66,6 +66,24 @@ const All_EXERCISES = {
       reward: 30,
       level: 1,
     },
+    {
+      id: 'lev1-9',
+      alias: 'breath-control',
+      title: 'Выдох-Контроль',
+      description:
+        'Прочитай длинный текст или стихотворение на одном дыхании',
+      reward: 30,
+      level: 1,
+    },
+    {
+      id: 'lev1-10',
+      alias: 'antonym-clash',
+      title: 'Риторический перевёртыш',
+      description:
+        'Перескажи текст, мгновенно меняя все ключевые слова на антонимы',
+      reward: 50,
+      level: 1,
+    },
   ],
   level2: [
     {
@@ -141,6 +159,15 @@ const All_EXERCISES = {
       title: 'Пулемет аргументов',
       description:
         'Выдай максимальное количество аргументов за ограниченное время',
+      reward: 50,
+      level: 2,
+    },
+    {
+      id: 'lev2-10',
+      alias: 'poetry-glitch',
+      title: 'Поэтический сбой',
+      description:
+        'Выразительно прочитай стих и с ходу придумай рифмованный финал',
       reward: 50,
       level: 2,
     },

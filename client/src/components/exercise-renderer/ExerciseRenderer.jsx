@@ -10,6 +10,9 @@ import Synonyms from '../exercises/level-1/synonyms/Synonyms'
 import TongueTwister from '../exercises/level-1/tongue-twister/TongueTwister'
 import WordZoom from '../exercises/level-1/word-zoom/WordZoom'
 import SpeechPace from '../exercises/level-1/speech-pace/SpeechPace'
+import BreathControl from '../exercises/level-1/breath-control/BreathControl'
+import AntonymClash from '../exercises/level-1/antonym-clash/AntonymClash'
+
 //level2
 import JargonTask from '../exercises/level-2/jargon-task/JargonTask'
 import SpeakingThread from '../exercises/level-2/speaking-thread/SpeakingThread'
@@ -20,6 +23,8 @@ import ScienceTranslator from '../exercises/level-2/science-translator/ScienceTr
 import KingFailure from '../exercises/level-2/king-failure/KingFailure'
 import FearExplosive from '../exercises/level-2/fear-explosive/FearExplosive'
 import ArgumentSpeed from '../exercises/level-2/argument-speed/ArgumentSpeed'
+import PoetryGlitch from '../exercises/level-2/poetry-glitch/PoetryGlitch'
+
 //level 3
 import DebateTrainerAi from '../exercises/level-3/debate-trainer-ai/DebateTrainerAi'
 import InterviewAi from '../exercises/level-3/interview-ai/InterviewAi'
@@ -58,6 +63,12 @@ const ExerciseRenderer = ({ exercise, isDaily }) => {
       return <WordZoom alias={exercise.alias} isDaily={isDaily} />
     case 'speech-pace':
       return <SpeechPace alias={exercise.alias} isDaily={isDaily} />
+    case 'breath-control':
+      return (
+        <BreathControl alias={exercise.alias} isDaily={isDaily} />
+      )
+    case 'antonym-clash':
+      return <AntonymClash alias={exercise.alias} isDaily={isDaily} />
     case 'jargon-task':
       return <JargonTask alias={exercise.alias} isDaily={isDaily} />
     case 'speaking-thread':
@@ -84,6 +95,8 @@ const ExerciseRenderer = ({ exercise, isDaily }) => {
       return (
         <ArgumentSpeed alias={exercise.alias} isDaily={isDaily} />
       )
+    case 'poetry-glitch':
+      return <PoetryGlitch alias={exercise.alias} isDaily={isDaily} />
     case 'ai-debate':
       return (
         <DebateTrainerAi alias={exercise.alias} isDaily={isDaily} />

@@ -80,6 +80,26 @@ const ALL_EXERCISES = [
     premium: false,
     skill: 'техника речи',
   },
+  {
+    alias: 'breath-control',
+    title: 'Выдох-Контроль',
+    description:
+      'Прочитай длинный текст или стихотворение на одном дыхании',
+    reward: 30,
+    level: 1,
+    premium: false,
+    skill: 'техника речи',
+  },
+  {
+    alias: 'antonym-clash',
+    title: 'Риторический перевёртыш',
+    description:
+      'Перескажи текст, мгновенно меняя все ключевые слова на антонимы',
+    reward: 50,
+    level: 1,
+    premium: false,
+    skill: 'находчивость',
+  },
 
   // LEVEL 2
   {
@@ -163,6 +183,16 @@ const ALL_EXERCISES = [
     level: 2,
     premium: false,
     skill: 'убедительность',
+  },
+  {
+    alias: 'poetry-glitch',
+    title: 'Поэтический сбой',
+    description:
+      'Выразительно прочитай стих и с ходу придумай рифмованный финал',
+    reward: 50,
+    level: 2,
+    premium: false,
+    skill: 'харизма и юмор',
   },
 
   // LEVEL 3 (AI)
