@@ -67,8 +67,9 @@ const checkAchievements = (
     [
       'tongue-twister',
       'fear-explosive',
+      'speech-pace',
       'ai-poem-rap',
-      'ai-poem-tongue',
+      'ai-poem-tongue', 
       'ai-radio-host',
     ].includes(s.alias),
   )
@@ -101,6 +102,7 @@ const checkAchievements = (
       'association',
       'synonyms',
       'taboo',
+      'word-zoom',
       'ai-metaphor',
       'ai-stop-word',
       'ai-random-word',

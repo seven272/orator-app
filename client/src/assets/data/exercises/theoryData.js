@@ -7,6 +7,8 @@ import { logicChainTheory } from './level1/logic-chain/theory'
 import { synonymsTheory } from './level1/synonyms/theory'
 import { emotionTheory } from './level1/emotion/theory'
 import { speechPaceTheory } from './level1/speech-pace/theory'
+import { breathControlTheory } from './level1/breath-control/theory'
+import { antonymClashTheory } from './level1/antonym-clash/theory'
 //level 2
 import { jargonTaskTheory } from './level2/jargon-task/theory'
 import { speakingThreadTheory } from './level2/speaking-thread/theory'
@@ -17,6 +19,7 @@ import { scienceTranslatorTheory } from './level2/science-translator/theory'
 import { fearExplosiveTheory } from './level2/fear-explosive/theory'
 import { kingFailureTheory } from './level2/king-failure/theory'
 import { argumentSpeedTheory } from './level2/argument-speed/theory'
+import { poetryGlitchTheory } from './level2/poetry-glitch/theory'
 //level 3
 import { aiDebateTheory } from './level3/ai-debate/theory'
 import { aiInterviewTheory } from './level3/ai-interview/theory'
@@ -44,7 +47,8 @@ const THEORY_DATA = {
   synonyms: synonymsTheory,
   emotion: emotionTheory,
   'speech-pace': speechPaceTheory,
-
+  'breath-control': breathControlTheory,
+  'antonym-clash': antonymClashTheory,
   // level 2
   'jargon-task': jargonTaskTheory,
   'speaking-thread': speakingThreadTheory,
@@ -55,6 +59,7 @@ const THEORY_DATA = {
   'fear-explosive': fearExplosiveTheory,
   'king-failure': kingFailureTheory,
   'argument-speed': argumentSpeedTheory,
+  'poetry-glitch':poetryGlitchTheory,
 
   //level 3
   'ai-debate': aiDebateTheory,
