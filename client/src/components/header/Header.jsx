@@ -12,7 +12,7 @@ import GamePanelWidget from './game-panel-widget/GamePanelWidget' // Импор�
 import {
   checkIsAuth,
   checkIsVkGuest,
-  fetchVkRegister,
+  fetchVkRegister, 
 } from '../../redux/slices/authSlice'
 import { syncGuestEnergy } from '../../redux/slices/profileSlice'
 import {

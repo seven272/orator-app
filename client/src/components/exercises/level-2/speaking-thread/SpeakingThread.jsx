@@ -6,12 +6,13 @@ import { PiTimer } from 'react-icons/pi'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
 
 import { useAudioRecorder } from '../../../../hooks/useAudioRecorder'
-import { speakingTopics } from '../../../../assets/data/exercises/level2/speaking-thread/data' 
-import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask' 
+import { speakingTopics } from '../../../../assets/data/exercises/level2/speaking-thread/data'
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
+import UpgradeExerciseBanner from '../../../upgrade-exercise-banner/UpgradeExerciseBanner'
 import styles from './SpeakingThread.module.css'
 
 const STATUS = {
@@ -136,7 +137,7 @@ const SpeakingThread = ({ alias, isDaily }) => {
     setIsTaskInterrupted(true)
   }
 
-   const handleCompleteReady = () => {
+  const handleCompleteReady = () => {
     setStatus(STATUS.FINISHED)
   }
 
@@ -243,6 +244,7 @@ const SpeakingThread = ({ alias, isDaily }) => {
                 </span>
               </div>
             )}
+            {xp > 0 && <UpgradeExerciseBanner alias={alias} />}
           </div>
         )}
       </div>
@@ -256,7 +258,7 @@ const SpeakingThread = ({ alias, isDaily }) => {
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
-        onComplete={handleCompleteReady} 
+        onComplete={handleCompleteReady}
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}

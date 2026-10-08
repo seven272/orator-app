@@ -1,0 +1,257 @@
+.page_container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  font-family: 'Onest', 'Inter', sans-serif;
+  box-sizing: border-box;
+}
+
+/* Шапка приложения */
+.header {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.btn_back {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  margin-right: 10px;
+  border-radius: 50%;
+  outline: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn_back:active {
+  background-color: #f1f5f9;
+  color: var(--color-primary);
+}
+
+.header_title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  letter-spacing: -0.2px;
+}
+
+/* Контентная часть */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Сине-голубой премиум-бейдж */
+.premium_badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-blue-dark));
+  color: #ffffff;
+  padding: 5px 12px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.15);
+  margin-bottom: 20px;
+}
+
+/* Контейнер иконки */
+.icon_large_wrap {
+  width: 76px;
+  height: 76px;
+  background-color: #f8fafc;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.ex_icon_png {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
+}
+
+.fallback_emoji {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: 16px;
+  margin-top: 0;
+  letter-spacing: -0.4px;
+  text-align: center;
+}
+
+/* Карточка с описанием преимуществ */
+.info_card {
+  width: 100%;
+  max-width: 440px;
+  background-color: #fafafa;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  border-radius: 16px;
+  padding: 18px;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.description {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-dark);
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.ai_features {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.ai_features strong {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Обертка для иконки и жирного заголовка */
+.ai_title_wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  vertical-align: middle;
+  margin-bottom: 4px;
+}
+
+/* Элегантный цвет для иконки робота */
+.ai_icon {
+  color: #7c3aed; /* Оставляем красивый акцентный цвет для ИИ-элементов */
+  flex-shrink: 0;
+}
+
+/* Блок кнопок */
+.actions_block {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+}
+
+/* Кнопка теории */
+.custom_btn_theory {
+  width: 100%;
+  min-height: 42px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  outline: none;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.custom_btn_theory:active {
+  background-color: #f8fafc;
+  transform: scale(0.99);
+}
+
+/* ⚡ Адаптивная синяя кнопка покупки Premium */
+.custom_btn_buy {
+  width: 100%;
+  min-height: 46px; 
+  padding: 10px 16px;
+  box-sizing: border-box;
+  
+  /* Фирменный синий градиент */
+  background: linear-gradient(135deg, var(--color-primary), var(--color-blue-dark));
+  border: none;
+  border-radius: 10px;
+  
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  
+  /* Центрирование и автоперенос для длинных текстов в ВК */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.25);
+  outline: none;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.custom_btn_buy:active {
+  opacity: 0.95;
+  transform: scale(0.99);
+}
+
+/* Ошибки */
+.error_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 12px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.error_text {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.btn_error_back {
+  padding: 8px 16px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}

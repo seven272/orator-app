@@ -1,0 +1,97 @@
+.ai_upgrade_banner {
+  width: 100%;
+  max-width: 440px;
+  margin-top: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+  /* Мягкий технологичный градиент */
+  background: linear-gradient(
+    135deg,
+    rgba(38, 136, 235, 0.04),
+    rgba(162, 0, 255, 0.04)
+  );
+  border: 1px dashed rgba(162, 0, 255, 0.25);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: fadeInUpgrade 0.4s ease-out forwards;
+}
+
+.ai_upgrade_sparkle {
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: #a200ff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.ai_upgrade_text {
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-text-dark);
+  margin: 0 0 14px 0;
+  text-align: justify;
+}
+
+/* 🤖 Кастомная интерактивная кнопка апгрейда */
+.btn_ai_upgrade {
+  appearance: none;
+  background: transparent;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 8px;
+
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid #a200ff;
+
+  color: #a200ff;
+  font-family: 'Onest', 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(162, 0, 255, 0.04);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.btn_ai_upgrade:hover {
+  background-color: rgba(162, 0, 255, 0.06);
+  border-color: #8b00dd;
+  color: #8b00dd;
+}
+
+.btn_ai_upgrade:active {
+  transform: scale(0.97);
+  background-color: rgba(162, 0, 255, 0.1);
+}
+
+.btn_icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+@keyframes fadeInUpgrade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

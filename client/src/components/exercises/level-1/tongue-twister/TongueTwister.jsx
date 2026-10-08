@@ -6,16 +6,17 @@ import { Icon20InfoCircleOutline } from '@vkontakte/icons'
 
 import styles from './TongueTwister.module.css'
 import { getRandomWord } from '../../../../assets/data/exercises/utils/getRandomValues'
-import { randomTwisters } from '../../../../assets/data/exercises/level1/tongue-twister/data' 
+import { randomTwisters } from '../../../../assets/data/exercises/level1/tongue-twister/data'
 import { useSpeech } from '../../../../hooks/useSpeech' //п1
 import {
-  calculateAccuracy,
+  calculateAccuracy, 
   calculateXP,
 } from '../../../../utils/compareSpeech'
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
+import UpgradeExerciseBanner from '../../../upgrade-exercise-banner/UpgradeExerciseBanner'
 
 const STATUS = {
   IDLE: 'idle',
@@ -110,12 +111,10 @@ const TongueTwister = ({ alias, isDaily }) => {
     setIsTaskInterrupted(true)
   }
 
-
-   const handleCompleteReady = () => {
+  const handleCompleteReady = () => {
     setStatus(STATUS.FINISHED)
     handleAutoCheckResult(transcript)
   }
-
 
   const clickNext = () => {
     setRandomWord(generator()) // Берем новую фразу
@@ -230,6 +229,7 @@ const TongueTwister = ({ alias, isDaily }) => {
                 <p className={styles.finished_xp}>+{xp} xp</p>
               </div>
             )}
+            {xp > 0 && <UpgradeExerciseBanner alias={alias} />}
           </div>
         )}
       </div>

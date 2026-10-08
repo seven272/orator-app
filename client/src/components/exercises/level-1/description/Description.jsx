@@ -6,12 +6,13 @@ import { Icon20InfoCircleOutline } from '@vkontakte/icons'
 
 import styles from './Description.module.css'
 import { getRandomWord } from '../../../../assets/data/exercises/utils/getRandomValues'
-import { randomItems } from '../../../../assets/data/exercises/level1/description/data' 
+import { randomItems } from '../../../../assets/data/exercises/level1/description/data'
 import { useSpeech } from '../../../../hooks/useSpeech'
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import TheoryContent from '../../../theory-content/TheoryContent'
-import Modal from '../../../../UI/modal/Modal' 
+import Modal from '../../../../UI/modal/Modal'
+import UpgradeExerciseBanner from '../../../upgrade-exercise-banner/UpgradeExerciseBanner'
 
 const STATUS = {
   IDLE: 'idle',
@@ -43,7 +44,7 @@ const Description = ({ alias, isDaily }) => {
   } = useSpeech('ru-RU')
 
   const wordGenerator = useMemo(() => getRandomWord(randomItems), [])
-const navigate = useNavigate()
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const [xp, setXp] = useState(0)
   const [randomWord, setRandomWord] = useState(() => wordGenerator())
@@ -99,7 +100,7 @@ const navigate = useNavigate()
     setIsTaskInterrupted(true)
   }
 
-   const handleCompleteReady = () => {
+  const handleCompleteReady = () => {
     setStatus(STATUS.FINISHED)
     handleAutoCheckResult(transcript)
   }
@@ -225,6 +226,7 @@ const navigate = useNavigate()
                 </span>
               </div>
             )}
+            {xp > 0 && <UpgradeExerciseBanner alias={alias} />}
           </div>
         )}
       </div>
@@ -238,7 +240,7 @@ const navigate = useNavigate()
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
-         onComplete={handleCompleteReady}
+        onComplete={handleCompleteReady}
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}

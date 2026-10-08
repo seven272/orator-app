@@ -7,12 +7,13 @@ import { PiTimer } from 'react-icons/pi'
 
 import { scienceScenarios } from '../../../../assets/data/exercises/level2/science-translator/data'
 import { useAudioRecorder } from '../../../../hooks/useAudioRecorder'
-import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask' 
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import styles from './ScienceTranslator.module.css'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
+import UpgradeExerciseBanner from '../../../upgrade-exercise-banner/UpgradeExerciseBanner'
 
 const STATUS = {
   IDLE: 'idle',
@@ -37,7 +38,7 @@ const ScienceTranslator = ({ alias, isDaily }) => {
     isSupported,
   } = useAudioRecorder()
   const dispatch = useDispatch()
-   const navigate = useNavigate()
+  const navigate = useNavigate()
   const [randomTask, setRandomTask] = useState(null)
   const [poolTasks, setPoolTasks] = useState([])
   const [status, setStatus] = useState(STATUS.IDLE)
@@ -106,7 +107,7 @@ const ScienceTranslator = ({ alias, isDaily }) => {
     setIsTaskInterrupted(true)
   }
 
-   const handleCompleteReady = () => {
+  const handleCompleteReady = () => {
     setStatus(STATUS.FINISHED)
   }
 
@@ -208,6 +209,7 @@ const ScienceTranslator = ({ alias, isDaily }) => {
                 </span>
               </div>
             )}
+            {xp > 0 && <UpgradeExerciseBanner alias={alias} />}
           </div>
         )}
       </div>
@@ -222,7 +224,7 @@ const ScienceTranslator = ({ alias, isDaily }) => {
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
         onRate={handleManualRate}
-        onComplete={handleCompleteReady} 
+        onComplete={handleCompleteReady}
         onFinish={clickStop}
         onNext={clickNext}
       />

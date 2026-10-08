@@ -12,6 +12,7 @@ import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
+import UpgradeExerciseBanner from '../../../upgrade-exercise-banner/UpgradeExerciseBanner'
 
 const TOTAL_TIME = 10
 
@@ -225,6 +226,7 @@ const Emotion = ({ alias, isDaily }) => {
                 </span>
               </div>
             )}
+             {xp > 0 && <UpgradeExerciseBanner alias={alias} />}
           </div>
         )}
       </div>

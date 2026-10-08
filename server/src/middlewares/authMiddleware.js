@@ -10,7 +10,7 @@ const checkAuth = async (req, res, next) => {
         success: false,
         message: 'Не получилось авторизоваться - токен не найден',
       })
-    }
+    } 
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
 

@@ -5,15 +5,16 @@ import { ScreenSpinner } from '@vkontakte/vkui'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
 import { PiTimer } from 'react-icons/pi'
 import { useNavigate } from 'react-router-dom'
-import { tabooScenarios } from '../../../../assets/data/exercises/level2/taboo/data'  
+import { tabooScenarios } from '../../../../assets/data/exercises/level2/taboo/data'
 import { useAudioRecorder } from '../../../../hooks/useAudioRecorder'
-import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask' 
+import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
+import UpgradeExerciseBanner from '../../../upgrade-exercise-banner/UpgradeExerciseBanner'
 import styles from './Taboo.module.css'
- 
+
 const STATUS = {
   IDLE: 'idle',
   RUNNING: 'running',
@@ -110,12 +111,12 @@ const Taboo = ({ alias, isDaily }) => {
     resetExerciseState()
   }
 
-   const handleCompleteReady = () => {
+  const handleCompleteReady = () => {
     setStatus(STATUS.FINISHED)
   }
 
   const clickStop = () => {
-   navigate(-1)
+    navigate(-1)
   }
 
   if (!randomTask) return <ScreenSpinner />
@@ -216,6 +217,7 @@ const Taboo = ({ alias, isDaily }) => {
                 </span>
               </div>
             )}
+            {xp > 0 && <UpgradeExerciseBanner alias={alias} />}
           </div>
         )}
       </div>
@@ -229,7 +231,7 @@ const Taboo = ({ alias, isDaily }) => {
         isTaskInterrupted={isTaskInterrupted}
         onStart={() => setStatus(STATUS.RUNNING)}
         onStop={handleInterrupt}
-        onComplete={handleCompleteReady} 
+        onComplete={handleCompleteReady}
         onRate={handleManualRate}
         onFinish={clickStop}
         onNext={clickNext}
