@@ -98,6 +98,54 @@ import {
   finishHistoricalBattle,
 } from '../controllers/ai-exercises/historicalController.js'
 
+import {
+  startJargonBoss,
+  generateJargonResponse,
+  finishJargonBoss,
+} from '../controllers/ai-exercises/jargonBossController.js'
+
+import {
+  startCommercialPitch,
+  generatePitchResponse,
+  finishCommercialPitch,
+} from '../controllers/ai-exercises/commercialPitchController.js'
+
+import {
+  startAssociationMaster,
+  generateAssociationMasterResponse,
+  finishAssociationMaster,
+} from '../controllers/ai-exercises/associationMasterController.js'
+
+import {
+  startToastCritic,
+  generateToastCriticResponse,
+  finishToastCritic,
+} from '../controllers/ai-exercises/toastCriticController.js'
+
+import {
+  startEmpathySpark,
+  generateEmpathyResponse,
+  finishEmpathySpark,
+} from '../controllers/ai-exercises/empathySparkController.js'
+
+import {
+  startAntiFlattery,
+  generateFlatteryResponse,
+  finishAntiFlattery,
+} from '../controllers/ai-exercises/antiFlatteryController.js'
+
+import {
+  startStarBridge,
+  generateStarResponse,
+  finishStarBridge,
+} from '../controllers/ai-exercises/starBridgeController.js'
+
+import {
+  startRhythmTransformer,
+  generateTransformerResponse,
+  finishRhythmTransformer,
+} from '../controllers/ai-exercises/rhythmTransformerController.js'
+
 const router = express.Router()
 
 // Настройка multer для удержания аудио в оперативной памяти (Buffer)
@@ -279,8 +327,8 @@ router.post(
   '/start-tongue',
   checkAuth,
   checkPremiumAndTicket('ai-poem-tongue'),
-  startPoemTongue, 
-) 
+  startPoemTongue,
+)
 router.post(
   '/response-tongue',
   checkAuth,
@@ -419,6 +467,191 @@ router.post(
   checkAuth,
   checkActiveSessionGuard('ai-historical-battle'),
   finishHistoricalBattle,
+)
+
+// Роутеры Уличных терок
+router.post(
+  '/start-jargon-boss',
+  checkAuth,
+  checkPremiumAndTicket('ai-jargon-boss'),
+  startJargonBoss,
+)
+
+router.post(
+  '/response-jargon-boss',
+  checkAuth,
+  checkActiveSessionGuard('ai-jargon-boss'),
+  upload.single('audio'),
+  generateJargonResponse,
+)
+
+router.post(
+  '/finish-jargon-boss',
+  checkAuth,
+  checkActiveSessionGuard('ai-jargon-boss'),
+  finishJargonBoss,
+)
+
+// Роутеры Суровый Инвестор Эдуард
+router.post(
+  '/start-commercial-pitch',
+  checkAuth,
+  checkPremiumAndTicket('ai-commercial-pitch'),
+  startCommercialPitch,
+)
+
+router.post(
+  '/response-commercial-pitch',
+  checkAuth,
+  checkActiveSessionGuard('ai-commercial-pitch'),
+  upload.single('audio'),
+  generatePitchResponse,
+)
+
+router.post(
+  '/finish-commercial-pitch',
+  checkAuth,
+  checkActiveSessionGuard('ai-commercial-pitch'),
+  finishCommercialPitch,
+)
+// Роутеры Мост Смыслов
+router.post(
+  '/start-association-master',
+  checkAuth,
+  checkPremiumAndTicket('ai-association-master'),
+  startAssociationMaster,
+)
+
+router.post(
+  '/response-association-master',
+  checkAuth,
+  checkActiveSessionGuard('ai-association-master'),
+  upload.single('audio'),
+  generateAssociationMasterResponse,
+)
+
+router.post(
+  '/finish-association-master',
+  checkAuth,
+  checkActiveSessionGuard('ai-association-master'),
+  finishAssociationMaster,
+)
+
+// Роутеры Банкетный критик
+router.post(
+  '/start-toast-critic',
+  checkAuth,
+  checkPremiumAndTicket('ai-toast-critic'),
+  startToastCritic,
+)
+
+router.post(
+  '/response-toast-critic',
+  checkAuth,
+  checkActiveSessionGuard('ai-toast-critic'),
+  upload.single('audio'),
+  generateToastCriticResponse,
+)
+
+router.post(
+  '/finish-toast-critic',
+  checkAuth,
+  checkActiveSessionGuard('ai-toast-critic'),
+  finishToastCritic,
+)
+
+// Роутеры Генератор Эмпатии
+router.post(
+  '/start-empathy-spark',
+  checkAuth,
+  checkPremiumAndTicket('ai-empathy-spark'),
+  startEmpathySpark,
+)
+
+router.post(
+  '/response-empathy-spark',
+  checkAuth,
+  checkActiveSessionGuard('ai-empathy-spark'),
+  upload.single('audio'),
+  generateEmpathyResponse,
+)
+
+router.post(
+  '/finish-empathy-spark',
+  checkAuth,
+  checkActiveSessionGuard('ai-empathy-spark'),
+  finishEmpathySpark,
+)
+
+
+// Роутеры анти-лесть
+router.post(
+  '/start-anti-flattery',
+  checkAuth,
+  checkPremiumAndTicket('ai-anti-flattery'),
+  startAntiFlattery,
+)
+
+router.post(
+  '/response-anti-flattery',
+  checkAuth,
+  checkActiveSessionGuard('ai-anti-flattery'),
+  upload.single('audio'),
+  generateFlatteryResponse,
+)
+
+router.post(
+  '/finish-anti-flattery',
+  checkAuth,
+  checkActiveSessionGuard('ai-anti-flattery'),
+  finishAntiFlattery,
+)
+
+// Роутеры Мост к кумиру
+router.post(
+  '/start-star-bridge',
+  checkAuth,
+  checkPremiumAndTicket('ai-star-bridge'),
+  startStarBridge,
+)
+
+router.post(
+  '/response-star-bridge',
+  checkAuth,
+  checkActiveSessionGuard('ai-star-bridge'),
+  upload.single('audio'),
+  generateStarResponse,
+)
+
+router.post(
+  '/finish-star-bridge',
+  checkAuth,
+  checkActiveSessionGuard('ai-star-bridge'),
+  finishStarBridge,
+)
+
+// Роутеры ии-метроном
+router.post(
+  '/start-rhythm-transformer',
+  checkAuth,
+  checkPremiumAndTicket('ai-rhythm-transformer'),
+  startRhythmTransformer,
+)
+
+
+router.post(
+  '/response-rhythm-transformer',
+  checkAuth,
+  checkActiveSessionGuard('ai-rhythm-transformer'),
+  upload.single('audio'),
+  generateTransformerResponse,
+)
+
+router.post(
+  '/finish-rhythm-transformer',
+  checkAuth,
+  checkActiveSessionGuard('ai-rhythm-transformer'),
+  finishRhythmTransformer,
 )
 
 export default router

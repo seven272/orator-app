@@ -345,6 +345,86 @@ const ALL_EXERCISES = [
     premium: true,
     skill: 'убедительность',
   },
+  {
+    alias: 'ai-jargon-boss',
+    title: 'Разрули тёрки',
+    description:
+      'Полноценный интерактивный симулятор «разговора по понятиям» в стрессовых ситуациях',
+    reward: 100,
+    level: 3,
+    premium: true,
+    skill: 'коммуникация',
+  },
+  {
+    alias: 'ai-commercial-pitch',
+    title: 'Суровый инвестор Эдуард',
+    description:
+      'Презентуй случайный бытовой предмет как революционный стартап циничному венчурному капиталисту',
+    reward: 100,
+    level: 3,
+    premium: true,
+    skill: 'коммуникация',
+  },
+  {
+    alias: 'ai-association-master',
+    title: 'Мост смыслов',
+    description:
+      'Попробуй изящно связать два полярных понятия красивой и неизбитой ассоциативной цепочкой',
+    reward: 100,
+    level: 3,
+    premium: true,
+    skill: 'находчивость',
+  },
+  {
+    alias: 'ai-toast-critic',
+    title: 'Банкетный критик',
+    description:
+      'Произнеси праздничный тост по каверзной схеме и получи жесткую рецензию от тамады со стажем',
+    reward: 100,
+    level: 3,
+    premium: true,
+    skill: 'харизма и юмор',
+  },
+  {
+    alias: 'ai-empathy-spark',
+    title: 'Генератор эмпатии',
+    description:
+      'Помоги собеседнику справиться с выгоранием и сильными эмоциями, используя технику активного слушания',
+    reward: 100,
+    level: 3,
+    premium: true,
+    skill: 'коммуникация',
+  },
+  {
+    alias: 'ai-anti-flattery',
+    title: 'Анти-лесть',
+    description:
+      'Защити свои границы и KPI в переговорах со скользким манипулятором, использующим токсичную лесть',
+    reward: 100,
+    level: 3,
+    premium: true,
+    skill: 'убедительность',
+  },
+  {
+    alias: 'ai-star-bridge',
+    title: 'Мост к кумиру',
+    description:
+      'У тебя есть всего 3 раунда в лифте, чтобы зацепить занятого топ-босса или селебрити нестандартным хуком',
+    reward: 100,
+    level: 3,
+    premium: true,
+    skill: 'находчивость',
+  },
+  {
+    alias: 'ai-rhythm-transformer',
+    title: 'Текст-трансформер',
+    description:
+      'Прокачай дикционную выносливость, читая скороговорки, которые ИИ на лету усложняет зубодробительными терминами',
+    reward: 100,
+    level: 3,
+    premium: true,
+    skill: 'техника речи',
+  },
 ]
 
 const seedDB = async () => {
@@ -353,7 +433,7 @@ const seedDB = async () => {
     await Task.deleteMany({})
     await Task.insertMany(ALL_EXERCISES)
     console.log(
-      '✅ База успешно обновлена упражнениями всех 3-х уровней!',
+      `✅ База успешно обновлена упражнениями всех 3-х уровней в количестве ${ALL_EXERCISES.length} шт.`,
     )
     process.exit()
   } catch (err) {

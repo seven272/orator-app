@@ -7,6 +7,7 @@ const SKILLS_MAP = {
     'ai-poem-tongue', // Тяжелая дикция
     'ai-poem-rap', //Рэп-манифест
     'ai-radio-host', //Радиоведущий
+   ' ai-rhythm-transformer'//Текст-трансформер
   ],
   находчивость: [
     'association', // Словесный мост 
@@ -18,6 +19,8 @@ const SKILLS_MAP = {
     'ai-metaphor', // Трудный переводчик
     'ai-stop-word', //Анти-слова
     'ai-random-word', //Слово из шляпы
+    'ai-star-bridge',//Мост к кумиру
+    'ai-association-master',//Мост смыслов
   ],
   'харизма и юмор': [
     'emotion', // Эмоциональный окрас
@@ -27,6 +30,7 @@ const SKILLS_MAP = {
     'king-failure', // Король провала 
     'ai-knockout', // Остроумный нокаут
     'ai-poem-acting', //Мастер дубляжа
+    'ai-toast-critic', //Банкетный критик
   ],
   убедительность: [
     'logic-chain', // Логическая цепь
@@ -38,6 +42,7 @@ const SKILLS_MAP = {
     'ai-tribune', // Трибуна
     'ai-alibi', // Железное алиби
     'ai-hisai-historical-battle', //Эхо истории
+    'ai-anti-flattery', //Анти-лесть
   ],
   коммуникация: [
     'ai-icebreaker', // Ледокол (умение завязать разговор)
@@ -45,6 +50,9 @@ const SKILLS_MAP = {
     'description', // Ода предмету (базовый навык монолога)
     'ai-bagrain', // Торг уместен
     'live-duel', // Живое общение, живая дуэль
+    'ai-jargon-boss',// Разрули тёрки
+    'ai-empathy-spark', //Генератор эмпатии
+    'ai-commercial-pitch', //Суровый инвестор Эдуард
   ],
 }
 

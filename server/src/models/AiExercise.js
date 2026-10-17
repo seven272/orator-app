@@ -27,7 +27,15 @@ const aiExercisesSchema = new mongoose.Schema(
         'ai-poem-rap',
         'ai-radio-host',
         'ai-random-word',
-        'ai-historical-battle'
+        'ai-historical-battle',
+        'ai-jargon-boss',
+        'ai-commercial-pitch',
+        'ai-association-master',
+        'ai-toast-critic',
+        'ai-empathy-spark',
+        'ai-anti-flattery',
+        'ai-star-bridge',
+        'ai-rhythm-transformer',
       ],
     },
 

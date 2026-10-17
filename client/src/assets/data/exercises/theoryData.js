@@ -36,6 +36,14 @@ import { aiRadioHostTheory } from './level3/ai-radio-host/theory'
 import { aiStopWordTheory } from './level3/ai-stop-word/theory'
 import { aiRandomWordTheory } from './level3/ai-random-word/theory'
 import { aiHistoricalBattleTheory } from './level3/ai-historical-battle/theory'
+import { aiJargonBossTheory } from './level3/ai-jargon-boss/theory'
+import { aiCommercialPitchTheory } from './level3/ai-commercial-pitch/theory'
+import { aiAssociationMasterTheory } from './level3/ai-association-master/theory'
+import { aiToastCriticTheory } from './level3/ai-toast-critic/theory'
+import { aiEmpathySparkTheory } from './level3/ai-empathy-spark/theory'
+import { aiAntiFlatteryTheory } from './level3/ai-anti-flattery/theory'
+import { aiStarBridgeTheory } from './level3/ai-star-bridge/theory'
+import { aiRhythmTransformerTheory } from './level3/ai-rhythm-transformer/theory'
 
 const THEORY_DATA = {
   // level 1
@@ -59,7 +67,7 @@ const THEORY_DATA = {
   'fear-explosive': fearExplosiveTheory,
   'king-failure': kingFailureTheory,
   'argument-speed': argumentSpeedTheory,
-  'poetry-glitch':poetryGlitchTheory,
+  'poetry-glitch': poetryGlitchTheory,
 
   //level 3
   'ai-debate': aiDebateTheory,
@@ -77,6 +85,14 @@ const THEORY_DATA = {
   'ai-stop-word': aiStopWordTheory,
   'ai-random-word': aiRandomWordTheory,
   'ai-historical-battle': aiHistoricalBattleTheory,
+  'ai-jargon-boss': aiJargonBossTheory,
+  'ai-commercial-pitch': aiCommercialPitchTheory,
+  'ai-association-master': aiAssociationMasterTheory,
+  'ai-toast-critic': aiToastCriticTheory,
+  'ai-empathy-spark': aiEmpathySparkTheory,
+  'ai-anti-flattery': aiAntiFlatteryTheory,
+  'ai-star-bridge': aiStarBridgeTheory,
+  'ai-rhythm-transformer': aiRhythmTransformerTheory,
 }
 
 export { THEORY_DATA }

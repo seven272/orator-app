@@ -60,7 +60,7 @@ const AlibiProcess = ({
   return (
     <div className={styles.screen_running}>
       {/* Прогресс-бары */}
-      <div className={styles.debate_header}>
+      <div className={styles.header}>
         <div className={styles.progress_container}>
           <div className={styles.progress_text}>
             <div>
@@ -98,7 +98,7 @@ const AlibiProcess = ({
         isAiThinking={isAiThinking}
       />
 
-      <div className={styles.debate_footer}>
+      <div className={styles.footer}>
         {aiStatus === AI_STATUS.IDLE && (
           <button
             onClick={onStartRecording}

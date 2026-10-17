@@ -24,47 +24,39 @@ const UPGRADE_MAPPING = {
     upgradeAlias: 'ai-metaphor',
     title: 'Трудный переводчик',
   },
- //6
+  //6
   'speaking-thread': {
     upgradeAlias: 'ai-radio-host',
     title: 'Радиоведущий',
   },
-
-  
-
-  //шаблоны
-  synonyms: {
-    upgradeAlias: 'ai-vocabulary-richness',
-    title: 'Богатый слог',
-  },
-  'logic-chain': {
-    upgradeAlias: 'ai-logic-detective',
-    title: 'Железная логика',
-  },
+  //7
   'jargon-task': {
-    upgradeAlias: 'ai-status-negotiator',
-    title: 'Статусный сдвиг',
+    upgradeAlias: 'ai-jargon-boss',
+    title: 'Разрули тёрки',
   },
-  'speaking-thread3': {
-    upgradeAlias: 'ai-thread-holder',
-    title: 'Хозяин беседы',
+    //8
+  'speech-pace': {
+    upgradeAlias: 'ai-rhythm-transformer',
+    title: 'Текст-трансформер',
   },
+  //9
+    association: {
+    upgradeAlias: 'ai-association-master',
+    title: 'Мост смыслов',
+  },
+  //10
   'toast-master': {
     upgradeAlias: 'ai-toast-critic',
     title: 'Банкетный критик',
   },
-  'joke-master': {
-    upgradeAlias: 'ai-comedy-club',
-    title: 'Стендап-комик',
+
+
+  //шаблон
+  synonyms_test: {
+    upgradeAlias: 'ai-vocabulary-richness',
+    title: 'Богатый слог',
   },
-  'science-translator2': {
-    upgradeAlias: 'ai-child-explain',
-    title: 'Эксперт для пятилетки',
-  },
-  'king-failure': {
-    upgradeAlias: 'ai-pr-savior',
-    title: 'Мастер самоиронии',
-  },
+
 }
 
 export default UPGRADE_MAPPING

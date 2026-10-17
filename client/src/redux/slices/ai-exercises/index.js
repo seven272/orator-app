@@ -13,6 +13,14 @@ import radioHostSlice from './radioHostSlice'
 import stopWordSlice from './stopWordSlice'
 import randomWordSlice from './randomWordSlice'
 import historicalSlice from './historicalSlice'
+import jargonBossSlice from './jargonBossSlice'
+import commercialPitchSlice from './commercialPitchSlice'
+import associationMasterSlice from './associationMasterSlice'
+import toastCriticSlice from './toastCriticSlice'
+import empathySparkSlice from './empathySparkSlice'
+import antiFlatterySlice from './antiFlatterySlice'
+import starBridgeSlice from './starBridgeSlice'
+import rhythmTransformerSlice from './rhythmTransformerSlice'
 
 // Экспортируем единый объект со всеми ИИ-редюсерами
 const aiSlices = {
@@ -31,6 +39,14 @@ const aiSlices = {
   stopWord: stopWordSlice,
   randomWord: randomWordSlice,
   historical: historicalSlice,
+  jargonBoss: jargonBossSlice,
+  commercialPitch: commercialPitchSlice,
+  associationMaster: associationMasterSlice,
+  toastCritic: toastCriticSlice,
+  empathySpark: empathySparkSlice,
+  antiFlattery: antiFlatterySlice,
+  starBridge: starBridgeSlice,
+  rhythmTransformer: rhythmTransformerSlice,
 }
 
 export default aiSlices

@@ -41,6 +41,14 @@ import PoemRapAi from '../exercises/level-3/poem-rap-ai/PoemRapAi'
 import RadioHostAi from '../exercises/level-3/radio-host-ai/RadioHostAi'
 import RandomWordAi from '../exercises/level-3/random-word-ai/RandomWordAi'
 import HistoricalAi from '../exercises/level-3/historical-battle-ai/HistoricalAi'
+import JargonBossAi from '../exercises/level-3/jargon-boss-ai/JargonBossAi'
+import PitchAi from '../exercises/level-3/commercial-pitch-ai/PitchAi'
+import AssociationMasterAi from '../exercises/level-3/association-master-ai/AssociationMasterAi'
+import ToastCriticAi from '../exercises/level-3/toast-critic-ai/ToastCriticAi'
+import EmpathySparkAi from '../exercises/level-3/empathy-spark-ai/EmpathySparkAi'
+import AntiFlatteryAi from '../exercises/level-3/anti-flattery-ai/AntiFlatteryAi'
+import StarBridgeAi from '../exercises/level-3/star-bridge-ai/StarBridgeAi'
+import RhythmTransformerAi from '../exercises/level-3/rhythm-transformer-ai/RhythmTransformerAi'
 
 const ExerciseRenderer = ({ exercise, isDaily }) => {
   // Определяем, какой компонент отрисовать на основе типа из конфига
@@ -129,6 +137,38 @@ const ExerciseRenderer = ({ exercise, isDaily }) => {
       return <RandomWordAi alias={exercise.alias} isDaily={isDaily} />
     case 'ai-historical-battle':
       return <HistoricalAi alias={exercise.alias} isDaily={isDaily} />
+    case 'ai-jargon-boss':
+      return <JargonBossAi alias={exercise.alias} isDaily={isDaily} />
+    case 'ai-commercial-pitch':
+      return <PitchAi alias={exercise.alias} isDaily={isDaily} />
+    case 'ai-association-master':
+      return (
+        <AssociationMasterAi
+          alias={exercise.alias}
+          isDaily={isDaily}
+        />
+      )
+    case 'ai-toast-critic':
+      return (
+        <ToastCriticAi alias={exercise.alias} isDaily={isDaily} />
+      )
+    case 'ai-empathy-spark':
+      return (
+        <EmpathySparkAi alias={exercise.alias} isDaily={isDaily} />
+      )
+    case 'ai-anti-flattery':
+      return (
+        <AntiFlatteryAi alias={exercise.alias} isDaily={isDaily} />
+      )
+    case 'ai-star-bridge':
+      return <StarBridgeAi alias={exercise.alias} isDaily={isDaily} />
+    case 'ai-rhythm-transformer':
+      return (
+        <RhythmTransformerAi
+          alias={exercise.alias}
+          isDaily={isDaily}
+        />
+      )
 
     default:
       return (

@@ -226,7 +226,7 @@ const TongueTwister = ({ alias, isDaily }) => {
                     className={styles.progress}
                   ></progress>
                 </div>
-                <p className={styles.finished_xp}>+{xp} xp</p>
+                <p className={styles.finished_xp}>+{xp} xp</p> 
               </div>
             )}
             {xp > 0 && <UpgradeExerciseBanner alias={alias} />}

@@ -21,7 +21,6 @@ import IconEx14 from '../../images/card-icons/king-failure.png'
 import IconEx31 from '../../images/card-icons/argument-speed.png'
 import IconEx35 from '../../images/card-icons/poetry-glitch.png'
 
-
 //LEVEL 3
 import IconEx15 from '../../images/card-icons/ai-debate.png'
 import IconEx16 from '../../images/card-icons/ai-inrerview.png'
@@ -38,6 +37,14 @@ import IconEx26 from '../../images/card-icons/ai-radio-host.png'
 import IconEx27 from '../../images/card-icons/ai-stop-word.png'
 import IconEx28 from '../../images/card-icons/ai-random-word.png'
 import IconEx29 from '../../images/card-icons/ai-historical-battle.png'
+import IconEx36 from '../../images/card-icons/ai-jargon-boss.png'
+import IconEx37 from '../../images/card-icons/ai-commercial-pitch.png'
+import IconEx38 from '../../images/card-icons/ai-association-master.png'
+import IconEx39 from '../../images/card-icons/ai-toast-critic.png'
+import IconEx40 from '../../images/card-icons/ai-empathy-spark.png'
+import IconEx41 from '../../images/card-icons/ai-anti-flattery.png'
+import IconEx42 from '../../images/card-icons/ai-star-bridge.png'
+import IconEx43 from '../../images/card-icons/ai-rhythm-transformer.png'
 
 const All_EXERCISES = {
   level1: [
@@ -485,6 +492,117 @@ const All_EXERCISES = {
       reward: 100,
       icon: IconEx29,
       skill: 'убедительность',
+      level: 3,
+      minLevel: 1,
+      premium: true,
+    },
+    // new
+    // +
+    {
+      id: 'lev3-16',
+      alias: 'ai-jargon-boss',
+      title: 'Разрули тёрки',
+      description:
+        'Полноценный интерактивный симулятор «разговора по понятиям» в стрессовых ситуациях',
+      reward: 100,
+      icon: IconEx36,
+      skill: 'коммуникация',
+      level: 3,
+      minLevel: 1,
+      premium: true,
+    },
+    // +
+    {
+      id: 'lev3-17',
+      alias: 'ai-commercial-pitch',
+      title: 'Суровый инвестор Эдуард',
+      description:
+        'Презентуй случайный бытовой предмет как революционный стартап циничному венчурному капиталисту',
+      reward: 100,
+      icon: IconEx37,
+      skill: 'коммуникация',
+      level: 3,
+      minLevel: 1,
+      premium: true,
+    },
+     // +
+    {
+      id: 'lev3-18',
+      alias: 'ai-association-master',
+      title: 'Мост смыслов',
+      description:
+        'Попробуй изящно связать два полярных понятия красивой и неизбитой ассоциативной цепочкой',
+      reward: 100,
+      icon: IconEx38,
+      skill: 'находчивость',
+      level: 3,
+      minLevel: 1,
+      premium: true,
+    },
+     // +
+    {
+      id: 'lev3-19',
+      alias: 'ai-toast-critic',
+      title: 'Банкетный критик',
+      description:
+        'Произнеси праздничный тост по каверзной схеме и получи жесткую рецензию от тамады со стажем',
+      reward: 100,
+      icon: IconEx39,
+      skill: 'харизма и юмор',
+      level: 3,
+      minLevel: 1,
+      premium: true,
+    },
+     // +
+    {
+      id: 'lev3-20',
+      alias: 'ai-empathy-spark',
+      title: 'Генератор эмпатии',
+      description:
+        'Помоги собеседнику справиться с выгоранием и сильными эмоциями, используя технику активного слушания',
+      reward: 100,
+      icon: IconEx40,
+      skill: 'коммуникация',
+      level: 3,
+      minLevel: 1,
+      premium: true,
+    },
+     // +
+    {
+      id: 'lev3-21',
+      alias: 'ai-anti-flattery',
+      title: 'Анти-лесть',
+      description:
+        'Защити свои границы и KPI в переговорах со скользким манипулятором, использующим токсичную лесть',
+      reward: 100,
+      icon: IconEx41,
+      skill: 'убедительность',
+      level: 3,
+      minLevel: 1,
+      premium: true,
+    },
+    {
+      id: 'lev3-22',
+      alias: 'ai-star-bridge',
+      title: 'Мост к кумиру',
+      description:
+        'У тебя есть всего 3 раунда в лифте, чтобы зацепить занятого топ-босса или селебрити нестандартным хуком',
+      reward: 100,
+      icon: IconEx42,
+      skill: 'находчивость',
+      level: 3,
+      minLevel: 1,
+      premium: true,
+    },
+    {
+      id: 'lev3-23',
+      alias: 'ai-rhythm-transformer',
+      title: 'Текст-трансформер',
+      description:
+        'Прокачай дикционную выносливость, читая скороговорки, которые ИИ на лету усложняет зубодробительными терминами',
+      reward: 100,
+      icon: IconEx43,
+      skill: 'техника речи',
       level: 3,
       minLevel: 1,
       premium: true,

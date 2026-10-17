@@ -17,7 +17,7 @@
 
 .unknown_ex span {
   font: var(--font-decor);
-  font-size: 30px;
+  font-size: 20px;
   color: var(--color-text-dark);
 }
 

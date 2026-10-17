@@ -12,6 +12,7 @@ import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
+import UpgradeExerciseBanner from '../../../upgrade-exercise-banner/UpgradeExerciseBanner' 
 
 const STATUS = {
   IDLE: 'idle',
@@ -209,6 +210,7 @@ const Association = ({ alias, isDaily }) => {
                 </span>
               </div>
             )}
+            {xp > 0 && <UpgradeExerciseBanner alias={alias} />}
           </div>
         )}
       </div>

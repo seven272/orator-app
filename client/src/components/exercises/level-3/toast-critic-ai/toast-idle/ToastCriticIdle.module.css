@@ -1,0 +1,155 @@
+/* Контейнер стартового экрана */
+.screen_idle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 24px;
+}
+
+/* Кнопка открытия модалки теории */
+.btn_theory {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 122, 255, 0.06);
+  border: 1px solid rgba(0, 122, 255, 0.15);
+  padding: 10px 18px;
+  border-radius: 20px;
+  color: var(--color-blue);
+  font: var(--font-m);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn_theory:hover {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.btn_theory:active {
+  transform: scale(0.98);
+}
+
+.theory_icon {
+  color: var(--color-blue);
+}
+
+/* Заголовок смены задания */
+.screen_idle_title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: var(--font-m-light);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 15px;
+}
+
+.change_topic_icon {
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: transform 0.3s ease;
+}
+
+.change_topic_icon:hover {
+  transform: rotate(180deg);
+  color: var(--color-blue);
+}
+
+/* Карточка с заданием */
+.idle_box {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-white);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+  padding: 24px;
+  margin: 20px 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.idle_text {
+  font: var(--font-m);
+  color: var(--color-text-dark);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* Контейнер отображения обязательной схемы тоста */
+.concepts_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(230, 240, 255, 0.3) 0%, rgba(240, 244, 255, 0.2) 100%);
+  border: 1px solid rgba(0, 122, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 5px;
+}
+
+.concept_item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.concept_label {
+  font: var(--font-m-light);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.concept_name {
+  font: var(--font-m);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-blue);
+}
+
+/* Нижняя панель и кнопка старта */
+.idle_footer {
+  width: 100%;
+  max-width: 480px;
+}
+
+.btn_start {
+  width: 100%;
+  padding: 15px;
+  border-radius: 25px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  font: var(--font-m);
+  font-weight: 600;
+  font-size: 15px;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.2);
+}
+
+.btn_start:hover:not(:disabled) {
+  background: #0066d6;
+  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.3);
+}
+
+.btn_start:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn_start:disabled {
+  background: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}

@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { PiTimer } from 'react-icons/pi'
 import { Icon20InfoCircleOutline } from '@vkontakte/icons'
- 
+
 import styles from './SpeechPace.module.css'
 // Импортируем утилиту генерации и данные темпов из новой структуры папок
 import { getRandomPaceTask } from '../../../../assets/data/exercises/level1/speech-pace/utils'
@@ -13,6 +13,7 @@ import { fetchCompleteExercise } from '../../../../redux/slices/exerciseSlice'
 import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
+import UpgradeExerciseBanner from '../../../upgrade-exercise-banner/UpgradeExerciseBanner'
 
 const STATUS = {
   IDLE: 'idle',
@@ -46,12 +47,14 @@ const SpeechPace = ({ alias, isDaily }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [xp, setXp] = useState(0)
-  
+
   // Инициализация текста
   const [task, setTask] = useState(getRandomPaceTask())
   // Инициализация темпа (по дефолту берём НОРМАЛЬНО — индекс 1)
-  const [currentPace, setCurrentPace] = useState(speechPaceData.paces[1])
-  
+  const [currentPace, setCurrentPace] = useState(
+    speechPaceData.paces[1],
+  )
+
   const [status, setStatus] = useState(STATUS.IDLE)
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME)
   const [isTaskInterrupted, setIsTaskInterrupted] = useState(false)
@@ -82,7 +85,7 @@ const SpeechPace = ({ alias, isDaily }) => {
       dispatch(
         fetchCompleteExercise({
           exAlias: alias,
-          score: 30, 
+          score: 30,
           isDaily: isDaily,
         }),
       )
@@ -112,8 +115,12 @@ const SpeechPace = ({ alias, isDaily }) => {
 
   // Функция случайной смены темпа, исключая текущий для динамики
   const changeRandomPace = () => {
-    const availablePaces = speechPaceData.paces.filter(p => p.label !== currentPace.label)
-    const randomIndex = Math.floor(Math.random() * availablePaces.length)
+    const availablePaces = speechPaceData.paces.filter(
+      (p) => p.label !== currentPace.label,
+    )
+    const randomIndex = Math.floor(
+      Math.random() * availablePaces.length,
+    )
     setCurrentPace(availablePaces[randomIndex])
   }
 
@@ -125,7 +132,7 @@ const SpeechPace = ({ alias, isDaily }) => {
 
   const clickStop = () => {
     resetExerciseState()
-    navigate(-1) 
+    navigate(-1)
   }
 
   // Логика основного таймера и смены темпа
@@ -158,7 +165,9 @@ const SpeechPace = ({ alias, isDaily }) => {
   return (
     <div className={styles.main_pace}>
       <h2 className={styles.title}>Метроном</h2>
-      <p className={styles.descr}>Читай текст, подстраиваясь под меняющийся темп метронома</p>
+      <p className={styles.descr}>
+        Читай текст, подстраиваясь под меняющийся темп метронома
+      </p>
 
       <div className={styles.screen}>
         {status === STATUS.IDLE && (
@@ -169,7 +178,9 @@ const SpeechPace = ({ alias, isDaily }) => {
               className={styles.btn_theory}
               onClick={() => setShowModal(true)}
             >
-              <Icon20InfoCircleOutline className={styles.theory_icon} />
+              <Icon20InfoCircleOutline
+                className={styles.theory_icon}
+              />
               Ознакомиться с теорией
             </button>
 
@@ -190,19 +201,19 @@ const SpeechPace = ({ alias, isDaily }) => {
 
             {/* Интерактивный блок метронома */}
             <div className={styles.metro_container}>
-              <div 
-                className={styles.metro_badge} 
+              <div
+                className={styles.metro_badge}
                 style={{ backgroundColor: currentPace.color }}
               >
                 {currentPace.label}
               </div>
-              
+
               {/* Пульсирующий круг-маятник, скорость которого задается через style */}
-              <div 
+              <div
                 className={styles.metro_pulsar}
-                style={{ 
+                style={{
                   animationDuration: pulseDuration,
-                  backgroundColor: currentPace.color 
+                  backgroundColor: currentPace.color,
                 }}
               />
             </div>
@@ -223,7 +234,9 @@ const SpeechPace = ({ alias, isDaily }) => {
         )}
 
         {isListening && status === STATUS.RUNNING && (
-          <div className={styles.note}>🎤 Управляйте скоростью речи под темп...</div>
+          <div className={styles.note}>
+            🎤 Управляйте скоростью речи под темп...
+          </div>
         )}
 
         {status === STATUS.FINISHED && (
@@ -248,6 +261,7 @@ const SpeechPace = ({ alias, isDaily }) => {
                 </span>
               </div>
             )}
+            {xp > 0 && <UpgradeExerciseBanner alias={alias} />}
           </div>
         )}
       </div>
@@ -265,7 +279,7 @@ const SpeechPace = ({ alias, isDaily }) => {
         onFinish={clickStop}
         onNext={clickNext}
       />
-      
+
       <Modal active={showModal} onClose={() => setShowModal(false)}>
         <TheoryContent
           alias={alias}

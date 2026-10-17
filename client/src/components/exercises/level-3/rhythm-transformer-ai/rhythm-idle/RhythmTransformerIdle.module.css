@@ -1,0 +1,132 @@
+/* Основной контейнер стартового экрана */
+.screen_idle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  width: 100%;
+  height: 100%;
+}
+
+/* Кнопка открытия модалки с теорией */
+.btn_theory {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 8px;
+  background: var(--color-white);
+  color: var(--color-primary);
+  border: 1px solid rgba(0, 122, 255, 0.15);
+  padding: 10px 18px;
+  border-radius: 20px;
+  font: var(--font-m);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: background 0.2s, transform 0.2s;
+  margin-bottom: 24px;
+}
+
+.btn_theory:hover {
+  background: #f5f9ff;
+  transform: translateY(-1px);
+}
+
+.theory_icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* Заголовок блока смены задания */
+.screen_idle_title {
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  font: var(--font-m-light);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+
+.change_topic_icon {
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.2s;
+}
+
+.change_topic_icon:hover {
+  color: var(--color-primary);
+  transform: rotate(180deg);
+}
+
+/* Центральный блок с описанием кейса/скороговорки */
+.idle_box {
+  width: 100%;
+  max-width: 440px;
+  background: var(--color-white);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.idle_text {
+  font: var(--font-m);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-dark);
+}
+
+.idle_text strong {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* Нижняя панель с кнопкой старта */
+.idle_footer {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn_start {
+  width: 100%;
+  padding: 14px;
+  border-radius: 25px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  font: var(--font-m);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.25);
+  transition: background 0.2s, transform 0.2s, opacity 0.2s;
+}
+
+.btn_start:hover:not(:disabled) {
+  background: #0066d6;
+  transform: translateY(-1px);
+}
+
+.btn_start:active:not(:disabled) {
+  transform: translateY(0);
+  background: #005bc2;
+}
+
+.btn_start:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
