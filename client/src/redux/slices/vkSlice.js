@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import { fetchVkAuth } from './authSlice'
 import axiosInstance from '../../utils/axiosInstance'
-
+ 
 // 1. Экшен начисления наград за выполнение ВК-заданий
 const fetchClaimVkBonus = createAsyncThunk(
   'vk/fetchClaimVkBonus',

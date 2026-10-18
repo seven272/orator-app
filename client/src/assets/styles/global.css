@@ -4,15 +4,22 @@
   box-sizing: border-box;
 }
 
+/* 🤖 ДОБАВЛЕНО: Глобальный запрет на инверсию в темную тему для браузера */
+:root {
+  color-scheme: light !important;
+}
+
 html,
 body {
-  width: 100vw; 
+  width: 100vw;
   max-width: 1050px;
   height: 100%;
   margin: 0 auto;
-  color: var(--font-color);
- background-color: var(--color-bg-layout) !important;
+  /* 🤖 ИСПРАВЛЕНО: заменена несуществующая переменная на ваш основной темный текст */
+  color: var(--color-text-primary) !important;
+  background-color: var(--color-bg-layout) !important;
   font: var(--font-m);
+  color-scheme: light !important;
 }
 
 #root {
@@ -30,7 +37,8 @@ a {
 h1 {
   font: var(--font-xl);
   font-style: normal;
-  color: var(--font-color);
+  /* 🤖 ИСПРАВЛЕНО: заменена несуществующая переменная */
+  color: var(--color-text-primary) !important;
 }
 
 .app {
@@ -43,7 +51,7 @@ h1 {
   justify-content: flex-start;
   align-items: center;
   box-sizing: border-box;
-  background-color:  var(--color-bg-layout) !important;
+  background-color: var(--color-bg-layout) !important;
   border: var(--border-main);
   /* overflow: auto; */
 }
@@ -52,12 +60,8 @@ h1 {
   opacity: 100%;
 }
 
-
-
 @media screen and (max-width: 650px) {
-
 }
 
 @media screen and (max-width: 370px) {
-
 }

@@ -160,6 +160,8 @@
 
 /* Активная кнопка "Получить" */
 .btn_task_action {
+  width: 100px;
+  height: 30px;
   padding: 8px 16px;
   background-color: #2688eb;
   color: #ffffff;
@@ -320,7 +322,43 @@
 .btn_premium_primary:active {
   opacity: 0.95;
   transform: scale(0.98);
+
 }
+
+/* Специальный стиль для кнопки добавления в Избранное (без наград) */
+.btn_task_favorites {
+  padding: 8px 16px;
+  background-color: transparent;
+  color: #2688eb; /* Фирменный синий VK */
+  border: 1px solid #2688eb;
+  border-radius: 10px;
+  font-family: 'Onest', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, transform 0.1s;
+}
+
+.btn_task_favorites:active:not(:disabled) {
+  background-color: rgba(38, 136, 235, 0.08);
+  transform: scale(0.97);
+}
+
+.btn_task_favorites:disabled {
+  border-color: #cbd5e1;
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+/* Сноска с пояснением отсутствия бонусов для модерации */
+.task_subtext_notice {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  color: #818c99; /* --color-text-secondary */
+  margin-top: 2px;
+}
+
 
 
 /* 🤖 МОБИЛЬНАЯ АДАПТАЦИЯ (ЭКРАНЫ ДО 450px) */

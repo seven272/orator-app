@@ -3,34 +3,50 @@
 .vkuiRoot__view,
 .vkuiRoot {
   --vkui--color_background: var(--color-bg-layout) !important;
-  --vkui--color_background: var(--color-bg-layout) !important;
   --vkui--color_background_page: var(--color-bg-layout) !important;
+  /* 🤖 ДОБАВЛЕНО: Принудительно выставляем темный текст VKUI для светлого фона */
+  --vkui--color_text_primary: var(--color-text-primary) !important;
   background-color: var(--color-bg-layout) !important;
+  color: var(--color-text-primary) !important;
 }
  
 .vkui {
   background-color: var(--color-bg-layout) !important;
   margin: 0 auto;
+  color: var(--color-text-primary) !important;
 }
+
 .vkuiAppRoot {
   background-color: var(--color-bg-layout) !important;
   height: auto;
+  color: var(--color-text-primary) !important;
 }
+
 .vkuiPanel__in {
   background-color: var(--color-bg-layout) !important;
+  color: var(--color-text-primary) !important;
 }
+
 .vkuiCustomSelectInput__container {
   color: var(--color-blue-vk);
 }
+
 .vkuiCustomSelectInput__container:hover {
 }
 
 .vkuiCustomSelectInput__container option:hover {
 }
+
+/* 🤖 ИСПРАВЛЕНО: Защищаем выпадающие списки от инверсии ОС */
 .vkuiCustomSelectInput__el {
-  color: var(--color-black);
+  color: var(--color-black) !important;
+  background-color: var(--color-white) !important;
+  color-scheme: light !important;
 }
 
+/* 🤖 ИСПРАВЛЕНО: Защищаем поля ввода даты от инверсии ОС */
 .vkuiDateInput__input {
-  color: var(--color-black);
+  color: var(--color-black) !important;
+  background-color: var(--color-white) !important;
+  color-scheme: light !important;
 }

@@ -1,4 +1,3 @@
-// components/modals/viral-bonus-modal/ViralBonusModal.jsx
 import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import bridge from '@vkontakte/vk-bridge'
@@ -47,11 +46,9 @@ const ViralBonusModal = () => {
   const dispatch = useDispatch()
   const { isVkMobile } = useVkEnvironment()
 
-  // Чтение карты квестов и состояния лоадеров напрямую из изолированного vkSlice
   const { isViralModalOpen, btnLoaders, viralBonusesClaimed } =
     useSelector((state) => state.vk)
 
-  // 🛠️На десктопном ВК скрываем мобильные методы [INDEX]
   const visibleTasks = useMemo(() => {
     if (!isVkMobile) {
       return VIRAL_TASKS_CONFIG.filter(
@@ -62,7 +59,6 @@ const ViralBonusModal = () => {
     return VIRAL_TASKS_CONFIG
   }, [isVkMobile])
 
-  // Проверяем наличие невыполненных заданий среди видимых
   const hasUnfinishedTasks = useMemo(() => {
     return visibleTasks.some(
       (task) => !viralBonusesClaimed[task.type],
@@ -82,17 +78,6 @@ const ViralBonusModal = () => {
     let bridgeResult = false
 
     switch (type) {
-      case 'favorites': {
-        try {
-          const res = await bridge.send('VKWebAppAddToFavorites')
-          bridgeResult = Boolean(res?.result)
-        } catch (error) {
-          console.error('favorites error', error)
-          bridgeResult = false
-        }
-        break
-      }
-
       case 'homeScreen': {
         try {
           await bridge.send('VKWebAppAddToHomeScreen')
@@ -127,6 +112,16 @@ const ViralBonusModal = () => {
         }
         break
       }
+      case 'favorites': {
+        try {
+          const res = await bridge.send('VKWebAppAddToFavorites')
+          bridgeResult = Boolean(res?.result)
+        } catch (error) {
+          console.error('favorites error', error)
+          bridgeResult = false
+        }
+        break
+      }
 
       default:
         console.warn(`Неизвестный тип действия: ${type}`)
@@ -135,7 +130,6 @@ const ViralBonusModal = () => {
     }
 
     if (bridgeResult) {
-      console.log('Bridge success:', { type, bridgeResult })
       dispatch(
         fetchClaimVkBonus({
           taskType: type,
@@ -187,8 +181,8 @@ const ViralBonusModal = () => {
                 🏆 Ораторские бусты
               </h3>
               <p className={styles.modal_subtitle}>
-                Выполняй задания от сообщества и забирай тройное комбо
-                наград за каждое!
+                Выполняй задания от Govorix и забирай
+                ораторские бонусы!
               </p>
 
               <div className={styles.reward_badge_combo}>
@@ -209,6 +203,7 @@ const ViralBonusModal = () => {
                 const isClaimed =
                   viralBonusesClaimed[task.type] ?? false
                 const isLoading = btnLoaders[task.type] ?? false
+                const isFavorites = task.type === 'favorites'
 
                 return (
                   <div
@@ -221,6 +216,13 @@ const ViralBonusModal = () => {
                       </div>
                       <span className={styles.task_name_text}>
                         {task.title}
+                        {isFavorites && (
+                          <span
+                            className={styles.task_subtext_notice}
+                          >
+                            Без наград, но поможет не потерять сервис
+                          </span>
+                        )}
                       </span>
                     </div>
 
@@ -232,12 +234,18 @@ const ViralBonusModal = () => {
                       ) : (
                         <button
                           type="button"
-                          className={styles.btn_task_action}
+                          className={
+                            isFavorites
+                              ? styles.btn_task_favorites
+                              : styles.btn_task_action
+                          }
                           onClick={() => handleExecuteTask(task.type)}
                           disabled={isLoading}
                         >
                           {isLoading ? (
                             <div className={styles.spinner_mini} />
+                          ) : isFavorites ? (
+                            'Закрепить'
                           ) : (
                             'Забрать'
                           )}

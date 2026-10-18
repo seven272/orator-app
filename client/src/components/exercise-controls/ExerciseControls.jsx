@@ -56,7 +56,7 @@ const ExerciseControls = ({
   const [isSharing, setIsSharing] = useState(false)
   const [isEnergyChecking, setIsEnergyChecking] = useState(false)
   const { isVkEnvironment } = useVkEnvironment()
-
+//для теста
   // const isVkEnvironment = true
 
   const { user: profileUser } = useSelector((state) => state.profile)
