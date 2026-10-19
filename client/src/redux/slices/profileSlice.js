@@ -37,6 +37,16 @@ import { fetchFinishPoemRap } from './ai-exercises/poemRapSlice'
 import { fetchFinishRadioHost } from './ai-exercises/radioHostSlice'
 import { fetchFinishRandomWord } from './ai-exercises/randomWordSlice'
 import { fetchFinishHistorical } from './ai-exercises/historicalSlice'
+
+import { fetchFinishJargonBoss } from './ai-exercises/jargonBossSlice'
+import { fetchFinishCommercialPitch } from './ai-exercises/commercialPitchSlice'
+import { fetchFinishAssociationMaster } from './ai-exercises/associationMasterSlice'
+import { fetchFinishToastCritic } from './ai-exercises/toastCriticSlice'
+import { fetchFinishEmpathySpark } from './ai-exercises/empathySparkSlice'
+import { fetchFinishAntiFlattery } from './ai-exercises/antiFlatterySlice'
+import { fetchFinishStarBridge } from './ai-exercises/starBridgeSlice'
+import { fetchFinishRhythmTransformer } from './ai-exercises/rhythmTransformerSlice'
+
 import { fetchSubmitLiveRating } from './liveDuelSlice'
 
 // Один универсальный запрос для получения всех данных профиля и дашборда
@@ -278,7 +288,7 @@ const profileSlice = createSlice({
           state.user.premiumExpiresAt = data.premiumExpiresAt
         }
       })
-      //Загрузка данных профиля 
+      //Загрузка данных профиля
       .addCase(fetchProfileData.pending, (state) => {
         state.loading = true
         state.error = null
@@ -331,6 +341,14 @@ const profileSlice = createSlice({
           fetchFinishRandomWord.fulfilled,
           fetchSubmitLiveRating.fulfilled,
           fetchFinishHistorical.fulfilled,
+          fetchFinishJargonBoss.fulfilled,
+          fetchFinishCommercialPitch.fulfilled,
+          fetchFinishAssociationMaster.fulfilled,
+          fetchFinishToastCritic.fulfilled,
+          fetchFinishEmpathySpark.fulfilled,
+          fetchFinishAntiFlattery.fulfilled,
+          fetchFinishStarBridge.fulfilled,
+          fetchFinishRhythmTransformer.fulfilled,
         ),
         (state, action) => {
           // Защита: если сессия завершилась без оценки, stats будет отсутствовать

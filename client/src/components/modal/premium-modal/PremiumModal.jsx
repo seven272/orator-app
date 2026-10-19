@@ -11,9 +11,8 @@ import {
   fetchPaymentLink,
   clearPaymentState,
 } from '../../../redux/slices/paymentSlice'
-// 🤖 Раскомментируйте ваш экшен авторизации/обновления профиля, если нужно обновлять стейт после покупки
-// import { fetchVkAuth } from '../../../redux/slices/authSlice' 
-
+// чтобы  обновлять стейт после покупки
+import { fetchProfileData } from '../../../redux/slices/profileSlice'
 import { useVkEnvironment } from '../../../hooks/useVkEnvironment'
 import { PREMIUM_TARIFFS } from '../../../constants/premiumTariffs'
 import styles from './PremiumModal.module.css'
@@ -42,14 +41,15 @@ const PREMIUM_BENEFITS = [
 const PremiumModal = () => {
   const dispatch = useDispatch()
   const { isVkEnvironment } = useVkEnvironment() // Извлекаем флаг среды ВК
- 
+
   const isPremiumModalOpen = useSelector(
     (state) => state.profile.isPremiumModalOpen,
   )
 
   const [loading, setLoading] = useState(false)
-  const [activeTariffCode, setActiveTariffCode] = useState('premium_30d')
-  
+  const [activeTariffCode, setActiveTariffCode] =
+    useState('premium_30d')
+
   const currentTariff = PREMIUM_TARIFFS[activeTariffCode]
 
   useEffect(() => {
@@ -81,17 +81,21 @@ const PremiumModal = () => {
   const handleBuyVkVotes = async () => {
     setLoading(true)
     try {
-      console.log(`[VK Payment] Инициализация заказа голосами для: ${currentTariff.itemCode}`)
-      
+      console.log(
+        `[VK Payment] Инициализация заказа голосами для: ${currentTariff.itemCode}`,
+      )
+
       const data = await bridge.send('VKWebAppShowOrderBox', {
         type: 'item',
-        item: currentTariff.itemCode // Передает 'premium_30d', 'premium_6m' или 'premium_1y'
+        item: currentTariff.itemCode, // Передает 'premium_30d', 'premium_6m' или 'premium_1y'
       })
 
       if (data && data.status === 'success') {
-        message.success('Оплата успешно проведена! Premium статус активирован.')
+        message.success(
+          'Оплата успешно проведена! Premium статус активирован.',
+        )
         // 🤖 Перезапрашиваем профиль с бэкенда, чтобы синхронизировать новые флаги премиума и даты
-        // dispatch(fetchVkAuth({ launchParams: window.location.search }))
+        dispatch(fetchProfileData())
         handleClose()
       }
     } catch (err) {
@@ -176,7 +180,9 @@ const PremiumModal = () => {
                   ? styles.tariff_tab_btn_active
                   : ''
               }`}
-              onClick={() => !loading && setActiveTariffCode(tariff.itemCode)}
+              onClick={() =>
+                !loading && setActiveTariffCode(tariff.itemCode)
+              }
               disabled={loading}
             >
               {tariff.title}
@@ -191,10 +197,9 @@ const PremiumModal = () => {
           </span>
           <div className={styles.price_row}>
             <span className={styles.current_price}>
-              {isVkEnvironment 
-                ? `${currentTariff.votesPrice} голосов` 
-                : `${currentTariff.price} ₽`
-              }
+              {isVkEnvironment
+                ? `${currentTariff.votesPrice} голосов`
+                : `${currentTariff.price} ₽`}
             </span>
           </div>
         </div>
@@ -204,15 +209,16 @@ const PremiumModal = () => {
           <button
             type="button"
             className={styles.activate_btn}
-            onClick={isVkEnvironment ? handleBuyVkVotes : handleBuyYookassa}
+            onClick={
+              isVkEnvironment ? handleBuyVkVotes : handleBuyYookassa
+            }
             disabled={loading}
           >
             {loading
               ? 'Загрузка...'
               : isVkEnvironment
-                ? `Оформить за ${currentTariff.votesPrice} голос.`
-                : `Оформить за ${currentTariff.price} ₽`
-            }
+                ? `Оформить за ${currentTariff.votesPrice} голосов`
+                : `Оформить за ${currentTariff.price} ₽`}
           </button>
         </div>
       </div>

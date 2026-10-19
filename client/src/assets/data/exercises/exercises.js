@@ -497,7 +497,7 @@ const All_EXERCISES = {
       premium: true,
     },
     // new
-    // +
+    // + 
     {
       id: 'lev3-16',
       alias: 'ai-jargon-boss',
