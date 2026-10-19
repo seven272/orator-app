@@ -89,14 +89,17 @@ const PremiumModal = () => {
         type: 'item',
         item: currentTariff.itemCode, // Передает 'premium_30d', 'premium_6m' или 'premium_1y'
       })
-
+      console.log(data)
       if (data && data.status === 'success') {
         message.success(
-          'Оплата успешно проведена! Premium статус активирован.',
+          'Оплата успешно проведена! Активируем Premium статус...',
         )
         // 🤖 Перезапрашиваем профиль с бэкенда, чтобы синхронизировать новые флаги премиума и даты
-        dispatch(fetchProfileData())
-        handleClose()
+        // ⏳ Даем бэкенду 1.2 секунды на сохранение данных в MongoDB
+        setTimeout(() => {
+          dispatch(fetchProfileData())
+          handleClose()
+        }, 1200)
       }
     } catch (err) {
       console.error('Ошибка вызова платежного окна VK Bridge:', err)
