@@ -12,17 +12,20 @@ import {
   linkEmailToVkAccount,
   linkVkToEmailAccount,
   mergeAccounts,
-  fakeBuyPremium
+  fakeBuyPremium,
 } from '../controllers/userController.js'
 import upload from '../middlewares/upload.js'
-import { checkAuth, optionalAuth } from '../middlewares/authMiddleware.js'
+import {
+  checkAuth,
+  optionalAuth,
+} from '../middlewares/authMiddleware.js'
 //middleware авторизации VK
-import verifyVkSignature from "../middlewares/vkLaunchParamsAuth.js"; 
+import { verifyVkSignature } from '../middlewares/vkLaunchParamsAuth.js'
 
 const router = new Router()
 
 router.post(
-  '/upload-avatar', 
+  '/upload-avatar',
   checkAuth,
   upload.single('avatar'),
   (req, res) => {
@@ -32,14 +35,11 @@ router.post(
         url: `static/avatars/${req.file.filename}`,
       })
     } catch (error) {
-      console.log(
-        'Ошибка сервера при загрузке аватара',
-        error
-      )
+      console.log('Ошибка сервера при загрузке аватара', error)
     }
-  } 
+  },
 )
- 
+
 router.post('/register', register)
 router.post('/login', login)
 router.post('/logout', logout)
@@ -49,9 +49,14 @@ router.put('/update-profile', checkAuth, updateProfile)
 router.post('/vk-website-auth', vkWebsiteAuth)
 router.post('/vk-auth', verifyVkSignature, vkAuth)
 router.post('/vk-register', verifyVkSignature, vkRegister)
-router.post('/link-email', checkAuth, verifyVkSignature, linkEmailToVkAccount)
-router.post('/link-vk', checkAuth, linkVkToEmailAccount);
-router.post('/merge-accounts', checkAuth, mergeAccounts);
+router.post(
+  '/link-email',
+  checkAuth,
+  verifyVkSignature,
+  linkEmailToVkAccount,
+)
+router.post('/link-vk', checkAuth, linkVkToEmailAccount)
+router.post('/merge-accounts', checkAuth, mergeAccounts)
 // Имитация успешной оплаты через ЮMoney
 router.post('/fake-buy', checkAuth, fakeBuyPremium)
 

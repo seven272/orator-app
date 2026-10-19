@@ -2,16 +2,19 @@ const PREMIUM_PRODUCTS = {
    'premium_30d': {
     title: 'Premium статус на 30 дней',
     price: '10.00', //490
+    votesPrice: 15,
     durationDays: 30
   },
   'premium_6m': {
     title: 'Premium статус на 6 месяцев',
     price: '15.00',
+    votesPrice: 60,
     durationDays: 180 //1990
   },
   'premium_1y': {
     title: 'Premium статус на 1 год',
     price: '20.00', //3490
+    votesPrice: 100,
     durationDays: 365
   }
 }

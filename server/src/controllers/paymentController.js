@@ -66,6 +66,7 @@ const createPaymentYookassa = async (req, res) => {
       userId,
       typeOrder,
       itemCode,
+      paymentMethod: 'yookassa',
       amount: parseFloat(product.price),
       status: 'created',
     })
@@ -165,6 +166,125 @@ const handleWebhookYookassa = async (req, res) => {
   }
 }
 
+/**
+ * Вебхук обработки платежных уведомлений от серверов ВКонтакте (Голоса)
+ * Размещается в paymentController.js и защищается мидлваром verifyVkPaymentSignature
+ * POST /api/pay/vk-callback
+ */
+const handleVkPaymentWebhook = async (req, res) => {
+  const { notification_type, item, order_id, status } = req.body
+  
+  // vkId извлечен и проброшен как String внутри вашего мидлвара проверки подписи платежа
+  const vkId = req.vkId 
+
+  try {
+    // --- ФАЗА 1: ЗАПРОС ИНФОРМАЦИИ О ТОВАРЕ (СИНХРОНИЗАЦИЯ КАТАЛОГА С СЕРВЕРАМИ ВК) ---
+    if (
+      notification_type === 'get_item' ||
+      notification_type === 'get_item_test'
+    ) {
+      const product = PREMIUM_PRODUCTS[item]
+
+      if (!product) {
+        console.error(`[VK Webhook Error] ❌ Тариф "${item}" не найден в константах PREMIUM_PRODUCTS`)
+        return res.status(404).json({ error: 'Товара нет в списке доступных тарифов' })
+      }
+
+      console.log(`[VK Webhook Catalog] 📦 Сервер ВК успешно синхронизировал данные о тарифе: ${item}`)
+      return res.json({
+        response: {
+          item_id: item,
+          title: product.title,
+          price: product.votesPrice,
+        },
+      })
+    }
+
+    // --- ФАЗА 2: ИЗМЕНЕНИЕ СТАТУСА ЗАКАЗА (ФАКТИЧЕСКОЕ НАЧИСЛЕНИЕ PREMIUM) ---
+    if (
+      (notification_type === 'order_status_change' ||
+        notification_type === 'order_status_change_test') &&
+      status === 'chargeable'
+    ) {
+      const orderId = String(order_id)
+
+      // 1. Идемпотентность: Проверяем транзакцию на дубликаты по уникальному orderId от ВК
+      const existingOrder = await Order.findOne({ orderId })
+      if (existingOrder) {
+        console.log(`[VK Webhook] ⚠️ Повторный колбэк для заказа ВК #${orderId}. Начисление пропущено (дубликат).`)
+        return res.json({
+          response: { 
+            order_id: Number(orderId), 
+            app_order_id: String(existingOrder._id) 
+          },
+        })
+      }
+
+      // 2. Валидация оплачиваемого тарифа
+      const product = PREMIUM_PRODUCTS[item]
+      if (!product) {
+        console.error(`[VK Webhook Error] ❌ Ошибка: ВК прислал оплату за неизвестный тариф "${item}"`)
+        return res.status(400).json({ error: 'Неверный код тарифа при смене статуса' })
+      }
+
+      // 3. Поиск существующего пользователя Говорикс по vkId (строго как в вашем claimVkBonus)
+      const user = await User.findOne({ vkId })
+      if (!user) {
+        console.error(`[VK Webhook Error] ❌ Критическая ошибка: Пользователь с vkId "${vkId}" не найден при оплате заказа ВК #${orderId}!`)
+        return res.status(404).json({ error: 'User not found in Govorix database' })
+      }
+
+      // 4. Фиксируем транзакцию в коллекции заказов (передаем user._id как ObjectId согласно вашей схеме)
+      const newOrder = await Order.create({
+        orderId,
+        userId: user._id, // Связываем через легальный ObjectId вашего документа User
+        typeOrder: 'premium_subscription',
+        itemCode: item,
+        paymentMethod: 'vk_votes', 
+        amount: parseFloat(product.votesPrice), // Записываем цену в голосах
+        status: 'completed',
+      })
+
+      // 5. Расчет даты окончания подписки (premiumExpiresAt)
+      const now = new Date()
+      let baseDate = now
+
+      // Если у пользователя уже активен Premium и дата окончания в будущем — продлеваем её кумулятивно
+      if (user.isPremium && user.premiumExpiresAt && user.premiumExpiresAt > now) {
+        baseDate = new Date(user.premiumExpiresAt)
+      }
+
+      // Добавляем дни тарифа к базовой дате на основе вашего поля durationDays
+      baseDate.setDate(baseDate.getDate() + product.durationDays)
+      
+      // Обновляем премиум-поля пользователя Говорикс
+      user.isPremium = true
+      user.premiumExpiresAt = baseDate
+
+      await user.save()
+      console.log(`[VK Webhook Success] 🎉 Тариф "${item}" успешно активирован для vkId: ${vkId}. Подписка активна до: ${baseDate.toISOString()}. Заказ в БД #${newOrder._id}`)
+
+      // Возвращаем строго валидный формат ответа по спецификации ВКонтакте
+      return res.json({
+        response: { 
+          order_id: Number(orderId), 
+          app_order_id: String(newOrder._id) 
+        },
+      })
+    }
+
+    // На все остальные типы уведомлений ВК отдаем стандартный ок-ответ
+    return res.json({ response: 'ok' })
+
+  } catch (error) {
+    console.error('❌ Критическая ошибка в handleVkPaymentWebhook:', error)
+    return res.status(500).json({
+      error: 'Внутренняя ошибка сервера при обработке покупки',
+    })
+  }
+}
+
+
 
 const fakeBuyPremium = async (req, res) => {
   try {
@@ -233,4 +353,5 @@ const fakeBuyCourse = async (req, res) => {
 export {
   createPaymentYookassa,
   handleWebhookYookassa,
+  handleVkPaymentWebhook,
 }

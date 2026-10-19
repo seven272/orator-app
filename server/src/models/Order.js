@@ -23,6 +23,13 @@ const OrderSchema = new mongoose.Schema(
       type: String, 
       required: true 
     }, // 'premium_30d' или 'sales_master'
+    paymentMethod: {
+      type: String,
+      enum: ['yookassa', 'vk_votes'],
+      default: 'yookassa',
+      required: true,
+      index: true
+    },
     amount: { 
       type: Number, 
       required: true 

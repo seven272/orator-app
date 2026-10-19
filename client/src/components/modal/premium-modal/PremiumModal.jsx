@@ -5,13 +5,15 @@ import bridge from '@vkontakte/vk-bridge'
 import { IoCloseOutline } from 'react-icons/io5'
 import { FaCrown, FaBoltLightning } from 'react-icons/fa6'
 import { HiSparkles, HiMiniQueueList } from 'react-icons/hi2'
-import { TbLock } from 'react-icons/tb'
 
 import { closePremiumModal } from '../../../redux/slices/profileSlice'
 import {
   fetchPaymentLink,
   clearPaymentState,
 } from '../../../redux/slices/paymentSlice'
+// 🤖 Раскомментируйте ваш экшен авторизации/обновления профиля, если нужно обновлять стейт после покупки
+// import { fetchVkAuth } from '../../../redux/slices/authSlice' 
+
 import { useVkEnvironment } from '../../../hooks/useVkEnvironment'
 import { PREMIUM_TARIFFS } from '../../../constants/premiumTariffs'
 import styles from './PremiumModal.module.css'
@@ -39,25 +41,16 @@ const PREMIUM_BENEFITS = [
 
 const PremiumModal = () => {
   const dispatch = useDispatch()
-  const { isVkEnvironment, vkPlatform } = useVkEnvironment()
+  const { isVkEnvironment } = useVkEnvironment() // Извлекаем флаг среды ВК
  
   const isPremiumModalOpen = useSelector(
     (state) => state.profile.isPremiumModalOpen,
   )
 
   const [loading, setLoading] = useState(false)
-  // Локальный стейт для выбранного тарифа
-  const [activeTariffCode, setActiveTariffCode] =
-    useState('premium_30d')
+  const [activeTariffCode, setActiveTariffCode] = useState('premium_30d')
+  
   const currentTariff = PREMIUM_TARIFFS[activeTariffCode]
-  const isPaymentAllowedInVk = ['desktop_web', 'mobile_web'].includes(
-    vkPlatform,
-  )
-  const canShowBuyButton = !isVkEnvironment || isPaymentAllowedInVk
-  const canShowWarningText = false
-
-   
- 
 
   useEffect(() => {
     document.body.style.overflow = isPremiumModalOpen ? 'hidden' : ''
@@ -84,10 +77,36 @@ const PremiumModal = () => {
     dispatch(closePremiumModal())
   }
 
+  // 🤖 МЕТОД 1: Нативная оплата голосами через VK Bridge (Для ВК-среды на любых девайсах, включая iOS/Android)
+  const handleBuyVkVotes = async () => {
+    setLoading(true)
+    try {
+      console.log(`[VK Payment] Инициализация заказа голосами для: ${currentTariff.itemCode}`)
+      
+      const data = await bridge.send('VKWebAppShowOrderBox', {
+        type: 'item',
+        item: currentTariff.itemCode // Передает 'premium_30d', 'premium_6m' или 'premium_1y'
+      })
+
+      if (data && data.status === 'success') {
+        message.success('Оплата успешно проведена! Premium статус активирован.')
+        // 🤖 Перезапрашиваем профиль с бэкенда, чтобы синхронизировать новые флаги премиума и даты
+        // dispatch(fetchVkAuth({ launchParams: window.location.search }))
+        handleClose()
+      }
+    } catch (err) {
+      console.error('Ошибка вызова платежного окна VK Bridge:', err)
+      message.error('Платеж отменен или произошла ошибка')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 🌐 МЕТОД 2: Стандартная оплата рублями через ЮKassa (Для внешнего сайта)
   const handleBuyYookassa = async () => {
     setLoading(true)
     try {
-      const  confirmationUrl  = await dispatch(
+      const confirmationUrl = await dispatch(
         fetchPaymentLink({
           typeOrder: 'premium_subscription',
           itemCode: currentTariff.itemCode,
@@ -157,9 +176,7 @@ const PremiumModal = () => {
                   ? styles.tariff_tab_btn_active
                   : ''
               }`}
-              onClick={() =>
-                !loading && setActiveTariffCode(tariff.itemCode)
-              }
+              onClick={() => !loading && setActiveTariffCode(tariff.itemCode)}
               disabled={loading}
             >
               {tariff.title}
@@ -167,47 +184,37 @@ const PremiumModal = () => {
           ))}
         </div>
 
-        {/* Блок цены динамически подстраивается под выбранный тариф */}
+        {/* 🤖 ИСПРАВЛЕНО: Блок цены динамически отображает Голоса в ВК и Рубли на сайте */}
         <div className={styles.price_box}>
           <span className={styles.duration}>
             {currentTariff.durationText}
           </span>
           <div className={styles.price_row}>
             <span className={styles.current_price}>
-              {currentTariff.price} ₽
+              {isVkEnvironment 
+                ? `${currentTariff.votesPrice} голосов` 
+                : `${currentTariff.price} ₽`
+              }
             </span>
           </div>
         </div>
 
+        {/* 🤖 ИСПРАВЛЕНО: Кнопка полностью разблокирована для всех мобильных платформ в ВК */}
         <div className={styles.buttons_container}>
-          {canShowBuyButton ? (
-            <button
-              type="button"
-              className={styles.activate_btn}
-              onClick={handleBuyYookassa}
-              disabled={loading}
-            >
-              {loading
-                  ? 'Загрузка...'
-                  : `Оформить за ${currentTariff.price} ₽`}
-            </button>
-          ) : (
-            <button
-              type="button"
-              className={styles.activate_btn}
-              disabled={true}
-            >
-              <TbLock size={20} className={styles.lock_icon} />
-              Оплата недоступна
-            </button>
-          )}
+          <button
+            type="button"
+            className={styles.activate_btn}
+            onClick={isVkEnvironment ? handleBuyVkVotes : handleBuyYookassa}
+            disabled={loading}
+          >
+            {loading
+              ? 'Загрузка...'
+              : isVkEnvironment
+                ? `Оформить за ${currentTariff.votesPrice} голос.`
+                : `Оформить за ${currentTariff.price} ₽`
+            }
+          </button>
         </div>
-
-        {!canShowBuyButton && canShowWarningText && (
-          <span className={styles.warning}>
-            * Пожалуйста, откройте приложение в компьютерной версии или перейдите на сайт govorix.ru для оплаты подписки.
-          </span>
-        )}
       </div>
     </div>
   )

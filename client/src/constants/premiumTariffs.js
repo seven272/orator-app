@@ -3,18 +3,21 @@ const PREMIUM_TARIFFS = {
     itemCode: 'premium_30d',
     title: '30 дней',
     price: 490,
+    votesPrice: 15,
     durationText: 'Подписка на 30 дней',
   },
   premium_6m: {
     itemCode: 'premium_6m',
     title: '6 месяцев',
     price: 1990,
+    votesPrice: 60,
     durationText: 'Подписка на 6 месяцев',
   },
   premium_1y: {
     itemCode: 'premium_1y',
     title: '1 год',
     price: 3490,
+    votesPrice: 100,
     durationText: 'Подписка на 1 год (выгодно!)',
   },
 }
