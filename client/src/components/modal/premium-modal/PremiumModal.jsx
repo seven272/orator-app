@@ -90,7 +90,7 @@ const PremiumModal = () => {
         item: currentTariff.itemCode, // Передает 'premium_30d', 'premium_6m' или 'premium_1y'
       })
       console.log(data)
-      if (data && data.status === 'success') {
+      if (data.status === 'success' || data.success === true) {
         message.success(
           'Оплата успешно проведена! Активируем Premium статус...',
         )
