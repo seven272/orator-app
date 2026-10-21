@@ -9,33 +9,39 @@ import gigachatAxiosClient from './gigachatAxiosClient.js' // ваш сущес�
 const sendGigaChatRequest = async (
   messages,
   maxTokens = 700,
-  temperature = 0.8,
+  temperature = null,
+  responseFormat = null,
 ) => {
   try {
-    // Подтягиваем модель из .env, либо используем Ultra как фоллбек
     const model =
       process.env.GIGACHAT_MODEL_NAME || 'GigaChat-3-Ultra'
 
+    // Базовый payload запроса
+    const requestPayload = {
+      model,
+      messages,
+      max_tokens: maxTokens,
+    }
+
+    // Если передана схема структурированного JSON — подмешиваем её в запрос
+    if (temperature) {
+      requestPayload.temperature = temperature
+    }
+
     const response = await gigachatAxiosClient.post(
       '/chat/completions',
-      {
-        model,
-        messages,
-        max_tokens: maxTokens,
-        temperature: temperature,
-      },
+      requestPayload,
     )
     const content = response.data?.choices?.[0]?.message?.content
+
     if (!content) {
       throw new Error('Получен пустой ответ от GigaChat API')
     }
+
     return content
   } catch (error) {
-    console.error(
-      `[GigaChat Error] Ошибка при запросе к модели ${process.env.GIGACHAT_MODEL_NAME}:`,
-      error.message,
-    )
-    throw error // Пробрасываем ошибку дальше в контроллер тренажёра
+    console.error(`[GigaChat Error]:`, error.message)
+    throw error
   }
 }
 
