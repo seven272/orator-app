@@ -1,6 +1,6 @@
 
 
-import { sendGigaChatRequest } from '../../utils/gigachatService.js'
+// import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 
 // диалог
 // aiRawAnswer = await sendGigaChatRequest(finalMessagesPayload, 400)
