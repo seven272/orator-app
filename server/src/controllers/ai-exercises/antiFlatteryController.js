@@ -3,7 +3,7 @@ import AiExercise from '../../models/AiExercise.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
 import { parseAiResponse } from '../../utils/aiJsonParser.js'
 import { transcribeShortAudio } from '../../utils/speechService.js'
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 
 // 1. СТАРТ УПРАЖНЕНИЯ
 const startAntiFlattery = async (req, res) => {
@@ -142,12 +142,10 @@ const generateFlatteryResponse = async (req, res) => {
 
     // Запрос к GigaChat API с фоллбеком
     try {
-      const response = await gigachatAxiosClient.post('/chat/completions', {
-        model: 'GigaChat-2',
-        messages: finalMessagesPayload,
-        max_tokens: 400,
-      })
-      aiRawAnswer = response.data?.choices?.[0]?.message?.content
+        aiRawAnswer = await sendGigaChatRequest(
+        finalMessagesPayload,
+        400,
+      )
     } catch (gigaError) {
       console.error('⚠️ [Сбой сети GigaChat] Фоллбек манипуляции активирован:', gigaError.message)
       
@@ -277,23 +275,17 @@ const finishAntiFlattery = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+       const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот протокол переговоров:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот протокол допроса:\n${chatHistory}`,
         },
-      )
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         manipulation_detection: 50,
         border_firmness: 50,
         factology: 50,

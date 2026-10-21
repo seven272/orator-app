@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -60,15 +60,21 @@ const generateMetaphorResponse = async (req, res) => {
       try {
         userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('Ошибка синхронного SaluteSpeech в переводчике:', speechError)
+        console.error(
+          'Ошибка синхронного SaluteSpeech в переводчике:',
+          speechError,
+        )
         return res.status(500).json({
-          message: 'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
+          message:
+            'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
           error: speechError.message,
         })
       }
     }
 
-    const attemptsCount = session.messages.filter((m) => m.role === 'user').length
+    const attemptsCount = session.messages.filter(
+      (m) => m.role === 'user',
+    ).length
     const isLastAttempt = attemptsCount >= 2 // Ограничение в 3 раунда
 
     // Обработка молчания пользователя
@@ -85,7 +91,8 @@ const generateMetaphorResponse = async (req, res) => {
       await session.save()
 
       return res.status(200).json({
-        answer: 'Ну и почему ты молчишь? Я жду объяснений! Давай, подбирай слова, я всё ещё ничего не понимаю!',
+        answer:
+          'Ну и почему ты молчишь? Я жду объяснений! Давай, подбирай слова, я всё ещё ничего не понимаю!',
         isFinished: isLastAttempt,
         understanding: session.exerciseData.understanding,
         isError: true,
@@ -93,7 +100,8 @@ const generateMetaphorResponse = async (req, res) => {
     }
 
     const cleanUserMessage = userMessage.trim()
-    const currentUnderstanding = Number(session.exerciseData.understanding) || 0
+    const currentUnderstanding =
+      Number(session.exerciseData.understanding) || 0
 
     const PROMPT = `Ты — специфический, капризный или далекий от технологий персонаж. Ты абсолютно не знаешь современных научных и технических терминов. 
 Сейчас пользователь пытается объяснить тебе сложный термин, подстраиваясь под твое мышление.
@@ -133,29 +141,27 @@ const generateMetaphorResponse = async (req, res) => {
     ]
 
     // Запрос к GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: finalMessagesPayload,
-        max_tokens: 400,
-      },
+    const aiRawAnswer = await sendGigaChatRequest(
+      finalMessagesPayload,
+      400,
     )
-
-    const aiRawAnswer = response.data?.choices?.[0]?.message?.content
 
     // Парсим изменение понимания (###+12)
     const understandingMatch = aiRawAnswer.match(/###\s?([+-]?\d+)/)
-    const understandingChange = understandingMatch ? parseInt(understandingMatch[1], 10) : 0
+    const understandingChange = understandingMatch
+      ? parseInt(understandingMatch[1], 10)
+      : 0
 
     let cleanAnswer = aiRawAnswer.replace(/###\s?[+-]?\d+/, '').trim()
 
     // Защитный фоллбек
     if (!cleanAnswer) {
       if (understandingChange > 0) {
-        cleanAnswer = 'Кажется, я начинаю что-то понимать. Продолжай в том же духе!'
+        cleanAnswer =
+          'Кажется, я начинаю что-то понимать. Продолжай в том же духе!'
       } else {
-        cleanAnswer = 'Ничего не понимаю из того, что ты говоришь. Изъясняйся проще!'
+        cleanAnswer =
+          'Ничего не понимаю из того, что ты говоришь. Изъясняйся проще!'
       }
     }
 
@@ -172,7 +178,8 @@ const generateMetaphorResponse = async (req, res) => {
     await session.save()
 
     // Имитация раздумий персонажа
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
     await sleep(Math.floor(Math.random() * 1500) + 1000)
 
     res.json({
@@ -182,9 +189,13 @@ const generateMetaphorResponse = async (req, res) => {
       isFinished: isLastAttempt || newUnderstanding >= 95, // Заканчиваем досрочно, если полное понимание
     })
   } catch (error) {
-    console.error('Metaphor AI Error:', error.response?.data || error.message)
+    console.error(
+      'Metaphor AI Error:',
+      error.response?.data || error.message,
+    )
     res.status(503).json({
-      answer: 'Собеседник отвлекся и перестал вас слушать из-за сильного шума вокруг. (Ошибка связи)',
+      answer:
+        'Собеседник отвлекся и перестал вас слушать из-за сильного шума вокруг. (Ошибка связи)',
     })
   }
 }
@@ -221,7 +232,8 @@ const finishMetaphor = async (req, res) => {
       session.score = 0
       session.result = {
         totalScore: 0,
-        feedback: 'Вы дали слишком короткие или размытые ответы. Объяснить сложный термин не удалось.',
+        feedback:
+          'Вы дали слишком короткие или размытые ответы. Объяснить сложный термин не удалось.',
         criteria: { accuracy: 0, simplicity: 0, adaptability: 0 },
       }
       await session.save()
@@ -267,23 +279,17 @@ const finishMetaphor = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот протокол объяснения термина:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот протокол объяснения термина:\n${chatHistory}`,
         },
-      )
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data?.choices?.[0]?.message?.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         accuracy: 50,
         simplicity: 50,
         adaptability: 50,
@@ -334,8 +340,5 @@ const finishMetaphor = async (req, res) => {
     })
   }
 }
-
-
-
 
 export { startMetaphor, generateMetaphorResponse, finishMetaphor }

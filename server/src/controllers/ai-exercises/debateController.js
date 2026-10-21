@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -98,54 +98,53 @@ const generateDebateResponse = async (req, res) => {
 Твоя задача: приведи ОДИН сильный контраргумент или задай провокационный вопрос. 
 Ответ должен быть коротким (2-4 предложения), живым и без вступлений вроде "Как опытный оппонент..."`
 
-    // 3. Отправляем в GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300, // Увеличил, чтобы не обрывал фразы
-      },
-    )
+    let aiAnswer = ''
 
-    // Логируем для отладки, если данных нет
-    if (!response.data || !response.data.choices) {
-      console.log(
-        'Неожиданный формат ответа:',
-        JSON.stringify(response.data),
+
+    // 3. Отправляем в GigaChat через единый сервис
+    try {
+      // Автоматически применится модель из .env, лимит 300 токенов
+      aiAnswer = await sendGigaChatRequest(
+        [{ role: 'user', content: PROMPT }],
+        300,
       )
+    } catch (gigaError) {
+      console.error(
+        '⚠️ [Сбой GigaChat в Дебатах] Локальный фоллбек оппонента активирован:',
+        gigaError.message,
+      )
+
+      // Мягкий фоллбек на случай падения сети: пишем универсальный язвительный контраргумент
+      aiAnswer =
+        'Ваша позиция звучит слишком поверхностно и не учитывает реальные рыночные риски. Чем вы обоснуете жизнеспособность этой идеи, кроме личного энтузиазма?'
     }
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
-
-    
-    // 3. Создаем объект для нового сообщения пользователя
+    // 4. Создаем объект для нового сообщения пользователя
     const newUserMessage = {
       role: 'user',
       text: cleanUserMessage,
     }
-    // 4. Создаем объект для ответа ИИ
+
+    // 5. Создаем объект для ответа ИИ
     const newAiMessage = {
       role: 'assistant',
       text: aiAnswer,
     }
 
-    // 4. Сохраняем в БД оба сообщения
+    // 6. Сохраняем в БД оба сообщения
     session.messages.push(newUserMessage)
     session.messages.push(newAiMessage)
 
     await session.save()
 
-    // 1. Создаем инструмент для паузы (в самом верху файла)
+    // 7. Имитируем естественную задержку перед ответом клиенту
     const sleep = (ms) =>
       new Promise((resolve) => setTimeout(resolve, ms))
-
-    // 2. Внутри контроллера используем его
     const randomDelay =
       Math.floor(Math.random() * (3000 - 1500 + 1)) + 1500
+    await sleep(randomDelay)
 
-    await sleep(randomDelay) // Код просто подождет здесь
-
+    // 8. Отправляем чистый результат на фронтенд
     res.json({
       user_transcript: cleanUserMessage,
       answer: aiAnswer,
@@ -250,25 +249,20 @@ const finishDebate = async (req, res) => {
 
     try {
       // Изолируем сетевой запрос к Сберу от ошибок ECONNRESET
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
-        {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Проанализируй этот диалог:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
-        },
-      )
 
-      const aiJsonResult = response.data.choices[0].message.content
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
+        {
+          role: 'user',
+          content: `Проанализируй этот диалог:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
+
+      const aiText = await sendGigaChatRequest(messages, countTokens)
 
       // Вызываем универсальный парсер одной строкой, передавая дефолты для Дебатов
-      evaluation = parseAiResponse(aiJsonResult, {
+      evaluation = parseAiResponse(aiText, {
         logic: 50,
         convincingness: 50,
         counterargumentation: 50,

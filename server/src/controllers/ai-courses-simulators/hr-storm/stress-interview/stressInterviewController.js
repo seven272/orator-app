@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -93,7 +93,6 @@ const generateStressResponse = async (req, res) => {
 
     if (req.file) {
       try {
-     
         userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
         console.error(
@@ -147,16 +146,11 @@ const generateStressResponse = async (req, res) => {
       cleanUserMessage,
     )
 
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 350,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      350,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer) throw new Error('Пустой ответ от GigaChat')
 
     session.messages.push({ role: 'user', text: cleanUserMessage })
@@ -244,25 +238,20 @@ const finishStressInterviewTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            {
-              role: 'system',
-              content: STRESS_INTERVIEW_EVALUATION_PROMPT,
-            },
-            {
-              role: 'user',
-              content: `Проанализируй это стресс-интервью:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: STRESS_INTERVIEW_EVALUATION_PROMPT,
         },
-      )
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+        {
+          role: 'user',
+          content: `Проанализируй это стресс-интервью:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
+
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         stressResistance: 40,
         reflection: 40,
       })
@@ -289,7 +278,7 @@ const finishStressInterviewTrainer = async (req, res) => {
       aiBlockConfig?.aiWorkoutConfig?.requiredScore || 1000
 
     progress.blocksProgress.aiWorkout.sessionsCount += 1
-     // 🔥 ФЛАГ ДЛЯ ФРОНТЕНДА: пошли ли баллы в зачёт общего прогресса блока
+    // 🔥 ФЛАГ ДЛЯ ФРОНТЕНДА: пошли ли баллы в зачёт общего прогресса блока
     let isScoreCounted = false
 
     if (evaluation.totalScore >= 65) {
@@ -298,7 +287,6 @@ const finishStressInterviewTrainer = async (req, res) => {
         evaluation.totalScore
       isScoreCounted = true
     }
-
 
     if (
       progress.blocksProgress.aiWorkout.accumulatedScore >=
@@ -323,7 +311,7 @@ const finishStressInterviewTrainer = async (req, res) => {
         totalScore: evaluation.totalScore,
         feedback: evaluation.feedback,
         criteria: evaluation.criteria,
-        isScoreCounted
+        isScoreCounted,
       },
     })
   } catch (error) {

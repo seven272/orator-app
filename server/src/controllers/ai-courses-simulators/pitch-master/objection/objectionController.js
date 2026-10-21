@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js' // Ваша модель курса для проверки requiredScore
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -150,16 +150,11 @@ const generateObjectionResponse = async (req, res) => {
     )
 
     // 3. Запрос к GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer) {
       throw new Error(
         'Пустой ответ от GigaChat в тренажере возражений',
@@ -201,7 +196,6 @@ const generateObjectionResponse = async (req, res) => {
     })
   }
 }
-
 
 const finishObjectionTrainer = async (req, res) => {
   try {
@@ -270,25 +264,22 @@ const finishObjectionTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: OBJECTION_EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Проанализируй этот диалог отработки возражений:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: OBJECTION_EVALUATION_PROMPT,
         },
-      )
+        {
+          role: 'user',
+          content: `Проанализируй этот диалог отработки возражений:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
+      const aiText = await sendGigaChatRequest(messages, countTokens)
 
       // Парсим JSON с фолбек-критериями для работы с возражениями
-      evaluation = parseAiResponse(aiJsonResult, {
+      evaluation = parseAiResponse(aiText, {
         empathy: 40,
         argumentation: 40,
       })
@@ -328,7 +319,6 @@ const finishObjectionTrainer = async (req, res) => {
       isScoreCounted = true
     }
 
-
     // Логика автоперехода при успешном наборе XP
     if (
       progress.blocksProgress.aiWorkout.accumulatedScore >=
@@ -354,7 +344,7 @@ const finishObjectionTrainer = async (req, res) => {
         totalScore: evaluation.totalScore,
         feedback: evaluation.feedback,
         criteria: evaluation.criteria, // Передаст объект { empathy, argumentation }
-        isScoreCounted
+        isScoreCounted,
       },
     })
   } catch (error) {

@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -184,21 +184,12 @@ const finishPoemActing = async (req, res) => {
     let evaluation
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
-        {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: PROMPT },
-            { role: 'user', content: userSpeechText },
-          ],
-        },
-      )
-
-      const aiJsonResult = response.data.choices[0]?.message?.content
-      console.log(
-        '🗣️ Сырой ответ от GigaChat (Дубляж):',
-        aiJsonResult,
+      const aiJsonResult = await sendGigaChatRequest(
+        [
+          { role: 'system', content: PROMPT },
+          { role: 'user', content: userSpeechText },
+        ],
+        700,
       )
 
       evaluation = parseAiResponse(aiJsonResult, {

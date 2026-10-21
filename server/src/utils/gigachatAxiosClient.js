@@ -45,7 +45,10 @@ const getAccessToken = async() => {
 
 // 2. Настройка клиента для запросов
 const gigachatAxiosClient = axios.create({
-  baseURL: 'https://gigachat.devices.sberbank.ru/api/v1',
+  //старая версия
+  // baseURL: 'https://gigachat.devices.sberbank.ru/api/v1',
+  //новая версия
+  baseURL: 'https://api.giga.chat/v1',
   httpsAgent,
   headers: {
     Accept: 'application/json',

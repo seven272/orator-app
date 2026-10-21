@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -59,15 +59,21 @@ const generateKnockoutResponse = async (req, res) => {
       try {
         userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('Ошибка синхронного SalutSpeech в стендапе:', speechError)
+        console.error(
+          'Ошибка синхронного SalutSpeech в стендапе:',
+          speechError,
+        )
         return res.status(500).json({
-          message: 'Не удалось расслышать вашу шутку. Пожалуйста, повторите запись.',
+          message:
+            'Не удалось расслышать вашу шутку. Пожалуйста, повторите запись.',
           error: speechError.message,
         })
       }
     }
 
-    const attemptsCount = session.messages.filter((m) => m.role === 'user').length
+    const attemptsCount = session.messages.filter(
+      (m) => m.role === 'user',
+    ).length
     const isLastAttempt = attemptsCount >= 2 // Ограничение в 3 раунда
 
     // Обработка молчания пользователя на сцене
@@ -84,7 +90,8 @@ const generateKnockoutResponse = async (req, res) => {
       await session.save()
 
       return res.status(200).json({
-        answer: 'Ну и чего ты замолчал? Микрофон проглотил? Зал ждет, выдай хоть что-то, кроме неловкой паузы!',
+        answer:
+          'Ну и чего ты замолчал? Микрофон проглотил? Зал ждет, выдай хоть что-то, кроме неловкой паузы!',
         isFinished: isLastAttempt,
         audienceReputation: session.exerciseData.audienceReputation,
         isError: true,
@@ -92,7 +99,8 @@ const generateKnockoutResponse = async (req, res) => {
     }
 
     const cleanUserMessage = userMessage.trim()
-    const currentReputation = Number(session.exerciseData.audienceReputation) || 50
+    const currentReputation =
+      Number(session.exerciseData.audienceReputation) || 50
 
     const PROMPT = `Ты — токсичный, острый на язык стендап-комик (или выкрикивающий хеклер из зала). Ты ведешь комедийную дуэль с пользователем на сцене в реальном времени.
 
@@ -130,16 +138,10 @@ const generateKnockoutResponse = async (req, res) => {
     ]
 
     // Запрос к GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: finalMessagesPayload,
-        max_tokens: 400,
-      },
+    const aiRawAnswer = await sendGigaChatRequest(
+      finalMessagesPayload,
+      400,
     )
-
-    const aiRawAnswer = response.data?.choices?.[0]?.message?.content
 
     // Парсим изменение репутации (###+10)
     const repMatch = aiRawAnswer.match(/###\s?([+-]?\d+)/)
@@ -152,9 +154,11 @@ const generateKnockoutResponse = async (req, res) => {
       if (repChange > 0) {
         cleanAnswer = 'Ладно-ладно, это было неплохо. Зал оценил.'
       } else if (repChange < 0) {
-        cleanAnswer = 'И это всё, что ты смог выдать под микрофон? Слабо!'
+        cleanAnswer =
+          'И это всё, что ты смог выдать под микрофон? Слабо!'
       } else {
-        cleanAnswer = 'Ну допустим. Посмотрим, как ты справишься со следующим.'
+        cleanAnswer =
+          'Ну допустим. Посмотрим, как ты справишься со следующим.'
       }
     }
 
@@ -171,7 +175,8 @@ const generateKnockoutResponse = async (req, res) => {
     await session.save()
 
     // Имитация раздумий ИИ-комика перед микрофоном
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
     await sleep(Math.floor(Math.random() * 1200) + 800)
 
     res.json({
@@ -181,9 +186,13 @@ const generateKnockoutResponse = async (req, res) => {
       isFinished: isLastAttempt,
     })
   } catch (error) {
-    console.error('Knockout AI Error:', error.response?.data || error.message)
+    console.error(
+      'Knockout AI Error:',
+      error.response?.data || error.message,
+    )
     res.status(503).json({
-      answer: 'В клубе временно отключилось электричество и микрофоны погасли. (Ошибка связи)',
+      answer:
+        'В клубе временно отключилось электричество и микрофоны погасли. (Ошибка связи)',
     })
   }
 }
@@ -219,7 +228,8 @@ const finishKnockout = async (req, res) => {
       session.score = 0
       session.result = {
         totalScore: 0,
-        feedback: 'Вы промолчали большинство раундов, залу не удалось услышать ваши панчи.',
+        feedback:
+          'Вы промолчали большинство раундов, залу не удалось услышать ваши панчи.',
         criteria: { reaction: 0, humor: 0, irony: 0 },
       }
       await session.save()
@@ -265,23 +275,18 @@ const finishKnockout = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот протокол стендап-дуэли:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот протокол стендап-дуэли:\n${chatHistory}`,
         },
-      )
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+
+      evaluation = parseAiResponse(aiText, {
         reaction: 50,
         humor: 50,
         irony: 50,
@@ -332,6 +337,5 @@ const finishKnockout = async (req, res) => {
     })
   }
 }
-
 
 export { startKnockout, generateKnockoutResponse, finishKnockout }

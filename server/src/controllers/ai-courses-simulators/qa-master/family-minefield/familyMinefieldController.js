@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -24,12 +24,10 @@ const startFamilyMinefieldTrainer = async (req, res) => {
     }
 
     if (progress.currentBlockIndex !== 1) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
-        })
+      return res.status(400).json({
+        message:
+          'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
+      })
     }
 
     const preview = `Вы сидите за праздничным семейным столом. Роль вашего оппонента: "${exerciseData.role}". ${exerciseData.context}. \nВнезапно повисает пауза, и родственник обращается к вам с неудобным вопросом...`
@@ -49,13 +47,11 @@ const startFamilyMinefieldTrainer = async (req, res) => {
     return res.status(201).json({ preview, question })
   } catch (error) {
     console.error('Error in startFamilyMinefieldTrainer:', error)
-    res
-      .status(500)
-      .json({
-        message:
-          'Ошибка сервера при старте тренажера Семейное минное поле',
-        error: error.message,
-      })
+    res.status(500).json({
+      message:
+        'Ошибка сервера при старте тренажера Семейное минное поле',
+      error: error.message,
+    })
   }
 }
 
@@ -73,12 +69,10 @@ const generateFamilyMinefieldResponse = async (req, res) => {
       !progress ||
       !progress.blocksProgress?.aiWorkout?.currentSession
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Активная сессия тренажера не найдена. Начните сначала.',
-        })
+      return res.status(400).json({
+        message:
+          'Активная сессия тренажера не найдена. Начните сначала.',
+      })
     }
 
     const session = progress.blocksProgress.aiWorkout.currentSession
@@ -98,13 +92,11 @@ const generateFamilyMinefieldResponse = async (req, res) => {
           'Ошибка STT в тренажере Семейное минное поле:',
           speechError,
         )
-        return res
-          .status(500)
-          .json({
-            message:
-              'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
-            error: speechError.message,
-          })
+        return res.status(500).json({
+          message:
+            'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
+          error: speechError.message,
+        })
       }
     } else {
       return res
@@ -141,16 +133,11 @@ const generateFamilyMinefieldResponse = async (req, res) => {
       cleanUserMessage,
     )
 
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer) {
       throw new Error(
         'Пустой ответ от GigaChat в тренажере Семейное минное поле',
@@ -180,12 +167,10 @@ const generateFamilyMinefieldResponse = async (req, res) => {
       'Ошибка в generateFamilyMinefieldResponse:',
       error.message,
     )
-    res
-      .status(503)
-      .json({
-        answer:
-          'Кто-то из гостей громко звякнул тарелкой. Пожалуйста, повторите вашу фразу.',
-      })
+    res.status(503).json({
+      answer:
+        'Кто-то из гостей громко звякнул тарелкой. Пожалуйста, повторите вашу фразу.',
+    })
   }
 }
 
@@ -245,31 +230,24 @@ const finishFamilyMinefieldTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            {
-              role: 'system',
-              content: FAMILY_MINEFIELD_EVALUATION_PROMPT,
-            },
-            {
-              role: 'user',
-              content: `Проанализируй этот стресс-диалог защиты границ за семейным столом:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: FAMILY_MINEFIELD_EVALUATION_PROMPT,
         },
-      )
+        {
+          role: 'user',
+          content: `Проанализируй этот стресс-диалог защиты границ за семейным столом:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      evaluation = parseAiResponse(
-        response.data.choices[0].message.content,
-        {
-          emotionalControl: 40,
-          topicShift: 40,
-        },
-      )
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+
+      evaluation = parseAiResponse(aiText, {
+        emotionalControl: 40,
+        topicShift: 40,
+      })
     } catch (apiError) {
       console.error(
         'Сбой сети GigaChat при оценке тренажера Семейное минное поле:',
@@ -329,12 +307,10 @@ const finishFamilyMinefieldTrainer = async (req, res) => {
       'Ошибка финализации тренажера Семейное минное поле:',
       error,
     )
-    return res
-      .status(500)
-      .json({
-        message:
-          'Внутренняя ошибка сервера при фиксации результатов тренажера',
-      })
+    return res.status(500).json({
+      message:
+        'Внутренняя ошибка сервера при фиксации результатов тренажера',
+    })
   }
 }
 

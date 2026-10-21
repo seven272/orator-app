@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -24,12 +24,10 @@ const startTaxiBlitzTrainer = async (req, res) => {
     }
 
     if (progress.currentBlockIndex !== 1) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
-        })
+      return res.status(400).json({
+        message:
+          'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
+      })
     }
 
     const preview = `Вы сели в такси. Роль водителя: "${exerciseData.role}". ${exerciseData.context}. \nВодитель посматривает на вас через зеркало заднего вида и внезапно нарушает тишину...`
@@ -49,12 +47,10 @@ const startTaxiBlitzTrainer = async (req, res) => {
     return res.status(201).json({ preview, question })
   } catch (error) {
     console.error('Error in startTaxiBlitzTrainer:', error)
-    res
-      .status(500)
-      .json({
-        message: 'Ошибка сервера при старте тренажера Такси-Блиц',
-        error: error.message,
-      })
+    res.status(500).json({
+      message: 'Ошибка сервера при старте тренажера Такси-Блиц',
+      error: error.message,
+    })
   }
 }
 
@@ -72,12 +68,10 @@ const generateTaxiBlitzResponse = async (req, res) => {
       !progress ||
       !progress.blocksProgress?.aiWorkout?.currentSession
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Активная сессия тренажера не найдена. Начните сначала.',
-        })
+      return res.status(400).json({
+        message:
+          'Активная сессия тренажера не найдена. Начните сначала.',
+      })
     }
 
     const session = progress.blocksProgress.aiWorkout.currentSession
@@ -97,13 +91,11 @@ const generateTaxiBlitzResponse = async (req, res) => {
           'Ошибка STT в тренажере Такси-Блиц:',
           speechError,
         )
-        return res
-          .status(500)
-          .json({
-            message:
-              'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
-            error: speechError.message,
-          })
+        return res.status(500).json({
+          message:
+            'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
+          error: speechError.message,
+        })
       }
     } else {
       return res
@@ -140,16 +132,11 @@ const generateTaxiBlitzResponse = async (req, res) => {
       cleanUserMessage,
     )
 
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer) {
       throw new Error(
         'Пустой ответ от GigaChat в тренажере Такси-Блиц',
@@ -179,12 +166,10 @@ const generateTaxiBlitzResponse = async (req, res) => {
       'Ошибка в generateTaxiBlitzResponse:',
       error.message,
     )
-    res
-      .status(503)
-      .json({
-        answer:
-          'Водитель отвлекся на дорожную ситуацию. Пожалуйста, повторите вашу фразу.',
-      })
+    res.status(503).json({
+      answer:
+        'Водитель отвлекся на дорожную ситуацию. Пожалуйста, повторите вашу фразу.',
+    })
   }
 }
 
@@ -244,28 +229,24 @@ const finishTaxiBlitzTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: TAXI_BLITZ_EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Проанализируй этот спонтанный экспромт-диалог в такси:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: TAXI_BLITZ_EVALUATION_PROMPT,
         },
-      )
+        {
+          role: 'user',
+          content: `Проанализируй этот спонтанный экспромт-диалог в такси:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      evaluation = parseAiResponse(
-        response.data.choices[0].message.content,
-        {
-          reactionSpeed: 40,
-          structuralFrame: 40,
-        },
-      )
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+
+      evaluation = parseAiResponse(aiText, {
+        reactionSpeed: 40,
+        structuralFrame: 40,
+      })
     } catch (apiError) {
       console.error(
         'Сбой сети GigaChat при оценке тренажера Такси-Блиц:',
@@ -322,12 +303,10 @@ const finishTaxiBlitzTrainer = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка финализации тренажера Такси-Блиц:', error)
-    return res
-      .status(500)
-      .json({
-        message:
-          'Внутренняя ошибка сервера при фиксации результатов тренажера',
-      })
+    return res.status(500).json({
+      message:
+        'Внутренняя ошибка сервера при фиксации результатов тренажера',
+    })
   }
 }
 

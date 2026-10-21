@@ -5,7 +5,7 @@ import CourseArchive from '../models/CourseArchive.js'
 import { checkAchievements } from '../utils/achievementService.js'
 import { IRL_CHALLENGE_PROMPTS_REGISTRY } from '../assets/prompts/irlPrompt.js'
 import { EXAM_PROMPTS_REGISTRY } from '../assets/prompts/examPrompt.js'
-import gigachatAxiosClient from '../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../utils/gigachatService.js'
 import { parseAiResponse } from '../utils/aiJsonParser.js'
 import { transcribeLongAudio } from '../utils/speechService.js'
 import { getXpThreshold } from '../utils/gamificationProgress.js'
@@ -235,31 +235,28 @@ const submitIrlReport = async (req, res) => {
 
     let parsedResult
 
-    // 3. Отправка отчета на жесткую цензуру в GigaChat-2
+    // 3. Отправка отчета на жесткую цензуру в GigaChat
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: currentIrlPrompt },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: currentIrlPrompt },
-            {
-              role: 'user',
-              content: `Проанализируй этот отчет по практическому заданию "В поле":\n${textReport.trim()}`,
-            },
-          ],
-          max_tokens: 700,
-          temperature: 0.3, // Минимизирует риск галлюцинаций и сломанного JSON
+          role: 'user',
+          content: `Проанализируй этот отчет по практическому заданию "В поле":\n${textReport.trim()}`,
         },
+      ]
+      const countTokens = 700
+
+      const aiText = await sendGigaChatRequest(
+        messages,
+        countTokens,
+        0.3,
       )
 
-      const aiJsonResult = response.data.choices[0].message.content
-
       // Парсим JSON с фолбеками на случай непредвиденных сбоев
-      parsedResult = parseAiResponse(aiJsonResult, {
+      parsedResult = parseAiResponse(aiText, {
         isCompleted: false,
         aiFeedback:
-          '⚠️ Робот-цензор не смог распознать структуру отчета. Перефразируйте текст более развернуто и попробуйте отправить снова.',
+          'Робот-цензор не смог распознать структуру отчета. Перефразируйте текст более развернуто и попробуйте отправить снова.',
       })
     } catch (apiError) {
       console.error(
@@ -391,30 +388,26 @@ const submitExamReport = async (req, res) => {
 
     // 6. Оценка текста ответа в GigaChat-2 с подстановкой выбранного промпта
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: currentExamPrompt }, // <-- Динамический промпт
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: currentExamPrompt }, // <-- Динамический промпт
-            {
-              role: 'user',
-              content: `Вот расшифровка устного ответа студента для оценки:\n"${userTranscript.trim()}"`,
-            },
-          ],
-          max_tokens: 800,
-          temperature: 0.3, // Минимизируем отклонения от JSON структуры
+          role: 'user',
+          content: `Вот расшифровка устного ответа студента для оценки:\n"${userTranscript.trim()}"`,
         },
+      ]
+      const countTokens = 800
+
+      const aiText = await sendGigaChatRequest(
+        messages,
+        countTokens,
+        0.4,
       )
 
-      const aiJsonResult =
-        response.data?.choices?.[0]?.message?.content
-
       // Парсим чистый JSON
-      parsedResult = parseAiResponse(aiJsonResult, {
+      parsedResult = parseAiResponse(aiText, {
         score: 0,
         aiFeedback:
-          '⚠️ Ошибка автоматической обработки результатов экзамена нейросетью. Пожалуйста, попробуйте позже.',
+          'Ошибка автоматической обработки результатов экзамена нейросетью. Пожалуйста, попробуйте позже.',
       })
     } catch (apiError) {
       console.error(
@@ -718,7 +711,7 @@ const fakeBuyCourse = async (req, res) => {
     if (!user) {
       return res
         .status(404)
-        .json({ message: 'Пользователь не найден' }) 
+        .json({ message: 'Пользователь не найден' })
     }
 
     // Если курс уже в активных — покупка не требуется

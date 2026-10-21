@@ -1,26 +1,39 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js';
-import UserCourseProgress from '../../../../models/UserCourseProgress.js';
-import Course from '../../../../models/Course.js';
-import { parseAiResponse } from '../../../../utils/aiJsonParser.js';
-import { transcribeShortAudio } from '../../../../utils/speechService.js';
-import { getDeafPassengerDialogPrompt, DEAF_PASSENGER_EVALUATION_PROMPT } from './deafPassengerPrompt.js';
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
+import UserCourseProgress from '../../../../models/UserCourseProgress.js'
+import Course from '../../../../models/Course.js'
+import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
+import { transcribeShortAudio } from '../../../../utils/speechService.js'
+import {
+  getDeafPassengerDialogPrompt,
+  DEAF_PASSENGER_EVALUATION_PROMPT,
+} from './deafPassengerPrompt.js'
 
 const startDeafPassengerTrainer = async (req, res) => {
   try {
-    const userId = req.userId;
-    const { courseCode, exerciseData } = req.body;
+    const userId = req.userId
+    const { courseCode, exerciseData } = req.body
 
-    const progress = await UserCourseProgress.findOne({ userId, courseCode });
+    const progress = await UserCourseProgress.findOne({
+      userId,
+      courseCode,
+    })
     if (!progress) {
-      return res.status(404).json({ message: 'Прогресс по данному интенсиву не найден' });
+      return res
+        .status(404)
+        .json({ message: 'Прогресс по данному интенсиву не найден' })
     }
 
     if (progress.currentBlockIndex !== 1) {
-      return res.status(400).json({ message: 'Вы не можете пройти ИИ-тренажер на текущем этапе курса' });
+      return res
+        .status(400)
+        .json({
+          message:
+            'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
+        })
     }
 
-    const preview = `Вы застряли в замкнутом пространстве или ситуации. Роль собеседника: "${exerciseData.role}". ${exerciseData.context}. \nЧеловек увлеченно и без остановки начинает монолог, полностью забирая всё внимание...`;
-    const question = `${exerciseData.firstQuestion}`;
+    const preview = `Вы застряли в замкнутом пространстве или ситуации. Роль собеседника: "${exerciseData.role}". ${exerciseData.context}. \nЧеловек увлеченно и без остановки начинает монолог, полностью забирая всё внимание...`
+    const question = `${exerciseData.firstQuestion}`
 
     progress.blocksProgress.aiWorkout.currentSession = {
       status: 'active',
@@ -28,182 +41,264 @@ const startDeafPassengerTrainer = async (req, res) => {
       exerciseData,
       messages: [],
       createdAt: new Date(),
-    };
+    }
 
-    progress.markModified('blocksProgress.aiWorkout');
-    await progress.save();
+    progress.markModified('blocksProgress.aiWorkout')
+    await progress.save()
 
-    return res.status(201).json({ preview, question });
+    return res.status(201).json({ preview, question })
   } catch (error) {
-    console.error('Error in startDeafPassengerTrainer:', error);
-    res.status(500).json({ message: 'Ошибка сервера при старте тренажера Попутчик-Глухарь', error: error.message });
+    console.error('Error in startDeafPassengerTrainer:', error)
+    res
+      .status(500)
+      .json({
+        message:
+          'Ошибка сервера при старте тренажера Попутчик-Глухарь',
+        error: error.message,
+      })
   }
-};
+}
 
 const generateDeafPassengerResponse = async (req, res) => {
   try {
-    const userId = req.userId;
-    const { courseCode } = req.body;
-    let userMessage = null;
+    const userId = req.userId
+    const { courseCode } = req.body
+    let userMessage = null
 
-    const progress = await UserCourseProgress.findOne({ userId, courseCode });
-    if (!progress || !progress.blocksProgress?.aiWorkout?.currentSession) {
-      return res.status(400).json({ message: 'Активная сессия тренажера не найдена. Начните сначала.' });
+    const progress = await UserCourseProgress.findOne({
+      userId,
+      courseCode,
+    })
+    if (
+      !progress ||
+      !progress.blocksProgress?.aiWorkout?.currentSession
+    ) {
+      return res
+        .status(400)
+        .json({
+          message:
+            'Активная сессия тренажера не найдена. Начните сначала.',
+        })
     }
 
-    const session = progress.blocksProgress.aiWorkout.currentSession;
+    const session = progress.blocksProgress.aiWorkout.currentSession
     if (session.status !== 'active') {
-      return res.status(400).json({ message: 'Эта сессия уже завершена.' });
+      return res
+        .status(400)
+        .json({ message: 'Эта сессия уже завершена.' })
     }
 
-    const { role, topic, context } = session.exerciseData;
+    const { role, topic, context } = session.exerciseData
 
     if (req.file) {
       try {
-        userMessage = await transcribeShortAudio(req.file.buffer);
+        userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('Ошибка STT в тренажере Попутчик-Глухарь:', speechError);
-        return res.status(500).json({ message: 'Не удалось распознать вашу речь. Пожалуйста, повторите запись.', error: speechError.message });
+        console.error(
+          'Ошибка STT в тренажере Попутчик-Глухарь:',
+          speechError,
+        )
+        return res
+          .status(500)
+          .json({
+            message:
+              'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
+            error: speechError.message,
+          })
       }
     } else {
-      return res.status(400).json({ message: 'Аудиофайл ответа не был передан.' });
+      return res
+        .status(400)
+        .json({ message: 'Аудиофайл ответа не был передан.' })
     }
 
-    const attemptsCount = session.messages.filter((m) => m.role === 'user').length;
-    const isFinished = attemptsCount >= 2;
+    const attemptsCount = session.messages.filter(
+      (m) => m.role === 'user',
+    ).length
+    const isFinished = attemptsCount >= 2
 
     if (!userMessage || !userMessage.trim()) {
-      session.messages.push({ role: 'user', text: 'Пользователь промолчал' });
-      progress.markModified('blocksProgress.aiWorkout');
-      await progress.save();
+      session.messages.push({
+        role: 'user',
+        text: 'Пользователь промолчал',
+      })
+      progress.markModified('blocksProgress.aiWorkout')
+      await progress.save()
 
       return res.status(200).json({
-        answer: 'Вы промолчали. Попутчик воспринял это как знак согласия и продолжил засыпать вас деталями своей истории.',
+        answer:
+          'Вы промолчали. Попутчик воспринял это как знак согласия и продолжил засыпать вас деталями своей истории.',
         isPitchFinished: isFinished,
         isError: true,
-      });
+      })
     }
 
-    const cleanUserMessage = userMessage.trim();
-    const PROMPT = getDeafPassengerDialogPrompt(role, topic, context, cleanUserMessage);
+    const cleanUserMessage = userMessage.trim()
+    const PROMPT = getDeafPassengerDialogPrompt(
+      role,
+      topic,
+      context,
+      cleanUserMessage,
+    )
 
-    const response = await gigachatAxiosClient.post('/chat/completions', {
-      model: 'GigaChat-2',
-      messages: [{ role: 'user', content: PROMPT }],
-      max_tokens: 300,
-    });
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
+    )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content;
     if (!aiAnswer) {
-      throw new Error('Пустой ответ от GigaChat в тренажере Попутчик-Глухарь');
+      throw new Error(
+        'Пустой ответ от GigaChat в тренажере Попутчик-Глухарь',
+      )
     }
 
-    session.messages.push({ role: 'user', text: cleanUserMessage });
-    session.messages.push({ role: 'assistant', text: aiAnswer.trim() });
+    session.messages.push({ role: 'user', text: cleanUserMessage })
+    session.messages.push({
+      role: 'assistant',
+      text: aiAnswer.trim(),
+    })
 
-    progress.markModified('blocksProgress.aiWorkout');
-    await progress.save();
+    progress.markModified('blocksProgress.aiWorkout')
+    await progress.save()
 
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    await sleep(Math.floor(Math.random() * 1500) + 1500);
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
+    await sleep(Math.floor(Math.random() * 1500) + 1500)
 
     return res.json({
       user_transcript: cleanUserMessage,
       answer: aiAnswer.trim(),
       isPitchFinished: isFinished,
-    });
+    })
   } catch (error) {
-    console.error('Ошибка в generateDeafPassengerResponse:', error.message);
-    res.status(503).json({ answer: 'Собеседник закашлялся или уронил вещь. Пожалуйста, повторите фразу перехвата инициативы.' });
+    console.error(
+      'Ошибка в generateDeafPassengerResponse:',
+      error.message,
+    )
+    res
+      .status(503)
+      .json({
+        answer:
+          'Собеседник закашлялся или уронил вещь. Пожалуйста, повторите фразу перехвата инициативы.',
+      })
   }
-};
+}
 
 const finishDeafPassengerTrainer = async (req, res) => {
   try {
-    const userId = req.userId;
-    const { courseCode } = req.body;
+    const userId = req.userId
+    const { courseCode } = req.body
 
     const [progress, course] = await Promise.all([
       UserCourseProgress.findOne({ userId, courseCode }),
       Course.findOne({ courseCode }),
-    ]);
+    ])
 
     if (!progress || !course) {
-      return res.status(404).json({ message: 'Необходимые данные не найдены' });
+      return res
+        .status(404)
+        .json({ message: 'Необходимые данные не найдены' })
     }
 
-    if (progress.currentBlockIndex !== 1 || !progress.blocksProgress?.aiWorkout?.currentSession) {
-      return res.status(400).json({ message: 'Нет активной сессии или блок недоступен' });
+    if (
+      progress.currentBlockIndex !== 1 ||
+      !progress.blocksProgress?.aiWorkout?.currentSession
+    ) {
+      return res
+        .status(400)
+        .json({ message: 'Нет активной сессии или блок недоступен' })
     }
 
-    const session = progress.blocksProgress.aiWorkout.currentSession;
-    const meaningfulMessages = session.messages.filter((m) => m.role === 'user' && m.text !== 'Пользователь промолчал');
+    const session = progress.blocksProgress.aiWorkout.currentSession
+    const meaningfulMessages = session.messages.filter(
+      (m) => m.role === 'user' && m.text !== 'Пользователь промолчал',
+    )
 
     if (meaningfulMessages.length < 2) {
-      progress.blocksProgress.aiWorkout.sessionsCount += 1;
-      progress.blocksProgress.aiWorkout.currentSession = null;
-      progress.markModified('blocksProgress.aiWorkout');
-      await progress.save();
+      progress.blocksProgress.aiWorkout.sessionsCount += 1
+      progress.blocksProgress.aiWorkout.currentSession = null
+      progress.markModified('blocksProgress.aiWorkout')
+      await progress.save()
 
       return res.status(200).json({
-        message: 'Тренажер завершен без оценки из-за отсутствия содержательных ответов',
+        message:
+          'Тренажер завершен без оценки из-за отсутствия содержательных ответов',
         totalScore: 0,
-        feedback: 'Вы не пытались вклиниться в разговор. Собеседник полностью сожрал ваше личное время.',
+        feedback:
+          'Вы не пытались вклиниться в разговор. Собеседник полностью сожрал ваше личное время.',
         progressData: progress,
-      });
+      })
     }
 
     const chatHistory = session.messages
-      .map((m) => `${m.role === 'user' ? 'Оратор' : 'Флудер'} : ${m.text}`)
-      .join('\n');
+      .map(
+        (m) =>
+          `${m.role === 'user' ? 'Оратор' : 'Флудер'} : ${m.text}`,
+      )
+      .join('\n')
 
-    let evaluation = null;
+    let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post('/chat/completions', {
-        model: 'GigaChat-2',
-        messages: [
-          { role: 'system', content: DEAF_PASSENGER_EVALUATION_PROMPT },
-          { role: 'user', content: `Проанализируй этот диалог принудительного перехвата инициативы у флудера:\n${chatHistory}` },
-        ],
-        max_tokens: 700,
-      });
+      const messages = [
+        {
+          role: 'system',
+          content: DEAF_PASSENGER_EVALUATION_PROMPT,
+        },
+        {
+          role: 'user',
+          content: `Проанализируй этот диалог принудительного перехвата инициативы у флудера:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      evaluation = parseAiResponse(response.data.choices[0].message.content, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         interruptionTiming: 40,
         focusReturn: 40,
-      });
+      })
     } catch (apiError) {
-      console.error('Сбой сети GigaChat при оценке тренажера Попутчик-Глухарь:', apiError.message);
+      console.error(
+        'Сбой сети GigaChat при оценке тренажера Попутчик-Глухарь:',
+        apiError.message,
+      )
     }
 
     if (!evaluation) {
       evaluation = {
         totalScore: 50,
-        feedback: 'Разговор окончен. Из-за технических неполадок подробная аналитика временно недоступна.',
+        feedback:
+          'Разговор окончен. Из-за технических неполадок подробная аналитика временно недоступна.',
         criteria: { interruptionTiming: 50, focusReturn: 50 },
-      };
+      }
     }
 
-    const aiBlockConfig = course.blocks.find((block) => block.blockType === 'ai_workout');
-    const requiredScore = aiBlockConfig?.aiWorkoutConfig?.requiredScore || 1000;
+    const aiBlockConfig = course.blocks.find(
+      (block) => block.blockType === 'ai_workout',
+    )
+    const requiredScore =
+      aiBlockConfig?.aiWorkoutConfig?.requiredScore || 1000
 
-    progress.blocksProgress.aiWorkout.sessionsCount += 1;
-    let isScoreCounted = false;
+    progress.blocksProgress.aiWorkout.sessionsCount += 1
+    let isScoreCounted = false
 
     if (evaluation.totalScore >= 65) {
-      progress.blocksProgress.aiWorkout.accumulatedScore += evaluation.totalScore;
-      isScoreCounted = true;
+      progress.blocksProgress.aiWorkout.accumulatedScore +=
+        evaluation.totalScore
+      isScoreCounted = true
     }
 
-    if (progress.blocksProgress.aiWorkout.accumulatedScore >= requiredScore) {
-      progress.blocksProgress.aiWorkout.isCompleted = true;
-      progress.currentBlockIndex = 2; 
+    if (
+      progress.blocksProgress.aiWorkout.accumulatedScore >=
+      requiredScore
+    ) {
+      progress.blocksProgress.aiWorkout.isCompleted = true
+      progress.currentBlockIndex = 2
     }
 
-    progress.blocksProgress.aiWorkout.currentSession = null;
-    progress.markModified('blocksProgress.aiWorkout');
-    await progress.save();
+    progress.blocksProgress.aiWorkout.currentSession = null
+    progress.markModified('blocksProgress.aiWorkout')
+    await progress.save()
 
     return res.status(200).json({
       status: progress.status,
@@ -215,11 +310,23 @@ const finishDeafPassengerTrainer = async (req, res) => {
         criteria: evaluation.criteria, // { interruptionTiming, focusReturn }
         isScoreCounted,
       },
-    });
+    })
   } catch (error) {
-    console.error('Ошибка финализации тренажера Попутчик-Глухарь:', error);
-    return res.status(500).json({ message: 'Внутренняя ошибка сервера при фиксации результатов тренажера' });
+    console.error(
+      'Ошибка финализации тренажера Попутчик-Глухарь:',
+      error,
+    )
+    return res
+      .status(500)
+      .json({
+        message:
+          'Внутренняя ошибка сервера при фиксации результатов тренажера',
+      })
   }
-};
+}
 
-export { startDeafPassengerTrainer, generateDeafPassengerResponse, finishDeafPassengerTrainer };
+export {
+  startDeafPassengerTrainer,
+  generateDeafPassengerResponse,
+  finishDeafPassengerTrainer,
+}

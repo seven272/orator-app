@@ -1,7 +1,7 @@
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { transcribeShortAudio } from '../../utils/speechService.js'
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
 import { parseAiResponse } from '../../utils/aiJsonParser.js'
 
@@ -53,7 +53,9 @@ const generateJargonResponse = async (req, res) => {
     }).sort({ createdAt: -1 })
 
     if (!session) {
-      return res.status(400).json({ message: 'Активная сессия не найдена.' })
+      return res
+        .status(400)
+        .json({ message: 'Активная сессия не найдена.' })
     }
 
     // Расшифровка аудио через службу SalutSpeech
@@ -61,16 +63,22 @@ const generateJargonResponse = async (req, res) => {
       try {
         userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('Ошибка синхронного SalutSpeech в Разрули Тёрки:', speechError)
+        console.error(
+          'Ошибка синхронного SalutSpeech в Разрули Тёрки:',
+          speechError,
+        )
         return res.status(500).json({
-          message: 'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
+          message:
+            'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
           error: speechError.message,
         })
       }
     }
 
     // Считаем раунды (TOTAL_ROUNDS = 3)
-    const attemptsCount = session.messages.filter((m) => m.role === 'user').length
+    const attemptsCount = session.messages.filter(
+      (m) => m.role === 'user',
+    ).length
     const isLastAttempt = attemptsCount >= 2
 
     // Обработка молчания или пустого ответа пользователя
@@ -87,7 +95,8 @@ const generateJargonResponse = async (req, res) => {
       await session.save()
 
       return res.status(200).json({
-        answer: 'Ты че завис, сказать нечего? Я жду ответа! Сюда смотри и обосновывай!',
+        answer:
+          'Ты че завис, сказать нечего? Я жду ответа! Сюда смотри и обосновывай!',
         isFinished: isLastAttempt,
         reputation: session.exerciseData.reputation,
         isError: true,
@@ -95,7 +104,8 @@ const generateJargonResponse = async (req, res) => {
     }
 
     const cleanUserMessage = userMessage.trim()
-    const currentReputation = Number(session.exerciseData.reputation) || 50
+    const currentReputation =
+      Number(session.exerciseData.reputation) || 50
     const keywordsList = session.exerciseData.keywords || []
 
     // Формируем жесткий системный промпт для ИИ-оппонента
@@ -126,7 +136,7 @@ const generateJargonResponse = async (req, res) => {
 Пользователь только что ответил тебе: "${cleanUserMessage}". Ответь ему в своей роли.
 
 В САМОМ КОНЦЕ ответа строго добавь маркер изменения уровня авторитета: ###+число или ###-число (от -15 до +15 в зависимости от смелости, четкости ответа и использования ключевых слов).
-Пример идеального ответа: "Слышь, ладно, тут ты правильно раскидал. Но за место перед подъездом все равно перетрем. ###+10"`;
+Пример идеального ответа: "Слышь, ладно, тут ты правильно раскидал. Но за место перед подъездом все равно перетрем. ###+10"`
 
     const finalMessagesPayload = [
       { role: 'system', content: PROMPT },
@@ -137,17 +147,17 @@ const generateJargonResponse = async (req, res) => {
     ]
 
     // Запрос к GigaChat API
-    const response = await gigachatAxiosClient.post('/chat/completions', {
-      model: 'GigaChat-2',
-      messages: finalMessagesPayload,
-      max_tokens: 400,
-    })
 
-    const aiRawAnswer = response.data?.choices?.[0]?.message?.content
+    const aiRawAnswer = await sendGigaChatRequest(
+      finalMessagesPayload,
+      400,
+    )
 
     // Парсим маркер изменения авторитета (###+10 или ###-5)
     const reputationMatch = aiRawAnswer.match(/###\s?([+-]?\d+)/)
-    const reputationChange = reputationMatch ? parseInt(reputationMatch[1], 10) : 0
+    const reputationChange = reputationMatch
+      ? parseInt(reputationMatch[1], 10)
+      : 0
 
     let cleanAnswer = aiRawAnswer.replace(/###\s?[+-]?\d+/, '').trim()
 
@@ -156,7 +166,8 @@ const generateJargonResponse = async (req, res) => {
       if (reputationChange > 0) {
         cleanAnswer = 'Ладно, базаришь уверенно, тут я тебя услышал.'
       } else if (reputationChange < 0) {
-        cleanAnswer = 'Ты мне зубы не заговаривай, за базар отвечать будешь или как?'
+        cleanAnswer =
+          'Ты мне зубы не заговаривай, за базар отвечать будешь или как?'
       } else {
         cleanAnswer = 'Короче, ближе к делу говори.'
       }
@@ -175,7 +186,8 @@ const generateJargonResponse = async (req, res) => {
     await session.save()
 
     // Имитация естественной паузы раздумий ИИ
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
     await sleep(Math.floor(Math.random() * 1200) + 800)
 
     res.json({
@@ -185,9 +197,13 @@ const generateJargonResponse = async (req, res) => {
       isFinished: isLastAttempt,
     })
   } catch (error) {
-    console.error('Jargon Boss AI Error:', error.response?.data || error.message)
+    console.error(
+      'Jargon Boss AI Error:',
+      error.response?.data || error.message,
+    )
     res.status(503).json({
-      answer: 'Связь оборвалась. Оппонент ушел в закат из-за помех в сети протоколирования.',
+      answer:
+        'Связь оборвалась. Оппонент ушел в закат из-за помех в сети протоколирования.',
     })
   }
 }
@@ -282,23 +298,17 @@ const finishJargonBoss = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот протокол беседы:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот протокол беседы:\n${chatHistory}`,
         },
-      )
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         context_match: 50,
         voice_firmness: 50,
         final_punch: 50,

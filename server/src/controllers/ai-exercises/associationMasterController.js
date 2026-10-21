@@ -1,9 +1,9 @@
 import User from '../../models/User.js'
 import AiExercise from '../../models/AiExercise.js'
-import { transcribeLongAudio} from '../../utils/speechService.js'
+import { transcribeLongAudio } from '../../utils/speechService.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
 import { parseAiResponse } from '../../utils/aiJsonParser.js'
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 
 // 1. СТАРТ УПРАЖНЕНИЯ
 const startAssociationMaster = async (req, res) => {
@@ -13,7 +13,7 @@ const startAssociationMaster = async (req, res) => {
 
     // Формируем стартовое описание для экрана
     const preview = `Задание: связать несочетаемое. \nПарадокс: "${exerciseData.situation}". \nПонятие А: "${exerciseData.concept_A}" ➔ Понятие Б: "${exerciseData.concept_B}".`
-    
+
     // Вводная фраза лингвиста берется напрямую из сценария
     const question = exerciseData.init_phrase
 
@@ -53,7 +53,9 @@ const generateAssociationMasterResponse = async (req, res) => {
     }).sort({ createdAt: -1 })
 
     if (!session) {
-      return res.status(400).json({ message: 'Активная сессия не найдена.' })
+      return res
+        .status(400)
+        .json({ message: 'Активная сессия не найдена.' })
     }
 
     // Расшифровка аудиофайла через боевой SalutSpeech
@@ -61,16 +63,22 @@ const generateAssociationMasterResponse = async (req, res) => {
       try {
         userMessage = await transcribeLongAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('Ошибка SalutSpeech в Мосте смыслов:', speechError)
+        console.error(
+          'Ошибка SalutSpeech в Мосте смыслов:',
+          speechError,
+        )
         return res.status(500).json({
-          message: 'Не удалось распознать аудиозапись. Пожалуйста, попробуйте записать ответ еще раз.',
+          message:
+            'Не удалось распознать аудиозапись. Пожалуйста, попробуйте записать ответ еще раз.',
           error: speechError.message,
         })
       }
     }
 
     // В данном тренажере TOTAL_ROUNDS = 1, так как игрок выдает один цельный спич-мост
-    const attemptsCount = session.messages.filter((m) => m.role === 'user').length
+    const attemptsCount = session.messages.filter(
+      (m) => m.role === 'user',
+    ).length
     const isLastAttempt = attemptsCount >= 0 // Первый же ответ пользователя является финальным ходом
 
     // Обработка молчания
@@ -87,7 +95,8 @@ const generateAssociationMasterResponse = async (req, res) => {
       await session.save()
 
       return res.status(200).json({
-        answer: 'Вы молчите. Помните, что оратор должен уметь находить связи мгновенно. Жду вашу попытку!',
+        answer:
+          'Вы молчите. Помните, что оратор должен уметь находить связи мгновенно. Жду вашу попытку!',
         isFinished: false, // Даем возможность переписать, если промолчал
         originality: session.exerciseData.originality,
         isError: true,
@@ -95,7 +104,8 @@ const generateAssociationMasterResponse = async (req, res) => {
     }
 
     const cleanUserMessage = userMessage.trim()
-    const currentOriginality = Number(session.exerciseData.originality) || 50
+    const currentOriginality =
+      Number(session.exerciseData.originality) || 50
 
     // Профессиональный лингвистический промпт для GigaChat-2
     const PROMPT = `Ты — профессиональный лингвист, эксперт по риторике и критик ассоциативного мышления. Твоя задача — оценить, насколько изящно и глубоко пользователь связал два абсолютно полярных понятия.
@@ -130,26 +140,28 @@ const generateAssociationMasterResponse = async (req, res) => {
     ]
 
     // Запрос к нейросети GigaChat
-    const response = await gigachatAxiosClient.post('/chat/completions', {
-      model: 'GigaChat-2',
-      messages: finalMessagesPayload,
-      max_tokens: 400,
-    })
 
-    const aiRawAnswer = response.data?.choices?.[0]?.message?.content
+    let aiRawAnswer = await sendGigaChatRequest(
+      finalMessagesPayload,
+      400,
+    )
 
     // Парсим маркер изменения оригинальности (###+15)
     const originalityMatch = aiRawAnswer.match(/###\s?([+-]?\d+)/)
-    const originalityChange = originalityMatch ? parseInt(originalityMatch[1], 10) : 0
+    const originalityChange = originalityMatch
+      ? parseInt(originalityMatch[1], 10)
+      : 0
 
     let cleanAnswer = aiRawAnswer.replace(/###\s?[+-]?\d+/, '').trim()
 
     // Защитный фоллбек текста
     if (!cleanAnswer) {
       if (originalityChange > 0) {
-        cleanAnswer = 'Интересная риторическая дуга. Я зафиксировал эту метафору.'
+        cleanAnswer =
+          'Интересная риторическая дуга. Я зафиксировал эту метафору.'
       } else {
-        cleanAnswer = 'Связь кажется слишком поверхностной и очевидной.'
+        cleanAnswer =
+          'Связь кажется слишком поверхностной и очевидной.'
       }
     }
 
@@ -166,7 +178,8 @@ const generateAssociationMasterResponse = async (req, res) => {
     await session.save()
 
     // Естественная задержка для имитации "размышлений" эксперта
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
     await sleep(1000)
 
     res.json({
@@ -176,13 +189,16 @@ const generateAssociationMasterResponse = async (req, res) => {
       isFinished: isLastAttempt,
     })
   } catch (error) {
-    console.error('Association Master AI Error:', error.response?.data || error.message)
+    console.error(
+      'Association Master AI Error:',
+      error.response?.data || error.message,
+    )
     res.status(503).json({
-      answer: 'Лингвистическая экспертиза прервана из-за технических неполадок на стороне ИИ-сервера.',
+      answer:
+        'Лингвистическая экспертиза прервана из-за технических неполадок на стороне ИИ-сервера.',
     })
   }
 }
-
 
 const finishAssociationMaster = async (req, res) => {
   try {
@@ -202,7 +218,9 @@ const finishAssociationMaster = async (req, res) => {
 
     const user = await User.findById(userId)
     if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' })
+      return res
+        .status(404)
+        .json({ message: 'Пользователь не найден' })
     }
 
     // Фильтруем пустые реплики пользователя
@@ -216,8 +234,13 @@ const finishAssociationMaster = async (req, res) => {
       session.score = 0
       session.result = {
         totalScore: 0,
-        feedback: 'Связь между понятиями не была установлена, так как вы промолчали.',
-        criteria: { originality_score: 0, metaphor_beauty: 0, logic_bridge: 0 },
+        feedback:
+          'Связь между понятиями не была установлена, так как вы промолчали.',
+        criteria: {
+          originality_score: 0,
+          metaphor_beauty: 0,
+          logic_bridge: 0,
+        },
       }
       await session.save()
 
@@ -235,7 +258,10 @@ const finishAssociationMaster = async (req, res) => {
 
     // Формируем стенограмму для ИИ-лингвиста
     const chatHistory = session.messages
-      .map((m) => `${m.role === 'user' ? 'Оратор' : 'Лингвист'}: ${m.text}`)
+      .map(
+        (m) =>
+          `${m.role === 'user' ? 'Оратор' : 'Лингвист'}: ${m.text}`,
+      )
       .join('\n')
 
     // Оценочный промпт по критериям речевой находчивости
@@ -260,37 +286,40 @@ const finishAssociationMaster = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот стенограмма выступления:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот стенограмма выступления:\n${chatHistory}`,
         },
-      )
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+
+      evaluation = parseAiResponse(aiText, {
         originality_score: 50,
         metaphor_beauty: 50,
         logic_bridge: 50,
       })
     } catch (apiError) {
-      console.error('Сбой сети GigaChat при финализации Моста смыслов:', apiError.message)
+      console.error(
+        'Сбой сети GigaChat при финализации Моста смыслов:',
+        apiError.message,
+      )
     }
 
     // Защитный фоллбек, если ИИ упал или выдал ошибку
     if (!evaluation) {
       evaluation = {
         totalScore: 50,
-        feedback: 'Речь сохранена в архиве лингвистического клуба, но ИИ-арбитр не смог сформировать подробный разбор из-за сбоя связи. Начислен базовый балл.',
-        criteria: { originality_score: 50, metaphor_beauty: 50, logic_bridge: 50 },
+        feedback:
+          'Речь сохранена в архиве лингвистического клуба, но ИИ-арбитр не смог сформировать подробный разбор из-за сбоя связи. Начислен базовый балл.',
+        criteria: {
+          originality_score: 50,
+          metaphor_beauty: 50,
+          logic_bridge: 50,
+        },
       }
     }
 
@@ -327,5 +356,8 @@ const finishAssociationMaster = async (req, res) => {
   }
 }
 
-export { startAssociationMaster, generateAssociationMasterResponse, finishAssociationMaster }
-
+export {
+  startAssociationMaster,
+  generateAssociationMasterResponse,
+  finishAssociationMaster,
+}

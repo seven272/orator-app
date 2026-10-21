@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -27,12 +27,10 @@ const startStreetRudenessTrainer = async (req, res) => {
     }
 
     if (progress.currentBlockIndex !== 1) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
-        })
+      return res.status(400).json({
+        message:
+          'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
+      })
     }
 
     const preview = `Конфликт: ${exerciseData.role}. Контекст: ${exerciseData.context}`
@@ -55,12 +53,10 @@ const startStreetRudenessTrainer = async (req, res) => {
       .json({ preview, question, progressData: progress })
   } catch (error) {
     console.error('Error in startStreetRudenessTrainer:', error)
-    res
-      .status(500)
-      .json({
-        message: 'Ошибка сервера при старте тренажера хамства',
-        error: error.message,
-      })
+    res.status(500).json({
+      message: 'Ошибка сервера при старте тренажера хамства',
+      error: error.message,
+    })
   }
 }
 
@@ -81,11 +77,9 @@ const generateStreetRudenessResponse = async (req, res) => {
       !progress ||
       !progress.blocksProgress?.aiWorkout?.currentSession
     ) {
-      return res
-        .status(400)
-        .json({
-          message: 'Активная сессия не найдена. Начните сначала.',
-        })
+      return res.status(400).json({
+        message: 'Активная сессия не найдена. Начните сначала.',
+      })
     }
 
     const session = progress.blocksProgress.aiWorkout.currentSession
@@ -93,11 +87,9 @@ const generateStreetRudenessResponse = async (req, res) => {
       session.status !== 'active' ||
       session.workoutConfigId !== 'street_rudeness'
     ) {
-      return res
-        .status(400)
-        .json({
-          message: 'Эта сессия некорректна или уже завершена.',
-        })
+      return res.status(400).json({
+        message: 'Эта сессия некорректна или уже завершена.',
+      })
     }
 
     const { role, topic, context } = session.exerciseData
@@ -164,16 +156,11 @@ const generateStreetRudenessResponse = async (req, res) => {
       cleanUserMessage,
     )
 
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 350,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer)
       throw new Error('Пустой ответ от GigaChat в тренажере хамства')
 
@@ -205,12 +192,10 @@ const generateStreetRudenessResponse = async (req, res) => {
       'Ошибка в generateStreetRudenessResponse:',
       error.message,
     )
-    res
-      .status(503)
-      .json({
-        answer:
-          'Собеседник агрессивно сплюнул. Пожалуйста, повторите фразу.',
-      })
+    res.status(503).json({
+      answer:
+        'Собеседник агрессивно сплюнул. Пожалуйста, повторите фразу.',
+    })
   }
 }
 
@@ -235,11 +220,9 @@ const finishStreetRudenessTrainer = async (req, res) => {
 
     const session = progress.blocksProgress?.aiWorkout?.currentSession
     if (!session || session.workoutConfigId !== 'street_rudeness') {
-      return res
-        .status(400)
-        .json({
-          message: 'Активная сессия тренажера хамства отсутствует',
-        })
+      return res.status(400).json({
+        message: 'Активная сессия тренажера хамства отсутствует',
+      })
     }
 
     const meaningfulMessages = session.messages.filter(
@@ -272,27 +255,20 @@ const finishStreetRudenessTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            {
-              role: 'system',
-              content: STREET_RUDENESS_EVALUATION_PROMPT,
-            },
-            {
-              role: 'user',
-              content: `Проанализируй этот уличный конфликт:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: STREET_RUDENESS_EVALUATION_PROMPT,
         },
-      )
+        {
+          role: 'user',
+          content: `Проанализируй этот уличный конфликт:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      const aiJsonResult =
-        response.data?.choices?.[0]?.message?.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         stressResistance: 40,
         reflection: 40,
       })
@@ -357,11 +333,9 @@ const finishStreetRudenessTrainer = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка финализации тренажера хамства:', error)
-    return res
-      .status(500)
-      .json({
-        message: 'Внутренняя ошибка сервера при фиксации результатов',
-      })
+    return res.status(500).json({
+      message: 'Внутренняя ошибка сервера при фиксации результатов',
+    })
   }
 }
 

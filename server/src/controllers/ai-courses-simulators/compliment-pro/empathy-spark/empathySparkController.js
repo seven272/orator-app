@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -24,12 +24,10 @@ const startEmpathySparkTrainer = async (req, res) => {
     }
 
     if (progress.currentBlockIndex !== 1) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
-        })
+      return res.status(400).json({
+        message:
+          'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
+      })
     }
 
     // Вместо жесткого слова "Попутчик" используем динамическую роль из сценария (бариста, коллекционер и т.д.)
@@ -51,12 +49,10 @@ const startEmpathySparkTrainer = async (req, res) => {
     return res.status(201).json({ preview, question })
   } catch (error) {
     console.error('Error in startEmpathySparkTrainer:', error)
-    res
-      .status(500)
-      .json({
-        message: 'Ошибка сервера при старте тренажера Искра доверия',
-        error: error.message,
-      })
+    res.status(500).json({
+      message: 'Ошибка сервера при старте тренажера Искра доверия',
+      error: error.message,
+    })
   }
 }
 
@@ -74,12 +70,10 @@ const generateEmpathySparkResponse = async (req, res) => {
       !progress ||
       !progress.blocksProgress?.aiWorkout?.currentSession
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Активная сессия тренажера не найдена. Начните сначала.',
-        })
+      return res.status(400).json({
+        message:
+          'Активная сессия тренажера не найдена. Начните сначала.',
+      })
     }
 
     const session = progress.blocksProgress.aiWorkout.currentSession
@@ -99,13 +93,11 @@ const generateEmpathySparkResponse = async (req, res) => {
           'Ошибка STT в тренажере Искра доверия:',
           speechError,
         )
-        return res
-          .status(500)
-          .json({
-            message:
-              'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
-            error: speechError.message,
-          })
+        return res.status(500).json({
+          message:
+            'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
+          error: speechError.message,
+        })
       }
     } else {
       return res
@@ -142,16 +134,11 @@ const generateEmpathySparkResponse = async (req, res) => {
       cleanUserMessage,
     )
 
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer) {
       throw new Error(
         'Пустой ответ от GigaChat в тренажере Искра доверия',
@@ -181,12 +168,10 @@ const generateEmpathySparkResponse = async (req, res) => {
       'Ошибка в generateEmpathySparkResponse:',
       error.message,
     )
-    res
-      .status(503)
-      .json({
-        answer:
-          'Попутчик надел наушники. Пожалуйста, повторите вашу фразу громче и четче.',
-      })
+    res.status(503).json({
+      answer:
+        'Попутчик надел наушники. Пожалуйста, повторите вашу фразу громче и четче.',
+    })
   }
 }
 
@@ -201,24 +186,20 @@ const finishEmpathySparkTrainer = async (req, res) => {
     ])
 
     if (!progress || !course) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Необходимые данные для завершения тренажера не найдены',
-        })
+      return res.status(404).json({
+        message:
+          'Необходимые данные для завершения тренажера не найдены',
+      })
     }
 
     if (
       progress.currentBlockIndex !== 1 ||
       !progress.blocksProgress?.aiWorkout?.currentSession
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Нет активной сессии тренажера или данный блок недоступен',
-        })
+      return res.status(400).json({
+        message:
+          'Нет активной сессии тренажера или данный блок недоступен',
+      })
     }
 
     const session = progress.blocksProgress.aiWorkout.currentSession
@@ -252,31 +233,24 @@ const finishEmpathySparkTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            {
-              role: 'system',
-              content: EMPATHY_SPARK_EVALUATION_PROMPT,
-            },
-            {
-              role: 'user',
-              content: `Проанализируй этот диалог начала знакомства в пути:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: EMPATHY_SPARK_EVALUATION_PROMPT,
         },
-      )
+        {
+          role: 'user',
+          content: `Проанализируй этот диалог начала знакомства в пути:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      evaluation = parseAiResponse(
-        response.data.choices[0].message.content,
-        {
-          observation: 40,
-          relevance: 40,
-        },
-      )
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+
+      evaluation = parseAiResponse(aiText, {
+        observation: 40,
+        relevance: 40,
+      })
     } catch (apiError) {
       console.error(
         'Сбой сети GigaChat при оценке тренажера Искра доверия:',
@@ -336,12 +310,10 @@ const finishEmpathySparkTrainer = async (req, res) => {
       'Ошибка финализации тренажера Искра доверия:',
       error,
     )
-    return res
-      .status(500)
-      .json({
-        message:
-          'Внутренняя ошибка сервера при фиксации результатов тренажера',
-      })
+    return res.status(500).json({
+      message:
+        'Внутренняя ошибка сервера при фиксации результатов тренажера',
+    })
   }
 }
 

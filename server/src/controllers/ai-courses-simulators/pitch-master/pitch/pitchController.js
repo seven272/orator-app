@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js' // Ваша модель курса для проверки requiredScore
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -21,7 +21,7 @@ const startPitchTrainer = async (req, res) => {
     })
 
     if (!progress) {
-      return res 
+      return res
         .status(404)
         .json({ message: 'Прогресс по данному интенсиву не найден' })
     }
@@ -57,7 +57,6 @@ const startPitchTrainer = async (req, res) => {
     })
   }
 }
-
 
 const generatePitchResponse = async (req, res) => {
   try {
@@ -154,21 +153,16 @@ const generatePitchResponse = async (req, res) => {
     const PROMPT = getPitchDialogPrompt(
       role,
       topic,
-      context, 
+      context,
       cleanUserMessage,
     )
 
     // 3. Запрос к GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer) {
       throw new Error('Пустой ответ от GigaChat в тренажере питча')
     }
@@ -208,7 +202,6 @@ const generatePitchResponse = async (req, res) => {
     })
   }
 }
-
 
 const finishPitchTrainer = async (req, res) => {
   try {
@@ -276,23 +269,20 @@ const finishPitchTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: PITCH_EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Проанализируй этот диалог-питч:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: PITCH_EVALUATION_PROMPT,
         },
-      )
+        {
+          role: 'user',
+          content: `Проанализируй этот диалог-питч:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         structure: 40,
         persuasion: 40,
       })
@@ -322,7 +312,7 @@ const finishPitchTrainer = async (req, res) => {
 
     // Обновляем статистику вашего блока
     progress.blocksProgress.aiWorkout.sessionsCount += 1
-     // 🔥 ФЛАГ ДЛЯ ФРОНТЕНДА: пошли ли баллы в зачёт общего прогресса блока
+    // 🔥 ФЛАГ ДЛЯ ФРОНТЕНДА: пошли ли баллы в зачёт общего прогресса блока
     let isScoreCounted = false
 
     if (evaluation.totalScore >= 65) {
@@ -331,7 +321,6 @@ const finishPitchTrainer = async (req, res) => {
         evaluation.totalScore
       isScoreCounted = true
     }
-
 
     // Проверяем, набрал ли пользователь нужную сумму баллов суммарно за все подходы
     if (
@@ -360,7 +349,7 @@ const finishPitchTrainer = async (req, res) => {
         totalScore: evaluation.totalScore,
         feedback: evaluation.feedback,
         criteria: evaluation.criteria,
-        isScoreCounted
+        isScoreCounted,
       },
     })
   } catch (error) {

@@ -1,6 +1,4 @@
-// ai-courses-simulators/toast-master/wedding-challenge/weddingChallengeController.js
-
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -29,12 +27,10 @@ const startWeddingChallengeTrainer = async (req, res) => {
     }
 
     if (progress.currentBlockIndex !== 1) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
-        })
+      return res.status(400).json({
+        message:
+          'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
+      })
     }
 
     const preview = `Вы берете в руки микрофон. Окружение: ${exerciseData.role}. Обстановка: ${exerciseData.context}`
@@ -57,12 +53,10 @@ const startWeddingChallengeTrainer = async (req, res) => {
       .json({ preview, question, progressData: progress })
   } catch (error) {
     console.error('Error in startWeddingChallengeTrainer:', error)
-    res
-      .status(500)
-      .json({
-        message: 'Ошибка сервера при старте свадебного тренажера',
-        error: error.message,
-      })
+    res.status(500).json({
+      message: 'Ошибка сервера при старте свадебного тренажера',
+      error: error.message,
+    })
   }
 }
 
@@ -83,12 +77,10 @@ const generateWeddingResponse = async (req, res) => {
       !progress ||
       !progress.blocksProgress?.aiWorkout?.currentSession
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            'Активная сессия тренажера не найдена. Начните сначала.',
-        })
+      return res.status(400).json({
+        message:
+          'Активная сессия тренажера не найдена. Начните сначала.',
+      })
     }
 
     const session = progress.blocksProgress.aiWorkout.currentSession
@@ -96,11 +88,9 @@ const generateWeddingResponse = async (req, res) => {
       session.status !== 'active' ||
       session.workoutConfigId !== 'wedding_challenge'
     ) {
-      return res
-        .status(400)
-        .json({
-          message: 'Эта сессия уже завершена или некорректна.',
-        })
+      return res.status(400).json({
+        message: 'Эта сессия уже завершена или некорректна.',
+      })
     }
 
     const { role, topic, context } = session.exerciseData
@@ -167,16 +157,11 @@ const generateWeddingResponse = async (req, res) => {
       cleanUserMessage,
     )
 
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer)
       throw new Error('Пустой ответ от GigaChat в тренажере тостов')
 
@@ -205,12 +190,10 @@ const generateWeddingResponse = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка в generateWeddingResponse:', error.message)
-    res
-      .status(503)
-      .json({
-        answer:
-          'Гости громко захлопали и поддержали вас. Продолжайте вашу мысль!',
-      })
+    res.status(503).json({
+      answer:
+        'Гости громко захлопали и поддержали вас. Продолжайте вашу мысль!',
+    })
   }
 }
 
@@ -235,11 +218,9 @@ const finishWeddingChallengeTrainer = async (req, res) => {
 
     const session = progress.blocksProgress?.aiWorkout?.currentSession
     if (!session || session.workoutConfigId !== 'wedding_challenge') {
-      return res
-        .status(400)
-        .json({
-          message: 'Нет активной сессии для данного тренажера',
-        })
+      return res.status(400).json({
+        message: 'Нет активной сессии для данного тренажера',
+      })
     }
 
     const meaningfulMessages = session.messages.filter(
@@ -273,29 +254,22 @@ const finishWeddingChallengeTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            {
-              role: 'system',
-              content: WEDDING_CHALLENGE_EVALUATION_PROMPT,
-            }, // Ссылка на промпт оценки свадьбы
-            {
-              role: 'user',
-              content: `Проанализируй этот праздничный тост на банкете:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: WEDDING_CHALLENGE_EVALUATION_PROMPT,
         },
-      )
+        {
+          role: 'user',
+          content: `Проанализируй этот праздничный тост на банкете:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      const aiJsonResult =
-        response.data?.choices?.[0]?.message?.content
-      if (!aiJsonResult) throw new Error('Пустая строка ответа от ИИ')
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      if (!aiText) throw new Error('Пустая строка ответа от ИИ')
 
-      evaluation = parseAiResponse(aiJsonResult, {
+      evaluation = parseAiResponse(aiText, {
         festiveStorytelling: 40,
         crowdEngagement: 40,
       })
@@ -360,11 +334,9 @@ const finishWeddingChallengeTrainer = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка финализации свадебного тренажера:', error)
-    return res
-      .status(500)
-      .json({
-        message: 'Внутренняя ошибка сервера при фиксации результатов',
-      })
+    return res.status(500).json({
+      message: 'Внутренняя ошибка сервера при фиксации результатов',
+    })
   }
 }
 

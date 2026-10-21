@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -36,12 +36,11 @@ const startInterview = async (req, res) => {
 
 const generateInterviewResponse = async (req, res) => {
   try {
-     let userMessage = null
-
+    let userMessage = null
 
     // Ищем сессию, созданную при старте дебатов
     let session = await AiExercise.findOne({
-      userId: req.userId, 
+      userId: req.userId,
       exerciseType: 'ai-interview',
       status: 'active',
     }).sort({ createdAt: -1 })
@@ -52,17 +51,21 @@ const generateInterviewResponse = async (req, res) => {
       })
     }
 
-     // Защита: извлекаем метаданные сценария напрямую из БД, не завязываясь на req.body при FormData
+    // Защита: извлекаем метаданные сценария напрямую из БД, не завязываясь на req.body при FormData
     const { role, topic, context } = session.exerciseData
 
-     // 2. Если фронтенд прислал аудиозапись — мгновенно расшифровываем быстрым методом Сбера
+    // 2. Если фронтенд прислал аудиозапись — мгновенно расшифровываем быстрым методом Сбера
     if (req.file) {
       try {
         userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('Ошибка синхронного SalutSpeech в интервью:', speechError)
+        console.error(
+          'Ошибка синхронного SalutSpeech в интервью:',
+          speechError,
+        )
         return res.status(500).json({
-          message: 'Не удалось распознать вашу речь ведущего. Пожалуйста, повторите запись.',
+          message:
+            'Не удалось распознать вашу речь ведущего. Пожалуйста, повторите запись.',
           error: speechError.message,
         })
       }
@@ -74,8 +77,13 @@ const generateInterviewResponse = async (req, res) => {
     ).length
     const isLastAttempt = attemptsCount >= 2 // Если это 3-й раз
 
-   // Обработка пустого ответа или промалчивания
-    if (!userMessage || typeof userMessage !== 'string' || !userMessage.trim() || userMessage.includes('нечего сказать')) {
+    // Обработка пустого ответа или промалчивания
+    if (
+      !userMessage ||
+      typeof userMessage !== 'string' ||
+      !userMessage.trim() ||
+      userMessage.includes('нечего сказать')
+    ) {
       session.messages.push({
         role: 'user',
         text: 'Пользователь промолчал',
@@ -97,20 +105,17 @@ const generateInterviewResponse = async (req, res) => {
     Вопрос должен быть коротким (2-4 предложения), острым, по теме.`
 
     // 4. Запрос к GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300,
-      },
-    )
 
     // Безопасное извлечение ответа GigaChat с указанием индекса [0] массива choices
-    const aiAnswer = response.data.choices?.[0]?.message?.content
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      400,
+    )
 
     if (!aiAnswer) {
-      console.error('❌ [BACK-DEBUG] GigaChat вернул пустой ответ в интервью')
+      console.error(
+        '❌ [BACK-DEBUG] GigaChat вернул пустой ответ в интервью',
+      )
       throw new Error('Empty GigaChat response')
     }
 
@@ -127,17 +132,18 @@ const generateInterviewResponse = async (req, res) => {
     await session.save()
 
     // Имитация естественной паузы раздумий ИИ-ведущего телешоу
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-    const randomDelay = Math.floor(Math.random() * (3000 - 1500 + 1)) + 1500
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
+    const randomDelay =
+      Math.floor(Math.random() * (3000 - 1500 + 1)) + 1500
     await sleep(randomDelay)
 
     // Возвращаем фронтенду результат диалога
     return res.json({
-      user_transcript: cleanUserMessage, 
+      user_transcript: cleanUserMessage,
       answer: aiAnswer.trim(),
       isInterviewFinished: isLastAttempt,
     })
-
   } catch (error) {
     console.error(
       'Ошибка при вызове GigaChat из sendUserResponse:',
@@ -240,24 +246,20 @@ const finishInterview = async (req, res) => {
 
     try {
       // Изолируем запрос к ИИ от сетевых сбросов ECONNRESET
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Проанализируй этот диалог:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Проанализируй этот диалог:\n${chatHistory}`,
         },
-      )
-      const aiJsonResult = response.data.choices[0].message.content
+      ]
+      const countTokens = 700
+
+      const aiText = await sendGigaChatRequest(messages, countTokens)
 
       // Вызываем универсальный парсер одной строкой
-      evaluation = parseAiResponse(aiJsonResult, {
+      evaluation = parseAiResponse(aiText, {
         toxicity: 30,
         diplomacy: 50,
       })

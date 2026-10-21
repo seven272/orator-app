@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -165,18 +165,13 @@ const finishStopWord = async (req, res) => {
 
     let evaluation
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
-        {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: PROMPT },
-            { role: 'user', content: userSpeechText },
-          ],
-        },
+      let aiJsonResult = await sendGigaChatRequest(
+        [
+          { role: 'system', content: PROMPT },
+          { role: 'user', content: userSpeechText },
+        ],
+        700,
       )
-
-      let aiJsonResult = response.data?.choices?.[0]?.message?.content
 
       evaluation = parseAiResponse(aiJsonResult, {
         tabooControl: 50,
@@ -194,7 +189,7 @@ const finishStopWord = async (req, res) => {
         criteria: {
           tabooControl: 50,
           vocabulary: 50,
-          speechPurity: 50, 
+          speechPurity: 50,
         },
       }
     }
@@ -216,7 +211,7 @@ const finishStopWord = async (req, res) => {
       'Анти-слова',
       isDaily,
     )
- 
+
     res
       .status(200)
       .json({ message: 'Успешно', session, ...gamificationResult })

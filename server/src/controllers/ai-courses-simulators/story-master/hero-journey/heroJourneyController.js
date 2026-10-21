@@ -1,6 +1,4 @@
-// backend/src/ai-courses-simulators/story-master/hero-journey/heroJourneyController.js
-
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -23,12 +21,9 @@ const startHeroJourneyTrainer = async (req, res) => {
       courseCode,
     })
     if (!progress) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'Прогресс по данному практическому курсу не найден',
-        })
+      return res.status(404).json({
+        message: 'Прогресс по данному практическому курсу не найден',
+      })
     }
 
     // Защита этапа обучения (ИИ-тренажеры доступны строго на Блоке 1)
@@ -83,11 +78,9 @@ const generateHeroJourneyResponse = async (req, res) => {
       !progress ||
       !progress.blocksProgress?.aiWorkout?.currentSession
     ) {
-      return res
-        .status(400)
-        .json({
-          message: 'Активная тренировка не найдена. Начните сначала.',
-        })
+      return res.status(400).json({
+        message: 'Активная тренировка не найдена. Начните сначала.',
+      })
     }
 
     const session = progress.blocksProgress.aiWorkout.currentSession
@@ -95,11 +88,9 @@ const generateHeroJourneyResponse = async (req, res) => {
       session.status !== 'active' ||
       session.workoutConfigId !== 'hero_journey'
     ) {
-      return res
-        .status(400)
-        .json({
-          message: 'Текущая сессия некорректна или уже завершена.',
-        })
+      return res.status(400).json({
+        message: 'Текущая сессия некорректна или уже завершена.',
+      })
     }
 
     const { role, topic, context } = session.exerciseData
@@ -162,16 +153,11 @@ const generateHeroJourneyResponse = async (req, res) => {
     )
 
     // Запрос к языковой модели GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer)
       throw new Error('Получен пустой ответ от нейросети')
 
@@ -201,12 +187,10 @@ const generateHeroJourneyResponse = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка в generateHeroJourneyResponse:', error)
-    res
-      .status(503)
-      .json({
-        answer:
-          'В комнате переговоров стало слишком шумно. Собеседник попросил повторить вашу мысль.',
-      })
+    res.status(503).json({
+      answer:
+        'В комнате переговоров стало слишком шумно. Собеседник попросил повторить вашу мысль.',
+    })
   }
 }
 
@@ -224,20 +208,16 @@ const finishHeroJourneyTrainer = async (req, res) => {
     ])
 
     if (!progress || !course) {
-      return res
-        .status(404)
-        .json({
-          message: 'Необходимые данные не найдены в базе данных',
-        })
+      return res.status(404).json({
+        message: 'Необходимые данные не найдены в базе данных',
+      })
     }
 
     const session = progress.blocksProgress?.aiWorkout?.currentSession
     if (!session || session.workoutConfigId !== 'hero_journey') {
-      return res
-        .status(400)
-        .json({
-          message: 'Активная сессия данного тренажера отсутствует',
-        })
+      return res.status(400).json({
+        message: 'Активная сессия данного тренажера отсутствует',
+      })
     }
 
     const meaningfulMessages = session.messages.filter(
@@ -272,30 +252,23 @@ const finishHeroJourneyTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            {
-              role: 'system',
-              content: HERO_JOURNEY_EVALUATION_PROMPT,
-            },
-            {
-              role: 'user',
-              content: `Проанализируй структуру этой истории и драматургию:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: HERO_JOURNEY_EVALUATION_PROMPT,
         },
-      )
+        {
+          role: 'user',
+          content: `Проанализируй структуру этой истории и драматургию:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      const aiJsonResult =
-        response.data?.choices?.[0]?.message?.content
-      if (!aiJsonResult)
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      if (!aiText)
         throw new Error('Получена пустая строка от экспертной модели')
 
-      evaluation = parseAiResponse(aiJsonResult, {
+      evaluation = parseAiResponse(aiText, {
         dramaturgyStructure: 40,
         emotionalHook: 40,
       })
@@ -361,11 +334,9 @@ const finishHeroJourneyTrainer = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка в finishHeroJourneyTrainer:', error)
-    return res
-      .status(500)
-      .json({
-        message: 'Внутренняя ошибка сервера при фиксации результатов',
-      })
+    return res.status(500).json({
+      message: 'Внутренняя ошибка сервера при фиксации результатов',
+    })
   }
 }
 

@@ -3,7 +3,7 @@ import AiExercise from '../../models/AiExercise.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
 import { parseAiResponse } from '../../utils/aiJsonParser.js'
 import { transcribeShortAudio } from '../../utils/speechService.js'
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 
 // 1. СТАРТ УПРАЖНЕНИЯ (Инициализация дикционной сессии)
 const startRhythmTransformer = async (req, res) => {
@@ -51,33 +51,47 @@ const generateTransformerResponse = async (req, res) => {
     }).sort({ createdAt: -1 })
 
     if (!session) {
-      return res.status(400).json({ message: 'Активная сессия не найдена.' })
+      return res
+        .status(400)
+        .json({ message: 'Активная сессия не найдена.' })
     }
 
     // Определяем текущий раунд на основе уже сделанных записей
-    const attemptsCount = session.messages.filter((m) => m.role === 'user').length
-    
+    const attemptsCount = session.messages.filter(
+      (m) => m.role === 'user',
+    ).length
+
     // Расшифровка аудио через службу Яндекса
     if (req.file) {
       try {
         userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('⚠️ [Сбой STT в Метрономе] Мягкий фоллбек активирован:', speechError.message)
-        
+        console.error(
+          '⚠️ [Сбой STT в Метрономе] Мягкий фоллбек активирован:',
+          speechError.message,
+        )
+
         // Фоллбек: если облако упало, подставляем эталонный текст текущего раунда, чтобы не ломать тест
-        if (attemptsCount === 0) userMessage = session.exerciseData.round_1
-        else if (attemptsCount === 1) userMessage = session.exerciseData.round_2
+        if (attemptsCount === 0)
+          userMessage = session.exerciseData.round_1
+        else if (attemptsCount === 1)
+          userMessage = session.exerciseData.round_2
         else userMessage = session.exerciseData.round_3
       }
     }
 
     // Защита от полного молчания
-    if (!userMessage || typeof userMessage !== 'string' || !userMessage.trim()) {
+    if (
+      !userMessage ||
+      typeof userMessage !== 'string' ||
+      !userMessage.trim()
+    ) {
       userMessage = 'Пользователь промолчал'
     }
 
     const cleanUserMessage = userMessage.trim()
-    const currentArticulation = Number(session.exerciseData.articulation) || 100
+    const currentArticulation =
+      Number(session.exerciseData.articulation) || 100
 
     // Логика продвижения по раундам и вытягивания текстов из базы
     let nextQuestion = ''
@@ -85,17 +99,26 @@ const generateTransformerResponse = async (req, res) => {
 
     if (attemptsCount === 0) {
       // Пользователь прочитал round_1. Сохраняем шаг и выдаем round_2
-      session.messages.push({ role: 'system', text: session.exerciseData.round_1 }) // Ожидалось
+      session.messages.push({
+        role: 'system',
+        text: session.exerciseData.round_1,
+      }) // Ожидалось
       session.messages.push({ role: 'user', text: cleanUserMessage }) // Прилетело
       nextQuestion = session.exerciseData.round_2
     } else if (attemptsCount === 1) {
       // Пользователь прочитал round_2. Сохраняем шаг и выдаем round_3
-      session.messages.push({ role: 'system', text: session.exerciseData.round_2 })
+      session.messages.push({
+        role: 'system',
+        text: session.exerciseData.round_2,
+      })
       session.messages.push({ role: 'user', text: cleanUserMessage })
       nextQuestion = session.exerciseData.round_3
     } else {
       // Пользователь прочитал финальный round_3. Диалог завершен
-      session.messages.push({ role: 'system', text: session.exerciseData.round_3 })
+      session.messages.push({
+        role: 'system',
+        text: session.exerciseData.round_3,
+      })
       session.messages.push({ role: 'user', text: cleanUserMessage })
       isLastAttempt = true
     }
@@ -114,11 +137,15 @@ const generateTransformerResponse = async (req, res) => {
     await session.save()
 
     // Микро-таймаут для имитации "обработки аудиопотока" на клиенте
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
     await sleep(500)
 
     res.json({
-      user_transcript: cleanUserMessage === 'Пользователь промолчал' ? null : cleanUserMessage,
+      user_transcript:
+        cleanUserMessage === 'Пользователь промолчал'
+          ? null
+          : cleanUserMessage,
       answer: nextQuestion, // Возвращаем усложненный текст следующего раунда
       articulation: newArticulation,
       isFinished: isLastAttempt,
@@ -126,12 +153,11 @@ const generateTransformerResponse = async (req, res) => {
   } catch (error) {
     console.error('Rhythm Transformer Step Error:', error.message)
     res.status(500).json({
-      answer: 'Сессия метронома прервана из-за внутренней ошибки сервера.',
+      answer:
+        'Сессия метронома прервана из-за внутренней ошибки сервера.',
     })
   }
 }
-
-
 
 const finishRhythmTransformer = async (req, res) => {
   try {
@@ -151,7 +177,9 @@ const finishRhythmTransformer = async (req, res) => {
 
     const user = await User.findById(userId)
     if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' })
+      return res
+        .status(404)
+        .json({ message: 'Пользователь не найден' })
     }
 
     // Собираем пары "Эталон — Транскрипт" для отправки в ИИ
@@ -160,13 +188,15 @@ const finishRhythmTransformer = async (req, res) => {
       const systemMsg = session.messages[i] // Эталонный текст
       const userMsg = session.messages[i + 1] // Что наговорил юзер
       if (systemMsg && userMsg) {
-        historyPairs.push(`РАУНД ${Math.floor(i/2) + 1}:\n- Эталон: "${systemMsg.text}"\n- Распознано: "${userMsg.text}"`)
+        historyPairs.push(
+          `РАУНД ${Math.floor(i / 2) + 1}:\n- Эталон: "${systemMsg.text}"\n- Распознано: "${userMsg.text}"`,
+        )
       }
     }
 
     // Если записей нет или пользователь везде молчал — завершаем с нулем
     const meaningfulUserMessages = session.messages.filter(
-      (m) => m.role === 'user' && m.text !== 'Пользователь промолчал'
+      (m) => m.role === 'user' && m.text !== 'Пользователь промолчал',
     )
 
     if (meaningfulUserMessages.length === 0) {
@@ -174,8 +204,13 @@ const finishRhythmTransformer = async (req, res) => {
       session.score = 0
       session.result = {
         totalScore: 0,
-        feedback: 'Вы не прочитали ни одной скороговорки. Прокачать дикцию в этом раунде не удалось.',
-        criteria: { phonetics: 0, rhythm_stability: 0, syllable_completeness: 0 },
+        feedback:
+          'Вы не прочитали ни одной скороговорки. Прокачать дикцию в этом раунде не удалось.',
+        criteria: {
+          phonetics: 0,
+          rhythm_stability: 0,
+          syllable_completeness: 0,
+        },
       }
       await session.save()
 
@@ -216,37 +251,40 @@ const finishRhythmTransformer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот результаты прочтения скороговорок по раундам:\n\n${historyPairs.join('\n\n')}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот результаты прочтения скороговорок по раундам:\n\n${historyPairs.join('\n\n')}`,
         },
-      )
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+
+      evaluation = parseAiResponse(aiText, {
         phonetics: 50,
         rhythm_stability: 50,
         syllable_completeness: 50,
       })
     } catch (apiError) {
-      console.error('Сбой сети GigaChat при финализации ИИ-Метронома:', apiError.message)
+      console.error(
+        'Сбой сети GigaChat при финализации ИИ-Метронома:',
+        apiError.message,
+      )
     }
 
     // Защитный фоллбек
     if (!evaluation) {
       evaluation = {
         totalScore: 50,
-        feedback: 'Аудиозапись вашего дикционного батла сохранена. Из-за временного сбоя связи ИИ-логопед не смог выдать подробный буквенный отчет. Начислен базовый балл за выносливость.',
-        criteria: { phonetics: 50, rhythm_stability: 50, syllable_completeness: 50 },
+        feedback:
+          'Аудиозапись вашего дикционного батла сохранена. Из-за временного сбоя связи ИИ-логопед не смог выдать подробный буквенный отчет. Начислен базовый балл за выносливость.',
+        criteria: {
+          phonetics: 50,
+          rhythm_stability: 50,
+          syllable_completeness: 50,
+        },
       }
     }
 
@@ -283,7 +321,8 @@ const finishRhythmTransformer = async (req, res) => {
   }
 }
 
-
-
-
-export { startRhythmTransformer, generateTransformerResponse , finishRhythmTransformer}
+export {
+  startRhythmTransformer,
+  generateTransformerResponse,
+  finishRhythmTransformer,
+}

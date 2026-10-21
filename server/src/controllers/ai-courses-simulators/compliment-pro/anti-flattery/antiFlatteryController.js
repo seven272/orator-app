@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -135,16 +135,11 @@ const generateAntiFlatteryResponse = async (req, res) => {
       cleanUserMessage,
     )
 
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer) {
       throw new Error(
         'Пустой ответ от GigaChat в тренажере Тонкая грань',
@@ -236,31 +231,24 @@ const finishAntiFlatteryTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            {
-              role: 'system',
-              content: ANTI_FLATTERY_EVALUATION_PROMPT,
-            },
-            {
-              role: 'user',
-              content: `Проанализируй этот диалог похвалы и оценки искренности:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: ANTI_FLATTERY_EVALUATION_PROMPT,
         },
-      )
+        {
+          role: 'user',
+          content: `Проанализируй этот диалог похвалы и оценки искренности:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      evaluation = parseAiResponse(
-        response.data.choices[0].message.content,
-        {
-          sincerity: 40,
-          focus: 40,
-        },
-      )
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+
+      evaluation = parseAiResponse(aiText, {
+        sincerity: 40,
+        focus: 40,
+      })
     } catch (apiError) {
       console.error(
         'Сбой сети GigaChat при оценке тренажера Тонкая грань:',

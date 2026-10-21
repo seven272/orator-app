@@ -2,8 +2,8 @@ import User from '../../models/User.js'
 import AiExercise from '../../models/AiExercise.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
 import { parseAiResponse } from '../../utils/aiJsonParser.js'
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
 import { transcribeLongAudio } from '../../utils/speechService.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 
 // 1. СТАРТ УПРАЖНЕНИЯ
 const startToastCritic = async (req, res) => {
@@ -141,16 +141,11 @@ const generateToastCriticResponse = async (req, res) => {
     ]
 
     // Запрос к GigaChat API
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: finalMessagesPayload,
-        max_tokens: 400,
-      },
-    )
 
-    const aiRawAnswer = response.data?.choices?.[0]?.message?.content
+    const aiRawAnswer = await sendGigaChatRequest(
+      finalMessagesPayload,
+      400,
+    )
 
     // Парсим маркер изменения отклика зала
     const emotionalMatch = aiRawAnswer.match(/###\s?([+-]?\d+)/)
@@ -294,23 +289,17 @@ const finishToastCritic = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот стенограмма застолья:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот стенограмма застолья:\n${chatHistory}`,
         },
-      )
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         structure_match: 50,
         humor_charisma: 50,
         no_cliches: 50,

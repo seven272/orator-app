@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -200,19 +200,13 @@ const finishRadioHost = async (req, res) => {
     let evaluation
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
-        {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: PROMPT },
-            { role: 'user', content: userSpeechText },
-          ],
-        },
+      const aiJsonResult = await sendGigaChatRequest(
+        [
+          { role: 'system', content: PROMPT },
+          { role: 'user', content: userSpeechText },
+        ],
+        700,
       )
-
-      const aiJsonResult = response.data.choices[0]?.message?.content
-      console.log('🗣️ Сырой ответ от GigaChat (Радио):', aiJsonResult)
 
       evaluation = parseAiResponse(aiJsonResult, {
         tempo: 50,
@@ -253,7 +247,7 @@ const finishRadioHost = async (req, res) => {
     // Алиас будет биндиться к категории «харизма и юмор» или «техника речи»
     const gamificationResult = await applyAiGamificationProgress(
       user,
-      evaluation.totalScore, 
+      evaluation.totalScore,
       'ai-ai-radio-host',
       'Радиоведущий',
       isDaily,

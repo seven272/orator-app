@@ -1,5 +1,4 @@
-// controllers/ai-exercises/historicalController.js
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -218,21 +217,18 @@ const finishHistoricalBattle = async (req, res) => {
     let evaluation
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: PROMPT },
-            { role: 'user', content: userSpeechText },
-          ],
+          role: 'user',
+          content: userSpeechText,
         },
-      )
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0]?.message?.content
-      console.log(
-        '🗣️ [Historical Battle] Сырой ответ от GigaChat:',
-        aiJsonResult,
+      const aiJsonResult = await sendGigaChatRequest(
+        messages,
+        countTokens,
       )
 
       let cleanedJson = aiJsonResult
@@ -296,11 +292,9 @@ const finishHistoricalBattle = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка в finishHistoricalBattle:', error)
-    res
-      .status(500)
-      .json({
-        message: 'Ошибка анализа исторической речи на сервере',
-      })
+    res.status(500).json({
+      message: 'Ошибка анализа исторической речи на сервере',
+    })
   }
 }
 

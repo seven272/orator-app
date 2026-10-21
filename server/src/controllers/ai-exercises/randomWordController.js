@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -37,7 +37,7 @@ const responseRandomWord = async (req, res) => {
   try {
     if (req.file) {
       try {
-        userMessage = await transcribeLongAudio(req.file.buffer) 
+        userMessage = await transcribeLongAudio(req.file.buffer)
       } catch (speechError) {
         console.error(
           'Ошибка распознавания в слове из шляпы:',
@@ -117,21 +117,27 @@ const finishRandomWord = async (req, res) => {
     // Загружаем профиль пользователя
     const user = await User.findById(userId)
     if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' })
+      return res
+        .status(404)
+        .json({ message: 'Пользователь не найден' })
     }
 
-    const userMessages = session.messages.filter((m) => m.role === 'user')
+    const userMessages = session.messages.filter(
+      (m) => m.role === 'user',
+    )
 
     // 2. Безопасная заглушка, если пользователь промолчал
     if (
       userMessages.length === 0 ||
-      userMessages[userMessages.length - 1].text === 'Пользователь промолчал'
+      userMessages[userMessages.length - 1].text ===
+        'Пользователь промолчал'
     ) {
       session.status = 'completed'
       session.score = 0
       session.result = {
         totalScore: 0,
-        feedback: 'Речь не была произнесена, оценка импровизации невозможна.',
+        feedback:
+          'Речь не была произнесена, оценка импровизации невозможна.',
         criteria: { integration: 0, logic: 0, charisma: 0 },
       }
       await session.save()
@@ -181,34 +187,32 @@ const finishRandomWord = async (req, res) => {
     let evaluation
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
-        {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: PROMPT },
-            { role: 'user', content: userSpeechText },
-          ],
-        },
+      const aiJsonResult = await sendGigaChatRequest(
+        [
+          { role: 'system', content: PROMPT },
+          { role: 'user', content: userSpeechText },
+        ],
+        700,
       )
 
-      let aiJsonResult = response.data?.choices?.[0]?.message?.content
-      console.log('🗣️ Сырой ответ от GigaChat (Импровизация):', aiJsonResult)
-      
       evaluation = parseAiResponse(aiJsonResult, {
         integration: 50,
         logic: 50,
         charisma: 50,
       })
     } catch (apiError) {
-      console.error('Сбой сети GigaChat в слове из шляпы:', apiError.message)
+      console.error(
+        'Сбой сети GigaChat в слове из шляпы:',
+        apiError.message,
+      )
     }
 
     // Аварийный стейт при поломке JSON-парсера
     if (!evaluation) {
       evaluation = {
         totalScore: 50,
-        feedback: 'Ваша импровизация сохранена, но ИИ сломал шляпу при парсинге. Попробуйте позже.',
+        feedback:
+          'Ваша импровизация сохранена, но ИИ сломал шляпу при парсинге. Попробуйте позже.',
         criteria: { integration: 50, logic: 50, charisma: 50 },
       }
     }
@@ -221,7 +225,7 @@ const finishRandomWord = async (req, res) => {
       feedback: evaluation.feedback,
       criteria: evaluation.criteria,
     }
-    
+
     await session.save()
 
     // Запускаем начисление опыта (алиас 'ai-random-word' должен быть в SKILLS_MAP в харизме или находчивости)
@@ -230,7 +234,7 @@ const finishRandomWord = async (req, res) => {
       evaluation.totalScore,
       'ai-random-word',
       'Слово из шляпы',
-      isDaily
+      isDaily,
     )
 
     res.status(200).json({
@@ -240,9 +244,10 @@ const finishRandomWord = async (req, res) => {
     })
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: 'Ошибка анализа речи в импровизации' })
+    res
+      .status(500)
+      .json({ message: 'Ошибка анализа речи в импровизации' })
   }
 }
-
 
 export { startRandomWord, responseRandomWord, finishRandomWord }

@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
@@ -27,7 +27,8 @@ const startNetworkingTrainer = async (req, res) => {
     // Защита: проверяем, что пользователь на этапе ИИ-тренажера (индекс 1)
     if (progress.currentBlockIndex !== 1) {
       return res.status(400).json({
-        message: 'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
+        message:
+          'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
       })
     }
 
@@ -46,7 +47,9 @@ const startNetworkingTrainer = async (req, res) => {
     progress.markModified('blocksProgress.aiWorkout')
     await progress.save()
 
-    return res.status(201).json({ preview, question, progressData: progress })
+    return res
+      .status(201)
+      .json({ preview, question, progressData: progress })
   } catch (error) {
     console.error('Error in startNetworkingTrainer:', error)
     res.status(500).json({
@@ -72,7 +75,8 @@ const generateNetworkingResponse = async (req, res) => {
       !progress.blocksProgress?.aiWorkout?.currentSession
     ) {
       return res.status(400).json({
-        message: 'Активная сессия тренажера не найдена. Начните сначала.',
+        message:
+          'Активная сессия тренажера не найдена. Начните сначала.',
       })
     }
 
@@ -90,13 +94,20 @@ const generateNetworkingResponse = async (req, res) => {
       try {
         console.log('--- ДАННЫЕ ИЗ REQ.FILE (MULTER) ---')
         console.log('Имя поля (fieldname):', req.file.fieldname)
-        console.log('MIME-тип от фронта (mimetype):', req.file.mimetype)
+        console.log(
+          'MIME-тип от фронта (mimetype):',
+          req.file.mimetype,
+        )
         console.log('-----------------------------------')
         userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('Ошибка Yandex SpeechKit в нетворкинге:', speechError)
+        console.error(
+          'Ошибка Yandex SpeechKit в нетворкинге:',
+          speechError,
+        )
         return res.status(500).json({
-          message: 'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
+          message:
+            'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
           error: speechError.message,
         })
       }
@@ -106,7 +117,9 @@ const generateNetworkingResponse = async (req, res) => {
         .json({ message: 'Аудиофайл ответа не был передан.' })
     }
 
-    const attemptsCount = session.messages.filter((m) => m.role === 'user').length
+    const attemptsCount = session.messages.filter(
+      (m) => m.role === 'user',
+    ).length
     const isSessionFinished = attemptsCount >= 2 // Конец диалога на 3-й раз
 
     // Обработка промалчивания / пустого распознавания
@@ -120,13 +133,16 @@ const generateNetworkingResponse = async (req, res) => {
         text: 'Пользователь промолчал',
       })
 
-      progress.markModified('blocksProgress.aiWorkout.currentSession.messages')
+      progress.markModified(
+        'blocksProgress.aiWorkout.currentSession.messages',
+      )
       progress.markModified('blocksProgress.aiWorkout.currentSession')
       progress.markModified('blocksProgress.aiWorkout')
       await progress.save()
 
       return res.status(200).json({
-        answer: 'Вы ничего не сказали. Собеседник ждет вашего ответа.',
+        answer:
+          'Вы ничего не сказали. Собеседник ждет вашего ответа.',
         isSessionFinished,
         isError: true,
         progressData: progress,
@@ -134,21 +150,23 @@ const generateNetworkingResponse = async (req, res) => {
     }
 
     const cleanUserMessage = userMessage.trim()
-    const PROMPT = getNetworkingDialogPrompt(role, topic, context, cleanUserMessage)
-
-    // Запрос к GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 300,
-      },
+    const PROMPT = getNetworkingDialogPrompt(
+      role,
+      topic,
+      context,
+      cleanUserMessage,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
+    // Запрос к GigaChat
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
+    )
+
     if (!aiAnswer) {
-      throw new Error('Пустой ответ от GigaChat в тренажере нетворкинга')
+      throw new Error(
+        'Пустой ответ от GigaChat в тренажере нетворкинга',
+      )
     }
 
     session.messages.push({ role: 'user', text: cleanUserMessage })
@@ -157,14 +175,17 @@ const generateNetworkingResponse = async (req, res) => {
       text: aiAnswer.trim(),
     })
 
-    progress.markModified('blocksProgress.aiWorkout.currentSession.messages')
+    progress.markModified(
+      'blocksProgress.aiWorkout.currentSession.messages',
+    )
     progress.markModified('blocksProgress.aiWorkout.currentSession')
     progress.markModified('blocksProgress.aiWorkout')
 
     await progress.save()
 
     // Имитация естественной паузы
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
     await sleep(Math.floor(Math.random() * 1500) + 1500)
 
     return res.json({
@@ -174,13 +195,16 @@ const generateNetworkingResponse = async (req, res) => {
       progressData: progress,
     })
   } catch (error) {
-    console.error('Ошибка в generateNetworkingResponse:', error.message)
+    console.error(
+      'Ошибка в generateNetworkingResponse:',
+      error.message,
+    )
     res.status(503).json({
-      answer: 'Собеседника кто-то окликнул в толпе. Пожалуйста, повторите фразу.',
+      answer:
+        'Собеседника кто-то окликнул в толпе. Пожалуйста, повторите фразу.',
     })
   }
 }
-
 
 const finishNetworkingTrainer = async (req, res) => {
   try {
@@ -193,7 +217,9 @@ const finishNetworkingTrainer = async (req, res) => {
     ])
 
     if (!progress || !course) {
-      return res.status(404).json({ message: 'Необходимые данные не найдены' })
+      return res
+        .status(404)
+        .json({ message: 'Необходимые данные не найдены' })
     }
 
     if (
@@ -201,7 +227,8 @@ const finishNetworkingTrainer = async (req, res) => {
       !progress.blocksProgress?.aiWorkout?.currentSession
     ) {
       return res.status(400).json({
-        message: 'Нет активной сессии тренажера или данный блок недоступен',
+        message:
+          'Нет активной сессии тренажера или данный блок недоступен',
       })
     }
 
@@ -218,54 +245,66 @@ const finishNetworkingTrainer = async (req, res) => {
       await progress.save()
 
       return res.status(200).json({
-        message: 'Тренажер завершен без оценки из-за отсутствия содержательных ответов',
+        message:
+          'Тренажер завершен без оценки из-за отсутствия содержательных ответов',
         totalScore: 0,
-        feedback: 'Вы пропустили диалог. Собеседник извинился и отошел к другому стенду.',
+        feedback:
+          'Вы пропустили диалог. Собеседник извинился и отошел к другому стенду.',
         progressData: progress,
       })
     }
 
     const chatHistory = session.messages
-      .map((m) => `${m.role === 'user' ? 'Эксперт' : 'Собеседник'}: ${m.text}`)
+      .map(
+        (m) =>
+          `${m.role === 'user' ? 'Эксперт' : 'Собеседник'}: ${m.text}`,
+      )
       .join('\n')
 
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: NETWORKING_EVALUATION_PROMPT },
-            { role: 'user', content: `Проанализируй это бизнес-знакомство:\n${chatHistory}` },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: NETWORKING_EVALUATION_PROMPT,
         },
-      )
+        {
+          role: 'user',
+          content: `Проанализируй это бизнес-знакомство:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         positioning: 40,
         callToAction: 40,
       })
     } catch (apiError) {
-      console.error('Сбой сети GigaChat при оценке нетворкинга:', apiError.message)
+      console.error(
+        'Сбой сети GigaChat при оценке нетворкинга:',
+        apiError.message,
+      )
     }
 
     if (!evaluation) {
       evaluation = {
         totalScore: 50,
-        feedback: 'Ваше знакомство состоялось. Из-за технических неполадок подробный отчет недоступен.',
+        feedback:
+          'Ваше знакомство состоялось. Из-за технических неполадок подробный отчет недоступен.',
         criteria: { positioning: 50, callToAction: 50 },
       }
     }
 
-    const aiBlockConfig = course.blocks.find((block) => block.blockType === 'ai_workout')
-    const requiredScore = aiBlockConfig?.aiWorkoutConfig?.requiredScore || 1000
+    const aiBlockConfig = course.blocks.find(
+      (block) => block.blockType === 'ai_workout',
+    )
+    const requiredScore =
+      aiBlockConfig?.aiWorkoutConfig?.requiredScore || 1000
 
     progress.blocksProgress.aiWorkout.sessionsCount += 1
-     // 🔥 ФЛАГ ДЛЯ ФРОНТЕНДА: пошли ли баллы в зачёт общего прогресса блока
+    // 🔥 ФЛАГ ДЛЯ ФРОНТЕНДА: пошли ли баллы в зачёт общего прогресса блока
     let isScoreCounted = false
 
     if (evaluation.totalScore >= 65) {
@@ -275,8 +314,10 @@ const finishNetworkingTrainer = async (req, res) => {
       isScoreCounted = true
     }
 
-
-    if (progress.blocksProgress.aiWorkout.accumulatedScore >= requiredScore) {
+    if (
+      progress.blocksProgress.aiWorkout.accumulatedScore >=
+      requiredScore
+    ) {
       progress.blocksProgress.aiWorkout.isCompleted = true
       progress.currentBlockIndex = 2 // Переход на IRL
     } else {
@@ -296,13 +337,14 @@ const finishNetworkingTrainer = async (req, res) => {
         totalScore: evaluation.totalScore,
         feedback: evaluation.feedback,
         criteria: evaluation.criteria,
-        isScoreCounted
+        isScoreCounted,
       },
     })
   } catch (error) {
     console.error('Ошибка финализации нетворкинга:', error)
     return res.status(500).json({
-      message: 'Внутренняя ошибка сервера при фиксации результатов тренажера',
+      message:
+        'Внутренняя ошибка сервера при фиксации результатов тренажера',
     })
   }
 }

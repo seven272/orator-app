@@ -1,9 +1,9 @@
 import User from '../../models/User.js'
 import AiExercise from '../../models/AiExercise.js'
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
 import { transcribeShortAudio } from '../../utils/speechService.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
 import { parseAiResponse } from '../../utils/aiJsonParser.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 
 // 1. СТАРТ УПРАЖНЕНИЯ
 const startCommercialPitch = async (req, res) => {
@@ -12,7 +12,7 @@ const startCommercialPitch = async (req, res) => {
     const { exerciseData } = req.body // Прилетает выбранный бытовой предмет из pitchScenarios.js
 
     // Формируем вводный контекст для экрана
-    const preview = `Предмет для презентации: "${exerciseData.situation}". \nЛегенда стартапа: ${exerciseData.legend} \nСкепсис Эдуарда: ${exerciseData.prosecutor_focus}`;
+    const preview = `Предмет для презентации: "${exerciseData.situation}". \nЛегенда стартапа: ${exerciseData.legend} \nСкепсис Эдуарда: ${exerciseData.prosecutor_focus}`
 
     // Стартовая язвительная реплика Эдуарда
     const question = exerciseData.init_phrase
@@ -53,7 +53,9 @@ const generatePitchResponse = async (req, res) => {
     }).sort({ createdAt: -1 })
 
     if (!session) {
-      return res.status(400).json({ message: 'Активная сессия не найдена.' })
+      return res
+        .status(400)
+        .json({ message: 'Активная сессия не найдена.' })
     }
 
     // 🛡️ Защита 1: Расшифровка аудио через службу SalutSpeech с мягким фоллбеком
@@ -61,14 +63,19 @@ const generatePitchResponse = async (req, res) => {
       try {
         userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('⚠️ [Сбой инфраструктуры речи] Фоллбек для Инвестора активирован:', speechError.message)
+        console.error(
+          '⚠️ [Сбой инфраструктуры речи] Фоллбек для Инвестора активирован:',
+          speechError.message,
+        )
         // Если Яндекс недоступен, симулируем уверенный питч с базовыми триггерами (УТП, Боль, Цифры)
         userMessage = `Эдуард, наш стартап на базе продукта "${session.exerciseData.situation}" решает главную боль миллионов пользователей. Наше УТП — это 200% экономия времени и полная автоматизация процесса. Рынок оценивается в миллиард долларов, и мы заберем 10% уже в первый год. Предлагаю вам долю за инвестиции.`
       }
     }
 
     // Считаем раунды (TOTAL_ROUNDS = 3)
-    const attemptsCount = session.messages.filter((m) => m.role === 'user').length
+    const attemptsCount = session.messages.filter(
+      (m) => m.role === 'user',
+    ).length
     const isLastAttempt = attemptsCount >= 2
 
     // Обработка молчания пользователя
@@ -85,7 +92,8 @@ const generatePitchResponse = async (req, res) => {
       await session.save()
 
       return res.status(200).json({
-        answer: 'Ну и чего ты молчишь? Время — деньги, парень. Моя минута стоит дороже твоего стартапа. Говори суть, или охрана выведет тебя!',
+        answer:
+          'Ну и чего ты молчишь? Время — деньги, парень. Моя минута стоит дороже твоего стартапа. Говори суть, или охрана выведет тебя!',
         isFinished: isLastAttempt,
         interest: session.exerciseData.interest,
         isError: true,
@@ -93,7 +101,8 @@ const generatePitchResponse = async (req, res) => {
     }
 
     const cleanUserMessage = userMessage.trim()
-    const currentInterest = Number(session.exerciseData.interest) || 50
+    const currentInterest =
+      Number(session.exerciseData.interest) || 50
 
     // Формируем жесткий системный промпт для циничного инвестора Эдуарда
     const PROMPT = `Ты — циничный, прагматичный венчурный инвестор Эдуард. Ты акула бизнеса и ценишь только выгоду, цифры, маржинальность и четкую структуру. Ты слушаешь Elevator Pitch стартапа в реальном времени.
@@ -124,7 +133,7 @@ const generatePitchResponse = async (req, res) => {
 Пользователь только что сказал: "${cleanUserMessage}". Ответь ему в роли Эдуарда.
 
 В САМОМ КОНЦЕ ответа строго добавь маркер изменения твоего интереса: ###+число или ###-число (от -15 до +15 в зависимости от убедительности маркетинга пользователя).
-Пример идеального ответа: "Цифры сходятся, но как вы собираетесь решать проблему с логистикой в регионах? Объясните мне это. ###+10"`;
+Пример идеального ответа: "Цифры сходятся, но как вы собираетесь решать проблему с логистикой в регионах? Объясните мне это. ###+10"`
 
     const finalMessagesPayload = [
       { role: 'system', content: PROMPT },
@@ -138,27 +147,33 @@ const generatePitchResponse = async (req, res) => {
 
     // 🛡️ Защита 2: Мягкий фоллбек на случай сбоя сети GigaChat API (500 Error)
     try {
-      const response = await gigachatAxiosClient.post('/chat/completions', {
-        model: 'GigaChat-2',
-        messages: finalMessagesPayload,
-        max_tokens: 400,
-      })
-      aiRawAnswer = response.data?.choices?.[0]?.message?.content
+      aiRawAnswer = await sendGigaChatRequest(
+        finalMessagesPayload,
+        400,
+      )
     } catch (gigaError) {
-      console.error('⚠️ [Сбой сети GigaChat] Локальный фоллбек для Инвестора активирован:', gigaError.message)
+      console.error(
+        '⚠️ [Сбой сети GigaChat] Локальный фоллбек для Инвестора активирован:',
+        gigaError.message,
+      )
       // Генерируем реплику Эдуарда локально в зависимости от текущего стейта
       if (currentInterest < 40) {
-        aiRawAnswer = 'Слушай, это какая-то детская сказка, а не бизнес. Я не вижу здесь маржи. Покажи мне реальные боли клиентов или уходи. ###-10'
+        aiRawAnswer =
+          'Слушай, это какая-то детская сказка, а не бизнес. Я не вижу здесь маржи. Покажи мне реальные боли клиентов или уходи. ###-10'
       } else if (currentInterest > 70) {
-        aiRawAnswer = 'А вот это уже пахнет хорошими иксами. С цифрами ты работать умеешь. Каковы ваши планы по выходу на международный рынок? ###+12'
+        aiRawAnswer =
+          'А вот это уже пахнет хорошими иксами. С цифрами ты работать умеешь. Каковы ваши планы по выходу на международный рынок? ###+12'
       } else {
-        aiRawAnswer = 'Звучит неплохо, но УТП пока слабовато. Чем вы лучше китайских аналогов, которые скопируют вас за неделю? ###+5'
+        aiRawAnswer =
+          'Звучит неплохо, но УТП пока слабовато. Чем вы лучше китайских аналогов, которые скопируют вас за неделю? ###+5'
       }
     }
 
     // Парсим маркер изменения интереса инвестора (###+10 или ###-5)
     const interestMatch = aiRawAnswer.match(/###\s?([+-]?\d+)/)
-    const interestChange = interestMatch ? parseInt(interestMatch[1], 10) : 0
+    const interestChange = interestMatch
+      ? parseInt(interestMatch[1], 10)
+      : 0
 
     let cleanAnswer = aiRawAnswer.replace(/###\s?[+-]?\d+/, '').trim()
 
@@ -180,7 +195,8 @@ const generatePitchResponse = async (req, res) => {
     await session.save()
 
     // Небольшой тайм-аут для имитации мышления ИИ
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
     await sleep(600)
 
     res.json({
@@ -192,7 +208,8 @@ const generatePitchResponse = async (req, res) => {
   } catch (error) {
     console.error('Commercial Pitch Controller Error:', error.message)
     res.status(500).json({
-      answer: 'Инвестор прервал встречу из-за срочного звонка по другому проекту. (Ошибка сервера)',
+      answer:
+        'Инвестор прервал встречу из-за срочного звонка по другому проекту. (Ошибка сервера)',
     })
   }
 }
@@ -215,7 +232,9 @@ const finishCommercialPitch = async (req, res) => {
 
     const user = await User.findById(userId)
     if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' })
+      return res
+        .status(404)
+        .json({ message: 'Пользователь не найден' })
     }
 
     // Фильтруем пустые или безответные раунды
@@ -229,7 +248,8 @@ const finishCommercialPitch = async (req, res) => {
       session.score = 0
       session.result = {
         totalScore: 0,
-        feedback: 'Вы практически ничего не ответили инвестору. Презентовать стартап и привлечь финансирование не удалось.',
+        feedback:
+          'Вы практически ничего не ответили инвестору. Презентовать стартап и привлечь финансирование не удалось.',
         criteria: { pain_match: 0, usp_clarity: 0, cta_structure: 0 },
       }
       await session.save()
@@ -248,7 +268,10 @@ const finishCommercialPitch = async (req, res) => {
 
     // Собираем стенограмму встречи
     const chatHistory = session.messages
-      .map((m) => `${m.role === 'user' ? 'Предприниматель' : 'Инвестор Эдуард'}: ${m.text}`)
+      .map(
+        (m) =>
+          `${m.role === 'user' ? 'Предприниматель' : 'Инвестор Эдуард'}: ${m.text}`,
+      )
       .join('\n')
 
     // Оценочный промпт венчурного аналитика
@@ -273,37 +296,39 @@ const finishCommercialPitch = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот протокол питч-сессии:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот протокол питч-сессии:\n${chatHistory}`,
         },
-      )
+      ]
+      const countTokens = 700
+      const aiText = await sendGigaChatRequest(messages, countTokens)
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      evaluation = parseAiResponse(aiText, {
         pain_match: 50,
         usp_clarity: 50,
         cta_structure: 50,
       })
     } catch (apiError) {
-      console.error('Сбой сети GigaChat при финализации Питча:', apiError.message)
+      console.error(
+        'Сбой сети GigaChat при финализации Питча:',
+        apiError.message,
+      )
     }
 
     // Локальный фоллбек-безопасник, если сеть упала
     if (!evaluation) {
       evaluation = {
         totalScore: 50,
-        feedback: 'Ваша презентация сохранена на слайдах, но ИИ-аналитик не смог сформировать инвестиционный отчет из-за сбоя связи. Начислен базовый балл.',
-        criteria: { pain_match: 50, usp_clarity: 50, cta_structure: 50 },
+        feedback:
+          'Ваша презентация сохранена на слайдах, но ИИ-аналитик не смог сформировать инвестиционный отчет из-за сбоя связи. Начислен базовый балл.',
+        criteria: {
+          pain_match: 50,
+          usp_clarity: 50,
+          cta_structure: 50,
+        },
       }
     }
 
@@ -335,9 +360,14 @@ const finishCommercialPitch = async (req, res) => {
   } catch (error) {
     console.error('Ошибка финализации Питча:', error)
     res.status(500).json({
-      message: 'Не удалось завершить упражнение Суровый Инвестор Эдуард',
+      message:
+        'Не удалось завершить упражнение Суровый Инвестор Эдуард',
     })
   }
 }
 
-export { startCommercialPitch, generatePitchResponse, finishCommercialPitch }
+export {
+  startCommercialPitch,
+  generatePitchResponse,
+  finishCommercialPitch,
+}

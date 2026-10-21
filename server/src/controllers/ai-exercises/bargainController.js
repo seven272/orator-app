@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -144,17 +144,11 @@ const generateBargainResponse = async (req, res) => {
       })),
     ]
 
-    // Запрос к GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: finalMessagesPayload,
-        max_tokens: 400,
-      },
+    // Запрос к GigaCha
+    const aiRawAnswer = await sendGigaChatRequest(
+      finalMessagesPayload,
+      400,
     )
-
-    const aiRawAnswer = response.data?.choices?.[0]?.message?.content
 
     // Парсим сумму, на которую ИИ снизил цену (###-50000)
     const priceMatch = aiRawAnswer.match(/###\s?-\s?(\d+)/)
@@ -292,23 +286,17 @@ const finishBargain = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот протокол коммерческого торга:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот протокол коммерческого торга:\n${chatHistory}`,
         },
-      )
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         benefits: 50,
         flexibility: 50,
         manipulation: 50,

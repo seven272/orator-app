@@ -1,11 +1,12 @@
-// ai-courses-simulators/party-charisma/vip-afterparty/vipAfterpartyController.js
-
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
 import { transcribeShortAudio } from '../../../../utils/speechService.js'
-import { getVipAfterpartyDialogPrompt, VIP_AFTERPARTY_EVALUATION_PROMPT } from './vipAfterpartyPrompt.js'
+import {
+  getVipAfterpartyDialogPrompt,
+  VIP_AFTERPARTY_EVALUATION_PROMPT,
+} from './vipAfterpartyPrompt.js'
 
 /**
  * 1. СТАРТ ТРЕНАЖЕРА (Инициализация встречи на афтерпати)
@@ -15,14 +16,20 @@ const startVipAfterpartyTrainer = async (req, res) => {
     const userId = req.userId
     const { courseCode, exerciseData } = req.body
 
-    const progress = await UserCourseProgress.findOne({ userId, courseCode })
+    const progress = await UserCourseProgress.findOne({
+      userId,
+      courseCode,
+    })
     if (!progress) {
-      return res.status(404).json({ message: 'Прогресс по данному интенсиву не найден' })
+      return res
+        .status(404)
+        .json({ message: 'Прогресс по данному интенсиву не найден' })
     }
 
     if (progress.currentBlockIndex !== 1) {
       return res.status(400).json({
-        message: 'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
+        message:
+          'Вы не можете пройти ИИ-тренажер на текущем этапе курса',
       })
     }
 
@@ -41,7 +48,9 @@ const startVipAfterpartyTrainer = async (req, res) => {
     progress.markModified('blocksProgress.aiWorkout')
     await progress.save()
 
-    return res.status(201).json({ preview, question, progressData: progress })
+    return res
+      .status(201)
+      .json({ preview, question, progressData: progress })
   } catch (error) {
     console.error('Error in startVipAfterpartyTrainer:', error)
     res.status(500).json({
@@ -60,14 +69,27 @@ const generateVipAfterpartyResponse = async (req, res) => {
     const { courseCode } = req.body
     let userMessage = null
 
-    const progress = await UserCourseProgress.findOne({ userId, courseCode })
-    if (!progress || !progress.blocksProgress?.aiWorkout?.currentSession) {
-      return res.status(400).json({ message: 'Активная сессия не найдена. Начните сначала.' })
+    const progress = await UserCourseProgress.findOne({
+      userId,
+      courseCode,
+    })
+    if (
+      !progress ||
+      !progress.blocksProgress?.aiWorkout?.currentSession
+    ) {
+      return res.status(400).json({
+        message: 'Активная сессия не найдена. Начните сначала.',
+      })
     }
 
     const session = progress.blocksProgress.aiWorkout.currentSession
-    if (session.status !== 'active' || session.workoutConfigId !== 'vip_afterparty') {
-      return res.status(400).json({ message: 'Эта сессия некорректна или уже завершена.' })
+    if (
+      session.status !== 'active' ||
+      session.workoutConfigId !== 'vip_afterparty'
+    ) {
+      return res.status(400).json({
+        message: 'Эта сессия некорректна или уже завершена.',
+      })
     }
 
     const { role, topic, context } = session.exerciseData
@@ -76,33 +98,50 @@ const generateVipAfterpartyResponse = async (req, res) => {
       try {
         console.log('--- ДАННЫЕ ИЗ REQ.FILE (MULTER) ---')
         console.log('Имя поля (fieldname):', req.file.fieldname)
-        console.log('MIME-тип от фронта (mimetype):', req.file.mimetype)
+        console.log(
+          'MIME-тип от фронта (mimetype):',
+          req.file.mimetype,
+        )
         console.log('-----------------------------------')
         userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('Ошибка Yandex SpeechKit в vip_afterparty:', speechError)
+        console.error(
+          'Ошибка Yandex SpeechKit в vip_afterparty:',
+          speechError,
+        )
         return res.status(500).json({
-          message: 'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
+          message:
+            'Не удалось распознать вашу речь. Пожалуйста, повторите запись.',
           error: speechError.message,
         })
       }
     } else {
-      return res.status(400).json({ message: 'Аудиофайл ответа не был передан.' })
+      return res
+        .status(400)
+        .json({ message: 'Аудиофайл ответа не был передан.' })
     }
 
-    const attemptsCount = session.messages.filter((m) => m.role === 'user').length
+    const attemptsCount = session.messages.filter(
+      (m) => m.role === 'user',
+    ).length
     const isSessionFinished = attemptsCount >= 2 // Конец интервью на 3-й раз (0, 1, 2)
 
     if (!userMessage || !userMessage.trim()) {
-      session.messages.push({ role: 'user', text: 'Пользователь промолчал' })
+      session.messages.push({
+        role: 'user',
+        text: 'Пользователь промолчал',
+      })
 
-      progress.markModified('blocksProgress.aiWorkout.currentSession.messages')
+      progress.markModified(
+        'blocksProgress.aiWorkout.currentSession.messages',
+      )
       progress.markModified('blocksProgress.aiWorkout.currentSession')
       progress.markModified('blocksProgress.aiWorkout')
       await progress.save()
 
       return res.status(200).json({
-        answer: 'Вы ничего не сказали. VIP-собеседник спокойно ждет от вас содержательного ответа.',
+        answer:
+          'Вы ничего не сказали. VIP-собеседник спокойно ждет от вас содержательного ответа.',
         isSessionFinished,
         isError: true,
         progressData: progress,
@@ -110,26 +149,36 @@ const generateVipAfterpartyResponse = async (req, res) => {
     }
 
     const cleanUserMessage = userMessage.trim()
-    const PROMPT = getVipAfterpartyDialogPrompt(role, topic, context, cleanUserMessage)
+    const PROMPT = getVipAfterpartyDialogPrompt(
+      role,
+      topic,
+      context,
+      cleanUserMessage,
+    )
 
-    const response = await gigachatAxiosClient.post('/chat/completions', {
-      model: 'GigaChat-2',
-      messages: [{ role: 'user', content: PROMPT }],
-      max_tokens: 350,
-    })
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
+    )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer) throw new Error('Пустой ответ от GigaChat')
 
     session.messages.push({ role: 'user', text: cleanUserMessage })
-    session.messages.push({ role: 'assistant', text: aiAnswer.trim() })
+    session.messages.push({
+      role: 'assistant',
+      text: aiAnswer.trim(),
+    })
 
-    progress.markModified('blocksProgress.aiWorkout.currentSession.messages')
+    progress.markModified(
+      'blocksProgress.aiWorkout.currentSession.messages',
+    )
     progress.markModified('blocksProgress.aiWorkout.currentSession')
     progress.markModified('blocksProgress.aiWorkout')
     await progress.save()
 
-    await new Promise((resolve) => setTimeout(resolve, Math.floor(Math.random() * 1000) + 1000))
+    await new Promise((resolve) =>
+      setTimeout(resolve, Math.floor(Math.random() * 1000) + 1000),
+    )
 
     return res.json({
       user_transcript: cleanUserMessage,
@@ -139,7 +188,10 @@ const generateVipAfterpartyResponse = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка в generateVipAfterpartyResponse:', error)
-    res.status(503).json({ answer: 'Собеседника кто-то окликнул. Пожалуйста, повторите вашу мысль.' })
+    res.status(503).json({
+      answer:
+        'Собеседника кто-то окликнул. Пожалуйста, повторите вашу мысль.',
+    })
   }
 }
 
@@ -157,16 +209,20 @@ const finishVipAfterpartyTrainer = async (req, res) => {
     ])
 
     if (!progress || !course) {
-      return res.status(404).json({ message: 'Данные не найдены в БД' })
+      return res
+        .status(404)
+        .json({ message: 'Данные не найдены в БД' })
     }
 
     const session = progress.blocksProgress?.aiWorkout?.currentSession
     if (!session || session.workoutConfigId !== 'vip_afterparty') {
-      return res.status(400).json({ message: 'Активная сессия тренажера отсутствует' })
+      return res
+        .status(400)
+        .json({ message: 'Активная сессия тренажера отсутствует' })
     }
 
     const meaningfulMessages = session.messages.filter(
-      (m) => m.role === 'user' && m.text !== 'Пользователь промолчал'
+      (m) => m.role === 'user' && m.text !== 'Пользователь промолчал',
     )
 
     if (meaningfulMessages.length < 2) {
@@ -179,51 +235,65 @@ const finishVipAfterpartyTrainer = async (req, res) => {
       return res.status(200).json({
         message: 'Интервью завершено без оценки.',
         totalScore: 0,
-        feedback: 'Диалог не склеился из-за долгих пауз. Собеседник извинился и отошел к другой VIP-группе.',
+        feedback:
+          'Диалог не склеился из-за долгих пауз. Собеседник извинился и отошел к другой VIP-группе.',
         progressData: progress,
       })
     }
 
     const chatHistory = session.messages
-      .map((m) => `${m.role === 'user' ? 'Пользователь' : 'VIP-Собеседник'}: ${m.text}`)
+      .map(
+        (m) =>
+          `${m.role === 'user' ? 'Пользователь' : 'VIP-Собеседник'}: ${m.text}`,
+      )
       .join('\n')
 
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post('/chat/completions', {
-        model: 'GigaChat-2',
-        messages: [
-          { role: 'system', content: VIP_AFTERPARTY_EVALUATION_PROMPT },
-          { role: 'user', content: `Проанализируй это неформальное вип-знакомство:\n${chatHistory}` },
-        ],
-        max_tokens: 700,
-      })
+      const messages = [
+        {
+          role: 'system',
+          content: VIP_AFTERPARTY_EVALUATION_PROMPT,
+        },
+        {
+          role: 'user',
+          content: `Проанализируй это неформальное вип-знакомство:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data?.choices?.[0]?.message?.content
-      if (!aiJsonResult) throw new Error('Пустая строка от ИИ')
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      if (!aiText) throw new Error('Пустая строка от ИИ')
 
-      evaluation = parseAiResponse(aiJsonResult, {
+      evaluation = parseAiResponse(aiText, {
         charismaStatus: 40,
         ecologicalExit: 40,
       })
     } catch (apiError) {
-      console.error('Сбой GigaChat при оценке vip_afterparty:', apiError.message)
+      console.error(
+        'Сбой GigaChat при оценке vip_afterparty:',
+        apiError.message,
+      )
     }
 
     if (!evaluation) {
       evaluation = {
         totalScore: 50,
-        feedback: 'Ваш разговор окончен. Из-за технических неполадок подробный отчет временно недоступен.',
+        feedback:
+          'Ваш разговор окончен. Из-за технических неполадок подробный отчет временно недоступен.',
         criteria: { charismaStatus: 50, ecologicalExit: 50 },
       }
     }
 
-    const aiBlockConfig = course.blocks.find((b) => b.blockType === 'ai_workout')
-    const globalRequiredScore = aiBlockConfig?.aiWorkoutConfig?.requiredScore || 1000
+    const aiBlockConfig = course.blocks.find(
+      (b) => b.blockType === 'ai_workout',
+    )
+    const globalRequiredScore =
+      aiBlockConfig?.aiWorkoutConfig?.requiredScore || 1000
 
     progress.blocksProgress.aiWorkout.sessionsCount += 1
-     // 🔥 ФЛАГ ДЛЯ ФРОНТЕНДА: пошли ли баллы в зачёт общего прогресса блока
+    // 🔥 ФЛАГ ДЛЯ ФРОНТЕНДА: пошли ли баллы в зачёт общего прогресса блока
     let isScoreCounted = false
 
     if (evaluation.totalScore >= 65) {
@@ -233,8 +303,10 @@ const finishVipAfterpartyTrainer = async (req, res) => {
       isScoreCounted = true
     }
 
-
-    if (progress.blocksProgress.aiWorkout.accumulatedScore >= globalRequiredScore) {
+    if (
+      progress.blocksProgress.aiWorkout.accumulatedScore >=
+      globalRequiredScore
+    ) {
       progress.blocksProgress.aiWorkout.isCompleted = true
       progress.currentBlockIndex = 2 // Авто-переход на Блок 3: IRL-челлендж
     } else {
@@ -254,12 +326,14 @@ const finishVipAfterpartyTrainer = async (req, res) => {
         totalScore: evaluation.totalScore,
         feedback: evaluation.feedback,
         criteria: evaluation.criteria,
-        isScoreCounted
+        isScoreCounted,
       },
     })
   } catch (error) {
     console.error('Ошибка в finishVipAfterpartyTrainer:', error)
-    return res.status(500).json({ message: 'Внутренняя ошибка сервера при фиксации результатов' })
+    return res.status(500).json({
+      message: 'Внутренняя ошибка сервера при фиксации результатов',
+    })
   }
 }
 

@@ -2,8 +2,8 @@ import User from '../../models/User.js'
 import AiExercise from '../../models/AiExercise.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
 import { parseAiResponse } from '../../utils/aiJsonParser.js'
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
 import { transcribeShortAudio } from '../../utils/speechService.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 
 // 1. СТАРТ УПРАЖНЕНИЯ
 const startEmpathySpark = async (req, res) => {
@@ -12,7 +12,7 @@ const startEmpathySpark = async (req, res) => {
     const { exerciseData } = req.body // Прилетает выбранный сценарий из empathyScenarios.js
 
     // Формируем вводный контекст для экрана
-    const preview = `Ситуация: "${exerciseData.situation}". \nКонтекст: ${exerciseData.event} \nТекущее состояние человека: ${exerciseData.target_emotion}`;
+    const preview = `Ситуация: "${exerciseData.situation}". \nКонтекст: ${exerciseData.event} \nТекущее состояние человека: ${exerciseData.target_emotion}`
 
     // Первое эмоциональное высказывание человека из сценария
     const question = exerciseData.init_phrase
@@ -53,7 +53,9 @@ const generateEmpathyResponse = async (req, res) => {
     }).sort({ createdAt: -1 })
 
     if (!session) {
-      return res.status(400).json({ message: 'Активная сессия не найдена.' })
+      return res
+        .status(400)
+        .json({ message: 'Активная сессия не найдена.' })
     }
 
     // Расшифровка аудио через службу распознавания речи
@@ -61,15 +63,20 @@ const generateEmpathyResponse = async (req, res) => {
       try {
         userMessage = await transcribeShortAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('⚠️ [Сбой инфраструктуры речи] Мягкий фоллбек активирован:', speechError.message)
-        
+        console.error(
+          '⚠️ [Сбой инфраструктуры речи] Мягкий фоллбек активирован:',
+          speechError.message,
+        )
+
         // Фоллбек-заглушка на случай технических сбоев STT
         userMessage = `Я очень хорошо тебя понимаю, мне безумно жаль, что так вышло. Это действительно тяжелый момент, но я рядом с тобой. Расскажи подробнее, что ты чувствуешь?`
       }
     }
 
     // Считаем раунды (TOTAL_ROUNDS = 3)
-    const attemptsCount = session.messages.filter((m) => m.role === 'user').length
+    const attemptsCount = session.messages.filter(
+      (m) => m.role === 'user',
+    ).length
     const isLastAttempt = attemptsCount >= 2
 
     // Обработка молчания пользователя
@@ -86,7 +93,8 @@ const generateEmpathyResponse = async (req, res) => {
       await session.save()
 
       return res.status(200).json({
-        answer: 'Ты молчишь... Мне кажется, тебе тоже наплевать на то, что со мной происходит. Ладно, забудь.',
+        answer:
+          'Ты молчишь... Мне кажется, тебе тоже наплевать на то, что со мной происходит. Ладно, забудь.',
         isFinished: isLastAttempt,
         empathyBalance: session.exerciseData.empathyBalance,
         isError: true,
@@ -94,7 +102,8 @@ const generateEmpathyResponse = async (req, res) => {
     }
 
     const cleanUserMessage = userMessage.trim()
-    const currentBalance = Number(session.exerciseData.empathyBalance) || 40
+    const currentBalance =
+      Number(session.exerciseData.empathyBalance) || 40
 
     // Сложнейший психологический системный промпт для ИИ-собеседника
     const PROMPT = `Ты — близкий человек, друг или коллега пользователя. Ты находишься в состоянии сильного эмоционального кризиса.
@@ -125,7 +134,7 @@ const generateEmpathyResponse = async (req, res) => {
 Пользователь только что ответил тебе: "${cleanUserMessage}". Ответь ему, оставаясь в роли.
 
 В САМОМ КОНЦЕ ответа строго добавь маркер изменения уровня баланса: ###+число или ###-число (от -15 до +15 в зависимости от экологичности и эмпатичности ответа пользователя).
-Пример идеального ответа: "Спасибо, что ты рядом. Мне действительно сейчас очень страшно, я не знаю, что делать дальше. ###+12"`;
+Пример идеального ответа: "Спасибо, что ты рядом. Мне действительно сейчас очень страшно, я не знаю, что делать дальше. ###+12"`
 
     const finalMessagesPayload = [
       { role: 'system', content: PROMPT },
@@ -139,33 +148,40 @@ const generateEmpathyResponse = async (req, res) => {
 
     // Запрос к GigaChat API с защитным фоллбеком
     try {
-      const response = await gigachatAxiosClient.post('/chat/completions', {
-        model: 'GigaChat-2',
-        messages: finalMessagesPayload,
-        max_tokens: 400,
-      })
-      aiRawAnswer = response.data?.choices?.[0]?.message?.content
+      aiRawAnswer = await sendGigaChatRequest(
+        finalMessagesPayload,
+        400,
+      )
     } catch (gigaError) {
-      console.error('⚠️ [Сбой сети GigaChat] Локальный фоллбек эмпатии активирован:', gigaError.message)
-      
+      console.error(
+        '⚠️ [Сбой сети GigaChat] Локальный фоллбек эмпатии активирован:',
+        gigaError.message,
+      )
+
       // Локальная симуляция поведения собеседника, если сервера Сбера перегружены
       if (currentBalance < 40) {
-        aiRawAnswer = 'Вам легко говорить. Вы понятия не имеете, каково мне сейчас. Оставьте меня в покое. ###-8'
+        aiRawAnswer =
+          'Вам легко говорить. Вы понятия не имеете, каково мне сейчас. Оставьте меня в покое. ###-8'
       } else if (currentBalance > 70) {
-        aiRawAnswer = 'Спасибо... Мне правда стало немного легче от твоих слов. Хорошо, что ты рядом. ###+10'
+        aiRawAnswer =
+          'Спасибо... Мне правда стало немного легче от твоих слов. Хорошо, что ты рядом. ###+10'
       } else {
-        aiRawAnswer = 'Может быть, ты и прав. Я просто безумно устал от этого всего и не вижу выхода. ###+5'
+        aiRawAnswer =
+          'Может быть, ты и прав. Я просто безумно устал от этого всего и не вижу выхода. ###+5'
       }
     }
 
     // Парсим изменение шкалы эмоционального баланса
     const balanceMatch = aiRawAnswer.match(/###\s?([+-]?\d+)/)
-    const balanceChange = balanceMatch ? parseInt(balanceMatch[1], 10) : 0
+    const balanceChange = balanceMatch
+      ? parseInt(balanceMatch[1], 10)
+      : 0
 
     let cleanAnswer = aiRawAnswer.replace(/###\s?[+-]?\d+/, '').trim()
 
     if (!cleanAnswer) {
-      cleanAnswer = 'Я просто не знаю, как пережить этот день. Спасибо, что выслушал.'
+      cleanAnswer =
+        'Я просто не знаю, как пережить этот день. Спасибо, что выслушал.'
     }
 
     // Обновляем и зажимаем баланс в рамках 0-100
@@ -175,13 +191,17 @@ const generateEmpathyResponse = async (req, res) => {
     // Сохраняем шаг в БД
     session.exerciseData.empathyBalance = newBalance
     session.markModified('exerciseData')
-    session.messages.push({ role: 'user', text: userMessage || cleanUserMessage })
+    session.messages.push({
+      role: 'user',
+      text: userMessage || cleanUserMessage,
+    })
     session.messages.push({ role: 'assistant', text: cleanAnswer })
 
     await session.save()
 
     // Небольшая естественная пауза "размышлений" ИИ
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+    const sleep = (ms) =>
+      new Promise((resolve) => setTimeout(resolve, ms))
     await sleep(800)
 
     res.json({
@@ -193,12 +213,11 @@ const generateEmpathyResponse = async (req, res) => {
   } catch (error) {
     console.error('Empathy Spark Controller Error:', error.message)
     res.status(500).json({
-      answer: 'Собеседник закрылся и положил трубку из-за внезапного сбоя на линии связи.',
+      answer:
+        'Собеседник закрылся и положил трубку из-за внезапного сбоя на линии связи.',
     })
   }
 }
-
-
 
 const finishEmpathySpark = async (req, res) => {
   try {
@@ -218,7 +237,9 @@ const finishEmpathySpark = async (req, res) => {
 
     const user = await User.findById(userId)
     if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' })
+      return res
+        .status(404)
+        .json({ message: 'Пользователь не найден' })
     }
 
     // Фильтруем пустые реплики пользователя
@@ -232,8 +253,13 @@ const finishEmpathySpark = async (req, res) => {
       session.score = 0
       session.result = {
         totalScore: 0,
-        feedback: 'Вы промолчали и оставили человека один на один с его тяжелыми переживаниями. Оказать поддержку не удалось.',
-        criteria: { validation: 0, active_listening: 0, influence_safety: 0 },
+        feedback:
+          'Вы промолчали и оставили человека один на один с его тяжелыми переживаниями. Оказать поддержку не удалось.',
+        criteria: {
+          validation: 0,
+          active_listening: 0,
+          influence_safety: 0,
+        },
       }
       await session.save()
 
@@ -251,7 +277,10 @@ const finishEmpathySpark = async (req, res) => {
 
     // Формируем историю чата для психологического аудита
     const chatHistory = session.messages
-      .map((m) => `${m.role === 'user' ? 'Пользователь (Утешитель)' : 'Собеседник (В кризисе)'}: ${m.text}`)
+      .map(
+        (m) =>
+          `${m.role === 'user' ? 'Пользователь (Утешитель)' : 'Собеседник (В кризисе)'}: ${m.text}`,
+      )
       .join('\n')
 
     // Оценочный промпт по критериям эмпатического общения
@@ -276,37 +305,39 @@ const finishEmpathySpark = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот протокол психологической беседы:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот протокол психологической беседы:\n${chatHistory}`,
         },
-      )
+      ]
+      const countTokens = 700
 
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         validation: 50,
         active_listening: 50,
         influence_safety: 50,
       })
     } catch (apiError) {
-      console.error('Сбой сети GigaChat при финализации Генератора Эмпатии:', apiError.message)
+      console.error(
+        'Сбой сети GigaChat при финализации Генератора Эмпатии:',
+        apiError.message,
+      )
     }
 
     // Фоллбек на случай сбоев Сбера
     if (!evaluation) {
       evaluation = {
         totalScore: 50,
-        feedback: 'Стенограмма бережно сохранена. К сожалению, ИИ-психолог сейчас недоступен из-за помех на линии, поэтому подробный разбор не сформирован. Начислен базовый балл.',
-        criteria: { validation: 50, active_listening: 50, influence_safety: 50 },
+        feedback:
+          'Стенограмма бережно сохранена. К сожалению, ИИ-психолог сейчас недоступен из-за помех на линии, поэтому подробный разбор не сформирован. Начислен базовый балл.',
+        criteria: {
+          validation: 50,
+          active_listening: 50,
+          influence_safety: 50,
+        },
       }
     }
 
@@ -343,4 +374,8 @@ const finishEmpathySpark = async (req, res) => {
   }
 }
 
-export { startEmpathySpark, generateEmpathyResponse, finishEmpathySpark }
+export {
+  startEmpathySpark,
+  generateEmpathyResponse,
+  finishEmpathySpark,
+}

@@ -1,11 +1,11 @@
-import gigachatAxiosClient from '../../../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../../../utils/gigachatService.js'
 import UserCourseProgress from '../../../../models/UserCourseProgress.js'
 import Course from '../../../../models/Course.js'
 import { parseAiResponse } from '../../../../utils/aiJsonParser.js'
 import { transcribeShortAudio } from '../../../../utils/speechService.js'
 import {
   getHrScreenerDialogPrompt,
-  HR_SCREENER_EVALUATION_PROMPT, 
+  HR_SCREENER_EVALUATION_PROMPT,
 } from './hrScreenerPrompt.js'
 
 const startHrScreenerTrainer = async (req, res) => {
@@ -154,16 +154,11 @@ const generateHrScreenerResponse = async (req, res) => {
     )
 
     // Запрос к GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: [{ role: 'user', content: PROMPT }],
-        max_tokens: 350,
-      },
+    const aiAnswer = await sendGigaChatRequest(
+      [{ role: 'user', content: PROMPT }],
+      300,
     )
 
-    const aiAnswer = response.data.choices?.[0]?.message?.content
     if (!aiAnswer) throw new Error('Пустой ответ от GigaChat')
 
     session.messages.push({ role: 'user', text: cleanUserMessage })
@@ -252,25 +247,20 @@ const finishHrScreenerTrainer = async (req, res) => {
     let evaluation = null
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+      const messages = [
         {
-          model: 'GigaChat-2',
-          messages: [
-            {
-              role: 'system',
-              content: HR_SCREENER_EVALUATION_PROMPT,
-            },
-            {
-              role: 'user',
-              content: `Проанализируй это чат-интервью:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'system',
+          content: HR_SCREENER_EVALUATION_PROMPT,
         },
-      )
-      const aiJsonResult = response.data.choices[0].message.content
-      evaluation = parseAiResponse(aiJsonResult, {
+        {
+          role: 'user',
+          content: `Проанализируй это чат-интервью:\n${chatHistory}`,
+        },
+      ]
+      const countTokens = 700
+
+      const aiText = await sendGigaChatRequest(messages, countTokens)
+      evaluation = parseAiResponse(aiText, {
         softSkills: 40,
         starStructure: 40,
       })

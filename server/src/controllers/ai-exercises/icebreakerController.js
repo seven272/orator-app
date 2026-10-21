@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -15,7 +15,7 @@ const startIcebreaker = async (req, res) => {
 
     const question = `Вот тебе маленькая подсказка, пример первого вопроса, - "${exerciseData.firstMessage}" Можешь начать с него, а лучше придумай свой.`
 
-    // Создаем сессию в БД 
+    // Создаем сессию в БД
     await AiExercise.create({
       userId,
       exerciseType: 'ai-icebreaker',
@@ -98,7 +98,7 @@ const generateIcebreakerResponse = async (req, res) => {
     const cleanUserMessage = userMessage.trim()
     const currentWarmth = Number(session.exerciseData.warmth) || 10
 
-     const PROMPT = `Ты — ${session.exerciseData.target} в ситуации: ${session.exerciseData.context}.
+    const PROMPT = `Ты — ${session.exerciseData.target} в ситуации: ${session.exerciseData.context}.
     Твой текущий уровень интереса к собеседнику: ${currentWarmth} из 100.
     
     ПРАВИЛА ОТВЕТА:
@@ -112,7 +112,6 @@ const generateIcebreakerResponse = async (req, res) => {
     В САМОМ КОНЦЕ ответа строго добавь маркер: ###+число или ###-число (изменение от -10 до +20).
     Пример правильного ответа: "Пожалуй, вы правы. ###+10"`
 
-  
     const finalMessagesPayload = [
       { role: 'system', content: PROMPT },
       ...session.messages.map((m) => ({
@@ -121,23 +120,12 @@ const generateIcebreakerResponse = async (req, res) => {
       })),
     ]
 
-
-
     // 4. Запрос к GigaChat
-    const response = await gigachatAxiosClient.post(
-      '/chat/completions',
-      {
-        model: 'GigaChat-2',
-        messages: finalMessagesPayload,
-        max_tokens: 400,
-      },
+    const aiRawAnswer = await sendGigaChatRequest(
+      finalMessagesPayload,
+      400,
     )
 
-    
-
-    // Безопасное извлечение ответа с указанием индекса массива choices
-    const aiRawAnswer = response.data?.choices?.[0]?.message?.content
-  
     // 5. Парсим изменение тепла (###+10) и чистим текст
     const warmthMatch = aiRawAnswer.match(/###\s?([+-]?\d+)/)
     const warmthChange = warmthMatch
@@ -158,7 +146,7 @@ const generateIcebreakerResponse = async (req, res) => {
         cleanAnswer = 'Ясно. Что еще предложите?'
       }
     }
-   
+
     // Обновляем шкалу
     let newWarmth = currentWarmth + warmthChange
     newWarmth = Math.min(Math.max(newWarmth, 0), 100)
@@ -279,23 +267,19 @@ const finishIcebreaker = async (req, res) => {
 
     try {
       // сетевой запрос к Сберу
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
+
+      const messages = [
+        { role: 'system', content: EVALUATION_PROMPT },
         {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: EVALUATION_PROMPT },
-            {
-              role: 'user',
-              content: `Вот итог беседы:\n${chatHistory}`,
-            },
-          ],
-          max_tokens: 700,
+          role: 'user',
+          content: `Вот итог беседы:\n${chatHistory}`,
         },
-      )
-      const aiJsonResult = response.data.choices[0].message.content
+      ]
+      const countTokens = 700
+
+      const aiText = await sendGigaChatRequest(messages, countTokens)
       // Парсим ответ универсальной утилитой под критерии Ледокола
-      evaluation = parseAiResponse(aiJsonResult, {
+      evaluation = parseAiResponse(aiText, {
         empathy: 50,
         openness: 50,
         initiative: 50,

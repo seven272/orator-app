@@ -1,4 +1,4 @@
-import gigachatAxiosClient from '../../utils/gigachatAxiosClient.js'
+import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 import AiExercise from '../../models/AiExercise.js'
 import User from '../../models/User.js'
 import { applyAiGamificationProgress } from '../../utils/gamificationProgress.js'
@@ -198,20 +198,14 @@ const finishTribune = async (req, res) => {
     let evaluation // объявляем переменную сверху
 
     try {
-      const response = await gigachatAxiosClient.post(
-        '/chat/completions',
-        {
-          model: 'GigaChat-2',
-          messages: [
-            { role: 'system', content: PROMPT },
-            { role: 'user', content: userSpeechText },
-          ],
-        },
+     let aiJsonResult = await sendGigaChatRequest(
+        [
+          { role: 'system', content: PROMPT },
+          { role: 'user', content: userSpeechText },
+        ],
+        700,
       )
 
-      const aiJsonResult = response.data.choices[0]?.message?.content
-
-      console.log('🗣️ Сырой ответ от GigaChat:', aiJsonResult) // Отличный лог для дебага
 
       // Вызываем парсер. Если он вернет null/undefined, сработает ваш if ниже
       evaluation = parseAiResponse(aiJsonResult, {
