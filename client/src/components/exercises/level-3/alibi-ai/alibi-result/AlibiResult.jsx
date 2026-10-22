@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FaVk } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
-import { ScreenSpinner } from '@vkontakte/vkui'
+import Spinner from '../../../../../UI/spinner/Spinner'
 import { message } from 'antd'
 
 import { useVkEnvironment } from '../../../../../hooks/useVkEnvironment'
@@ -20,7 +20,7 @@ const AlibiResult = ({ onCloseExercise, onRestartExercise }) => {
   const isVkEnvironment = useVkEnvironment()
   const [isSharing, setIsSharing] = useState(false)
 
-  if (!verdict) return <ScreenSpinner />
+  if (!verdict) return <Spinner centered={true}  />
 
   const handleShareStory = async () => {
     if (isSharing) return
