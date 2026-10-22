@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
+import Spinner from '../../../../UI/spinner/Spinner'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -140,7 +140,7 @@ const DebateTrainerAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomTopic) return <ScreenSpinner />
+  if (!randomTopic) return <Spinner centered={true} />
 
   return (
     <div className={styles.main_debate}>

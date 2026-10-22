@@ -91,7 +91,7 @@ const BargainProcess = ({
 
   return (
     <div className={styles.screen_running}>
-      <div className={styles.debate_header}>
+      <div className={styles.header}>
         <div className={styles.progress_container}>
           <div className={styles.progress_text}>
             <div>
@@ -132,7 +132,7 @@ const BargainProcess = ({
         isAiThinking={isAiThinking}
       />
 
-      <div className={styles.debate_footer}>
+      <div className={styles.footer}>
         {aiStatus === AI_STATUS.IDLE && (
           <button
             onClick={onStartRecording}
@@ -174,7 +174,7 @@ const BargainProcess = ({
         {aiStatus === AI_STATUS.FINISHED && (
           <button
             onClick={onFinishDialog}
-            className={styles.debate_finish_btn}
+            className={styles.finish_btn}
           >
             Узнать решение по сделке <TbScoreboard size={25} />
           </button>

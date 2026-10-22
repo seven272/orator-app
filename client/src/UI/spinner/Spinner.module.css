@@ -1,0 +1,67 @@
+.spinner_wrapper {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Базовая структура спиннера (Dual Ring / Плавный круг) */
+.spinner {
+  display: inline-block;
+  position: relative;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Размеры */
+.size_sm {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+}
+
+.size_md {
+  width: 32px;
+  height: 32px;
+  border: 3px solid transparent;
+}
+
+.size_lg {
+  width: 56px;
+  height: 56px;
+  border: 4px solid transparent;
+}
+
+.centered_full {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: inherit; /* Наследует минимальную высоту, если она задана */
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+/* Цветовые вариации на базе ваших CSS-переменных */
+.variant_primary {
+  border-top-color: var(--color-primary); /* #007aff */
+  border-left-color: var(--color-secondary); /* #b2d7ff */
+}
+
+.variant_vk {
+  border-top-color: var(--color-blue-vk); /* #2688eb */
+  border-left-color: rgba(38, 136, 235, 0.2);
+}
+
+.variant_white {
+  border-top-color: var(--color-white); /* #ffffff */
+  border-left-color: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

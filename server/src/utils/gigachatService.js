@@ -23,9 +23,14 @@ const sendGigaChatRequest = async (
       max_tokens: maxTokens,
     }
 
-    // Если передана схема структурированного JSON — подмешиваем её в запрос
+    // Если передана температура — подмешиваем её в запрос
     if (temperature) {
       requestPayload.temperature = temperature
+    }
+
+     // Если передана схема структурированного JSON — подмешиваем её в запрос
+    if (responseFormat) {
+      requestPayload.response_format = responseFormat;
     }
 
     const response = await gigachatAxiosClient.post(

@@ -87,7 +87,7 @@ const KnockoutProcess = ({
                 style={{ width: `${safeReputation}%` }}
               />
             </div>
-          </div>
+          </div> 
         </div>
       </div>
 

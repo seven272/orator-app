@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FaVk } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
-import { ScreenSpinner } from '@vkontakte/vkui'
+import Spinner from '../../../../../UI/spinner/Spinner'
 import { message } from 'antd'
 
 import { useVkEnvironment } from '../../../../../hooks/useVkEnvironment'
@@ -50,7 +50,7 @@ const DebateResult = ({ onCloseExercise, onRestartExercise }) => {
     setIsSharing(false)
   }
 
-  if (!verdict) return <ScreenSpinner />
+  if (!verdict) return <Spinner centered={true}/>
   return (
     <div className={styles.screen_finished}>
       <div className={styles.finish_card}>

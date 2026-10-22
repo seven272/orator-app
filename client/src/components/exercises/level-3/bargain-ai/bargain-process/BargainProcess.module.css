@@ -5,7 +5,7 @@
 }
 
 /* Верхняя панель дебатов (Инфо и Таймер) */
-.debate_header {
+.header {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -16,7 +16,7 @@
   backdrop-filter: blur(10px);
 }
 
-.debate_header_text {
+.header_text {
   display: flex;
   justify-content: center;
   width: 100%;
@@ -52,7 +52,7 @@
   transition: width 0.5s ease;
 }
 
-.warmth_bar_fill {
+.price_bar_fill {
   height: 100%;
   border-radius: 10px;
    background: var(--color-primary);
@@ -73,7 +73,7 @@
   font-weight: 600;
 }
 
-.debate_footer {
+.footer {
   display: flex;
   padding: 15px 20px;
   background: rgba(255, 255, 255, 0.5);
@@ -134,7 +134,7 @@
   align-items: center;
 }
 
-.debate_finish_btn {
+.finish_btn {
   width: 100%;
   padding: 14px;
   border-radius: 25px;

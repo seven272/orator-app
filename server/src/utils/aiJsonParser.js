@@ -1,100 +1,96 @@
-// utils/aiJsonParser.js
+import { jsonrepair } from 'jsonrepair'
 
 /**
- * Железобетонный каскадный парсер ответов GigaChat
+ * Парсер ответов GigaChat с использованием json-repair.
  * @param {string} rawText - Сырой текстовый ответ от ИИ
- * @param {Object} defaultCriteria - Дефолтные критерии на случай критического сбоя ИИ (свои для каждого тренажера)
+ * @param {Object} defaultCriteria - Дефолтные критерии на случай сбоя
  * @returns {Object} - Распарсенный объект с полями totalScore, feedback и criteria
  */
 const parseAiResponse = (rawText, defaultCriteria) => {
-  let evaluation = null
+  const DEFAULT_SCORE = 60
+  const SAFE_FEEDBACK =
+    'Ваше выступление сохранено, но ИИ не смог сформировать детальный текстовый отчет из-за сбоя формата.'
 
-  try {
-    let jsonString = rawText.trim()
+  let raw = String(rawText || '').trim()
 
-    // 1. Отрезаем маркдаун-обертки ```json ... ```, если ИИ их добавил
-    jsonString = jsonString
-      .replace(/```json/g, '')
-      .replace(/```/g, '')
-      .trim()
+  // 1. Убираем markdown-обёртки, если есть
+  raw = raw
+    .replace(/^```json/g, '')
+    .replace(/```$/g, '')
+    .trim()
 
-    // Если GigaChat обернул значение поля feedback в ёлочки «...»,
-    // превращаем их в валидные двойные кавычки для JSON
-    jsonString = jsonString.replace(/:\s*«([\s\S]*?)»/g, ': "$1"')
+  // 2. Пытаемся найти самый первый JSON-объект по балансу скобок
+  function extractFirstJsonObject(text) {
+    const firstOpen = text.indexOf('{')
+    if (firstOpen === -1) return null
 
-    // 2. Вырезаем строго блок от первой до последней фигурной скобки
-    const jsonMatch = jsonString.match(/\{[\s\S]*\}/)
-    if (!jsonMatch)
-      throw new Error('Фигурные скобки JSON не найдены в ответе ИИ')
-    jsonString = jsonMatch[0]
-
-    // 3. Экранируем переносы строк внутри текстовых полей (превращаем в безопасный "\\n")
-    jsonString = jsonString
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r')
-
-    // 4. ИСПРАВЛЕНИЕ: Добавляем \s* ПОСЛЕ \\n, чтобы пробелы форматирования GigaChat не ломали синтаксис
-    jsonString = jsonString.replace(/,\s*\\n\s*"/g, ',\n"')
-    jsonString = jsonString.replace(/\{\s*\\n\s*"/g, '{\n"')
-    jsonString = jsonString.replace(/:\s*\{\s*\\n\s*"/g, ':{\n"')
-    jsonString = jsonString.replace(/"\s*\\n\s*\}/g, '"\n}')
-    jsonString = jsonString.replace(/\}\s*\\n\s*\}/g, '}\n}')
-    // Новое лечащее правило для форматированного JSON с отступами пробелами от GigaChat:
-    jsonString = jsonString.replace(/\\n\s*"/g, '\n"') 
-    jsonString = jsonString.replace(/,\s*\}/g, '}') // Удаление висячих запятых, если они будут
-
-    // 5. Убираем одинарные кавычки внутри английских слов
-    jsonString = jsonString.replace(/(\w)'(\w)/g, '$1$2')
-
-    // Избавляемся от лишних пробелов/табов между ключами и значениями
-    jsonString = jsonString.replace(/\s+/g, ' ')
-
-    // Первая попытка мягкого парсинга
-    evaluation = JSON.parse(jsonString)
-  } catch (error) {
-    console.warn(
-      '⚠️ Ошибка первого этапа парсинга ИИ, пробуем агрессивный фоллбек:',
-      error.message,
-    )
-
-    try {
-      // 6. ИСПРАВЛЕНИЕ: Защищаем от undefined, принудительно приводя к строке
-      const safeRawText = String(rawText || '')
-
-      let safeJson = safeRawText
-        .replace(/[«»]/g, '"')
-        .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
-
-      const jsonMatchFallback = safeJson.match(/\{[\s\S]*\}/)
-      let finalFallbackString = jsonMatchFallback
-        ? jsonMatchFallback[0]
-        : safeJson
-
-      finalFallbackString = finalFallbackString
-        .replace(/\r?\n|\r/g, ' ')
-        .replace(/\s+/g, ' ')
-        .replace(/,\s*\}/g, '}')
-
-      evaluation = JSON.parse(finalFallbackString)
-    } catch (fallbackError) {
-      console.error(
-        '❌ Критический слом формата GigaChat. Аварийный выход на дефолты.',
-        fallbackError.message,
-      )
+    let depth = 0
+    for (let i = firstOpen; i < text.length; i++) {
+      const ch = text[i]
+      if (ch === '{') depth++
+      else if (ch === '}') {
+        depth--
+        if (depth === 0) {
+          return text.substring(firstOpen, i + 1)
+        }
+      }
     }
+    return null
   }
 
-  // 7. Если оба этапа парсинга провалились — возвращаем безопасный объект-заглушку
-  if (!evaluation) {
-    evaluation = {
-      totalScore: 50,
-      feedback:
-        'Ваше выступление сохранено, но ИИ не смог сформировать детальный текстовый отчет из-за сбоя формата. Начислены базовые баллы.',
+  const jsonCandidate = extractFirstJsonObject(raw)
+  if (!jsonCandidate) {
+    // Если вообще нет JSON-объекта — сразу фоллбек
+    return {
+      totalScore: DEFAULT_SCORE,
+      feedback: SAFE_FEEDBACK,
       criteria: defaultCriteria,
     }
   }
 
-  return evaluation
+  let evaluation = null
+
+  try {
+    // 3. json-repair «лечит» битый JSON
+    const repairedJson = jsonrepair(jsonCandidate)
+    evaluation = JSON.parse(repairedJson)
+  } catch (e) {
+    console.warn(
+      '⚠️ Не удалось восстановить JSON через json-repair, пробуем фоллбек',
+      e.message,
+    )
+  }
+
+  // 4. Валидируем структуру результата
+  if (evaluation && typeof evaluation.totalScore === 'number') {
+    return {
+      totalScore: evaluation.totalScore,
+      feedback: evaluation.feedback || SAFE_FEEDBACK,
+      criteria: evaluation.criteria || defaultCriteria,
+    }
+  }
+
+  // 5. Фоллбек: вытаскиваем данные регулярками из исходного текста
+  const scoreMatch = raw.match(/totalScore\s*[:=]\s*([\d.]+)/i)
+  const feedbackMatch =
+    raw.match(/"feedback"\s*:\s*"([^"]*)"/i) ||
+    raw.match(/feedback[:=]\s*"([^"]*)"/i)
+
+  const totalScore = scoreMatch
+    ? parseFloat(scoreMatch[1])
+    : DEFAULT_SCORE
+  let feedback = feedbackMatch ? feedbackMatch[1] : SAFE_FEEDBACK
+
+  feedback = feedback
+    .replace(/[«»"]/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  return {
+    totalScore: isNaN(totalScore) ? DEFAULT_SCORE : totalScore,
+    feedback,
+    criteria: defaultCriteria,
+  }
 }
 
 export { parseAiResponse }

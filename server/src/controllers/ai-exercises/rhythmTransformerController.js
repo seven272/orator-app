@@ -5,6 +5,32 @@ import { parseAiResponse } from '../../utils/aiJsonParser.js'
 import { transcribeShortAudio } from '../../utils/speechService.js'
 import { sendGigaChatRequest } from '../../utils/gigachatService.js'
 
+//Это специальная схема чтобы Гигачат возвращал ответ строго в виде json-объекта
+const METRONOME_JSON_SCHEMA = {
+  type: 'json_schema',
+  schema: {
+    type: 'object',
+    properties: {
+      totalScore: { type: 'number' },
+      feedback: { type: 'string' },
+      criteria: {
+        type: 'object',
+        properties: {
+          phonetics: { type: 'number' },
+          rhythm_stability: { type: 'number' },
+          syllable_completeness: { type: 'number' },
+        },
+        required: [
+          'phonetics',
+          'rhythm_stability',
+          'syllable_completeness',
+        ],
+      },
+    },
+    required: ['totalScore', 'feedback', 'criteria'],
+  },
+}
+
 // 1. СТАРТ УПРАЖНЕНИЯ (Инициализация дикционной сессии)
 const startRhythmTransformer = async (req, res) => {
   try {
@@ -260,7 +286,14 @@ const finishRhythmTransformer = async (req, res) => {
       ]
       const countTokens = 700
 
-      const aiText = await sendGigaChatRequest(messages, countTokens)
+      const aiText = await sendGigaChatRequest(
+        messages,
+        countTokens,
+        0.1,
+        METRONOME_JSON_SCHEMA,
+      )
+      console.log('Ответ ИИ метронома')
+      console.log(aiText)
 
       evaluation = parseAiResponse(aiText, {
         phonetics: 50,
