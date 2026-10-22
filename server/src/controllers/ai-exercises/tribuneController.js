@@ -93,7 +93,7 @@ const responseTribune = async (req, res) => {
 
     // Возвращаем распознанный текст (user_transcript) обратно на фронтенд,
     // чтобы мобильное приложение мгновенно отобразило пользователю, что именно он наговорил.
-    return res.status(200).json({
+    return res.status(200).json({ 
       user_transcript: userMessage.trim(),
       answer: 'Текст получен, готов приступать к разбору!',
       isFinished: true,

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { ScreenSpinner } from '@vkontakte/vkui'
+import Spinner from '../../../../../UI/spinner/Spinner'
 
 import styles from './PitchResult.module.css'
 
@@ -10,7 +10,7 @@ const PitchResult = ({ onCloseExercise, onRestartExercise }) => {
   if (exStatus === 'loading' || !verdict) {
     return (
       <div className={styles.loading_box}>
-        <ScreenSpinner />
+        <Spinner />
         <span className={styles.loading_text}>
           Венчурный комитет изучает презентацию и юнит-экономику стартапа...
         </span>

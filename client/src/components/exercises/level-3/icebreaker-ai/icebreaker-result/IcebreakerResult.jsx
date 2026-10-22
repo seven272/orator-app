@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { FaVk } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { message } from 'antd'
 
 import { useVkEnvironment } from '../../../../../hooks/useVkEnvironment'
 import { shareAiExerciseResultToStory } from '../../../../../utils/vk-utils/vkShareStory'
 import styles from './IcebreakerResult.module.css'
+import Spinner from '../../../../../UI/spinner/Spinner'
 
 const dictianory = {
   empathy: 'Эмпатия',
@@ -51,7 +51,8 @@ const IcebreakerResult = ({ onCloseExercise, onRestartExercise }) => {
     setIsSharing(false)
   }
 
-  if (!verdict) return <ScreenSpinner />
+  if (!verdict) return <Spinner centered={true} />
+
   return (
     <div className={styles.screen_finished}>
       <div className={styles.finish_card}>

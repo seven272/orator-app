@@ -177,6 +177,8 @@ const generatePitchResponse = async (req, res) => {
 
     let cleanAnswer = aiRawAnswer.replace(/###\s?[+-]?\d+/, '').trim()
 
+    console.log(cleanAnswer)
+
     // На всякий случай жесткая защита текста
     if (!cleanAnswer) {
       cleanAnswer = 'Я жду конкретных цифр и УТП. Не трать мое время.'

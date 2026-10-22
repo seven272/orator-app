@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './AssociationMasterAi.module.css'
+import Spinner from '../../../../UI/spinner/Spinner'
 import { associationScenarios } from '../../../../assets/data/exercises/level3/ai-association-master/associationScenarios'
 import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import AssociationMasterIdle from './association-idle/AssociationMasterIdle'
@@ -107,7 +107,7 @@ const AssociationMasterAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomScenario) return <ScreenSpinner />
+  if (!randomScenario) return <Spinner centered={true} />
 
   return (
     <div className={styles.main}>

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
-import { useDispatch, useSelector } from 'react-redux'
 
+import { useDispatch, useSelector } from 'react-redux'
+import Spinner from '../../../../UI/spinner/Spinner'
 import styles from './HistoricalAi.module.css'
 // Импортируем нашу базу из 20 сценариев, которую создали ранее
 import aiHistoricalScenarios from '../../../../assets/data/exercises/level3/ai-historical-battle/historicalScenarios'
@@ -126,7 +126,7 @@ const HistoricalAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomScenario) return <ScreenSpinner />
+  if (!randomScenario) return <Spinner centered={true} />
 
   return (
     <div className={styles.main_historical}>

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
+
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './InterviewAi.module.css'
+import Spinner from '../../../../UI/spinner/Spinner'
 import aiInterviewSnenarios from '../../../../assets/data/exercises/level3/ai-interview/interviewSnenarios'
 import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
 import InterviewIdle from './interview-idle/InterviewIdle'
@@ -28,10 +29,7 @@ import Modal from '../../../../UI/modal/Modal'
 const TOTAL_ROUNDS = 3
 const TIME_ROUND = 15
 
-// const isSpeechSupported = !!(
-//   typeof window !== 'undefined' &&
-//   (window.SpeechRecognition || window.webkitSpeechRecognition)
-// )
+
 
 const InterviewAi = ({ alias, isDaily }) => {
   const { startListening, stopListening, resetTranscript } =
@@ -133,7 +131,7 @@ const InterviewAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomInterview) return <ScreenSpinner />
+  if (!randomInterview) return <Spinner centered={true} />
 
   return (
     <div className={styles.main_interview}>

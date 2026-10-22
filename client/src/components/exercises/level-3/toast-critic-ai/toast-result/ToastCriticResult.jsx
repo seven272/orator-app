@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { ScreenSpinner } from '@vkontakte/vkui'
+import Spinner from '../../../../../UI/spinner/Spinner'
 
 import styles from './ToastCriticResult.module.css'
 
@@ -10,7 +10,7 @@ const ToastCriticResult = ({ onCloseExercise, onRestartExercise }) => {
   if (exStatus === 'loading' || !verdict) {
     return (
       <div className={styles.loading_box}>
-        <ScreenSpinner />
+        <Spinner  />
         <span className={styles.loading_text}>
           Тамада со стажем и ресторанный критик изучают стенограмму вашего тоста...
         </span>

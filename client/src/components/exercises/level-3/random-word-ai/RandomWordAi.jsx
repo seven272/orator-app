@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
-
+import Spinner from '../../../../UI/spinner/Spinner'
 import styles from './RandomWordAi.module.css'
 import randomWordScenarios from '../../../../assets/data/exercises/level3/ai-random-word/randomWordScenarios'
 import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
@@ -141,7 +140,7 @@ const RandomWordAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomScenario) return <ScreenSpinner />
+  if (!randomScenario) return <Spinner centered={true} />
 
   return (
     <div className={styles.main_word}>

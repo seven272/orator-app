@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
-
+import Spinner from '../../../../UI/spinner/Spinner'
 import styles from './RadioHostAi.module.css'
 import radioHostScenarios from '../../../../assets/data/exercises/level3/ai-radio-host/radioHostScenarios'
 import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
@@ -141,7 +140,7 @@ const RadioHostAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomRadio) return <ScreenSpinner />
+  if (!randomRadio) return <Spinner centered={true} />
 
   return (
     <div className={styles.main_radio_host}>

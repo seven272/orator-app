@@ -20,7 +20,7 @@ const AlibiResult = ({ onCloseExercise, onRestartExercise }) => {
   const isVkEnvironment = useVkEnvironment()
   const [isSharing, setIsSharing] = useState(false)
 
-  if (!verdict) return <Spinner centered={true}  />
+  if (!verdict) return <Spinner centered={true} />
 
   const handleShareStory = async () => {
     if (isSharing) return
@@ -108,7 +108,7 @@ const AlibiResult = ({ onCloseExercise, onRestartExercise }) => {
               className={styles.btn_share}
               onClick={handleShareStory}
               disabled={isSharing}
-            > 
+            >
               <FaVk size={18} /> Поделиться результатом
             </button>
           )}

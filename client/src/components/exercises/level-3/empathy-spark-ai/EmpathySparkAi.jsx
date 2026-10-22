@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './EmpathySparkAi.module.css'
@@ -11,6 +10,7 @@ import EmpathySparkProcess from './empathy-process/EmpathySparkProcess'
 import EmpathySparkResult from './empathy-result/EmpathySparkResult'
 import { useSpeechSber } from '../../../../hooks/useSpeechSber'
 import { SCREEN_STATUS, AI_STATUS } from '../../../../constants/exercises'
+import Spinner from '../../../../UI/spinner/Spinner'
 
 import {
   setEmpathyAiStatus,
@@ -107,10 +107,10 @@ const EmpathySparkAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomScenario) return <ScreenSpinner />
+  if (!randomScenario) return <Spinner centered={true} />
 
   return (
-    <div className={styles.main_container}>
+    <div className={styles.main}>
       <h2 className={styles.title}>Генератор Эмпатии</h2>
       <p className={styles.descr}>Помоги человеку справиться с кризисом, используя активное слушание</p>
 

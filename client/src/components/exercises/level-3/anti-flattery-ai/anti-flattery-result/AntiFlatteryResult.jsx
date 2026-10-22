@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { ScreenSpinner } from '@vkontakte/vkui'
+import Spinner from '../../../../../UI/spinner/Spinner'
 
 import styles from './AntiFlatteryResult.module.css'
 
@@ -10,7 +10,7 @@ const AntiFlatteryResult = ({ onCloseExercise, onRestartExercise }) => {
   if (exStatus === 'loading' || !verdict) {
     return (
       <div className={styles.loading_box}>
-        <ScreenSpinner />
+       <Spinner centered={true} />
         <span className={styles.loading_text}>
           ИИ-эксперт детально анализирует скрытые уловки манипулятора...
         </span>

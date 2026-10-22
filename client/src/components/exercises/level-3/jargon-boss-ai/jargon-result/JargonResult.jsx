@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Spinner } from '@vkontakte/vkui'
+import Spinner from '../../../../../UI/spinner/Spinner'
 
 import styles from './JargonResult.module.css'
 

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './PitchAi.module.css'
@@ -11,6 +10,7 @@ import PitchProcess from './pitch-process/PitchProcess'
 import PitchResult from './pitch-result/PitchResult'
 import { useSpeechSber } from '../../../../hooks/useSpeechSber'
 import { SCREEN_STATUS, AI_STATUS } from '../../../../constants/exercises'
+import Spinner from '../../../../UI/spinner/Spinner'
 
 import {
   setPitchAiStatus,
@@ -108,7 +108,7 @@ const PitchAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomSubject) return <ScreenSpinner />
+  if (!randomSubject) return <Spinner centered={true} />
 
   return (
     <div className={styles.main}>

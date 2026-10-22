@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
-
+import Spinner from '../../../../UI/spinner/Spinner'
 import styles from './PoemTongueAi.module.css' // Стилизуется по аналогии с TribuneAi
 import poemTongueScenarios from '../../../../assets/data/exercises/level3/ai-poem-tongue/poemTongueScenarios'
 import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
@@ -141,7 +140,7 @@ const PoemTongueAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomTongue) return <ScreenSpinner />
+  if (!randomTongue) return <Spinner centered={true} />
 
   return (
     <div className={styles.main_tongue}>

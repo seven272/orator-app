@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { FaVk } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { message } from 'antd'
 
 import { useVkEnvironment } from '../../../../../hooks/useVkEnvironment'
 import { shareAiExerciseResultToStory } from '../../../../../utils/vk-utils/vkShareStory'
+import Spinner from '../../../../../UI/spinner/Spinner'
 import styles from './PoemActingResult.module.css'
 
 // Специализированный словарь локализации для критериев актерского мастерства
@@ -53,7 +53,7 @@ const PoemActingResult = ({ onCloseExercise, onRestartExercise }) => {
     setIsSharing(false)
   }
 
-  if (!verdict) return <ScreenSpinner />
+  if (!verdict) return <Spinner centered={true} />
 
   return (
     <div className={styles.screen_finished}>

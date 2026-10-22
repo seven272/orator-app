@@ -179,20 +179,20 @@ router.post(
 router.post(
   '/start-interview',
   checkAuth,
-  checkPremiumAndTicket('ai-inrerview'),
+  checkPremiumAndTicket('ai-interview'),
   startInterview,
 )
 router.post(
   '/response-interview',
   checkAuth,
-  checkActiveSessionGuard('ai-inrerview'),
+  checkActiveSessionGuard('ai-interview'),
   upload.single('audio'),
   generateInterviewResponse,
 )
 router.post(
   '/finish-interview',
   checkAuth,
-  checkActiveSessionGuard('ai-inrerview'),
+  checkActiveSessionGuard('ai-interview'),
   finishInterview,
 )
 

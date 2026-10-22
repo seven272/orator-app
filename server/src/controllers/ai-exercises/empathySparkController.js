@@ -178,6 +178,8 @@ const generateEmpathyResponse = async (req, res) => {
       : 0
 
     let cleanAnswer = aiRawAnswer.replace(/###\s?[+-]?\d+/, '').trim()
+    console.log(aiRawAnswer)
+    console.log(cleanAnswer)
 
     if (!cleanAnswer) {
       cleanAnswer =

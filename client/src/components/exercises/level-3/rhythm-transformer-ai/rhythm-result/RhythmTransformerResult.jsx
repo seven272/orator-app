@@ -1,7 +1,6 @@
-import React from 'react'
 import { useSelector } from 'react-redux'
-import { ScreenSpinner } from '@vkontakte/vkui'
 
+import Spinner from '../../../../../UI/spinner/Spinner'
 import styles from './RhythmTransformerResult.module.css'
 
 const RhythmTransformerResult = ({ onCloseExercise, onRestartExercise }) => {
@@ -10,7 +9,7 @@ const RhythmTransformerResult = ({ onCloseExercise, onRestartExercise }) => {
   if (exStatus === 'loading' || !verdict) {
     return (
       <div className={styles.loading_box}>
-        <ScreenSpinner />
+       <Spinner centered={true} />
         <span className={styles.loading_text}>
           ИИ-логопед детально сканирует звуковые стыки и слоги...
         </span>

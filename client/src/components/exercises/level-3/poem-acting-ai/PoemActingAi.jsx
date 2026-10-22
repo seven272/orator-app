@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
+import Spinner from '../../../../UI/spinner/Spinner'
 import styles from './PoemActingAi.module.css'
 import poemActingScenarios from '../../../../assets/data/exercises/level3/ai-poem-acting/poemActingScenarios'
 import { getRandomObjTask } from '../../../../assets/data/exercises/utils/getRandomObjTask'
@@ -135,7 +135,7 @@ const PoemActingAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomActing) return <ScreenSpinner />
+  if (!randomActing) return <Spinner centered={true} />
 
   return (
     <div className={styles.main_poem_acting}>

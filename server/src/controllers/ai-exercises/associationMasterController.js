@@ -107,73 +107,9 @@ const generateAssociationMasterResponse = async (req, res) => {
     const currentOriginality =
       Number(session.exerciseData.originality) || 50
 
-    // Профессиональный лингвистический промпт для GigaChat-2
-    const PROMPT = `Ты — профессиональный лингвист, эксперт по риторике и критик ассоциативного мышления. Твоя задача — оценить, насколько изящно и глубоко пользователь связал два абсолютно полярных понятия.
-
-КОНТЕКСТ ЗАДАНИЯ:
-- Понятие А: "${session.exerciseData.concept_A}"
-- Понятие Б: "${session.exerciseData.concept_B}"
-- ТВОЙ КРИТИЧЕСКИЙ ФОКУС: "${session.exerciseData.prosecutor_focus}"
-
-⚠️ СТРОГИЕ ПРАВИЛА ФОРМАТА ТВОЕЙ РЕПЛИКИ:
-1. Пиши СТРОГО одну реплику лингвиста от первого лица.
-2. ЗАПРЕЩЕНО использовать третье лицо (например: "Лингвист кивнул", "улыбнулся", "задумался").
-3. ЗАПРЕЩЕНО придумывать продолжение диалога за пользователя.
-4. Никаких художественных описаний действий, никаких тире перед репликой ("— ...") и никаких вводных слов вроде "Лингвист:".
-5. Текст должен быть коротким (1-3 предложения), интеллектуальным и емко комментировать качество риторической связи пользователя.
-
-ОЦЕНКА СВЯЗИ:
-- Если связь банальна (например, просто через физический материал или в 1 очевидный логический шаг) — это слабый результат.
-- Если оратор создал неожиданную метафору, нашел философский подтекст или функциональное сходство — это блестящий результат.
-
-Пользователь только что произнес следующий речевой мост: "${cleanUserMessage}". Ответь ему в своей роли.
-
-В САМОМ КОНЦЕ своего ответа строго добавь маркер изменения уровня оригинальности: ###+число или ###-число (от -25 до +30 в зависимости от глубины метафоры).
-Пример идеального ответа: "Потрясающая ментальная гибкость! Объединить эти понятия через концепцию времени — это действительно сильный ораторский ход. ###+25"`
-
-    const finalMessagesPayload = [
-      { role: 'system', content: PROMPT },
-      ...session.messages.map((m) => ({
-        role: m.role,
-        content: m.text || m.content,
-      })),
-    ]
-
-    // Запрос к нейросети GigaChat
-
-    let aiRawAnswer = await sendGigaChatRequest(
-      finalMessagesPayload,
-      400,
-    )
-
-    // Парсим маркер изменения оригинальности (###+15)
-    const originalityMatch = aiRawAnswer.match(/###\s?([+-]?\d+)/)
-    const originalityChange = originalityMatch
-      ? parseInt(originalityMatch[1], 10)
-      : 0
-
-    let cleanAnswer = aiRawAnswer.replace(/###\s?[+-]?\d+/, '').trim()
-
-    // Защитный фоллбек текста
-    if (!cleanAnswer) {
-      if (originalityChange > 0) {
-        cleanAnswer =
-          'Интересная риторическая дуга. Я зафиксировал эту метафору.'
-      } else {
-        cleanAnswer =
-          'Связь кажется слишком поверхностной и очевидной.'
-      }
-    }
-
-    // Высчитываем новую шкалу оригинальности в границах 0-100
-    let newOriginality = currentOriginality + originalityChange
-    newOriginality = Math.min(Math.max(newOriginality, 0), 100)
-
-    // Сохраняем ход в базу данных
-    session.exerciseData.originality = newOriginality
     session.markModified('exerciseData')
     session.messages.push({ role: 'user', text: userMessage })
-    session.messages.push({ role: 'assistant', text: cleanAnswer })
+   
 
     await session.save()
 
@@ -184,8 +120,8 @@ const generateAssociationMasterResponse = async (req, res) => {
 
     res.json({
       user_transcript: cleanUserMessage,
-      answer: cleanAnswer,
-      originality: newOriginality,
+      answer: 'Текст получен. ИИ-лингвист готов приступать к разбору и оценке',
+      originality: currentOriginality,
       isFinished: isLastAttempt,
     })
   } catch (error) {

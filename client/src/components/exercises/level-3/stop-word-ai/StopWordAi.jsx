@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
+import Spinner from '../../../../UI/spinner/Spinner'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './StopWordAi.module.css'
@@ -140,7 +140,7 @@ const StopWordAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomScenario) return <ScreenSpinner />
+  if (!randomScenario) return <Spinner centered={true} />
 
   return (
     <div className={styles.main_stop_word}>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { ScreenSpinner } from '@vkontakte/vkui'
 
+import Spinner from '../../../../../UI/spinner/Spinner'
 import styles from './StarBridgeResult.module.css'
 
 const StarBridgeResult = ({ onCloseExercise, onRestartExercise }) => {
@@ -10,7 +10,7 @@ const StarBridgeResult = ({ onCloseExercise, onRestartExercise }) => {
   if (exStatus === 'loading' || !verdict) {
     return (
       <div className={styles.loading_box}>
-        <ScreenSpinner />
+        <Spinner centered={true} />
         <span className={styles.loading_text}>
           Бизнес-аналитик изучает ваш Elevator Pitch в лифте...
         </span>

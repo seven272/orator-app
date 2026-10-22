@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
+import Spinner from '../../../../UI/spinner/Spinner'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './PoemRapAi.module.css'
@@ -141,7 +141,7 @@ const PoemRapAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomRap) return <ScreenSpinner />
+  if (!randomRap) return <Spinner centered={true} />
 
   return (
     <div className={styles.main_poem_rap}>

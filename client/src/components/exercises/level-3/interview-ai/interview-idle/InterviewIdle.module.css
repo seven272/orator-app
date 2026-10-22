@@ -108,39 +108,30 @@
 }
 
 .btn_theory {
-  /* Сбрасываем дефолтные стили кнопки */
-  appearance: none;
-  background: transparent;
-  border: 1px solid var(--vkui--color_separator_primary);
-  border-radius: 10px;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  margin: 12px auto; /* Центрируем */
-  padding: 8px 16px;
-  color: var(--vkui--color_text_secondary);
-  font-size: 14px;
+  background: rgba(0, 122, 255, 0.06);
+  border: 1px solid rgba(0, 122, 255, 0.15);
+  padding: 10px 18px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  color: var(--color-blue);
+  font: var(--font-m);
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    transform 0.1s active;
+  transition: background 0.2s, transform 0.2s;
 }
 
-/* Эффект при наведении (для десктопа) */
-@media (hover: hover) {
-  .btn_theory:hover {
-    background-color: var(--vkui--color_background_secondary);
-  }
+.btn_theory:hover {
+  background: rgba(0, 122, 255, 0.1);
 }
 
-/* Эффект при нажатии */
 .btn_theory:active {
-  transform: scale(0.97);
-  background-color: var(--vkui--color_background_secondary);
+  transform: scale(0.98);
 }
 
 .theory_icon {
-  color: var(--vkui--color_icon_medium);
+  color: var(--color-blue);
 }

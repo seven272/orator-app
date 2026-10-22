@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import styles from './IcebreakerAi.module.css'
@@ -10,6 +9,7 @@ import IcebreakerIdle from './icebreaker-idle/IcebreakerIdle'
 import IcebreakerProcess from './icebreaker-process/IcebreakerProcess'
 import IcebreakerResult from './icebreaker-result/IcebreakerResult'
 import { useSpeechSber } from '../../../../hooks/useSpeechSber'
+import Spinner from '../../../../UI/spinner/Spinner'
 import {
   SCREEN_STATUS,
   AI_STATUS,
@@ -130,7 +130,7 @@ const IcebreakerAi = ({ alias, isDaily }) => {
     setScreenStatus(SCREEN_STATUS.IDLE)
   }
 
-  if (!randomSituation) return <ScreenSpinner />
+  if (!randomSituation) return <Spinner centered={true}  />
 
   return (
     <div className={styles.main_icebreaker}>

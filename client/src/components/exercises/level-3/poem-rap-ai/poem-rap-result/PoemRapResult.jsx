@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { FaVk } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
-import { ScreenSpinner } from '@vkontakte/vkui'
 import { message } from 'antd'
-
+import Spinner from '../../../../../UI/spinner/Spinner'
 import { useVkEnvironment } from '../../../../../hooks/useVkEnvironment'
 import { shareAiExerciseResultToStory } from '../../../../../utils/vk-utils/vkShareStory'
 import styles from './PoemRapResult.module.css'
@@ -53,7 +52,7 @@ const PoemRapResult = ({ onCloseExercise, onRestartExercise }) => {
     setIsSharing(false)
   }
 
-  if (!verdict) return <ScreenSpinner />
+  if (!verdict) return <Spinner centered={true} />
 
   return (
     <div className={styles.screen_finished}>
