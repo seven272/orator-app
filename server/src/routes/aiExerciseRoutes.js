@@ -146,6 +146,12 @@ import {
   finishRhythmTransformer,
 } from '../controllers/ai-exercises/rhythmTransformerController.js'
 
+import {
+  startFreeArtist,
+  generateFreeArtistResponse,
+  finishFreeArtist,
+} from '../controllers/ai-exercises/freeArtistController.js'
+
 const router = express.Router()
 
 // Настройка multer для удержания аудио в оперативной памяти (Buffer)
@@ -652,6 +658,30 @@ router.post(
   checkAuth,
   checkActiveSessionGuard('ai-rhythm-transformer'),
   finishRhythmTransformer,
+)
+
+// Роутеры Свободный художник
+router.post(
+  '/start-free-artist',
+  checkAuth,
+  checkPremiumAndTicket('ai-free-artist'),
+  startFreeArtist,
+)
+
+router.post(
+  '/response-free-artist',
+  checkAuth,
+  checkActiveSessionGuard('ai-free-artist'),
+  upload.single('audio'),
+  generateFreeArtistResponse,
+)
+
+
+router.post(
+  '/finish-free-artist',
+  checkAuth,
+  checkActiveSessionGuard('ai-free-artist'),
+  finishFreeArtist,
 )
 
 export default router

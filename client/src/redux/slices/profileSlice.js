@@ -37,7 +37,6 @@ import { fetchFinishPoemRap } from './ai-exercises/poemRapSlice'
 import { fetchFinishRadioHost } from './ai-exercises/radioHostSlice'
 import { fetchFinishRandomWord } from './ai-exercises/randomWordSlice'
 import { fetchFinishHistorical } from './ai-exercises/historicalSlice'
-
 import { fetchFinishJargonBoss } from './ai-exercises/jargonBossSlice'
 import { fetchFinishCommercialPitch } from './ai-exercises/commercialPitchSlice'
 import { fetchFinishAssociationMaster } from './ai-exercises/associationMasterSlice'
@@ -46,6 +45,7 @@ import { fetchFinishEmpathySpark } from './ai-exercises/empathySparkSlice'
 import { fetchFinishAntiFlattery } from './ai-exercises/antiFlatterySlice'
 import { fetchFinishStarBridge } from './ai-exercises/starBridgeSlice'
 import { fetchFinishRhythmTransformer } from './ai-exercises/rhythmTransformerSlice'
+import { fetchFinishFreeArtist } from './ai-exercises/freeArtistSlice'
 
 import { fetchSubmitLiveRating } from './liveDuelSlice'
 
@@ -349,6 +349,7 @@ const profileSlice = createSlice({
           fetchFinishAntiFlattery.fulfilled,
           fetchFinishStarBridge.fulfilled,
           fetchFinishRhythmTransformer.fulfilled,
+          fetchFinishFreeArtist.fulfilled
         ),
         (state, action) => {
           // Защита: если сессия завершилась без оценки, stats будет отсутствовать

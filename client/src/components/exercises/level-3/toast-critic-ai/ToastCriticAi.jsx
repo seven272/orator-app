@@ -109,7 +109,7 @@ const ToastCriticAi = ({ alias, isDaily }) => {
 
   if (!randomScenario) return <Spinner centered={true} />
 
-  return (
+  return ( 
     <div className={styles.main}>
       <h2 className={styles.title}>Банкетный критик</h2>
       <p className={styles.descr}>Произнеси праздничный тост по заданной схеме и получи рецензию эксперта</p>

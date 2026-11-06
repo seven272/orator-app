@@ -425,6 +425,17 @@ const ALL_EXERCISES = [
     premium: true,
     skill: 'техника речи',
   },
+
+  {
+    alias: 'ai-free-artist',
+    title: 'Свободный художник',
+    description:
+      'Полная свобода слова: выбери свою тему, произнеси монолог или презентацию проекта и получи персональный экспертный разбор от ИИ-судьи',
+    reward: 100,
+    level: 3,
+    premium: true,
+    skill: 'убедительность',
+  },
 ]
 
 const seedDB = async () => {

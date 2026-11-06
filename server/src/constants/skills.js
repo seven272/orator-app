@@ -43,6 +43,7 @@ const SKILLS_MAP = {
     'ai-alibi', // Железное алиби
     'ai-hisai-historical-battle', //Эхо истории
     'ai-anti-flattery', //Анти-лесть
+    'ai-free-artist', //Свободный художник
   ],
   коммуникация: [
     'ai-icebreaker', // Ледокол (умение завязать разговор)

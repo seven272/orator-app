@@ -45,6 +45,7 @@ import IconEx40 from '../../images/card-icons/ai-empathy-spark.png'
 import IconEx41 from '../../images/card-icons/ai-anti-flattery.png'
 import IconEx42 from '../../images/card-icons/ai-star-bridge.png'
 import IconEx43 from '../../images/card-icons/ai-rhythm-transformer.png'
+import IconEx44 from '../../images/card-icons/ai-free-artist.png'
 
 const All_EXERCISES = {
   level1: [
@@ -497,7 +498,7 @@ const All_EXERCISES = {
       premium: true,
     },
     // new
-    // + 
+    // +
     {
       id: 'lev3-16',
       alias: 'ai-jargon-boss',
@@ -525,7 +526,7 @@ const All_EXERCISES = {
       minLevel: 1,
       premium: true,
     },
-     // +
+    // +
     {
       id: 'lev3-18',
       alias: 'ai-association-master',
@@ -539,7 +540,7 @@ const All_EXERCISES = {
       minLevel: 1,
       premium: true,
     },
-     // +
+    // +
     {
       id: 'lev3-19',
       alias: 'ai-toast-critic',
@@ -553,7 +554,7 @@ const All_EXERCISES = {
       minLevel: 1,
       premium: true,
     },
-     // +
+    // +
     {
       id: 'lev3-20',
       alias: 'ai-empathy-spark',
@@ -567,7 +568,7 @@ const All_EXERCISES = {
       minLevel: 1,
       premium: true,
     },
-     // +
+    // +
     {
       id: 'lev3-21',
       alias: 'ai-anti-flattery',
@@ -603,6 +604,19 @@ const All_EXERCISES = {
       reward: 100,
       icon: IconEx43,
       skill: 'техника речи',
+      level: 3,
+      minLevel: 1,
+      premium: true,
+    },
+    {
+      id: 'lev3-24',
+      alias: 'ai-free-artist',
+      title: 'Свободный художник',
+      description:
+        'Полная свобода слова: выбери свою тему, произнеси монолог или презентацию проекта и получи персональный экспертный разбор от ИИ-судьи',
+      reward: 100,
+      icon: IconEx44,
+      skill: 'убедительность',
       level: 3,
       minLevel: 1,
       premium: true,

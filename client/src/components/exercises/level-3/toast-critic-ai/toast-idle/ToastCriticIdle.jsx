@@ -27,8 +27,13 @@ const ToastCriticIdle = ({
       </span>
 
       <div className={styles.idle_box}>
-        <span className={styles.idle_text}>
-          <strong>Событие:</strong> {situationData.event}
+        <span className={styles.idle_text}> 
+          <strong>Повод:</strong> {situationData.situation}
+        
+        </span>
+        <span className={styles.idle_text}> 
+          
+          <strong>Детали:</strong> {situationData.event}
         </span>
         
         {/* Контейнер обязательной схемы тоста */}

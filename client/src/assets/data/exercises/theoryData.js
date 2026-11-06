@@ -44,6 +44,7 @@ import { aiEmpathySparkTheory } from './level3/ai-empathy-spark/theory'
 import { aiAntiFlatteryTheory } from './level3/ai-anti-flattery/theory'
 import { aiStarBridgeTheory } from './level3/ai-star-bridge/theory'
 import { aiRhythmTransformerTheory } from './level3/ai-rhythm-transformer/theory'
+import { aiFreeArtistTheory } from './level3/ai-free-artist/theory'
 
 const THEORY_DATA = {
   // level 1
@@ -93,6 +94,7 @@ const THEORY_DATA = {
   'ai-anti-flattery': aiAntiFlatteryTheory,
   'ai-star-bridge': aiStarBridgeTheory,
   'ai-rhythm-transformer': aiRhythmTransformerTheory,
+  'ai-free-artist': aiFreeArtistTheory,
 }
 
 export { THEORY_DATA }

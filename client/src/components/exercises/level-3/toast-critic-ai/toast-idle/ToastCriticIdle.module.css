@@ -81,6 +81,10 @@
   font-size: 14px;
 }
 
+.idle_text strong {
+  color: var(--color-primary);
+}
+
 /* Контейнер отображения обязательной схемы тоста */
 .concepts_wrapper {
   display: flex;
