@@ -95,7 +95,7 @@ const ALL_EXERCISES = [
     title: 'Риторический перевёртыш',
     description:
       'Перескажи текст, мгновенно меняя все ключевые слова на антонимы',
-    reward: 50,
+    reward: 30,
     level: 1,
     premium: false,
     skill: 'находчивость',
