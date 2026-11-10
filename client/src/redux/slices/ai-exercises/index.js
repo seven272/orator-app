@@ -22,6 +22,7 @@ import antiFlatterySlice from './antiFlatterySlice'
 import starBridgeSlice from './starBridgeSlice'
 import rhythmTransformerSlice from './rhythmTransformerSlice'
 import freeArtistSlice from './freeArtistSlice'
+import nesmeyanaSlice from './nesmeyanaSlice'
 
 // Экспортируем единый объект со всеми ИИ-редюсерами
 const aiSlices = {
@@ -49,6 +50,7 @@ const aiSlices = {
   starBridge: starBridgeSlice,
   rhythmTransformer: rhythmTransformerSlice,
   freeArtist: freeArtistSlice,
+  nesmeyana: nesmeyanaSlice,
 }
 
 export default aiSlices

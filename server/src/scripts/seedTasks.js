@@ -436,6 +436,16 @@ const ALL_EXERCISES = [
     premium: true,
     skill: 'убедительность',
   },
+  {
+    alias: 'ai-nesmeyana',
+    title: 'Несмеяна',
+    description:
+      'Расскажи готовый анекдот так, чтобы растопить лед самого угрюмого, хмурого и неулыбаемого слушателя в мире',
+    reward: 100,
+    level: 3,
+    premium: true,
+    skill: 'харизма и юмор',
+  },
 ]
 
 const seedDB = async () => {

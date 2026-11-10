@@ -31,6 +31,7 @@ const SKILLS_MAP = {
     'ai-knockout', // Остроумный нокаут
     'ai-poem-acting', //Мастер дубляжа
     'ai-toast-critic', //Банкетный критик
+    'ai-nesmeyana', // Несмеяна
   ],
   убедительность: [
     'logic-chain', // Логическая цепь

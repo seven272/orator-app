@@ -46,6 +46,7 @@ import IconEx41 from '../../images/card-icons/ai-anti-flattery.png'
 import IconEx42 from '../../images/card-icons/ai-star-bridge.png'
 import IconEx43 from '../../images/card-icons/ai-rhythm-transformer.png'
 import IconEx44 from '../../images/card-icons/ai-free-artist.png'
+import IconEx45 from '../../images/card-icons/ai-nesmeyana.png'
 
 const All_EXERCISES = {
   level1: [
@@ -617,6 +618,19 @@ const All_EXERCISES = {
       reward: 100,
       icon: IconEx44,
       skill: 'убедительность',
+      level: 3,
+      minLevel: 1,
+      premium: true,
+    },
+    {
+      id: 'lev3-25',
+      alias: 'ai-nesmeyana',
+      title: 'Несмеяна',
+      description:
+        'Расскажи готовый анекдот так, чтобы растопить лед самого угрюмого, хмурого и неулыбаемого слушателя в мире',
+      reward: 100,
+      icon: IconEx45,
+      skill: 'харизма и юмор',
       level: 3,
       minLevel: 1,
       premium: true,

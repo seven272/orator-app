@@ -46,6 +46,7 @@ import { fetchFinishAntiFlattery } from './ai-exercises/antiFlatterySlice'
 import { fetchFinishStarBridge } from './ai-exercises/starBridgeSlice'
 import { fetchFinishRhythmTransformer } from './ai-exercises/rhythmTransformerSlice'
 import { fetchFinishFreeArtist } from './ai-exercises/freeArtistSlice'
+import { fetchFinishNesmeyana } from './ai-exercises/nesmeyanaSlice'
 
 import { fetchSubmitLiveRating } from './liveDuelSlice'
 
@@ -349,7 +350,8 @@ const profileSlice = createSlice({
           fetchFinishAntiFlattery.fulfilled,
           fetchFinishStarBridge.fulfilled,
           fetchFinishRhythmTransformer.fulfilled,
-          fetchFinishFreeArtist.fulfilled
+          fetchFinishFreeArtist.fulfilled,
+          fetchFinishNesmeyana.fulfilled,
         ),
         (state, action) => {
           // Защита: если сессия завершилась без оценки, stats будет отсутствовать

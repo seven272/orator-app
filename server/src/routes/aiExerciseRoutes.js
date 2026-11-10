@@ -152,6 +152,12 @@ import {
   finishFreeArtist,
 } from '../controllers/ai-exercises/freeArtistController.js'
 
+import {
+  startNesmeyana,
+  generateNesmeyanaResponse,
+  finishNesmeyana,
+} from '../controllers/ai-exercises/nesmeyanaController.js'
+
 const router = express.Router()
 
 // Настройка multer для удержания аудио в оперативной памяти (Buffer)
@@ -676,12 +682,34 @@ router.post(
   generateFreeArtistResponse,
 )
 
-
 router.post(
   '/finish-free-artist',
   checkAuth,
   checkActiveSessionGuard('ai-free-artist'),
   finishFreeArtist,
+)
+
+// Роутеры упражнения Несмеяна
+router.post(
+  '/start-nesmeyana',
+  checkAuth,
+  checkPremiumAndTicket('ai-nesmeyana'),
+  startNesmeyana,
+)
+
+router.post(
+  '/response-nesmeyana',
+  checkAuth,
+  checkActiveSessionGuard('ai-nesmeyana'),
+  upload.single('audio'),
+  generateNesmeyanaResponse,
+)
+
+router.post(
+  '/finish-nesmeyana',
+  checkAuth,
+  checkActiveSessionGuard('ai-nesmeyana'),
+  finishNesmeyana,
 )
 
 export default router

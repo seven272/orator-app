@@ -37,6 +37,7 @@ const aiExercisesSchema = new mongoose.Schema(
         'ai-star-bridge',
         'ai-rhythm-transformer',
         'ai-free-artist',
+        'ai-nesmeyana',
       ],
     },
 

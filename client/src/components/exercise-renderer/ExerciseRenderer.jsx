@@ -50,6 +50,7 @@ import AntiFlatteryAi from '../exercises/level-3/anti-flattery-ai/AntiFlatteryAi
 import StarBridgeAi from '../exercises/level-3/star-bridge-ai/StarBridgeAi'
 import RhythmTransformerAi from '../exercises/level-3/rhythm-transformer-ai/RhythmTransformerAi'
 import FreeArtistAi from '../exercises/level-3/free-artist-ai/FreeArtistAi'
+import NesmeyanaAi from '../exercises/level-3/nesmeyana-ai/NesmeyanaAi'
 
 const ExerciseRenderer = ({ exercise, isDaily }) => {
   // Определяем, какой компонент отрисовать на основе типа из конфига
@@ -172,6 +173,8 @@ const ExerciseRenderer = ({ exercise, isDaily }) => {
       )
     case 'ai-free-artist':
       return <FreeArtistAi alias={exercise.alias} isDaily={isDaily} />
+    case 'ai-nesmeyana':
+      return <NesmeyanaAi alias={exercise.alias} isDaily={isDaily} />
 
     default:
       return (
