@@ -247,7 +247,7 @@ const JargonTask = ({ alias, isDaily }) => {
                 <span className={styles.finished_answer}>
                   <strong>Ваш ответ:</strong>{' '}
                   {transcript || 'Запись не велась'}
-                </span>
+                </span> 
               </div>
             )}
             {xp > 0 && <UpgradeExerciseBanner alias={alias} />}

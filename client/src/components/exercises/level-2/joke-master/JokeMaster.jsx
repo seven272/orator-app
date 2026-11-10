@@ -13,6 +13,8 @@ import ExerciseControls from '../../../exercise-controls/ExerciseControls'
 import styles from './JokeMaster.module.css'
 import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
+import UpgradeExerciseBanner from '../../../upgrade-exercise-banner/UpgradeExerciseBanner'
+
 
 const STATUS = {
   IDLE: 'idle',
@@ -236,6 +238,7 @@ const JokeMaster = ({ alias, isDaily }) => {
                 <p className={styles.finished_xp}>+{xp} xp</p>
               </>
             )}
+            {xp > 0 && <UpgradeExerciseBanner alias={alias} />}
           </div>
         )}
       </div>

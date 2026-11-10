@@ -34,13 +34,13 @@ const UPGRADE_MAPPING = {
     upgradeAlias: 'ai-jargon-boss',
     title: 'Разрули тёрки',
   },
-    //8
+  //8
   'speech-pace': {
     upgradeAlias: 'ai-rhythm-transformer',
     title: 'Текст-трансформер',
   },
   //9
-    association: {
+  association: {
     upgradeAlias: 'ai-association-master',
     title: 'Мост смыслов',
   },
@@ -49,14 +49,17 @@ const UPGRADE_MAPPING = {
     upgradeAlias: 'ai-toast-critic',
     title: 'Банкетный критик',
   },
-
+  //11
+  'joke-master': {
+    upgradeAlias: 'ai-nesmeyana',
+    title: 'Несмеяна',
+  },
 
   //шаблон
   synonyms_test: {
     upgradeAlias: 'ai-vocabulary-richness',
     title: 'Богатый слог',
   },
-
 }
 
 export default UPGRADE_MAPPING

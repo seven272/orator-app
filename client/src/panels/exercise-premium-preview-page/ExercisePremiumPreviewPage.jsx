@@ -30,6 +30,11 @@ const ExercisePremiumPreviewPage = () => {
   const isAuth = useSelector(checkIsAuth)
   const isVkGuest = useSelector(checkIsVkGuest)
 
+  const { isPremium: userIsPremium } = useSelector(
+    (state) => state.profile.user,
+  )
+  console.log(userIsPremium)
+
   // Поиск тренажёра по alias во всех уровнях объекта All_EXERCISES
   const exercise = Object.values(All_EXERCISES)
     .flat()
@@ -71,7 +76,18 @@ const ExercisePremiumPreviewPage = () => {
           Зарегистрироваться и оформить премиум
         </button>
       )
-    } else {
+    } else if (userIsPremium && isAuth) {
+       return (
+        <button
+          type="button"
+          className={styles.custom_btn_buy}
+          onClick={() => navigate(`/exercise/${exercise.alias}`)}
+        >
+          В тренажер
+        </button>
+      )
+    }
+    else {
       return (
         <button
           type="button"
@@ -124,16 +140,17 @@ const ExercisePremiumPreviewPage = () => {
           <p className={styles.description}>
             {exercise.description}.
           </p>
-      <p className={styles.ai_features}>
-  <span className={styles.ai_title_wrap}>
-    <RiRobotLine size={18} className={styles.ai_icon} />
-    <strong>Преимущества:</strong>
-  </span>
-  <br />
-  В этой версии искусственный интеллект полностью берёт на себя роль вашего личного наставника. 
-  Он запишет аудиопоток, мгновенно разберёт структуру аргументов, укажет на речевые ошибки 
-  и выдаст точную оценку по шкале ораторского мастерства.
-</p>
+          <p className={styles.ai_features}>
+            <span className={styles.ai_title_wrap}>
+              <RiRobotLine size={18} className={styles.ai_icon} />
+              <strong>Преимущества:</strong>
+            </span>
+            <br />В этой версии искусственный интеллект полностью
+            берёт на себя роль вашего личного наставника. Он запишет
+            аудиопоток, мгновенно разберёт структуру аргументов,
+            укажет на речевые ошибки и выдаст точную оценку по шкале
+            ораторского мастерства.
+          </p>
         </div>
 
         {/* Интерактивные самописные кнопки действий */}
