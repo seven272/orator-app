@@ -1,94 +1,166 @@
 import crypto from 'crypto'
 
+// const verifyVkSignature = (req, res, next) => {
+//   // 1. Продвинутое извлечение: проверяем, прислал ли фронтенд строку или уже готовый объект параметров
+//   const launchParams =
+//     req.body.launchParams || req.query.launchParams || req.body
+
+//   if (!launchParams) {
+//     console.warn(
+//       'verifyVkSignature: Параметры запуска не переданы в запросе',
+//     )
+//     return res
+//       .status(400)
+//       .json({ message: 'Параметры запуска не переданы' })
+//   }
+//   let queryParams = {}
+
+//   // Если пришла строка (начинается с ? или содержит vk_) — парсим её
+//   if (typeof launchParams === 'string') {
+//     const cleanParamsString = launchParams.startsWith('?')
+//       ? launchParams.slice(1)
+//       : launchParams
+//     const urlParams = new URLSearchParams(cleanParamsString)
+//     for (const [key, value] of urlParams.entries()) {
+//       queryParams[key] = value
+//     }
+//   } else if (typeof launchParams === 'object') {
+//     // Если фронтенд прислал уже готовый чистый объект параметров
+//     queryParams = { ...launchParams }
+//   }
+
+//   const { sign, ...params } = queryParams
+
+//   // 2. Валидация "свежести" (оставляем твою рабочую логику)
+//   const vkTs = parseInt(params.vk_ts, 10)
+//   const now = Math.floor(Date.now() / 1000)
+//   const THIRTY_DAYS_IN_SECONDS = 2592000
+
+//   if (!vkTs || Math.abs(now - vkTs) > THIRTY_DAYS_IN_SECONDS) {
+//     // 🛠️ Добавили логирование, чтобы бэкенд перестал молчать в консоли
+//     console.error(
+//       `verifyVkSignature ❌ Срок действия параметров истек. vk_ts: ${vkTs}, текущее время: ${now}, разница: ${now - vkTs} сек.`,
+//     )
+//     return res.status(403).json({
+//       message: 'Срок действия параметров запуска ВКонтакте истек',
+//     })
+//   }
+//   // 3. Формируем строку проверки без encodeURIComponent
+//   // const checkString = Object.keys(params)
+//   //   .filter((key) => key.startsWith('vk_'))
+//   //   .sort()
+//   //   .map((key) => `${key}=${params[key]}`)
+//   //   .join('&')
+
+//   // const secretKey = process.env.VK_SECRET_KEY
+//   // if (!secretKey) {
+//   //   console.error(
+//   //     'КРИТИЧЕСКАЯ ОШИБКА: Переменная VK_SECRET_KEY не задана в .env',
+//   //   )
+//   //   return res
+//   //     .status(500)
+//   //     .json({ message: 'Ошибка конфигурации сервера' })
+//   // }
+
+//   // // 4. Считаем хэш
+//   // const hash = crypto
+//   //   .createHmac('sha256', secretKey)
+//   //   .update(checkString)
+//   //   .digest('base64')
+//   //   .replace(/\+/g, '-')
+//   //   .replace(/\//g, '_')
+//   //   .replace(/=$/, '')
+
+//   // 3. Формируем строку проверки — значения ОБЯЗАТЕЛЬНО кодируем
+//   const checkString = Object.keys(params)
+//     .filter((key) => key.startsWith('vk_'))
+//     .sort()
+//     .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+//     .join('&')
+
+//   const secretKey = process.env.VK_SECRET_KEY
+//   if (!secretKey) {
+//     console.error(
+//       'КРИТИЧЕСКАЯ ОШИБКА: Переменная VK_SECRET_KEY не задана в .env',
+//     )
+//     return res
+//       .status(500)
+//       .json({ message: 'Ошибка конфигурации сервера' })
+//   }
+
+//   // 4. Считаем хэш — срезаем всё паддинг-количество "="
+//   const hash = crypto
+//     .createHmac('sha256', secretKey)
+//     .update(checkString)
+//     .digest('base64')
+//     .replace(/\+/g, '-')
+//     .replace(/\//g, '_')
+//     .replace(/=+$/, '')
+
+//   if (hash !== sign) {
+//     console.error(
+//       `verifyVkSignature ❌ Ошибка валидации: подпись не совпадает. Ожидался: ${sign}, рассчитан: ${hash}`,
+//     )
+//     return res
+//       .status(403)
+//       .json({ message: 'Ошибка валидации: подпись не совпадает' })
+//   }
+
+//   req.vkId = String(params.vk_user_id)
+
+//   next()
+// }
+
 const verifyVkSignature = (req, res, next) => {
-  // 1. Продвинутое извлечение: проверяем, прислал ли фронтенд строку или уже готовый объект параметров
-  const launchParams =
-    req.body.launchParams || req.query.launchParams || req.body
+  const launchParams = req.body.launchParams || req.query.launchParams
 
-  if (!launchParams) {
-    console.warn(
-      'verifyVkSignature: Параметры запуска не переданы в запросе',
-    )
-    return res
-      .status(400)
-      .json({ message: 'Параметры запуска не переданы' })
-  }
-  let queryParams = {}
-
-  // Если пришла строка (начинается с ? или содержит vk_) — парсим её
-  if (typeof launchParams === 'string') {
-    const cleanParamsString = launchParams.startsWith('?')
-      ? launchParams.slice(1)
-      : launchParams
-    const urlParams = new URLSearchParams(cleanParamsString)
-    for (const [key, value] of urlParams.entries()) {
-      queryParams[key] = value
-    }
-  } else if (typeof launchParams === 'object') {
-    // Если фронтенд прислал уже готовый чистый объект параметров
-    queryParams = { ...launchParams }
-  }
-
-  const { sign, ...params } = queryParams
-
-  // 2. Валидация "свежести" (оставляем твою рабочую логику)
-  const vkTs = parseInt(params.vk_ts, 10)
-  const now = Math.floor(Date.now() / 1000)
-  const THIRTY_DAYS_IN_SECONDS = 2592000
-
-  if (!vkTs || Math.abs(now - vkTs) > THIRTY_DAYS_IN_SECONDS) {
-    // 🛠️ Добавили логирование, чтобы бэкенд перестал молчать в консоли
+  if (typeof launchParams !== 'string' || !launchParams.includes('vk_')) {
     console.error(
-      `verifyVkSignature ❌ Срок действия параметров истек. vk_ts: ${vkTs}, текущее время: ${now}, разница: ${now - vkTs} сек.`,
+      'verifyVkSignature ❌ launchParams не переданы или переданы не строкой:',
+      typeof launchParams,
+      launchParams,
     )
-    return res.status(403).json({
-      message: 'Срок действия параметров запуска ВКонтакте истек',
-    })
+    return res.status(400).json({ message: 'Параметры запуска не переданы' })
   }
-  // 3. Формируем строку проверки без encodeURIComponent
-  // const checkString = Object.keys(params)
-  //   .filter((key) => key.startsWith('vk_'))
-  //   .sort()
-  //   .map((key) => `${key}=${params[key]}`)
-  //   .join('&')
 
-  // const secretKey = process.env.VK_SECRET_KEY
-  // if (!secretKey) {
-  //   console.error(
-  //     'КРИТИЧЕСКАЯ ОШИБКА: Переменная VK_SECRET_KEY не задана в .env',
-  //   )
-  //   return res
-  //     .status(500)
-  //     .json({ message: 'Ошибка конфигурации сервера' })
-  // }
+  const clean = launchParams.startsWith('?') ? launchParams.slice(1) : launchParams
 
-  // // 4. Считаем хэш
-  // const hash = crypto
-  //   .createHmac('sha256', secretKey)
-  //   .update(checkString)
-  //   .digest('base64')
-  //   .replace(/\+/g, '-')
-  //   .replace(/\//g, '_')
-  //   .replace(/=$/, '')
+  let sign = ''
+  const rawParams = []
 
-  // 3. Формируем строку проверки — значения ОБЯЗАТЕЛЬНО кодируем
-  const checkString = Object.keys(params)
-    .filter((key) => key.startsWith('vk_'))
-    .sort()
-    .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+  for (const pair of clean.split('&')) {
+    const eq = pair.indexOf('=')
+    const key = eq === -1 ? pair : pair.slice(0, eq)
+    const value = eq === -1 ? '' : pair.slice(eq + 1)
+    if (key === 'sign') sign = value
+    else if (key.startsWith('vk_')) rawParams.push([key, value])
+  }
+
+  if (!sign || rawParams.length === 0) {
+    return res.status(400).json({ message: 'Параметры запуска некорректны' })
+  }
+
+  // Проверка свежести — по сырому значению
+  const vkTsPair = rawParams.find(([key]) => key === 'vk_ts')
+  const vkTs = vkTsPair ? parseInt(vkTsPair[1], 10) : NaN
+  const now = Math.floor(Date.now() / 1000)
+  const THIRTY_DAYS = 2592000
+
+  if (!vkTs || Math.abs(now - vkTs) > THIRTY_DAYS) {
+    return res.status(403).json({ message: 'Срок действия параметров запуска истек' })
+  }
+
+  const checkString = rawParams
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, value]) => `${key}=${value}`)
     .join('&')
 
   const secretKey = process.env.VK_SECRET_KEY
   if (!secretKey) {
-    console.error(
-      'КРИТИЧЕСКАЯ ОШИБКА: Переменная VK_SECRET_KEY не задана в .env',
-    )
-    return res
-      .status(500)
-      .json({ message: 'Ошибка конфигурации сервера' })
+    console.error('КРИТИЧЕСКАЯ ОШИБКА: VK_SECRET_KEY не задан')
+    return res.status(500).json({ message: 'Ошибка конфигурации сервера' })
   }
 
-  // 4. Считаем хэш — срезаем всё паддинг-количество "="
   const hash = crypto
     .createHmac('sha256', secretKey)
     .update(checkString)
@@ -98,15 +170,19 @@ const verifyVkSignature = (req, res, next) => {
     .replace(/=+$/, '')
 
   if (hash !== sign) {
+    // Диагностика: видно ровно то, что реально участвует в подписи
     console.error(
-      `verifyVkSignature ❌ Ошибка валидации: подпись не совпадает. Ожидался: ${sign}, рассчитан: ${hash}`,
+      'verifyVkSignature ❌ Подпись не совпадает\n' +
+      '  raw:  ' + clean + '\n' +
+      '  checkString: ' + checkString + '\n' +
+      '  ожидался: ' + sign + '\n' +
+      '  рассчитан: ' + hash,
     )
-    return res
-      .status(403)
-      .json({ message: 'Ошибка валидации: подпись не совпадает' })
+    return res.status(403).json({ message: 'Ошибка валидации: подпись не совпадает' })
   }
 
-  req.vkId = String(params.vk_user_id)
+  const userIdPair = rawParams.find(([key]) => key === 'vk_user_id')
+  req.vkId = userIdPair ? userIdPair[1] : ''
 
   next()
 }
