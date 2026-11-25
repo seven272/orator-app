@@ -1,0 +1,191 @@
+.screen_finished {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.finish_card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(15px);
+  border-radius: 24px;
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.status_badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.badge_passed {
+  background: rgba(52, 199, 89, 0.15);
+  color: #1e7e34;
+}
+
+.badge_failed {
+  background: rgba(255, 77, 79, 0.15);
+  color: #cf1322;
+}
+
+.finish_title {
+  font: var(--font-title);
+  font-size: 20px;
+  margin: 0 0 18px;
+  color: var(--color-text-dark);
+}
+
+/* Круговой балл */
+.score_circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--color-white);
+  margin: 0 auto 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.circle_passed {
+  border: 4px solid #34c759;
+  box-shadow: 0 0 15px rgba(52, 199, 89, 0.25);
+}
+
+.circle_failed {
+  border: 4px solid #ff4d4f;
+  box-shadow: 0 0 15px rgba(255, 77, 79, 0.2);
+}
+
+.score_value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  line-height: 1;
+}
+
+.score_label {
+  font-size: 11px;
+  color: #8e9bae;
+  margin-top: 2px;
+}
+
+/* Детализация критериев */
+.criteria_list {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.criteria_item {
+  margin-bottom: 12px;
+  font: var(--font-m);
+  font-size: 13px;
+  color: var(--color-text-primary);
+}
+
+.criteria_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mini_bar {
+  width: 100%;
+  height: 6px;
+  background: #e6f0ff;
+  border-radius: 4px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.mini_bar div {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.bar_passed {
+  background: #34c759;
+}
+
+.bar_failed {
+  background: var(--color-blue);
+}
+
+/* Блок вердикта */
+.verdict_box {
+  background: var(--color-white);
+  padding: 15px;
+  border-radius: 16px;
+  text-align: left;
+  margin-bottom: 22px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.verdict_subtitle {
+  font: var(--font-m);
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--color-text-dark);
+}
+
+.verdict_text {
+  font: var(--font-m);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Кнопки действий */
+.btn_group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn_primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+  font: var(--font-m);
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn_primary:active {
+  opacity: 0.85;
+}
+
+.btn_secondary {
+  width: 100%;
+  padding: 13px;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--color-blue);
+  border: 1px solid var(--color-blue);
+  font: var(--font-m);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn_secondary:active {
+  background: rgba(0, 122, 255, 0.05);
+}

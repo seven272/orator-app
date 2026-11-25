@@ -13,6 +13,8 @@ import courseSlice from './slices/courseSlice'
 import feedSlice from './slices/feedSlice'
 import vkSlice from './slices/vkSlice'
 import paymentSlice from './slices/paymentSlice'
+import rankSlice from './slices/rankSlice'
+import rankExamSlice from './slices/rankExamSlice'
 //слайсы ИИ тренажеров
 import aiSlices from './slices/ai-exercises/index'
 
@@ -31,6 +33,8 @@ const store = configureStore({
     feed: feedSlice,
     vk: vkSlice,
     payment: paymentSlice,
+    rank: rankSlice,
+    rankExam: rankExamSlice,
     //ИИ тренажеры
     ...aiSlices,
   },

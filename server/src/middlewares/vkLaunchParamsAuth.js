@@ -46,10 +46,36 @@ const verifyVkSignature = (req, res, next) => {
     })
   }
   // 3. Формируем строку проверки без encodeURIComponent
+  // const checkString = Object.keys(params)
+  //   .filter((key) => key.startsWith('vk_'))
+  //   .sort()
+  //   .map((key) => `${key}=${params[key]}`)
+  //   .join('&')
+
+  // const secretKey = process.env.VK_SECRET_KEY
+  // if (!secretKey) {
+  //   console.error(
+  //     'КРИТИЧЕСКАЯ ОШИБКА: Переменная VK_SECRET_KEY не задана в .env',
+  //   )
+  //   return res
+  //     .status(500)
+  //     .json({ message: 'Ошибка конфигурации сервера' })
+  // }
+
+  // // 4. Считаем хэш
+  // const hash = crypto
+  //   .createHmac('sha256', secretKey)
+  //   .update(checkString)
+  //   .digest('base64')
+  //   .replace(/\+/g, '-')
+  //   .replace(/\//g, '_')
+  //   .replace(/=$/, '')
+
+  // 3. Формируем строку проверки — значения ОБЯЗАТЕЛЬНО кодируем
   const checkString = Object.keys(params)
     .filter((key) => key.startsWith('vk_'))
     .sort()
-    .map((key) => `${key}=${params[key]}`)
+    .map((key) => `${key}=${encodeURIComponent(params[key])}`)
     .join('&')
 
   const secretKey = process.env.VK_SECRET_KEY
@@ -62,14 +88,14 @@ const verifyVkSignature = (req, res, next) => {
       .json({ message: 'Ошибка конфигурации сервера' })
   }
 
-  // 4. Считаем хэш
+  // 4. Считаем хэш — срезаем всё паддинг-количество "="
   const hash = crypto
     .createHmac('sha256', secretKey)
     .update(checkString)
     .digest('base64')
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
-    .replace(/=$/, '')
+    .replace(/=+$/, '')
 
   if (hash !== sign) {
     console.error(

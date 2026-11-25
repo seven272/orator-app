@@ -12,7 +12,7 @@ import {
   linkEmailToVkAccount,
   linkVkToEmailAccount,
   mergeAccounts,
-  fakeBuyPremium,
+
 } from '../controllers/userController.js'
 import upload from '../middlewares/upload.js'
 import {
@@ -57,7 +57,6 @@ router.post(
 )
 router.post('/link-vk', checkAuth, linkVkToEmailAccount)
 router.post('/merge-accounts', checkAuth, mergeAccounts)
-// Имитация успешной оплаты через ЮMoney
-router.post('/fake-buy', checkAuth, fakeBuyPremium)
+
 
 export default router

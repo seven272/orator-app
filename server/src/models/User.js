@@ -62,9 +62,23 @@ const userSchema = new mongoose.Schema(
       // уровень
       level: { type: Number, default: 1 },
       // игровой опыт текущего уроня
-      xp: { type: Number, default: 0 }, 
+      xp: { type: Number, default: 0 },
       // баланс жетонов оратора
       coins: { type: Number, default: 0 },
+      // Текущий ранг на Карте ораторского пути (0: Начинающий ... 4: Легенда)
+      speakerRank: { type: Number, default: 0 },
+      // Прогресс по специальным испытаниям для перехода на следующий ранг
+      rankChallenges: [
+        {
+          targetRank: { type: Number, required: true }, // 1, 2, 3 или 4
+          examPassed: { type: Boolean, default: false },
+          examBestScore: { type: Number, default: 0 },
+          realTaskCompleted: { type: Boolean, default: false },
+          realTaskReport: { type: String, default: '' },
+          realTaskFeedback: { type: String, default: '' },
+          completedAt: { type: Date },
+        },
+      ],
       // Список полученных званий и наград
       achievements: [
         {
@@ -75,7 +89,7 @@ const userSchema = new mongoose.Schema(
       ],
     },
     // --- УДЕРЖАНИЕ (Retention) ---
-    streak: { 
+    streak: {
       current: { type: Number, default: 0 },
       lastCompletedDate: { type: Date },
     },
@@ -87,6 +101,7 @@ const userSchema = new mongoose.Schema(
           alias: { type: String },
           title: { type: String },
           totalPoints: { type: Number, default: 0 },
+          bestScore: { type: Number, default: 0 },
           completionsCount: { type: Number, default: 0 },
         },
       ],
@@ -130,7 +145,8 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    lastWeeklyRewardDate: { //дата получения награды за удержание стрика в 7 дней
+    lastWeeklyRewardDate: {
+      //дата получения награды за удержание стрика в 7 дней
       type: String,
       default: '', // Будет хранить дату воскресенья выполненной недели "YYYY-MM-DD"
     },

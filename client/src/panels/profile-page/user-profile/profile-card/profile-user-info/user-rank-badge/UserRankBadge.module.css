@@ -1,0 +1,137 @@
+.rank_dropdown_wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 4px 0;
+}
+
+.rank_trigger_badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid #91caff;
+  background-color: #e6f4ff;
+  color: #0958d9;
+  transition: all 0.2s ease;
+}
+
+.rank_trigger_badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(22, 119, 255, 0.15);
+}
+
+.tier_badge_2 {
+  border-color: #85a5ff;
+  background-color: #f0f5ff;
+  color: #1d39c4;
+}
+
+.tier_badge_3,
+.tier_badge_4 {
+  border-color: #ffd666;
+  background: linear-gradient(90deg, #fffbe6, #fff1b8);
+  color: #ad6800;
+}
+
+.badge_arrow {
+  font-size: 9px;
+  opacity: 0.75;
+}
+
+.rank_popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 100;
+  width: 240px;
+  background-color: var(--color-white, #ffffff);
+  border: 1px solid #d6e4ff;
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 10px 28px rgba(0, 44, 140, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.popover_header {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--color-text-secondary);
+}
+
+.popover_list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.popover_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  opacity: 0.65;
+}
+
+.row_passed {
+  opacity: 1;
+  color: var(--color-text-dark);
+}
+
+.row_current {
+  opacity: 1;
+  background-color: #e6f4ff;
+  color: #0958d9;
+  font-weight: 700;
+}
+
+.row_left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.row_mic {
+  font-size: 14px;
+}
+
+.row_status {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.popover_hint {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  padding: 6px 8px;
+  border-radius: 8px;
+  background-color: #f5f9ff;
+  text-align: center;
+}
+
+.popover_cta_btn {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: none;
+  background-color: #1677ff;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.popover_cta_btn:hover {
+  background-color: #0958d9;
+}

@@ -24,6 +24,8 @@ const DashboardPage = () => {
     error: profileError,
   } = useSelector((state) => state.profile)
 
+  const { speakerProgress } = useSelector((state) => state.rank)
+
   const {
     duelStats,
     statsLoading: duelLoading,
@@ -77,6 +79,7 @@ const DashboardPage = () => {
       weakPoint={weakPoint}
       recentActivity={recentActivity}
       totalExercises={totalExercises}
+      speakerProgress={speakerProgress}
       duelStats={duelStats}
       archiveCourses={archives}
     />

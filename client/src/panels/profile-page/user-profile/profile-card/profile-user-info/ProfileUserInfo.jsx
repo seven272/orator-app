@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { message } from 'antd'
 import AvatarOrPlaceholder from '../../../../../components/avatar-or-placeholder/AvatarOrPlaceholder'
 import { openPremiumModal } from '../../../../../redux/slices/profileSlice'
-import styles from './ProfileUserInfo.module.css' // Используем общий файл стилей
+import UserRankBadge from './user-rank-badge/UserRankBadge'
+import styles from './ProfileUserInfo.module.css'
 
 const ProfileUserInfo = ({ user, isPremium, premiumExpiresAt }) => {
   const dispatch = useDispatch()
@@ -12,6 +12,7 @@ const ProfileUserInfo = ({ user, isPremium, premiumExpiresAt }) => {
   const handleOpenPayment = () => {
     dispatch(openPremiumModal())
   }
+
   return (
     <div className={styles.top_profile_row}>
       <div className={styles.avatar_wrapper}>
@@ -22,14 +23,11 @@ const ProfileUserInfo = ({ user, isPremium, premiumExpiresAt }) => {
         <h4 className={styles.display_name}>
           {user?.displayName || 'Anonimus'}
         </h4>
-        <span className={styles.level_badge}>
-          Уровень {user?.progression?.level || 1}
-        </span>
+
+        <UserRankBadge rankIndex={user?.progression?.speakerRank ?? 0} />
 
         <div className={styles.premium_status_row}>
-          <span className={styles.status_label}>
-            Премиум-статус:{' '}
-          </span>
+          <span className={styles.status_label}>Премиум-статус: </span>
           {isPremium ? (
             <span className={styles.status_value_active}>
               активен{' '}
@@ -37,9 +35,7 @@ const ProfileUserInfo = ({ user, isPremium, premiumExpiresAt }) => {
                 `(до ${new Date(premiumExpiresAt).toLocaleDateString('ru-RU')})`}
             </span>
           ) : (
-            <span className={styles.status_value_inactive}>
-              не активен
-            </span>
+            <span className={styles.status_value_inactive}>не активен</span>
           )}
         </div>
       </div>

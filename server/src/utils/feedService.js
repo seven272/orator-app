@@ -1,6 +1,5 @@
 import FeedEvent from '../models/FeedEvent.js'
 
-
 // Публикация о покупке/активации Premium-подписки
 const trackPremiumPurchase = async (userId) => {
   try {
@@ -152,9 +151,32 @@ const trackLevelUpEvent = async (userId, newLevel) => {
   try {
     await FeedEvent.create({
       user: userId,
+      type: 'LEVEL_UP',
+      meta: {
+        newLevel: `${newLevel} уровня`,
+      },
+    })
+  } catch (error) {
+    console.error('Ошибка публикации левелапа в ленту:', error)
+  }
+}
+
+// Публикация о повышении уровня (Level Up)
+const trackRankUpEvent = async (userId, numberRank) => {
+  const ranks = [
+    'начинающий',
+    'уверенный',
+    'профи',
+    'мастер',
+    'легенда',
+  ]
+  const newRank = ranks[numberRank] || 0
+  try {
+    await FeedEvent.create({
+      user: userId,
       type: 'RANK_UP',
       meta: {
-        newRank: `${newLevel} уровня`,
+        newRank: `${newRank}`,
       },
     })
   } catch (error) {
@@ -174,7 +196,7 @@ const trackWeeklyPrize = async (userId, itemTitle) => {
     console.error(error)
   }
 }
-//  Сундук с призыми
+//  Живая дуэль
 const trackLiveDuel = async (userId) => {
   const isFirstVariant = Math.random() > 0.5
   try {
@@ -192,8 +214,6 @@ const trackLiveDuel = async (userId) => {
   }
 }
 
-
-
 export {
   trackPremiumPurchase,
   trackChallengeCompletion,
@@ -203,6 +223,7 @@ export {
   trackStreakAndMilestones,
   trackNewAchievements,
   trackLevelUpEvent,
+  trackRankUpEvent,
   trackWeeklyPrize,
   trackLiveDuel,
 }

@@ -1,6 +1,16 @@
 // controllers/leaderboardController.js
 import User from '../models/User.js'
 
+import { RANKS } from '../constants/ranks.js'
+
+const getRankInfo = (rankIndex = 0) => {
+  const stage = RANKS.find((r) => r.rankIndex === rankIndex) || RANKS
+  return {
+    speakerRank: stage.rankIndex,
+    speakerRankTitle: stage.title,
+  }
+}
+
 const getLeaderboard = async (req, res) => {
   try {
     // В зависимости от вашей реализации авторизации, извлеките ID, если токен есть.
@@ -20,7 +30,7 @@ const getLeaderboard = async (req, res) => {
       .sort(sortQuery)
       .limit(10)
       .select(
-        'displayName progression.level stats.lifetimeXp weeklyXp isPremium avatar',
+        'displayName progression.level progression.speakerRank stats.lifetimeXp weeklyXp isPremium avatar',
       )
 
     const leaderboard = topUsers.map((user, index) => ({
@@ -28,6 +38,7 @@ const getLeaderboard = async (req, res) => {
       id: user._id,
       displayName: user.displayName || 'Аноним',
       level: user.progression?.level || 1,
+      ...getRankInfo(user.progression?.speakerRank ?? 0),
       score: isWeekly ? user.weeklyXp : user.stats.lifetimeXp,
       isPremium: user.isPremium,
       avatar: user.avatar,
@@ -58,6 +69,7 @@ const getLeaderboard = async (req, res) => {
           id: currentUser._id,
           displayName: currentUser.displayName || 'Вы',
           level: currentUser.progression?.level || 1,
+          ...getRankInfo(currentUser.progression?.speakerRank ?? 0),
           score: isWeekly
             ? currentUser.weeklyXp
             : currentUser.stats.lifetimeXp,

@@ -42,6 +42,19 @@ const FeedList = () => {
             </>
           ),
         }
+        case 'LEVEL_UP':
+        return {
+          icon: '🆙',
+          text: (
+            <>
+              прокачал свои навыки, теперь он оратор {' '}
+              <span className={styles.highlight_rank}>
+                {meta?.newLevel || '2'}
+              </span>
+              !
+            </>
+          ),
+        }
       case 'CHALLENGE_DONE':
         return {
           icon: '🔥',
@@ -118,7 +131,7 @@ const FeedList = () => {
         }
       case 'EXERCISE_TOP_SCORE':
         return {
-          icon: '🎯',
+          icon: '🎯', 
           text: (
             <>
               показал блестящий результат в тренажере{' '}

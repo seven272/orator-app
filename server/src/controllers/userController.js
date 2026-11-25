@@ -11,6 +11,10 @@ import { getXpThreshold } from '../utils/gamificationProgress.js'
 import { trackPremiumPurchase } from '../utils/feedService.js'
 import { translit } from '../utils/transliterate.js'
 import { validatePasswordStrength } from '../utils/passwordValidator.js'
+import {
+  calculateSpeakerProgress,
+  promoteUserRank,
+} from '../utils/rankService.js'
 
 dotenv.config()
 
@@ -1070,6 +1074,8 @@ const getUserProfile = async (req, res) => {
       ),
     ]
 
+    const speakerProgress = calculateSpeakerProgress(user)
+
     res.status(200).json({
       user: {
         displayName: user.displayName,
@@ -1093,6 +1099,7 @@ const getUserProfile = async (req, res) => {
           },
         }),
       },
+      speakerProgress,
       skills: skillsData,
       weakPoint,
       recentActivity: user.stats.exerciseStats.slice(-5).reverse(), // Последние 5
@@ -1106,44 +1113,9 @@ const getUserProfile = async (req, res) => {
   }
 }
 
-const fakeBuyPremium = async (req, res) => {
-  try {
-    const userId = req.user.id // Зависит от вашего middleware
 
-    // Выставляем премиум на 30 дней вперед
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 30)
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      {
-        isPremium: true,
-        premiumExpiresAt: expiresAt,
-      },
-      { new: true },
-    )
 
-    if (!updatedUser) {
-      return res
-        .status(404)
-        .json({ message: 'Пользователь не найден' })
-    }
-
-    trackPremiumPurchase(updatedUser._id)
-
-    res.json({
-      success: true,
-      message: 'Премиум статус успешно активирован на 30 дней!',
-      isPremium: updatedUser.isPremium,
-      premiumExpiresAt: updatedUser.premiumExpiresAt,
-    })
-  } catch (error) {
-    console.error(error)
-    res
-      .status(500)
-      .json({ message: 'Ошибка при активации премиум-статуса' })
-  }
-}
 
 export {
   register,
@@ -1158,5 +1130,4 @@ export {
   linkVkToEmailAccount,
   mergeAccounts,
   getUserProfile,
-  fakeBuyPremium,
 }

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import bridge from '@vkontakte/vk-bridge'
 
 import axiosInstance from '../../utils/axiosInstance'
-import { fetchActivateFakePremium } from './profileSlice'
+
 
 const fetchRegisterUser = createAsyncThunk(
   'auth/fetchRegisterUser',
@@ -459,15 +459,7 @@ const authSlice = createSlice({
         state.isLoading = false
         state.error = action.payload
       })
-      // проверяем премиум из profileSlice
-      .addCase(
-        fetchActivateFakePremium.fulfilled,
-        (state, action) => {
-          if (state.user) {
-            state.user.isPremium = action.payload.isPremium
-          }
-        },
-      )
+ 
       // ==========================================
       // 11. АВТОРИЗАЦИЯ НА САЙТЕ ЧЕРЕЗ ВК
       // ==========================================

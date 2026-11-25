@@ -2,12 +2,16 @@ import dayjs from 'dayjs'
 
 import { checkAchievements } from './achievementService.js'
 import DailyTask from '../models/DailyTask.js'
-import { trackLevelUpEvent, trackStreakAndMilestones, trackNewAchievements } from './feedService.js'
+import {
+  trackLevelUpEvent,
+  trackStreakAndMilestones,
+  trackNewAchievements,
+} from './feedService.js'
 
 // Мягкая прогрессия: каждый уровень требует на 500 XP больше предыдущего
 const getXpThreshold = (level) => {
   if (level <= 1) return 1000
-  return 1000 + (level - 1) * 500 
+  return 1000 + (level - 1) * 500
 }
 
 /**
@@ -96,7 +100,7 @@ const applyAiGamificationProgress = async (
         ) {
           user.dailyProgress[pIndex].isCompleted = true
           isJustCompleted = true
-        } 
+        }
       }
 
       // Формируем объект обновления для фронтенда
@@ -121,7 +125,7 @@ const applyAiGamificationProgress = async (
   const earnedXp = baseEarnedXp + dailyBonusXp
   const earnedCoins = baseEarnedCoins + dailyBonusCoins
 
-  // 4. Зачисление наград в профиль 
+  // 4. Зачисление наград в профиль
   user.stats.lifetimeXp += earnedXp
   user.weeklyXp += earnedXp
   user.progression.xp += earnedXp
@@ -145,11 +149,18 @@ const applyAiGamificationProgress = async (
   if (statIndex > -1) {
     user.stats.exerciseStats[statIndex].totalPoints += score
     user.stats.exerciseStats[statIndex].completionsCount += 1
+    // Обновляем рекорд за одну сессию, если текущий результат выше
+    if (
+      score > (user.stats.exerciseStats[statIndex].bestScore || 0)
+    ) {
+      user.stats.exerciseStats[statIndex].bestScore = score
+    }
   } else {
     user.stats.exerciseStats.push({
       alias: exAlias,
       title: exerciseTitle,
       totalPoints: score,
+      bestScore: score,
       completionsCount: 1,
     })
   }
@@ -162,8 +173,8 @@ const applyAiGamificationProgress = async (
   // Автоматические триггеры «Ленты новостей»
   // А. Если произошел Level Up:
   if (isLevelUp) {
-    trackLevelUpEvent(user._id, user.progression.level);
-  }
+    trackLevelUpEvent(user._id, user.progression.level)
+  } 
   // Б. Трекинг рекордов, юбилеев и серий дней (стриков):
   trackStreakAndMilestones({
     userId: user._id,
@@ -171,11 +182,11 @@ const applyAiGamificationProgress = async (
     exerciseTitle: exerciseTitle,
     score: score,
     userStats: user.stats.exerciseStats,
-    streakDays: user.streak.current
-  });
+    streakDays: user.streak.current,
+  })
   // В. Если получены новые достижения/ачивки:
   if (newAwards && newAwards.length > 0) {
-    trackNewAchievements(user._id, newAwards);
+    trackNewAchievements(user._id, newAwards)
   }
 
   const completedDays = [
@@ -187,7 +198,7 @@ const applyAiGamificationProgress = async (
   ]
 
   return {
-    earnedXp, 
+    earnedXp,
     earnedCoins,
     isLevelUp,
     newAchievements: newAwards || [],

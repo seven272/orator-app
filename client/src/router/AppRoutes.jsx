@@ -28,6 +28,7 @@ import ForbiddenPage from '../panels/forbidden-page/ForbiddenPage'
 import ProtectedRoute from '../components/protected-route/ProtectedRoute'
 import OfferPage from '../panels/offer-page/OfferPage'
 import ExercisePremiumPreviewPage from '../panels/exercise-premium-preview-page/ExercisePremiumPreviewPage'
+import RankExamPage from '../panels/rank-exam-page/RankExamPage'
 
 const router = createHashRouter([
   {
@@ -47,7 +48,10 @@ const router = createHashRouter([
             element: <ExercisesLayout />,
             children: [
               { path: 'exercise/:alias', element: <ExercisePage /> },
-              { path: 'exercise/preview/:alias', element: <ExercisePremiumPreviewPage /> },
+              {
+                path: 'exercise/preview/:alias',
+                element: <ExercisePremiumPreviewPage />,
+              },
             ],
           },
 
@@ -85,6 +89,7 @@ const router = createHashRouter([
                 path: 'course/:courseCode',
                 element: <SelectedCoursePage />,
               },
+              { path: 'rank-exam/:alias', element: <RankExamPage /> },
               // 🔒 ЗАЩИЩЕННАЯ АДМИНКА
               // Оборачиваем AdminPage в ProtectedRoute с флагом onlyAdmin
               {

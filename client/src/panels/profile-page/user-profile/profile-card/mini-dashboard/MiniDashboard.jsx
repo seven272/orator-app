@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { IoStatsChart } from 'react-icons/io5'
 import {
-  FaFire,
   FaCoins,
   FaChevronRight,
   FaCrosshairs,
   FaAward,
 } from 'react-icons/fa'
+import { IoMdTrendingUp } from "react-icons/io";
 
 import styles from './MiniDashboard.module.css'
 import { fetchProfileData } from '../../../../../redux/slices/profileSlice'
@@ -46,12 +46,10 @@ const MiniDashboard = () => {
       </div>
       <div className={styles.top_row}>
         <div className={styles.metric}>
-          <FaFire className={styles.icon_streak} />
+          <IoMdTrendingUp className={styles.icon_level} />
           <div className={styles.metric_content}>
-            <span className={styles.metric_label}>Дней подряд</span>
-            <span className={styles.metric_value}>
-              {user.streak} дн.
-            </span>
+            <span className={styles.metric_label}>Уровень</span>
+            <span className={styles.metric_value}>{user.level}</span>
           </div>
         </div>
 

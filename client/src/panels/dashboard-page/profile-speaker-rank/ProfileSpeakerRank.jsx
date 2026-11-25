@@ -1,141 +1,180 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { message } from 'antd'
+import { fetchRankUp } from '../../../redux/slices/rankSlice'
+import RankTimeline from './rank-timeline/RankTimeline'
+import RankRequirementsDrawer from './rank-requirements-drawer/RankRequirementsDrawer'
 import styles from './ProfileSpeakerRank.module.css'
 
-const ALL_STAGES = [
-  { xpThreshold: 0, title: 'Начинающий', mic: '🎙️' },
-  { xpThreshold: 10000, title: 'Уверенный', mic: '🎤' },
-  { xpThreshold: 50000, title: 'Профи', mic: '🎧' },
-  { xpThreshold: 200000, title: 'Мастер', mic: '📻' },
-  { xpThreshold: 500000, title: 'Легенда', mic: '👑' },
-]
+const ProfileSpeakerRank = ({ userXp = 0, speakerProgress }) => {
+  const dispatch = useDispatch()
+  const { rankUpLoading } = useSelector((state) => state.rank)
 
-  const calculateRoadPercent = (userXp) => {
-    // 1. Крайний случай: если опыт равен или превышает максимум (Легенда)
-    const maxThreshold = ALL_STAGES[ALL_STAGES.length - 1].xpThreshold
-    if (userXp >= maxThreshold) return 100
+  // Храним индекс выбранной ступени (null — всё свернуто)
+  const [selectedStageIndex, setSelectedStageIndex] = useState(null)
 
-    // 2. Находим текущий интервал, в котором находится пользователь
-    let currentStageIndex = 0
-    for (let i = 0; i < ALL_STAGES.length - 1; i++) {
-      if (
-        userXp >= ALL_STAGES[i].xpThreshold &&
-        userXp < ALL_STAGES[i + 1].xpThreshold
-      ) {
-        currentStageIndex = i
-        break
-      }
-    }
+  if (!speakerProgress) return null
 
-    // 3. Берем пороговые значения текущего отрезка пути
-    const startXp = ALL_STAGES[currentStageIndex].xpThreshold
-    const endXp = ALL_STAGES[currentStageIndex + 1].xpThreshold
+  const {
+    currentRank,
+    nextRank,
+    stagesTimeline,
+    isMaxRank,
+    canRankUp,
+    completedCount,
+    totalCount,
+    requirements,
+  } = speakerProgress
 
-    // 4. Считаем, какой процент отрезка пользователь уже прошел
-    const xpInInterval = userXp - startXp
-    const intervalTotalXp = endXp - startXp
-    const percentInInterval = (xpInInterval / intervalTotalXp) * 100
+  const isNextDrawerOpen =
+    !isMaxRank && nextRank && selectedStageIndex === nextRank.rankIndex
 
-    // 5. Распределяем визуальный вес: каждая из 4-х секций занимает ровно 25% общей линии
-    const segmentWeight = 25
-    const totalRoadPercent =
-      currentStageIndex * segmentWeight +
-      percentInInterval * (segmentWeight / 100)
+  const previewStage =
+    selectedStageIndex !== null && !isNextDrawerOpen
+      ? stagesTimeline.find((s) => s.rankIndex === selectedStageIndex)
+      : null
 
-    return Math.min(Math.max(totalRoadPercent, 0), 100)
+  const handleSelectStage = (rankIndex) => {
+    setSelectedStageIndex((prev) => (prev === rankIndex ? null : rankIndex))
   }
 
-const ProfileSpeakerRank = ({ userXp, progressData }) => {
+  const handleToggleNextGate = () => {
+    if (!nextRank) return
+    setSelectedStageIndex((prev) =>
+      prev === nextRank.rankIndex ? null : nextRank.rankIndex,
+    )
+  }
 
-
-  // Вычисляем общий процент прохождения всей карты ораторского пути для закрашивания линии
-  // 500 000 XP — это наш абсолютный максимум (Легенда)
-  const totalRoadPercent = calculateRoadPercent(userXp)
+  const handleRankUp = async () => {
+    try {
+      const res = await dispatch(fetchRankUp()).unwrap()
+      message.success(res.message || 'Ранг успешно повышен!')
+      setSelectedStageIndex(null)
+    } catch (err) {
+      message.error(err || 'Не удалось повысить ранг')
+    }
+  }
 
   return (
-    <div className={styles.mic_progress_block}>
-      {/* Крупная статусная шапка */}
-      <div className={styles.mic_header}>
-        <div className={styles.mic_icon_box}>
-          <span className={styles.dynamic_mic}>
-            {progressData.mic}
-          </span>
+    <div className={styles.stage_pass_card}>
+      {/* 1. ШАПКА «STAGE PASS» */}
+      <div className={styles.pass_header}>
+        <div
+          className={`${styles.spotlight_medallion} ${styles[`tier_${currentRank.rankIndex}`] || ''}`}
+        >
+          <span className={styles.medallion_emoji}>{currentRank.mic}</span>
         </div>
-        <div className={styles.mic_titles}>
-          <span className={styles.rank_title}>Ваш текущий ранг</span>
-          <h5 className={styles.audience_text}>
-            {progressData.title}
-          </h5>
-        </div>
-      </div>
 
-      <p className={styles.stage_desc}>{progressData.desc}</p>
-
-      {/* Текущая шкала XP уровня */}
-      <div className={styles.xp_wrapper}>
-        <div className={styles.xp_labels}>
-          <span className={styles.xp_current_text}>{userXp} XP</span>
-          <span>
-            {progressData.maxXp === Infinity
-              ? 'MAX'
-              : `${progressData.maxXp} XP`}
-          </span>
-        </div>
-        <div className={styles.xp_track}>
-          <div
-            className={styles.xp_fill}
-            style={{ width: `${progressData.percent}%` }}
-          />
-        </div>
-        <span className={styles.audience_sub_hint}>
-          🔥 {progressData.audience}
-        </span>
-      </div>
-
-      {/* КАРТА ОРАТОРСКОГО ПУТИ (Премиальный интерактивный таймлайн) */}
-      <div className={styles.timeline_container}>
-        <h6 className={styles.timeline_title}>
-          Карта ораторского пути
-        </h6>
-
-        <div className={styles.timeline_wrapper_scroll}>
-          <div className={styles.stages_line}>
-            {/* 🔒 ЖЕСТКАЯ СКВОЗНАЯ РЕЛЬСА ПРОГРЕССА */}
-            <div className={styles.progress_line_track}>
-              <div
-                className={styles.progress_line_fill}
-                style={{ width: `${totalRoadPercent}%` }}
-              />
-            </div>
-
-            {ALL_STAGES.map((stage, index) => {
-              const isReached = userXp >= stage.xpThreshold
-              const isCurrent = progressData.title === stage.title
-
-              return (
-                <div
-                  key={index}
-                  className={`${styles.stage_node} ${isReached ? styles.node_reached : ''} ${isCurrent ? styles.node_current : ''}`}
-                >
-                  <div className={styles.node_mic_box}>
-                    <span className={styles.node_emoji}>
-                      {stage.mic}
-                    </span>
-                  </div>
-                  <span className={styles.node_title}>
-                    {stage.title}
-                  </span>
-                  <span className={styles.node_xp_hint}>
-                    {stage.xpThreshold === 0
-                      ? '0 XP'
-                      : `${stage.xpThreshold / 1000}к+ XP`}
-                  </span>
-                </div>
-              )
-            })}
+        <div className={styles.pass_info}>
+          <div className={styles.pass_meta_row}>
+            <span className={styles.pass_tag}>• РАНГ ОРАТОРА •</span>
+            <span className={styles.venue_badge}>
+              📍 {currentRank.audience}
+            </span>
           </div>
+          <h4 className={styles.pass_title}>{currentRank.title}</h4>
+          <p className={styles.pass_quote}>«{currentRank.desc}»</p>
         </div>
+
+        {/* Правый блок: Кнопка апгрейда или кнопка с 4 точками прогресса */}
+        {!isMaxRank && nextRank && (
+          <div className={styles.pass_actions}>
+            {canRankUp ? (
+              <button
+                type="button"
+                className={styles.hero_rankup_btn}
+                disabled={rankUpLoading}
+                onClick={handleRankUp}
+              >
+                {rankUpLoading
+                  ? 'Повышаем...'
+                  : `🎉 Получить ранг «${nextRank.title}»`}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={`${styles.gate_trigger_btn} ${isNextDrawerOpen ? styles.gate_trigger_active : ''}`}
+                onClick={handleToggleNextGate}
+              >
+                <div className={styles.dots_row} aria-hidden="true">
+                  {[0, 1, 2, 3].map((dotIdx) => (
+                    <span
+                      key={dotIdx}
+                      className={`${styles.progress_dot} ${dotIdx < completedCount ? styles.dot_filled : ''}`}
+                    />
+                  ))}
+                </div>
+                <span>Следующий этап</span>
+                <span className={styles.chevron}>
+                  {isNextDrawerOpen ? '▲' : '▼'}
+                </span>
+              </button>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* 2. СТУПЕНИ АМФИТЕАТРА */}
+      <RankTimeline
+        stagesTimeline={stagesTimeline}
+        nextRank={nextRank}
+        selectedStageIndex={selectedStageIndex}
+        canRankUp={canRankUp}
+        completedCount={completedCount}
+        totalCount={totalCount}
+        onSelectStage={handleSelectStage}
+      />
+
+      {/* 3А. ПАНЕЛЬ 4 УСЛОВИЙ (если открыт следующий целевой ранг) */}
+      {isNextDrawerOpen && requirements && nextRank && (
+        <RankRequirementsDrawer
+          userXp={userXp}
+          nextRank={nextRank}
+          requirements={requirements}
+          canRankUp={canRankUp}
+          rankUpLoading={rankUpLoading}
+          onRankUp={handleRankUp}
+        />
+      )}
+
+      {/* 3Б. КАРТОЧКА ПРЕДПРОСМОТРА (если кликнули по пройденной или далекой ступени) */}
+      {previewStage && (
+        <div className={styles.preview_card}>
+          <div className={styles.preview_left}>
+            <span className={styles.preview_emoji}>{previewStage.mic}</span>
+            <div className={styles.preview_texts}>
+              <div className={styles.preview_top}>
+                <strong className={styles.preview_title}>
+                  {previewStage.title}
+                </strong>
+                <span
+                  className={`${styles.preview_status} ${previewStage.isCurrent ? styles.status_current : previewStage.isReached ? styles.status_done : styles.status_future}`}
+                >
+                  {previewStage.isCurrent
+                    ? 'Ваш текущий уровень'
+                    : previewStage.isReached
+                      ? 'Этап пройден ✓'
+                      : `Порог: ${previewStage.minXp.toLocaleString()} XP`}
+                </span>
+              </div>
+              <span className={styles.preview_venue}>
+                📍 Площадка: {previewStage.audience}
+              </span>
+              <p className={styles.preview_desc}>{previewStage.desc}</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className={styles.preview_close_btn}
+            onClick={() => setSelectedStageIndex(null)}
+            aria-label="Закрыть предпросмотр"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   )
 }

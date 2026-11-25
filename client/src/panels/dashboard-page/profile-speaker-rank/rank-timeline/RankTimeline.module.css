@@ -1,0 +1,178 @@
+.amphitheater_scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 6px 2px 2px 2px;
+}
+
+.amphitheater_scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Выравнивание по нижней линии — создает эффект растущих ступеней */
+.amphitheater_row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(84px, 1fr));
+  align-items: flex-end;
+  gap: 8px;
+  width: 100%;
+  min-width: 460px;
+}
+
+.stage_step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  padding: 8px 4px;
+  cursor: pointer;
+  opacity: 0.48;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.stage_step:hover {
+  opacity: 0.95;
+  background-color: #f5f9ff;
+  transform: translateY(-2px);
+}
+
+/* Пройденные ступени */
+.step_reached {
+  opacity: 0.9;
+}
+
+/* Следующая целевая ступень */
+.step_next {
+  opacity: 0.92;
+  background-color: #f8fbff;
+  border-color: #d6e4ff;
+}
+
+/* Текущая активная ступень пользователя */
+.step_current {
+  opacity: 1;
+  background-color: #f0f7ff;
+  border-color: #91caff;
+}
+
+/* Выбранная кликом ступень для просмотра деталей */
+.step_selected {
+  opacity: 1;
+  background-color: #e6f4ff;
+  border-color: #1677ff;
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.12);
+}
+
+/* Базовый медальон */
+.medallion {
+  position: relative;
+  border-radius: 50%;
+  background-color: var(--color-white);
+  border: 1.5px solid var(--color-grey-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Ступени роста (от Начинающего до Легенды) */
+.step_0 {
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+}
+
+.step_1 {
+  width: 38px;
+  height: 38px;
+  font-size: 17px;
+}
+
+.step_2 {
+  width: 42px;
+  height: 42px;
+  font-size: 19px;
+}
+
+.step_3 {
+  width: 46px;
+  height: 46px;
+  font-size: 21px;
+}
+
+.step_4 {
+  width: 52px;
+  height: 52px;
+  font-size: 24px;
+  border-color: #ffe58f;
+  background: radial-gradient(circle at 30% 30%, #fffbe6, #ffffff);
+}
+
+.step_reached .medallion {
+  border-color: #69b1ff;
+  background-color: #e6f4ff;
+}
+
+.step_current .medallion {
+  border: 2px solid #1677ff;
+  background-color: var(--color-white);
+  box-shadow: 0 0 14px rgba(22, 119, 255, 0.35);
+}
+
+.step_4.step_current .medallion,
+.step_4.step_reached .medallion {
+  border-color: #faad14;
+  box-shadow: 0 0 16px rgba(250, 173, 20, 0.4);
+}
+
+.done_mark {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #52c41a;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #fff;
+}
+
+.progress_pill {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background-color: #1677ff;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1.5px solid #fff;
+}
+
+.step_title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.step_current .step_title {
+  color: #1677ff;
+}
+
+.step_xp {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}

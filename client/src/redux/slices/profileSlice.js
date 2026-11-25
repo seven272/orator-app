@@ -67,20 +67,6 @@ const fetchProfileData = createAsyncThunk(
   },
 )
 
-const fetchActivateFakePremium = createAsyncThunk(
-  'profile/fetchActivateFakePremium',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post('/user/fake-buy')
-      return response.data // Ждем { isPremium: true, premiumExpiresAt: ... }
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || 'Ошибка активации Премиума',
-      )
-    }
-  },
-)
-
 const initialState = {
   user: {
     displayName: '',
@@ -116,6 +102,7 @@ const initialState = {
   recentActivity: [], //последние 5 сделанных упражнений
   totalExercises: 0,
   lastAwarded: null, // Сюда кладем новую ачивку для триггера модалки
+  speakerProgress: null, //данные по уровню новичок, мастер...
   isStale: false,
   loading: false,
   isPremiumModalOpen: false,
@@ -299,6 +286,7 @@ const profileSlice = createSlice({
         state.user = action.payload.user
         state.skills = action.payload.skills
         state.weakPoint = action.payload.weakPoint
+        state.speakerProgress = action.payload.speakerProgress
         state.recentActivity = action.payload.recentActivity
         state.totalExercises = action.payload.totalExercises
       })
@@ -306,23 +294,7 @@ const profileSlice = createSlice({
         state.loading = false
         state.error = action.payload
       })
-      // покупка премиум
-      .addCase(fetchActivateFakePremium.pending, (state) => {
-        state.error = null
-      })
-      .addCase(
-        fetchActivateFakePremium.fulfilled,
-        (state, action) => {
-          if (state.user) {
-            state.user.isPremium = action.payload.isPremium
-            state.user.premiumExpiresAt =
-              action.payload.premiumExpiresAt
-          }
-        },
-      )
-      .addCase(fetchActivateFakePremium.rejected, (state, action) => {
-        state.error = action.payload
-      })
+   
       // Глобальный слушатель для ЛЮБОГО успешно завершенного тренажера
       .addMatcher(
         isAnyOf(
@@ -405,5 +377,5 @@ export const {
   openPremiumModal,
   closePremiumModal,
 } = profileSlice.actions
-export { fetchProfileData, fetchActivateFakePremium }
+export { fetchProfileData }
 export default profileSlice.reducer

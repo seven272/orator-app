@@ -3,6 +3,7 @@ import styles from './LeaderboardList.module.css'
 
 const LeaderboardList = ({ user, isCurrent, activeTab }) => {
   const isTopThree = user.rank <= 3
+  const isLegend = user.speakerRank === 4
   const medals = { 1: '🥇', 2: '🥈', 3: '🥉' }
 
   // Валидация аватара: отсекаем пустые строки, заглушки 'dicebear.com' и строки без расширения файла
@@ -18,6 +19,7 @@ const LeaderboardList = ({ user, isCurrent, activeTab }) => {
         ${styles.row} 
         ${isCurrent ? styles.rowCurrentUser : ''} 
         ${user.isPremium ? styles.rowPremium : ''}
+        ${isLegend ? styles.rowLegend : ''}
       `}
     >
       {/* Место в рейтинге (медаль или цифра) */}
@@ -40,13 +42,23 @@ const LeaderboardList = ({ user, isCurrent, activeTab }) => {
         </div>
       )}
 
-      {/* Имя и статус */}
+      {/* Имя, статус PRO и текстовый ранг оратора */}
       <div className={styles.nameContainer}>
-        <span className={styles.name}>
-          {user.displayName || 'Аноним'}
-        </span>
-        {user.isPremium && (
-          <span className={styles.premiumBadge}>PRO</span>
+        <div className={styles.nameRow}>
+          <span className={styles.name}>
+            {user.displayName || 'Аноним'}
+          </span>
+          {user.isPremium && (
+            <span className={styles.premiumBadge}>PRO</span>
+          )}
+        </div>
+
+        {user.speakerRankTitle && (
+          <span
+            className={`${styles.speakerRank} ${isLegend ? styles.speakerRankLegend : ''}`}
+          >
+            {user.speakerRankTitle}
+          </span>
         )}
       </div>
 

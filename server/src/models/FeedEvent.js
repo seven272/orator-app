@@ -14,7 +14,8 @@ const feedEventSchema = new mongoose.Schema(
       type: String,
       enum: [
         'RANK_UP',
-        'CHALLENGE_DONE',
+        'LEVEL_UP',
+        'CHALLENGE_DONE', 
         'PREMIUM_BUY',
         'STREAK_WEEK',
         'EXERCISE_TOP_SCORE', // Высокий балл в ИИ-тренажере (>80)
@@ -33,6 +34,7 @@ const feedEventSchema = new mongoose.Schema(
     meta: {
       eventTargetName: { type: String }, // Универсальное название (челленджа, курса, товара или ранга)
       newRank: { type: String }, // Новый ораторский ранг юзера
+      newLevel: { type: String }, // Новый ораторский уровень юзера
       streakDays: { type: Number }, // Количество дней ударного режима (ударный темп)
       exerciseTitle: { type: String }, // Название тренажера («Дебаты», «Ассоциации»)
       score: { type: Number }, // Полученный балл

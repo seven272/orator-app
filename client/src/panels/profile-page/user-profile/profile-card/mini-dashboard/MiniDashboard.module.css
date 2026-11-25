@@ -71,7 +71,7 @@
 }
 
 /* Иконки перепривязаны к палитре приложения */
-.icon_streak { color: var(--color-red); font-size: 14px; flex-shrink: 0; }
+.icon_level { color: var(--color-red); font-size: 14px; flex-shrink: 0; }
 .icon_coins { color: var(--color-green); font-size: 14px; flex-shrink: 0; }
 .icon_lifetime_xp { color: var(--color-primary); font-size: 14px; flex-shrink: 0; }
 

@@ -25,7 +25,7 @@ import TheoryContent from '../../../theory-content/TheoryContent'
 import Modal from '../../../../UI/modal/Modal'
 
 const TOTAL_ROUNDS = 1
-const TIME_ROUND = 40
+const TIME_ROUND = 60
 
 const TribuneAi = ({ alias, isDaily }) => {
   // ИСПРАВЛЕНИЕ 1: Обязательно достаем audioBlob из нашего нового хука
