@@ -3,32 +3,29 @@ const RANKS = [
     rankIndex: 0,
     minXp: 0,
     title: 'Начинающий',
-    audience: 'Кухня (Семья и кот, 1-3 чел)',
-    mic: '🎙️',
-    desc: 'Тестирую навыки на самых близких.',
     // Требования для перехода на ранг 1 (Уверенный)
     nextRankRequirements: {
       targetRank: 1,
       requiredXp: 10000,
       exercises: [
         {
-          alias: 'ai-tribune',
-          title: 'Трибуна',
-          minPercent: 75, // > 75% от макс. балла тренажера
+          alias: 'ai-rhythm-transformer',
+          title: 'ИИ-метроном',
+          minScore: 70,
         },
         {
-          alias: 'ai-icebreaker',
-          title: 'Ледокол',
-          minPercent: 70,
+          alias: 'ai-random-word',
+          title: 'Слово из шляпы',
+          minScore: 70,
         },
       ],
       exam: {
-  alias: 'exam-confident',
-  title: 'Экзамен: Идеальный питч',
-  description:
-    'Презентуйте случайный продукт за 60 секунд по четкой структуре: проблема, решение, выгода и призыв к действию.',
-  minScore: 80,
-},
+        alias: 'exam-confident',
+        title: 'Экзамен: Идеальный питч',
+        description:
+          'Презентуйте случайный продукт за 60 секунд по четкой структуре: проблема, решение, выгода и призыв к действию.',
+        minScore: 70,
+      },
       realWorldTask: {
         title: 'Голосовое без черновиков',
         description:
@@ -40,9 +37,6 @@ const RANKS = [
     rankIndex: 1,
     minXp: 10000,
     title: 'Уверенный',
-    audience: 'Офис / Локальный бар (15-30 чел)',
-    mic: '🎤',
-    desc: 'Внимательно слушают в компании.',
     // Требования для перехода на ранг 2 (Профи)
     nextRankRequirements: {
       targetRank: 2,
@@ -51,21 +45,21 @@ const RANKS = [
         {
           alias: 'ai-debate',
           title: 'Дебаты',
-          minPercent: 80,
+          minScore: 75,
         },
         {
-          alias: 'ai-commercial-pitch',
-          title: 'Коммерческий питч',
-          minPercent: 75,
+          alias: 'ai-poem-acting',
+          title: 'Мастер дубляжа',
+          minScore: 75,
         },
       ],
-   exam: {
-  alias: 'exam-pro',
-  title: 'Экзамен: Адвокат идеи',
-  description:
-    'Защитите спорный тезис в убедительном монологе: приведите сильные аргументы и заранее закройте главное возражение.',
-  minScore: 80,
-},
+      exam: {
+        alias: 'exam-pro',
+        title: 'Экзамен: Адвокат идеи',
+        description:
+          'Защитите спорный тезис в убедительном монологе: приведите сильные аргументы и заранее закройте главное возражение.',
+        minScore: 80,
+      },
 
       realWorldTask: {
         title: 'Тост или поздравление вживую',
@@ -78,32 +72,34 @@ const RANKS = [
     rankIndex: 2,
     minXp: 50000,
     title: 'Профи',
-    audience: 'Конференц-зал TED (200-500 чел)',
-    mic: '🎧',
-    desc: 'Держу фокус целого зала.',
     // Требования для перехода на ранг 3 (Мастер)
     nextRankRequirements: {
       targetRank: 3,
-      requiredXp: 200000,
+      requiredXp: 100000,
       exercises: [
         {
           alias: 'ai-interview',
           title: 'Стресс-интервью',
-          minPercent: 85,
+          minScore: 80,
         },
         {
-          alias: 'ai-jargon-boss',
-          title: 'Босс без жаргона',
-          minPercent: 80,
+          alias: 'ai-poem-tongue',
+          title: 'Тяжелая дикция',
+          minScore: 80,
+        },
+        {
+          alias: 'ai-tribune',
+          title: 'Трибуна',
+          minScore: 80,
         },
       ],
-     exam: {
-  alias: 'exam-master',
-  title: 'Экзамен: Антикризисное обращение',
-  description:
-    'Выступите перед недовольной аудиторией в острой ситуации, сохранив спокойствие и органично вплетя 3 обязательных факта.',
-  minScore: 80,
-},
+      exam: {
+        alias: 'exam-master',
+        title: 'Экзамен: Антикризисное обращение',
+        description:
+          'Выступите перед недовольной аудиторией в острой ситуации, сохранив спокойствие и органично вплетя 3 обязательных факта.',
+        minScore: 80,
+      },
 
       realWorldTask: {
         title: 'Публичный вопрос или выступление на созвоне',
@@ -114,39 +110,41 @@ const RANKS = [
   },
   {
     rankIndex: 3,
-    minXp: 200000,
+    minXp: 100000,
     title: 'Мастер',
-    audience: 'Концерт-холл (3 000 - 5 000 чел)',
-    mic: '📻',
-    desc: 'Вдохновляю тысячи сердец.',
     // Требования для перехода на ранг 4 (Легенда)
     nextRankRequirements: {
       targetRank: 4,
-      requiredXp: 500000,
+      requiredXp: 200000,
       exercises: [
         {
           alias: 'ai-tribune',
           title: 'Трибуна',
-          minPercent: 90,
+          minScore: 90,
         },
         {
-          alias: 'ai-historical-battle',
-          title: 'Исторический баттл',
-          minPercent: 85,
+          alias: 'ai-debate',
+          title: 'Дебат-клуб',
+          minScore: 90,
         },
         {
-          alias: 'ai-metaphor',
-          title: 'Мастер метафор',
-          minPercent: 85,
+          alias: 'ai-radio-host',
+          title: 'Радиоведущий',
+          minScore: 90,
+        },
+        {
+          alias: 'ai-toast-critic',
+          title: 'Банкетный критик',
+          minScore: 90,
         },
       ],
-     exam: {
-  alias: 'exam-legend',
-  title: 'Экзамен: Главная сцена TED',
-  description:
-    'Произнесите вдохновляющую речь уровня TED: объедините историю-крючок, сквозную метафору и сильный манифест.',
-  minScore: 80,
-},
+      exam: {
+        alias: 'exam-legend',
+        title: 'Экзамен: Главная сцена TED',
+        description:
+          'Произнесите вдохновляющую речь уровня TED: объедините историю-крючок, сквозную метафору и сильный манифест.',
+        minScore: 90,
+      },
       realWorldTask: {
         title: 'Живое выступление перед аудиторией',
         description:
@@ -156,11 +154,8 @@ const RANKS = [
   },
   {
     rankIndex: 4,
-    minXp: 500000,
+    minXp: 200000,
     title: 'Легенда',
-    audience: 'Стадион «Олимпийский» (30 000+)',
-    mic: '👑',
-    desc: 'Голос, меняющий стадионы!',
     nextRankRequirements: null, // Максимальный ранг достигнут
   },
 ]

@@ -1,18 +1,3 @@
-.stage_pass_card {
-  background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-  border-radius: 18px;
-  padding: 18px 20px;
-  border: 1px solid #e6f0ff;
-  box-shadow: 0 6px 20px rgba(0, 74, 226, 0.04);
-  margin-bottom: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-/* ==========================================================================
-   ШАПКА «STAGE PASS»
-   ========================================================================== */
 .pass_header {
   display: flex;
   align-items: center;
@@ -20,7 +5,6 @@
   flex-wrap: wrap;
 }
 
-/* Медальон с эффектом софита */
 .spotlight_medallion {
   width: 54px;
   height: 54px;
@@ -34,7 +18,6 @@
   box-shadow: 0 4px 14px rgba(22, 119, 255, 0.16);
 }
 
-/* Цветовая эволюция медальона по рангам */
 .tier_2 {
   background: radial-gradient(circle at 30% 25%, #f0f5ff, #adc6ff);
   border-color: #597ef7;
@@ -48,8 +31,10 @@
   box-shadow: 0 4px 16px rgba(250, 173, 20, 0.28);
 }
 
-.medallion_emoji {
-  font-size: 26px;
+.medallion_png {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .pass_info {
@@ -98,7 +83,6 @@
   margin: 0;
 }
 
-/* Кнопка открытия условий с 4 точками прогресса */
 .pass_actions {
   display: flex;
   align-items: center;
@@ -166,109 +150,6 @@
 .hero_rankup_btn:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(22, 119, 255, 0.45);
-}
-
-/* ==========================================================================
-   КАРТОЧКА ПРЕДПРОСМОТРА ЛЮБОЙ СТУПЕНИ ПО КЛИКУ
-   ========================================================================== */
-.preview_card {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background-color: var(--color-white);
-  border: 1px solid #d6e4ff;
-  animation: slideDown 0.2s ease;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.preview_left {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.preview_emoji {
-  font-size: 24px;
-  line-height: 1.2;
-}
-
-.preview_texts {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.preview_top {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.preview_title {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--color-text-dark);
-}
-
-.preview_status {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 10px;
-}
-
-.status_current {
-  background-color: #e6f4ff;
-  color: #1677ff;
-}
-
-.status_done {
-  background-color: #f6ffed;
-  color: #389e0d;
-}
-
-.status_future {
-  background-color: #f5f5f5;
-  color: var(--color-text-secondary);
-}
-
-.preview_venue {
-  font-size: 11px;
-  font-weight: 600;
-  color: #0958d9;
-}
-
-.preview_desc {
-  font-size: 11px;
-  color: var(--color-text-secondary);
-  margin: 0;
-}
-
-.preview_close_btn {
-  background: none;
-  border: none;
-  color: var(--color-text-secondary);
-  font-size: 13px;
-  cursor: pointer;
-  padding: 2px 6px;
-}
-
-.preview_close_btn:hover {
-  color: var(--color-text-dark);
 }
 
 @media screen and (max-width: 680px) {

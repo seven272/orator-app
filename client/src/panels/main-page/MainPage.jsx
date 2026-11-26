@@ -22,9 +22,7 @@ const MainPage = () => {
 
   return (
     <div className={styles.section_main}>
-      {/* Наш новый изолированный компонент баннера */}
       <PromoBannerBlock />
-
       <div className={styles.border}></div>
       <DashboardBlock />
       <div className={styles.border}></div>

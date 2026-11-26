@@ -1,0 +1,12 @@
+.stage_pass_card {
+  background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+  border-radius: 18px;
+  padding: 18px 20px;
+  border: 1px solid #e6f0ff;
+  box-shadow: 0 6px 20px rgba(0, 74, 226, 0.04);
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+

@@ -1,15 +1,46 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { RANKS } from '../../../constants/ranks'
 
 import styles from './DashboardBlock.module.css'
 
 const DashboardBlock = () => {
   const navigate = useNavigate()
 
-  // деструктуризация с защитой от undefined (fallback объект)
   const userData = useSelector((state) => state.profile?.user) || {}
-  const { level = 1, levelProgressPercent = 0, coins = 0 } = userData
+  const { speakerProgress } = useSelector((state) => state.rank) || {}
+
+  const lifetimeXp = userData.lifetimeXp || 0
+  const rankIndex =
+    speakerProgress?.currentRank?.rankIndex ??
+    userData.progression?.speakerRank ??
+    userData.speakerRank ??
+    0
+
+  const currentStage =
+    RANKS.find((r) => r.rankIndex === rankIndex) || RANKS[0]
+  const nextStage =
+    RANKS.find((r) => r.rankIndex === rankIndex + 1) || null
+
+  const isMaxRank = !nextStage
+
+  // Считаем процент прогресса до следующего ранга
+  let rankProgressPercent = 100
+  if (!isMaxRank) {
+    if (speakerProgress?.requirements?.xp?.percent !== undefined) {
+      rankProgressPercent = speakerProgress.requirements.xp.percent
+    } else {
+      const startXp = currentStage.minXp
+      const targetXp = nextStage.minXp
+      const range = Math.max(targetXp - startXp, 1)
+      const earned = Math.max(lifetimeXp - startXp, 0)
+      rankProgressPercent = Math.min(
+        Math.round((earned / range) * 100),
+        100,
+      )
+    }
+  }
 
   return (
     <section
@@ -20,31 +51,43 @@ const DashboardBlock = () => {
     >
       <div className={styles.banner_header}>
         <h2 className={styles.banner_title}>
-          📊 АНАЛИЗ НАВЫКОВ И ПРОГРЕСС
+          📊 ПУТЬ ОРАТОРА И СТАТИСТИКА
         </h2>
       </div>
 
       <div className={styles.banner_wrapper}>
         <div className={styles.banner_row}>
-          <span className={styles.text_main}>
-            Твой уровень:{' '}
-            <strong>
-              {level} ({levelProgressPercent}%)
-            </strong>
+          <div className={styles.rank_info}>
+            <img
+              src={currentStage.icon}
+              alt={currentStage.title}
+              className={styles.rank_icon}
+            />
+            <span className={styles.text_main}>
+              Ранг:{' '}
+              <span className={styles.text_main_subtitle}>
+                {currentStage.title}{' '}
+                {!isMaxRank && `(${rankProgressPercent}%)`}
+              </span>
+            </span>
+          </div>
+
+          <span className={styles.badge_xp}>
+            ⚡ {lifetimeXp.toLocaleString()} XP
           </span>
-          <span className={styles.badge_coins}>🪙 {coins}</span>
         </div>
 
-        {/* Улучшение: Визуальный прогресс-бар для мгновенного считывания UI */}
         <div className={styles.progress_container}>
           <div
             className={styles.progress_bar}
-            style={{ width: `${levelProgressPercent}%` }}
+            style={{ width: `${rankProgressPercent}%` }}
           />
         </div>
 
         <div className={styles.banner_footer}>
-          <span>Нажми, чтобы посмотреть полную статистику</span>
+          <span>
+           Нажмите, чтобы посмотреть полную статистику
+          </span>
           <span className={styles.chevron_icon}>›</span>
         </div>
       </div>

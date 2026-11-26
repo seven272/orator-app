@@ -1,11 +1,8 @@
 import { RANKS } from '../constants/ranks.js'
 import { trackRankUpEvent } from './feedService.js'
 
-/**
- * Рассчитывает текущий ранг, статусы всех 4 замков для перехода
- * и флаг доступности кнопки повышения ранга.
- */
-export const calculateSpeakerProgress = (user) => {
+// Рассчитывает текущий ранг, статусы всех 4 замков для перехода и флаг доступности кнопки повышения ранга.
+const calculateSpeakerProgress = (user) => {
   const currentRankIndex = user.progression?.speakerRank ?? 0
   const currentStage =
     RANKS.find((r) => r.rankIndex === currentRankIndex) || RANKS[0]
@@ -15,10 +12,6 @@ export const calculateSpeakerProgress = (user) => {
   const stagesTimeline = RANKS.map((stage) => ({
     rankIndex: stage.rankIndex,
     minXp: stage.minXp,
-    title: stage.title,
-    audience: stage.audience,
-    desc: stage.desc,
-    mic: stage.mic,
     isReached: currentRankIndex >= stage.rankIndex,
     isCurrent: currentRankIndex === stage.rankIndex,
   }))
@@ -59,11 +52,10 @@ export const calculateSpeakerProgress = (user) => {
       (s) => s.alias === reqEx.alias,
     )
     const bestScore = Math.min(userStat?.bestScore || 0, 100)
-    const minRequired = reqEx.minScore ?? reqEx.minPercent
+    const minRequired = reqEx.minScore
 
     return {
       alias: reqEx.alias,
-      title: reqEx.title,
       minScore: minRequired,
       bestScore,
       isDone: bestScore > minRequired,
@@ -139,8 +131,6 @@ export const calculateSpeakerProgress = (user) => {
       },
       realWorldTask: {
         targetRank: reqs.targetRank,
-        title: reqs.realWorldTask.title,
-        description: reqs.realWorldTask.description,
         isUnlocked: isTrialsUnlocked,
         isDone: isRealTaskDone,
         feedback: challengeRecord?.realTaskFeedback || '',
@@ -149,10 +139,8 @@ export const calculateSpeakerProgress = (user) => {
   }
 }
 
-/**
- * Явное повышение ранга пользователя по кнопке
- */
-export const promoteUserRank = async (user) => {
+// Явное повышение ранга пользователя по кнопке
+const promoteUserRank = async (user) => {
   const progress = calculateSpeakerProgress(user)
 
   if (progress.isMaxRank) {
@@ -163,15 +151,17 @@ export const promoteUserRank = async (user) => {
     throw new Error(
       'Не все условия для перехода на следующий ранг выполнены',
     )
-  } 
+  }
 
   user.progression.speakerRank += 1
-   
+
   await user.save()
 
-   if (progress.canRankUp) {
-      trackRankUpEvent(user._id, user.progression.speakerRank)
-    } 
+  if (progress.canRankUp) {
+    trackRankUpEvent(user._id, user.progression.speakerRank)
+  }
 
   return calculateSpeakerProgress(user)
 }
+
+export { calculateSpeakerProgress, promoteUserRank }

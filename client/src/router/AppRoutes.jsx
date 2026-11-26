@@ -47,6 +47,7 @@ const router = createHashRouter([
             path: '',
             element: <ExercisesLayout />,
             children: [
+              
               { path: 'exercise/:alias', element: <ExercisePage /> },
               {
                 path: 'exercise/preview/:alias',

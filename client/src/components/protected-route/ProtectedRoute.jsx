@@ -23,7 +23,7 @@ const ProtectedRoute = ({ onlyAdmin = false }) => {
   }
 
   // Если все проверки пройдены — разрешаем рендеринг страницы
-  return <Outlet />
+  return <Outlet /> 
 }
 
 export default ProtectedRoute

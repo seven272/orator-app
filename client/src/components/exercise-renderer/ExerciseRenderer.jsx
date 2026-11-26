@@ -1,5 +1,11 @@
-import React from 'react'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
+import {
+  checkIsAuth,
+  checkIsVkGuest,
+} from '../../redux/slices/authSlice'
 import styles from './ExerciseRenderer.module.css'
 //level1
 import Association from '../exercises/level-1/association/Association'
@@ -52,8 +58,22 @@ import RhythmTransformerAi from '../exercises/level-3/rhythm-transformer-ai/Rhyt
 import FreeArtistAi from '../exercises/level-3/free-artist-ai/FreeArtistAi'
 import NesmeyanaAi from '../exercises/level-3/nesmeyana-ai/NesmeyanaAi'
 
+
 const ExerciseRenderer = ({ exercise, isDaily }) => {
-  // Определяем, какой компонент отрисовать на основе типа из конфига
+  const navigate = useNavigate()
+  const isAuth = useSelector(checkIsAuth)
+  const isVkGuest = useSelector(checkIsVkGuest)
+  const { isLoading} = useSelector((state) => state.auth)
+
+  //защита при переходе по прямой ссылке от неавторизованных пользователей
+  useEffect(() => {
+    if (exercise?.premium && (!isAuth || isVkGuest) && !isLoading) {
+      console.log('Вы не авторизованы. Доступ к тренажеру запрещен')
+      navigate('/forbidden')
+    }
+
+  }, [isAuth, isVkGuest, navigate, exercise, isLoading])
+
   switch (exercise.alias) {
     case 'association':
       return <Association alias={exercise.alias} isDaily={isDaily} />

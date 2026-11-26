@@ -13,7 +13,7 @@ import { Radar } from '@ant-design/plots'
 import Achievements from '../achievements/Achievements'
 import LiveDuelStats from '../live-duel-stats/LiveDuelStats'
 import CourseHistory from '../course-history/CourseHistory'
-import ProfileSpeakerRank from '../profile-speaker-rank/ProfileSpeakerRank'
+import RankSpeaker from '../../../components/rank-speaker/RankSpeaker'
 import styles from './Dashboard.module.css'
 
 const Dashboard = ({
@@ -29,10 +29,10 @@ const Dashboard = ({
   if (!skills || !user || !duelStats) {
     return <Spin size="large" fullscreen />
   }
- 
+
   return (
     <div className={styles.container}>
-      <ProfileSpeakerRank
+      <RankSpeaker
         userXp={user.lifetimeXp}
         speakerProgress={speakerProgress}
       />

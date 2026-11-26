@@ -10,11 +10,11 @@ import ExerciseRenderer from '../../components/exercise-renderer/ExerciseRendere
 
 
 const ExercisePage = () => {
-  const navigate = useNavigate() 
+  const navigate = useNavigate()
   const params = useParams()
   const [searchParams] = useSearchParams()
   const isDaily = searchParams.get('daily') === 'true'
-
+ 
   //  Находим иконку из статического конфига по alias
   const exerciseData = params?.alias
     ? Object.values(All_EXERCISES)
@@ -27,6 +27,8 @@ const ExercisePage = () => {
   const handleGoBack = () => {
     navigate(-1)
   }
+
+
 
   if (!exerciseData) {
     return (

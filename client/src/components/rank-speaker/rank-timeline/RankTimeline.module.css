@@ -176,3 +176,9 @@
   color: var(--color-text-secondary);
   white-space: nowrap;
 }
+.rank_png_icon {
+  width: 72%;
+  height: 72%;
+  object-fit: contain;
+  display: block;
+}

@@ -36,10 +36,11 @@ axiosInstance.interceptors.response.use(
       if (!isAuthRoute && !isEnergyLimitError) {
         
         // 🔒 1. Если пользователь НЕ авторизован (Анониму пришёл статус 401)
-        if (httpStatus === 401) {
-          window.location.hash = '/auth' 
-          return Promise.reject(error)
-        }
+        // if (httpStatus === 401) {
+          
+        //   window.location.hash = '/auth' 
+        //   return Promise.reject(error)
+        // }
 
         // 🎟️ 2. Если авторизован, но нет Премиума / билетов (Пришёл статус 403 и ACCESS_DENIED)
         if (httpStatus === 403 && errorData.code === 'ACCESS_DENIED') {

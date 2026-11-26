@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { message } from 'antd'
+
 import { useSpeechSber } from '../../hooks/useSpeechSber'
 import { SCREEN_STATUS, AI_STATUS } from '../../constants/exercises'
 import {
@@ -14,6 +15,7 @@ import {
 import RankExamIdle from './rank-exam-idle/RankExamIdle'
 import RankExamProcess from './rank-exam-process/RankExamProcess'
 import RankExamResult from './rank-exam-result/RankExamResult'
+import RankExamGate from './rank-exam-gate/RankExamGate'
 import styles from './RankExamPage.module.css'
 
 const EXAM_TITLES_MAP = {
@@ -62,6 +64,8 @@ const RankExamPage = () => {
     userSpeech,
     error,
   } = useSelector((state) => state.rankExam)
+
+  const { user } = useSelector((state) => state.profile)
 
   const isLoading = exStatus === 'loading'
   const headerInfo = EXAM_TITLES_MAP[alias]
@@ -154,6 +158,10 @@ const RankExamPage = () => {
         </button>
       </div>
     )
+  }
+
+  if (!user?.isPremium) {
+    return <RankExamGate />
   }
 
   return (

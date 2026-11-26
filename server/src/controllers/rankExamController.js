@@ -17,12 +17,26 @@ const startRankExam = async (req, res) => {
 
     const examConfig = RANK_EXAMS_CONFIG[alias]
     if (!examConfig) {
-      return res.status(400).json({ message: 'Неизвестный тип экзамена' })
+      return res
+        .status(400)
+        .json({ message: 'Неизвестный тип экзамена' })
     }
 
-    const user = await User.findById(userId).select('progression stats')
+    const user = await User.findById(userId).select(
+      'progression stats isPremium',
+    )
+
     if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' })
+      return res
+        .status(404)
+        .json({ message: 'Пользователь не найден' })
+    }
+
+    if (!user.isPremium) {
+      return res.status(403).json({
+        message:
+          'Сдача экзамена доступна только пользователям с активной подпиской Premium',
+      })
     }
 
     const progress = calculateSpeakerProgress(user)
@@ -76,9 +90,13 @@ const responseRankExam = async (req, res) => {
       try {
         userMessage = await transcribeLongAudio(req.file.buffer)
       } catch (speechError) {
-        console.error('Ошибка распознавания SalutSpeech на экзамене:', speechError)
+        console.error(
+          'Ошибка распознавания SalutSpeech на экзамене:',
+          speechError,
+        )
         return res.status(500).json({
-          message: 'Не удалось распознать аудиозапись. Попробуйте еще раз.',
+          message:
+            'Не удалось распознать аудиозапись. Попробуйте еще раз.',
           error: speechError.message,
         })
       }
@@ -87,7 +105,8 @@ const responseRankExam = async (req, res) => {
     if (!userMessage || !userMessage.trim()) {
       return res.status(200).json({
         user_transcript: '',
-        answer: 'Вы ничего не сказали. Оценить пустую речь невозможно.',
+        answer:
+          'Вы ничего не сказали. Оценить пустую речь невозможно.',
         isFinished: true,
         isError: true,
       })
@@ -95,7 +114,8 @@ const responseRankExam = async (req, res) => {
 
     return res.status(200).json({
       user_transcript: userMessage.trim(),
-      answer: 'Выступление принято. Нажмите «Вердикт ИИ-судьи», чтобы получить оценку экзаменатора.',
+      answer:
+        'Выступление принято. Нажмите «Вердикт ИИ-судьи», чтобы получить оценку экзаменатора.',
       isFinished: true,
       isError: false,
     })
@@ -119,19 +139,26 @@ const finishRankExam = async (req, res) => {
 
     const examConfig = RANK_EXAMS_CONFIG[alias]
     if (!examConfig) {
-      return res.status(400).json({ message: 'Неизвестный тип экзамена' })
+      return res
+        .status(400)
+        .json({ message: 'Неизвестный тип экзамена' })
     }
 
     const ticketData =
-      examConfig.tickets.find((t) => t.id === ticketId) || examConfig.tickets[0]
+      examConfig.tickets.find((t) => t.id === ticketId) ||
+      examConfig.tickets[0]
 
     const user = await User.findById(userId)
     if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' })
+      return res
+        .status(404)
+        .json({ message: 'Пользователь не найден' })
     }
 
     const defaultCriteriaKeys = Object.keys(examConfig.criteriaLabels)
-    const zeroCriteria = Object.fromEntries(defaultCriteriaKeys.map((k) => [k, 0]))
+    const zeroCriteria = Object.fromEntries(
+      defaultCriteriaKeys.map((k) => [k, 0]),
+    )
 
     // Если пользователь промолчал — не пишем в БД, сразу возвращаем результат
     if (!userSpeech || !userSpeech.trim()) {
@@ -162,14 +189,21 @@ const finishRankExam = async (req, res) => {
         0.2,
       )
 
-      const fallbackCriteria = Object.fromEntries(defaultCriteriaKeys.map((k) => [k, 50]))
+      const fallbackCriteria = Object.fromEntries(
+        defaultCriteriaKeys.map((k) => [k, 50]),
+      )
       evaluation = parseAiResponse(aiJsonResult, fallbackCriteria)
     } catch (apiError) {
-      console.error('Сбой сети GigaChat при судействе экзамена:', apiError.message)
+      console.error(
+        'Сбой сети GigaChat при судействе экзамена:',
+        apiError.message,
+      )
     }
 
     if (!evaluation || typeof evaluation.totalScore !== 'number') {
-      const fallbackCriteria = Object.fromEntries(defaultCriteriaKeys.map((k) => [k, 50]))
+      const fallbackCriteria = Object.fromEntries(
+        defaultCriteriaKeys.map((k) => [k, 50]),
+      )
       evaluation = {
         totalScore: 50,
         feedback:
@@ -201,9 +235,10 @@ const finishRankExam = async (req, res) => {
         result: resultPayload,
       })
 
-      const challengeIndex = user.progression.rankChallenges.findIndex(
-        (c) => c.targetRank === examConfig.targetRank,
-      )
+      const challengeIndex =
+        user.progression.rankChallenges.findIndex(
+          (c) => c.targetRank === examConfig.targetRank,
+        )
 
       if (challengeIndex === -1) {
         user.progression.rankChallenges.push({
@@ -234,7 +269,9 @@ const finishRankExam = async (req, res) => {
     })
   } catch (error) {
     console.error('Ошибка в finishRankExam:', error)
-    return res.status(500).json({ message: 'Ошибка анализа экзаменационной речи' })
+    return res
+      .status(500)
+      .json({ message: 'Ошибка анализа экзаменационной речи' })
   }
 }
 

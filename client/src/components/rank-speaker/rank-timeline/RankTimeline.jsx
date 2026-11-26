@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
+import { RANKS } from '../../../constants/ranks'
 import styles from './RankTimeline.module.css'
 
 const STEP_SIZE_CLASSES = [
@@ -11,22 +12,26 @@ const STEP_SIZE_CLASSES = [
 ]
 
 const RankTimeline = ({
-  stagesTimeline,
-  nextRank,
+  stagesTimeline = [],
+  nextRankIndex,
   selectedStageIndex,
   canRankUp,
   completedCount,
   totalCount,
   onSelectStage,
 }) => {
-  if (!stagesTimeline || stagesTimeline.length === 0) return null
-
   return (
     <div className={styles.amphitheater_scroll}>
       <div className={styles.amphitheater_row}>
-        {stagesTimeline.map((stage) => {
+        {RANKS.map((stage) => {
+          const serverStage = stagesTimeline.find(
+            (s) => s.rankIndex === stage.rankIndex,
+          )
+          const isReached = serverStage?.isReached ?? false
+          const isCurrent = serverStage?.isCurrent ?? false
           const isNextTarget =
-            nextRank && stage.rankIndex === nextRank.rankIndex
+            nextRankIndex !== null &&
+            stage.rankIndex === nextRankIndex
           const isSelected = selectedStageIndex === stage.rankIndex
           const sizeClass =
             STEP_SIZE_CLASSES[stage.rankIndex] || styles.step_0
@@ -36,12 +41,16 @@ const RankTimeline = ({
               key={stage.rankIndex}
               type="button"
               onClick={() => onSelectStage(stage.rankIndex)}
-              className={`${styles.stage_step} ${stage.isReached ? styles.step_reached : ''} ${stage.isCurrent ? styles.step_current : ''} ${isNextTarget ? styles.step_next : ''} ${isSelected ? styles.step_selected : ''}`}
+              className={`${styles.stage_step} ${isReached ? styles.step_reached : ''} ${isCurrent ? styles.step_current : ''} ${isNextTarget ? styles.step_next : ''} ${isSelected ? styles.step_selected : ''}`}
             >
               <div className={`${styles.medallion} ${sizeClass}`}>
-                <span className={styles.mic_icon}>{stage.mic}</span>
+                <img
+                  src={stage.icon}
+                  alt={stage.title}
+                  className={styles.rank_png_icon}
+                />
 
-                {stage.isReached && !stage.isCurrent && (
+                {isReached && !isCurrent && (
                   <span className={styles.done_mark}>✓</span>
                 )}
 

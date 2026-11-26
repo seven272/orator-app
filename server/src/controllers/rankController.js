@@ -5,7 +5,7 @@ import {
   promoteUserRank,
 } from '../utils/rankService.js'
 import { sendGigaChatRequest } from '../utils/gigachatService.js'
-import { parseAiResponse } from '../utils/aiJsonParser.js'
+
 
 /**
  * Внутренняя функция оценки текстового отчета о реальном задании через GigaChat

@@ -135,3 +135,15 @@
 .popover_cta_btn:hover {
   background-color: #0958d9;
 }
+
+.trigger_png {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.row_png {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
