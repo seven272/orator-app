@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { message } from 'antd'
 import bridge from '@vkontakte/vk-bridge'
-import { IoCloseOutline } from 'react-icons/io5'
+import { IoCloseOutline, IoInformationCircleOutline } from 'react-icons/io5'
 import { FaCrown, FaBoltLightning } from 'react-icons/fa6'
 import { HiSparkles, HiMiniQueueList } from 'react-icons/hi2'
 
-import { closePremiumModal } from '../../../redux/slices/profileSlice'
+import {
+  closePremiumModal,
+  fetchProfileData,
+} from '../../../redux/slices/profileSlice'
 import {
   fetchPaymentLink,
+  fetchGetPaymentPolicy,
   clearPaymentState,
 } from '../../../redux/slices/paymentSlice'
-// чтобы  обновлять стейт после покупки
-import { fetchProfileData } from '../../../redux/slices/profileSlice'
 import { useVkEnvironment } from '../../../hooks/useVkEnvironment'
+import { resolvePaymentPolicy } from '../../../utils/paymentPolicy'
 import { PREMIUM_TARIFFS } from '../../../constants/premiumTariffs'
 import styles from './PremiumModal.module.css'
 
@@ -40,17 +43,30 @@ const PREMIUM_BENEFITS = [
 
 const PremiumModal = () => {
   const dispatch = useDispatch()
-  const { isVkEnvironment } = useVkEnvironment() // Извлекаем флаг среды ВК
+  const { isVkEnvironment, platformKey } = useVkEnvironment()
 
   const isPremiumModalOpen = useSelector(
     (state) => state.profile.isPremiumModalOpen,
   )
+  const { paymentRules, isPolicyLoaded } = useSelector((state) => state.payment)
 
   const [loading, setLoading] = useState(false)
-  const [activeTariffCode, setActiveTariffCode] =
-    useState('premium_30d')
+  const [activeTariffCode, setActiveTariffCode] = useState('premium_30d')
 
   const currentTariff = PREMIUM_TARIFFS[activeTariffCode]
+
+  // Вычисляем разрешенные методы оплаты для текущей платформы
+  const policy = useMemo(
+    () => resolvePaymentPolicy(platformKey, paymentRules),
+    [platformKey, paymentRules],
+  )
+
+  // Подгружаем актуальную политику при открытии модалки, если еще не загружена
+  useEffect(() => {
+    if (isPremiumModalOpen && !isPolicyLoaded) {
+      dispatch(fetchGetPaymentPolicy())
+    }
+  }, [isPremiumModalOpen, isPolicyLoaded, dispatch])
 
   useEffect(() => {
     document.body.style.overflow = isPremiumModalOpen ? 'hidden' : ''
@@ -77,25 +93,19 @@ const PremiumModal = () => {
     dispatch(closePremiumModal())
   }
 
-  // 🤖 МЕТОД 1: Нативная оплата голосами через VK Bridge (Для ВК-среды на любых девайсах, включая iOS/Android)
+  // МЕТОД 1: Нативная оплата голосами через VK Bridge
   const handleBuyVkVotes = async () => {
     setLoading(true)
     try {
-      console.log(
-        `[VK Payment] Инициализация заказа голосами для: ${currentTariff.itemCode}`,
-      )
-
       const data = await bridge.send('VKWebAppShowOrderBox', {
         type: 'item',
-        item: currentTariff.itemCode, // Передает 'premium_30d', 'premium_6m' или 'premium_1y'
+        item: currentTariff.itemCode,
       })
-      console.log(data)
+
       if (data.status === 'success' || data.success === true) {
         message.success(
           'Оплата успешно проведена! Активируем Premium статус...',
         )
-        // 🤖 Перезапрашиваем профиль с бэкенда, чтобы синхронизировать новые флаги премиума и даты
-        // ⏳ Даем бэкенду 1.2 секунды на сохранение данных в MongoDB
         setTimeout(() => {
           dispatch(fetchProfileData())
           handleClose()
@@ -109,7 +119,7 @@ const PremiumModal = () => {
     }
   }
 
-  // 🌐 МЕТОД 2: Стандартная оплата рублями через ЮKassa (Для внешнего сайта)
+  // МЕТОД 2: Стандартная оплата рублями через ЮKassa
   const handleBuyYookassa = async () => {
     setLoading(true)
     try {
@@ -173,57 +183,98 @@ const PremiumModal = () => {
           ))}
         </div>
 
-        <div className={styles.tariff_tabs_container}>
-          {Object.values(PREMIUM_TARIFFS).map((tariff) => (
+        {/* СЦЕНАРИЙ А: Платформа запрещает оплату цифровых товаров (Reader / Companion режим) */}
+        {policy.isPaymentRestricted ? (
+          <div className={styles.restriction_container}>
+            <div className={styles.restriction_notice_box}>
+              <IoInformationCircleOutline
+                size={22}
+                className={styles.restriction_icon}
+              />
+              <p className={styles.restriction_text}>
+                {policy.restrictionMessage}
+              </p>
+            </div>
+
             <button
-              key={tariff.itemCode}
               type="button"
-              className={`${styles.tariff_tab_btn} ${
-                activeTariffCode === tariff.itemCode
-                  ? styles.tariff_tab_btn_active
-                  : ''
-              }`}
-              onClick={() =>
-                !loading && setActiveTariffCode(tariff.itemCode)
-              }
-              disabled={loading}
+              className={styles.understand_btn}
+              onClick={handleClose}
             >
-              {tariff.title}
+              Понятно
             </button>
-          ))}
-        </div>
-
-        {/* 🤖 ИСПРАВЛЕНО: Блок цены динамически отображает Голоса в ВК и Рубли на сайте */}
-        <div className={styles.price_box}>
-          <span className={styles.duration}>
-            {currentTariff.durationText}
-          </span>
-          <div className={styles.price_row}>
-            <span className={styles.current_price}>
-              {isVkEnvironment
-                ? `${currentTariff.votesPrice} голосов`
-                : `${currentTariff.price} ₽`}
-            </span>
           </div>
-        </div>
+        ) : (
+          /* СЦЕНАРИЙ Б: Оплата разрешена (ЮKassa, Голоса ВК или оба варианта) */
+          <>
+            <div className={styles.tariff_tabs_container}>
+              {Object.values(PREMIUM_TARIFFS).map((tariff) => (
+                <button
+                  key={tariff.itemCode}
+                  type="button"
+                  className={`${styles.tariff_tab_btn} ${
+                    activeTariffCode === tariff.itemCode
+                      ? styles.tariff_tab_btn_active
+                      : ''
+                  }`}
+                  onClick={() =>
+                    !loading && setActiveTariffCode(tariff.itemCode)
+                  }
+                  disabled={loading}
+                >
+                  {tariff.title}
+                </button>
+              ))}
+            </div>
 
-        {/* 🤖 ИСПРАВЛЕНО: Кнопка полностью разблокирована для всех мобильных платформ в ВК */}
-        <div className={styles.buttons_container}>
-          <button
-            type="button"
-            className={styles.activate_btn}
-            onClick={
-              isVkEnvironment ? handleBuyVkVotes : handleBuyYookassa
-            }
-            disabled={loading}
-          >
-            {loading
-              ? 'Загрузка...'
-              : isVkEnvironment
-                ? `Оформить за ${currentTariff.votesPrice} голосов`
-                : `Оформить за ${currentTariff.price} ₽`}
-          </button>
-        </div>
+            <div className={styles.price_box}>
+              <span className={styles.duration}>
+                {currentTariff.durationText}
+              </span>
+              <div className={styles.price_row}>
+                <span className={styles.current_price}>
+                  {policy.canUseYookassa && !policy.canUseVkVotes
+                    ? `${currentTariff.price} ₽`
+                    : !policy.canUseYookassa && policy.canUseVkVotes
+                      ? `${currentTariff.votesPrice} голосов`
+                      : `${currentTariff.price} ₽ / ${currentTariff.votesPrice} голосов`}
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.buttons_container}>
+              {policy.canUseYookassa && (
+                <button
+                  type="button"
+                  className={styles.activate_btn}
+                  onClick={handleBuyYookassa}
+                  disabled={loading}
+                >
+                  {loading
+                    ? 'Загрузка...'
+                    : `Оформить за ${currentTariff.price} ₽`}
+                </button>
+              )}
+
+              {policy.canUseVkVotes && (
+                <button
+                  type="button"
+                  className={
+                    policy.canUseYookassa
+                      ? styles.vk_votes_secondary_btn
+                      : styles.activate_btn
+                  }
+                  onClick={handleBuyVkVotes}
+                  disabled={loading}
+                >
+                  {loading
+                    ? 'Загрузка...'
+                    : `Оформить за ${currentTariff.votesPrice} голосов`}
+                </button>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

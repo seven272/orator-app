@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { FaChevronDown, FaChevronUp, FaBookOpen, FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
 import styles from './StatisticsTotal.module.css'
 
-// Словарь для преобразования кодов в человекочитаемые названия
 const COURSE_NAMES = {
   pitch_master: 'Питч на миллион',
   self_pitch_pro: 'Личный бренд: самопрезентация на миллион',
@@ -15,11 +14,16 @@ const COURSE_NAMES = {
   story_master: 'Магия истории: искусство увлекательного рассказа',
 }
 
+const SOURCE_ICONS = {
+  site: '💻',
+  vk: '🌐',
+  android: '📱',
+}
+
+const RANK_ICONS = ['🌱', '🎙️', '🔥', '👑', '🏆']
+
 const StatisticsTotal = () => {
-  // Забираем данные из стора. Запрос делает родитель AdminPage.jsx
   const { analytics, loading, error } = useSelector((state) => state.admin)
-  
-  // Стейт для разворачивания списка детальной аналитики курсов
   const [showCoursesList, setShowCoursesList] = useState(false)
 
   if (loading) {
@@ -32,14 +36,18 @@ const StatisticsTotal = () => {
 
   if (!analytics) return null
 
-  // Деструктурируем данные, включая новый объект курсов
-  const { summary, exercises_analytics, top_purchases, courses_analytics } = analytics
+  const {
+    summary,
+    exercises_analytics,
+    top_purchases,
+    courses_analytics,
+    users_breakdown,
+  } = analytics
 
   const getCourseTitle = (code) => COURSE_NAMES[code] || code
 
   return (
     <div className={styles.admin_container}>
-      
       {/* 1. ВЕРХНЕУРОВНЕВЫЕ ПРОДУКТОВЫЕ МЕТРИКИ */}
       <h3 className={styles.block_main_title}>📊 Общая статистика</h3>
       <div className={styles.stats_grid}>
@@ -69,7 +77,62 @@ const StatisticsTotal = () => {
         </div>
       </div>
 
-      {/* 2. БЛОК ГЛОБАЛЬНОЙ СВОДКИ ПО КУРСАМ (Новый раздел) */}
+      {/* 1.1 ИСТОЧНИКИ РЕГИСТРАЦИИ И PREMIUM ПО ПЛАТФОРМАМ */}
+      {users_breakdown?.by_source && (
+        <div className={styles.section_card}>
+          <h2 className={styles.section_title}>
+            🧭 Источники регистрации и Premium
+          </h2>
+          {users_breakdown.by_source.map((src) => {
+            const share =
+              summary.total_users > 0
+                ? Math.round((src.total / summary.total_users) * 100)
+                : 0
+            return (
+              <div key={src.source} className={styles.data_row}>
+                <span className={styles.row_name}>
+                  {SOURCE_ICONS[src.source] || '🔹'} {src.label}
+                </span>
+                <div className={styles.breakdown_metrics}>
+                  <span className={styles.row_meta}>
+                    Всего: <strong>{src.total}</strong> ({share}%)
+                  </span>
+                  <span className={styles.premium_pill}>
+                    ⭐ Premium: <strong>{src.premium}</strong>
+                  </span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* 1.2 РАСПРЕДЕЛЕНИЕ ПО РАНГАМ ОРАТОРА */}
+      {users_breakdown?.by_rank && (
+        <div className={styles.section_card}>
+          <h2 className={styles.section_title}>
+            🎖️ Распределение по рангам оратора
+          </h2>
+          {users_breakdown.by_rank.map((item) => {
+            const share =
+              summary.total_users > 0
+                ? Math.round((item.count / summary.total_users) * 100)
+                : 0
+            return (
+              <div key={item.rank} className={styles.data_row}>
+                <span className={styles.row_name}>
+                  {RANK_ICONS[item.rank] || '🏅'} {item.title}
+                </span>
+                <span className={styles.row_meta}>
+                  <strong>{item.count}</strong> чел. ({share}%)
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* 2. БЛОК ГЛОБАЛЬНОЙ СВОДКИ ПО КУРСАМ */}
       {courses_analytics?.summary && (
         <div className={styles.courses_summary_card}>
           <h2 className={styles.section_title}>📈 Аналитика курсов (Все пользователи)</h2>
@@ -98,7 +161,6 @@ const StatisticsTotal = () => {
             </div>
           </div>
 
-          {/* Интерактивный переключатель деталей по каждому курсу */}
           <div onClick={() => setShowCoursesList(!showCoursesList)} className={styles.box_nav_list}>
             <span className={styles.text_nav_list}>
               {showCoursesList ? 'свернуть детализацию' : 'смотреть детали по курсам'}
@@ -106,7 +168,6 @@ const StatisticsTotal = () => {
             {showCoursesList ? <FaChevronUp size={13} /> : <FaChevronDown size={13} />}
           </div>
 
-          {/* Покурсовая детализация */}
           {showCoursesList && (
             <div className={styles.courses_detail_list}>
               {courses_analytics.items && courses_analytics.items.length > 0 ? (

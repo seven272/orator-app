@@ -1,0 +1,131 @@
+.events_page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.top_filters_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.format_pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.format_pill {
+  padding: 7px 13px;
+  border-radius: 20px;
+  border: 1px solid var(--color-grey-light);
+  background-color: var(--color-white);
+  color: var(--color-text-dark);
+  font-family: var(--font-family-subtitle);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.format_pill:hover {
+  border-color: var(--color-primary);
+}
+
+.format_pill_active {
+  background-color: var(--color-dark);
+  border-color: var(--color-dark);
+  color: var(--color-white);
+}
+
+.my_tickets_btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--color-secondary);
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  font-family: var(--font-family-subtitle);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.my_tickets_btn_active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.cities_scroll_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.cities_scroll_row::-webkit-scrollbar {
+  display: none;
+}
+
+.city_chip {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background-color: var(--color-white);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-upstring);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.city_chip_active {
+  background-color: var(--color-secondary);
+  color: var(--color-blue-dark);
+  font-family: var(--font-family-subtitle);
+}
+
+.loader_box,
+.empty_box {
+  background-color: var(--color-white);
+  border-radius: 16px;
+  padding: 40px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sections_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.events_list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.past_section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.past_section_title {
+  margin: 0;
+  font-family: var(--font-family-subtitle);
+  font-size: 15px;
+  color: var(--color-text-secondary);
+}

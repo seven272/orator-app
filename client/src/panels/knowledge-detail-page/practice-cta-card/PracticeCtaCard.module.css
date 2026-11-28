@@ -1,0 +1,64 @@
+.practice_cta_card {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-blue-dark) 100%
+  );
+  border-radius: 20px;
+  padding: 20px;
+  color: var(--color-white);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25);
+}
+
+.cta_icon_box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cta_title {
+  margin: 0;
+  font-family: var(--font-family-title);
+  font-size: 18px;
+  line-height: 22px;
+  color: var(--color-white);
+}
+
+.cta_desc {
+  margin: 6px 0 0 0;
+  font: var(--font-m);
+  line-height: 19px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cta_action_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  background-color: var(--color-yellow);
+  color: var(--color-font-color-dark);
+  font-family: var(--font-family-title);
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.cta_action_btn:hover {
+  filter: brightness(1.05);
+}
+
+.cta_action_btn:active {
+  transform: scale(0.98);
+}

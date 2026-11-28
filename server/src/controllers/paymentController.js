@@ -2,9 +2,10 @@ import { v4 as uuidv4 } from 'uuid'
 import axios from 'axios'
 import Order from '../models/Order.js'
 import User from '../models/User.js'
+import Event from '../models/Event.js'
 import {
   PREMIUM_PRODUCTS,
-  COURSE_PRODUCTS, 
+  COURSE_PRODUCTS,
 } from '../constants/paymentProducts.js'
 
 const YOOKASSA_API_URL = 'https://api.yookassa.ru/v3/payments'
@@ -19,7 +20,11 @@ const createPaymentYookassa = async (req, res) => {
     let product = null
     let description = ''
 
-    const targetPage = typeOrder === 'premium_subscription' ? 'profile' : 'courses'
+    let targetPage = '/'
+    if (typeOrder === 'courses') targetPage = 'courses'
+    if (typeOrder === 'premium_subscription') targetPage = 'profile'
+    if (typeOrder === 'event_ticket')
+      targetPage = `hub/events/${itemCode}`
 
     const returnUrl = isVk
       ? `https://vk.ru/app54762318/#/${targetPage}`
@@ -48,6 +53,44 @@ const createPaymentYookassa = async (req, res) => {
       }
 
       description = `Оплата курса "${product.title}" в Govorix`
+    } else if (typeOrder === 'event_ticket') {
+      const eventDoc = await Event.findById(itemCode)
+      if (!eventDoc || !eventDoc.isPublished) {
+        return res
+          .status(404)
+          .json({ message: 'Мероприятие не найдено' })
+      }
+
+      // Проверяем, не записан ли юзер уже
+      const alreadyRegistered = eventDoc.participants.some(
+        (p) => p.userId.toString() === userId.toString(),
+      )
+      if (alreadyRegistered) {
+        return res
+          .status(400)
+          .json({ message: 'Вы уже записаны на это мероприятие' })
+      }
+
+      // Проверяем свободные места (подтвержденные + заказы 'created' за последние 15 минут)
+      const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000)
+      const activePendingCount = await Order.countDocuments({
+        typeOrder: 'event_ticket',
+        itemCode: eventDoc._id.toString(),
+        status: 'created',
+        createdAt: { $gt: fifteenMinutesAgo },
+      })
+
+      if (
+        eventDoc.participants.length + activePendingCount >=
+        eventDoc.maxSeats
+      ) {
+        return res.status(400).json({
+          message: 'Свободных мест на мероприятие больше нет',
+        })
+      }
+
+      product = { price: eventDoc.priceRub.toFixed(2) }
+      description = `Билет на мероприятие «${eventDoc.title}» в Govorix`
     } else {
       return res.status(400).json({ message: 'Неверный тип заказа' })
     }
@@ -101,7 +144,6 @@ const createPaymentYookassa = async (req, res) => {
     res.status(200).json({
       success: true,
       confirmationUrl: response.data.confirmation.confirmation_url,
-      
     })
   } catch (error) {
     console.error(
@@ -118,7 +160,6 @@ const createPaymentYookassa = async (req, res) => {
 const handleWebhookYookassa = async (req, res) => {
   try {
     const { event, object } = req.body
-    
 
     if (event === 'payment.succeeded') {
       const { mongoOrderId, dbUserId, typeOrder, itemCode } =
@@ -150,12 +191,25 @@ const handleWebhookYookassa = async (req, res) => {
           isPremium: true,
           premiumExpiresAt: expiresAt,
         })
-
       } else if (typeOrder === 'course_purchase') {
         await User.findByIdAndUpdate(dbUserId, {
           $addToSet: { activePurchasedCourses: itemCode }, // addToSet защищает от дублирования кода курса
         })
-      
+      } else if (typeOrder === 'event_ticket') {
+        const eventDoc = await Event.findById(itemCode)
+        if (eventDoc) {
+          const alreadyInList = eventDoc.participants.some(
+            (p) => p.userId.toString() === dbUserId.toString(),
+          )
+          if (!alreadyInList) {
+            eventDoc.participants.push({
+              userId: dbUserId,
+              registeredAt: new Date(),
+              attended: false,
+            })
+            await eventDoc.save()
+          }
+        }
       }
     }
     // ЮKassa всегда ожидает 200 OK
@@ -173,9 +227,9 @@ const handleWebhookYookassa = async (req, res) => {
  */
 const handleVkPaymentWebhook = async (req, res) => {
   const { notification_type, item, order_id, status } = req.body
-  
+
   // vkId извлечен и проброшен как String внутри вашего мидлвара проверки подписи платежа
-  const vkId = req.vkId 
+  const vkId = req.vkId
 
   try {
     // --- ФАЗА 1: ЗАПРОС ИНФОРМАЦИИ О ТОВАРЕ (СИНХРОНИЗАЦИЯ КАТАЛОГА С СЕРВЕРАМИ ВК) ---
@@ -186,11 +240,17 @@ const handleVkPaymentWebhook = async (req, res) => {
       const product = PREMIUM_PRODUCTS[item]
 
       if (!product) {
-        console.error(`[VK Webhook Error] ❌ Тариф "${item}" не найден в константах PREMIUM_PRODUCTS`)
-        return res.status(404).json({ error: 'Товара нет в списке доступных тарифов' })
+        console.error(
+          `[VK Webhook Error] ❌ Тариф "${item}" не найден в константах PREMIUM_PRODUCTS`,
+        )
+        return res
+          .status(404)
+          .json({ error: 'Товара нет в списке доступных тарифов' })
       }
 
-      console.log(`[VK Webhook Catalog] 📦 Сервер ВК успешно синхронизировал данные о тарифе: ${item}`)
+      console.log(
+        `[VK Webhook Catalog] 📦 Сервер ВК успешно синхронизировал данные о тарифе: ${item}`,
+      )
       return res.json({
         response: {
           item_id: item,
@@ -211,11 +271,13 @@ const handleVkPaymentWebhook = async (req, res) => {
       // 1. Идемпотентность: Проверяем транзакцию на дубликаты по уникальному orderId от ВК
       const existingOrder = await Order.findOne({ orderId })
       if (existingOrder) {
-        console.log(`[VK Webhook] ⚠️ Повторный колбэк для заказа ВК #${orderId}. Начисление пропущено (дубликат).`)
+        console.log(
+          `[VK Webhook] ⚠️ Повторный колбэк для заказа ВК #${orderId}. Начисление пропущено (дубликат).`,
+        )
         return res.json({
-          response: { 
-            order_id: Number(orderId), 
-            app_order_id: String(existingOrder._id) 
+          response: {
+            order_id: Number(orderId),
+            app_order_id: String(existingOrder._id),
           },
         })
       }
@@ -223,15 +285,23 @@ const handleVkPaymentWebhook = async (req, res) => {
       // 2. Валидация оплачиваемого тарифа
       const product = PREMIUM_PRODUCTS[item]
       if (!product) {
-        console.error(`[VK Webhook Error] ❌ Ошибка: ВК прислал оплату за неизвестный тариф "${item}"`)
-        return res.status(400).json({ error: 'Неверный код тарифа при смене статуса' })
+        console.error(
+          `[VK Webhook Error] ❌ Ошибка: ВК прислал оплату за неизвестный тариф "${item}"`,
+        )
+        return res
+          .status(400)
+          .json({ error: 'Неверный код тарифа при смене статуса' })
       }
 
       // 3. Поиск существующего пользователя Говорикс по vkId (строго как в вашем claimVkBonus)
       const user = await User.findOne({ vkId })
       if (!user) {
-        console.error(`[VK Webhook Error] ❌ Критическая ошибка: Пользователь с vkId "${vkId}" не найден при оплате заказа ВК #${orderId}!`)
-        return res.status(404).json({ error: 'User not found in Govorix database' })
+        console.error(
+          `[VK Webhook Error] ❌ Критическая ошибка: Пользователь с vkId "${vkId}" не найден при оплате заказа ВК #${orderId}!`,
+        )
+        return res
+          .status(404)
+          .json({ error: 'User not found in Govorix database' })
       }
 
       // 4. Фиксируем транзакцию в коллекции заказов (передаем user._id как ObjectId согласно вашей схеме)
@@ -240,7 +310,7 @@ const handleVkPaymentWebhook = async (req, res) => {
         userId: user._id, // Связываем через легальный ObjectId вашего документа User
         typeOrder: 'premium_subscription',
         itemCode: item,
-        paymentMethod: 'vk_votes', 
+        paymentMethod: 'vk_votes',
         amount: parseFloat(product.votesPrice), // Записываем цену в голосах
         status: 'completed',
       })
@@ -250,34 +320,42 @@ const handleVkPaymentWebhook = async (req, res) => {
       let baseDate = now
 
       // Если у пользователя уже активен Premium и дата окончания в будущем — продлеваем её кумулятивно
-      if (user.isPremium && user.premiumExpiresAt && user.premiumExpiresAt > now) {
+      if (
+        user.isPremium &&
+        user.premiumExpiresAt &&
+        user.premiumExpiresAt > now
+      ) {
         baseDate = new Date(user.premiumExpiresAt)
       }
 
       // Добавляем дни тарифа к базовой дате на основе вашего поля durationDays
       baseDate.setDate(baseDate.getDate() + product.durationDays)
-      
+
       // Обновляем премиум-поля пользователя Говорикс
       user.isPremium = true
       user.premiumExpiresAt = baseDate
 
       await user.save()
-      console.log(`[VK Webhook Success] 🎉 Тариф "${item}" успешно активирован для vkId: ${vkId}. Подписка активна до: ${baseDate.toISOString()}. Заказ в БД #${newOrder._id}`)
+      console.log(
+        `[VK Webhook Success] 🎉 Тариф "${item}" успешно активирован для vkId: ${vkId}. Подписка активна до: ${baseDate.toISOString()}. Заказ в БД #${newOrder._id}`,
+      )
 
       // Возвращаем строго валидный формат ответа по спецификации ВКонтакте
       return res.json({
-        response: { 
-          order_id: Number(orderId), 
-          app_order_id: String(newOrder._id) 
+        response: {
+          order_id: Number(orderId),
+          app_order_id: String(newOrder._id),
         },
       })
     }
 
     // На все остальные типы уведомлений ВК отдаем стандартный ок-ответ
     return res.json({ response: 'ok' })
-
   } catch (error) {
-    console.error('❌ Критическая ошибка в handleVkPaymentWebhook:', error)
+    console.error(
+      '❌ Критическая ошибка в handleVkPaymentWebhook:',
+      error,
+    )
     return res.status(500).json({
       error: 'Внутренняя ошибка сервера при обработке покупки',
     })
@@ -285,70 +363,6 @@ const handleVkPaymentWebhook = async (req, res) => {
 }
 
 
-
-const fakeBuyPremium = async (req, res) => {
-  try {
-    const userId = req.userId // приведен к стандарту checkAuth
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 30)
-
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { isPremium: true, premiumExpiresAt: expiresAt },
-      { new: true },
-    )
-
-    if (!updatedUser)
-      return res
-        .status(404)
-        .json({ message: 'Пользователь не найден' })
-
-    res.json({
-      success: true,
-      message:
-        'Имитация: Премиум статус успешно активирован на 30 дней!',
-      isPremium: updatedUser.isPremium,
-      premiumExpiresAt: updatedUser.premiumExpiresAt,
-    })
-  } catch (error) {
-    res.status(500).json({
-      message: 'Ошибка при симуляции активации премиум-статуса',
-    })
-  }
-}
-
-const fakeBuyCourse = async (req, res) => {
-  try {
-    const { courseCode } = req.body
-    const userId = req.userId
-
-    const user = await User.findById(userId)
-    if (!user)
-      return res
-        .status(404)
-        .json({ message: 'Пользователь не найден' })
-
-    if (user.activePurchasedCourses.includes(courseCode)) {
-      return res
-        .status(400)
-        .json({ message: 'Этот интенсив вами уже приобретен' })
-    }
-
-    user.activePurchasedCourses.push(courseCode)
-    await user.save()
-
-    res.status(200).json({
-      success: true,
-      message:
-        'Имитация: Оплата успешно симулирована. Доступ к интенсиву открыт!',
-      activePurchasedCourses: user.activePurchasedCourses,
-    })
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'Ошибка при симуляции оплаты курса' })
-  }
-}
 
 export {
   createPaymentYookassa,

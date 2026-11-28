@@ -34,6 +34,23 @@ const fetchAdminUsers = createAsyncThunk(
   },
 )
 
+const fetchAdminUserDetails = createAsyncThunk(
+  'admin/fetchAdminUserDetails',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get(
+        `/admin/user/${userId}/details`,
+      )
+      return res.data.details
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          'Не удалось загрузить детали профиля',
+      )
+    }
+  },
+)
+
 const fetchUpdateUserPremium = createAsyncThunk(
   'admin/fetchUpdateUserPremium',
   async ({ userId, duration }, { rejectWithValue }) => {
@@ -130,15 +147,22 @@ const adminSlice = createSlice({
     total_pages: 1,
     current_page: 1,
     merch_orders: [],
+    selectedUserDetails: null,
+    loadingUserDetails: false,
     loading: false,
     error: null,
   },
   reducers: {
     clearAdminState: (state) => {
       state.analytics = null
+      state.selectedUserDetails = null
       state.error = null
     },
+    clearSelectedUserDetails: (state) => {
+      state.selectedUserDetails = null
+    },
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchAdminAnalytics.pending, (state) => {
@@ -158,6 +182,17 @@ const adminSlice = createSlice({
         state.users = action.payload.users
         state.total_pages = action.payload.total_pages
         state.current_page = action.payload.current_page
+      })
+      // детальная статистика по юзеру
+      .addCase(fetchAdminUserDetails.pending, (state) => {
+        state.loadingUserDetails = true
+      })
+      .addCase(fetchAdminUserDetails.fulfilled, (state, action) => {
+        state.loadingUserDetails = false
+        state.selectedUserDetails = action.payload
+      })
+      .addCase(fetchAdminUserDetails.rejected, (state) => {
+        state.loadingUserDetails = false
       })
       // toggle premium user
       .addCase(fetchUpdateUserPremium.fulfilled, (state, action) => {
@@ -195,7 +230,8 @@ const adminSlice = createSlice({
   },
 })
 
-export const { clearAdminState } = adminSlice.actions
+export const { clearAdminState, clearSelectedUserDetails } =
+  adminSlice.actions
 export {
   fetchAdminAnalytics,
   fetchUpdateUserPremium,
@@ -204,5 +240,6 @@ export {
   fetchDeleteUserById,
   fetchAdminMerchOrders,
   fetchToggleOrderShipped,
+  fetchAdminUserDetails,
 }
 export default adminSlice.reducer

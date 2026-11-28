@@ -31,8 +31,8 @@ const RANKS = [
         alias: 'exam-confident',
         title: 'Экзамен: Первая сцена',
         description:
-          'Выступите с 2-минутной речью на случайную тему без долгих пауз и слов-паразитов.',
-        minScore: 80,
+          'Презентуйте случайный продукт за 60 секунд по четкой структуре: проблема, решение, выгода и призыв к действию.',
+        minScore: 70,
       },
       realWorldTask: {
         title: 'Голосовое без черновиков',
@@ -62,13 +62,18 @@ const RANKS = [
           title: 'Мастер дубляжа',
           minScore: 75,
         },
+        {
+          alias: 'ai-toast-critic',
+          title: 'Банкетный критик',
+          minScore: 75,
+        },
       ],
       exam: {
         alias: 'exam-pro',
-        title: 'Экзамен: Защита идеи',
+        title: 'Экзамен: Адвокат идеи',
         description:
-          'Защитите спорную идею перед скептичным ИИ-оппонентом за 3 раунда аргументации.',
-        minScore: 80,
+          'Защитите спорный тезис в убедительном монологе: приведите сильные аргументы и заранее закройте главное возражение.',
+        minScore: 75,
       },
       realWorldTask: {
         title: 'Тост или поздравление вживую',
@@ -86,30 +91,30 @@ const RANKS = [
     desc: 'Держу фокус целого зала.',
     nextRankRequirements: {
       targetRank: 3,
-      requiredXp: 200000,
+      requiredXp: 100000,
       exercises: [
         {
           alias: 'ai-interview',
           title: 'Стресс-интервью',
-          minScore: 80,
+          minScore: 75,
         },
         {
           alias: 'ai-poem-tongue',
           title: 'Тяжелая дикция',
-          minScore: 80,
+          minScore: 75,
         },
         {
           alias: 'ai-tribune',
           title: 'Трибуна',
-          minScore: 80,
+          minScore: 75,
         },
       ],
       exam: {
         alias: 'exam-master',
-        title: 'Экзамен: Пресс-конференция',
+        title: 'Экзамен: Антикризисное обращение',
         description:
-          'Ответьте на серию провокационных вопросов ИИ-журналиста, сохраняя спокойствие и логику.',
-        minScore: 80,
+          'Выступите перед недовольной аудиторией в острой ситуации, сохранив спокойствие и органично вплетя 3 обязательных факта.',
+        minScore: 75,
       },
       realWorldTask: {
         title: 'Публичный вопрос или выступление на созвоне',
@@ -130,32 +135,37 @@ const RANKS = [
       requiredXp: 200000,
       exercises: [
         {
-          alias: 'ai-tribune',
-          title: 'Трибуна',
-          minScore: 90,
+          alias: 'ai-commercial-pitch',
+          title: 'Инвестор Эдуард',
+          minScore: 80,
         },
         {
-          alias: 'ai-debate',
-          title: 'Дебат-клуб',
-          minScore: 90,
+          alias: 'ai-association-master',
+          title: 'Мост смыслов',
+          minScore: 80,
         },
         {
           alias: 'ai-radio-host',
           title: 'Радиоведущий',
-          minScore: 90,
+          minScore: 80,
         },
         {
-          alias: 'ai-toast-critic',
-          title: 'Банкетный критик',
-          minScore: 90,
+          alias: 'ai-bargain',
+          title: 'Торг уместен',
+          minScore: 80,
+        },
+          {
+          alias: 'ai-nesmeyana',
+          title: 'Несмеяна',
+          minScore: 80,
         },
       ],
       exam: {
         alias: 'exam-legend',
         title: 'Экзамен: Главная сцена',
-        description:
-          'Финальное комплексное испытание: импровизация, сторителлинг и убеждение без права на ошибку.',
-        minScore: 80,
+         description:
+          'Произнесите вдохновляющую речь уровня TED: объедините историю-крючок, сквозную метафору и сильный манифест.',
+        minScore: 85,
       },
       realWorldTask: {
         title: 'Живое выступление перед аудиторией',

@@ -32,10 +32,11 @@ const MainPage = () => {
       <div className={styles.border}></div>
       <CoursesBannerBlock />
       <div className={styles.border}></div>
-      <ActivityBlock />
-      <div className={styles.border}></div>
       <LeaderboardShortBlock />
       <div className={styles.border}></div>
+      <ActivityBlock />
+      <div className={styles.border}></div>
+      
     </div>
   )
 }

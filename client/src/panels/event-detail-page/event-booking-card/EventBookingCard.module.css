@@ -1,0 +1,78 @@
+.booking_card {
+  background-color: var(--color-white);
+  border-radius: 20px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(46, 49, 56, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booking_price_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.booking_label {
+  font-family: var(--font-family-upstring);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.booking_price {
+  font-family: var(--font-family-decor);
+  font-size: 20px;
+  color: var(--color-text-dark);
+}
+
+.primary_action_btn {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 14px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-family-title);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.3);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.primary_action_btn:hover:not(:disabled) {
+  background-color: var(--color-blue-dark);
+}
+
+.primary_action_btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.primary_action_btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.disabled_action_btn {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 14px;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-subtitle);
+  font-size: 14px;
+  cursor: not-allowed;
+}
+
+.payment_hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}

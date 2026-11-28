@@ -1,0 +1,212 @@
+.modal_overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: rgba(18, 18, 18, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  animation: fade_in 0.16s ease-out;
+}
+
+@keyframes fade_in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal_content {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  background-color: var(--color-white);
+  border-radius: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.modal_title {
+  margin: 0;
+  font-family: var(--font-family-title);
+  font-size: 18px;
+  color: var(--color-text-dark);
+}
+
+.close_icon_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.close_icon_btn:hover {
+  color: var(--color-text-dark);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field_group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.label_with_help {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.label {
+  font-family: var(--font-family-subtitle);
+  font-size: 12px;
+  color: var(--color-text-dark);
+}
+
+.help_trigger_btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--color-secondary);
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  font-family: var(--font-family-subtitle);
+  font-size: 11px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.help_trigger_btn:hover {
+  background-color: var(--color-secondary);
+}
+
+.radio_row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.radio_btn {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--color-grey-light);
+  background-color: var(--color-bg-light);
+  color: var(--color-text-dark);
+  font-family: var(--font-family-subtitle);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.radio_btn_active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.two_cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--color-grey-light);
+  font-family: var(--font-family-regular);
+  font-size: 13px;
+  color: var(--color-text-dark);
+  background-color: var(--color-white);
+  box-sizing: border-box;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.checkbox_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family-regular);
+  font-size: 13px;
+  color: var(--color-text-dark);
+  cursor: pointer;
+}
+
+.checkbox_row input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.submit_btn {
+  margin-top: 4px;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-family-title);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit_btn:hover:not(:disabled) {
+  background-color: var(--color-blue-dark);
+}
+
+.submit_btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media screen and (max-width: 420px) {
+  .two_cols {
+    grid-template-columns: 1fr;
+  }
+}

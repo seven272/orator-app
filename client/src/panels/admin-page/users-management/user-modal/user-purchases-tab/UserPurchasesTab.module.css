@@ -1,0 +1,99 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.block_title {
+  margin: 0 0 2px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.empty_text {
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+  padding: 6px 0;
+}
+
+.item_card {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 9px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.row_top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.item_name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.row_sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.status_progress {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.status_completed {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status_failed {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.price_pill {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.qty_badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background-color: #e2e8f0;
+  color: #334155;
+}

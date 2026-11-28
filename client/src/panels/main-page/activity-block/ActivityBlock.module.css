@@ -14,21 +14,22 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--color-text-secondary);
-  margin-bottom: 8px;
+  margin: 0 0 10px 0;
   padding-left: 4px;
 }
 
+/* Гибкая сетка: автоматически подстраивается под 3, 4 или 5 элементов */
 .block_grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
   gap: 10px;
 }
 
 .block_item {
-   background-color: var(--color-bg-light);
+  background-color: var(--color-bg-light);
   border: none;
   border-radius: 16px;
-  padding: 16px 4px;
+  padding: 14px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -40,37 +41,56 @@
     0 2px 6px rgba(0, 0, 0, 0.02);
   transition:
     transform 0.1s ease,
-    background-color 0.1s ease;
+    background-color 0.15s ease;
   -webkit-tap-highlight-color: transparent;
-  box-sizing: border-box; 
+  box-sizing: border-box;
+}
+
+.block_item:hover {
+  background-color: var(--color-white);
 }
 
 .block_item:active {
-  transform: scale(0.95);
-  background-color: var(--color-bg-light);
+  transform: scale(0.96);
 }
 
 .badge_wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .item_icon {
-  width: 30px;
-  height: 30px;
-   flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.vector_icon_wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background-color: var(--color-white);
+  color: var(--item-accent, var(--color-primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .badge_text {
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.3px;
+  color: var(--item-accent, var(--color-text-dark));
+  white-space: nowrap;
 }
 
 .item_subtitle {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--color-text-secondary);
   text-align: center;
@@ -80,28 +100,15 @@
   width: 100%;
 }
 
-/* Тематические цвета под типы карточек */
-.type_shop .badge_text {
-  color: #2e7d32;
-}
-
-.type_challenges .badge_text {
-  color: #e65100;
-}
-
-.type_duels .badge_text {
-  color: #c2185b;
-}
-
 @media (max-width: 450px) {
   .block_grid {
-    grid-template-columns: 1fr; /* Перестраиваем в одну колонку */
+    grid-template-columns: 1fr;
     gap: 8px;
   }
 
   .block_item {
-    flex-direction: row; /* Элементы внутри карточки встают в ряд */
-    justify-content: space-between; /* Название слева, сабтитл справа */
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     padding: 12px 16px;
   }
@@ -113,6 +120,6 @@
   .item_subtitle {
     width: auto;
     text-align: right;
-    max-width: 50%; /* Защита, чтобы длинный текст не наехал на заголовок */
+    max-width: 50%;
   }
 }

@@ -1,0 +1,147 @@
+.knowledge_page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Поле поиска */
+.search_box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: var(--color-white);
+  border-radius: 14px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(46, 49, 56, 0.04);
+  border: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.search_box:focus-within {
+  border-color: var(--color-primary);
+}
+
+.search_icon {
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.search_input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 11px 10px;
+  font-family: var(--font-family-regular);
+  font-size: 14px;
+  color: var(--color-text-dark);
+  outline: none;
+}
+
+.search_input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.clear_search_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.clear_search_btn:hover {
+  color: var(--color-text-dark);
+}
+
+/* Фильтры формата */
+.format_pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.format_pill {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--color-grey-light);
+  background-color: var(--color-white);
+  color: var(--color-text-dark);
+  font-family: var(--font-family-subtitle);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.format_pill:hover {
+  border-color: var(--color-primary);
+}
+
+.format_pill_active {
+  background-color: var(--color-dark);
+  border-color: var(--color-dark);
+  color: var(--color-white);
+}
+
+/* Горизонтальный скролл навыков */
+.skills_scroll_row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.skills_scroll_row::-webkit-scrollbar {
+  display: none;
+}
+
+.skill_chip {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background-color: var(--color-white);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-upstring);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.skill_chip:hover {
+  color: var(--color-primary);
+  border-color: var(--color-secondary);
+}
+
+.skill_chip_active {
+  background-color: var(--color-secondary);
+  color: var(--color-blue-dark);
+  font-family: var(--font-family-subtitle);
+}
+
+/* Состояния загрузки и пустоты */
+.loader_box,
+.empty_box {
+  background-color: var(--color-white);
+  border-radius: 16px;
+  padding: 40px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cards_list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}

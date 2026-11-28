@@ -1,5 +1,7 @@
 import User from '../models/User.js'
 import UserCourseProgress from '../models/UserCourseProgress.js'
+import Order from '../models/Order.js'
+import Event from '../models/Event.js'
 
 const getStatistics = async (req, res) => {
   try {
@@ -145,7 +147,55 @@ const getStatistics = async (req, res) => {
       }),
     )
 
-    // 6. Отправка ответа на фронтенд
+        // 6. Детализация пользователей по рангам и источникам регистрации
+    const [
+      rank0Count,
+      rank1Count,
+      rank2Count,
+      rank3Count,
+      rank4Count,
+      siteTotal,
+      sitePremium,
+      vkTotal,
+      vkPremium,
+      androidTotal,
+      androidPremium,
+    ] = await Promise.all([
+      User.countDocuments({ 'progression.speakerRank': 0 }),
+      User.countDocuments({ 'progression.speakerRank': 1 }),
+      User.countDocuments({ 'progression.speakerRank': 2 }),
+      User.countDocuments({ 'progression.speakerRank': 3 }),
+      User.countDocuments({ 'progression.speakerRank': 4 }),
+      User.countDocuments({ registeredFrom: 'site' }),
+      User.countDocuments({ registeredFrom: 'site', isPremium: true }),
+      User.countDocuments({ registeredFrom: 'vk' }),
+      User.countDocuments({ registeredFrom: 'vk', isPremium: true }),
+      User.countDocuments({ registeredFrom: 'android' }),
+      User.countDocuments({ registeredFrom: 'android', isPremium: true }),
+    ])
+
+    const users_breakdown = {
+      by_rank: [
+        { rank: 0, title: 'Начинающий', count: rank0Count },
+        { rank: 1, title: 'Уверенный', count: rank1Count },
+        { rank: 2, title: 'Профи', count: rank2Count },
+        { rank: 3, title: 'Мастер', count: rank3Count },
+        { rank: 4, title: 'Легенда', count: rank4Count },
+      ],
+      by_source: [
+        { source: 'site', label: 'Сайт', total: siteTotal, premium: sitePremium },
+        { source: 'vk', label: 'ВКонтакте', total: vkTotal, premium: vkPremium },
+        {
+          source: 'android',
+          label: 'Android',
+          total: androidTotal,
+          premium: androidPremium,
+        },
+      ],
+    }
+
+
+    // 7. Отправка ответа на фронтенд
     res.status(200).json({
       success: true,
       data: {
@@ -158,6 +208,7 @@ const getStatistics = async (req, res) => {
           total_coins_in_economy: stats_result.total_coins,
           avg_xp: Math.round(stats_result.avg_lifetime_xp),
         },
+        users_breakdown,
         exercises_analytics,
         top_purchases: formatted_purchases,
         courses_analytics: {
@@ -228,6 +279,65 @@ const getUserList = async (req, res) => {
     })
   }
 }
+
+const getUserDetailsAdmin = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const user = await User.findById(id).select('-password')
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Пользователь не найден',
+      })
+    }
+
+    // 1. Детальный прогресс по курсам
+    const coursesProgress = await UserCourseProgress.find({ userId: id }).select(
+      'courseCode status currentDay score updatedAt'
+    )
+
+    // 2. Оплаченные билеты на мероприятия из Order
+    const eventOrders = await Order.find({
+      userId: id,
+      typeOrder: 'event_ticket',
+      status: 'completed',
+    }).sort({ createdAt: -1 })
+
+    const eventTickets = []
+    for (const order of eventOrders) {
+      const eventDoc = await Event.findById(order.itemCode).select(
+        'title format city startDate'
+      )
+      eventTickets.push({
+        orderId: order._id,
+        eventId: order.itemCode,
+        title: eventDoc ? eventDoc.title : 'Мероприятие удалено',
+        format: eventDoc ? eventDoc.format : '',
+        city: eventDoc ? eventDoc.city : '',
+        startDate: eventDoc ? eventDoc.startDate : null,
+        amount: order.amount,
+        purchasedAt: order.createdAt,
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      details: {
+        user,
+        coursesProgress,
+        eventTickets,
+      },
+    })
+  } catch (error) {
+    console.error('Ошибка получения детальной статистики пользователя:', error)
+    return res.status(500).json({
+      success: false,
+      message: 'Ошибка сервера при загрузке карточки пользователя',
+    })
+  }
+}
+
 
 const updatePremiumUserAdmin = async (req, res) => {
   try {
@@ -415,6 +525,7 @@ const toggleStatusMerch = async (req, res) => {
 export {
   getStatistics,
   getUserList,
+  getUserDetailsAdmin,
   updatePremiumUserAdmin,
   addCourseToUserAdmin,
   deleteUser,

@@ -16,7 +16,7 @@ const OrderSchema = new mongoose.Schema(
     },
     typeOrder: { 
       type: String, 
-      enum: ['premium_subscription', 'course_purchase'], 
+      enum: ['premium_subscription', 'course_purchase', 'event_ticket'], 
       required: true 
     },
     itemCode: { 

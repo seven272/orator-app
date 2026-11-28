@@ -3,6 +3,7 @@ import {
   getStatistics,
   getUserList,
   updatePremiumUserAdmin,
+  getUserDetailsAdmin,
   addCourseToUserAdmin,
   deleteUser,
   getMerchOrders,
@@ -16,7 +17,6 @@ import {
 
 const router = express.Router()
 
-
 router.get('/statistics', checkAuth, checkAdmin, getStatistics)
 router.get('/user-list', checkAuth, checkAdmin, getUserList)
 router.post(
@@ -25,6 +25,13 @@ router.post(
   checkAdmin,
   addCourseToUserAdmin,
 )
+router.get(
+  '/user/:id/details',
+  checkAuth,
+  checkAdmin,
+  getUserDetailsAdmin,
+)
+
 router.post(
   '/update-premium/:id',
   checkAuth,

@@ -18,7 +18,7 @@
   width: 100%;
   max-width: 480px;
   border-radius: 16px;
-  padding: 24px;
+  padding: 22px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   position: relative;
   box-sizing: border-box;
@@ -30,18 +30,18 @@
 .modal_title {
   font-size: 18px;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin: 0 0 14px 0;
   color: #111111;
-  padding-right: 24px;
+  padding-right: 28px;
 }
 
 .modal_close_btn {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 18px;
+  right: 18px;
   background: none;
   border: none;
-  font-size: 34px;
+  font-size: 32px;
   color: #aaaaaa;
   line-height: 1;
   padding: 0;
@@ -52,193 +52,70 @@
   color: #333333;
 }
 
-/* 💡 Стили локального блока уведомлений */
 .admin_alert_box {
   width: 100%;
   padding: 10px 14px;
   font-size: 13px;
   font-weight: 600;
   border-radius: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   box-sizing: border-box;
   animation: slide_up 0.15s ease-out;
   text-align: center;
 }
 
-/* Зеленый успех */
 .alert_success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
-/* Красная ошибка */
 .alert_error {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
-/* Желтое предупреждение */
 .alert_warning {
   background-color: #fff3cd;
   color: #856404;
   border: 1px solid #ffeeba;
 }
 
-
-.detail_row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  font-size: 13px;
-  border-bottom: 1px dashed #e9ecef;
+/* Вкладки внутри модалки */
+.modal_tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  background-color: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+  margin-bottom: 14px;
 }
 
-.row_meta_text {
-  color: #666666;
-  font-size: 12px;
-  font-family: monospace;
-}
-
-/* Секция тегов курсов */
-.courses_section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 12px 0;
-  border-bottom: 1px dashed #e9ecef;
-}
-
-.section_subtitle {
-  font-size: 13px;
-  font-weight: 600;
-  color: #495057;
-}
-
-.course_tags_wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.course_badge_tag {
-  background-color: #e3f2fd;
-  color: #0d47a1;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-
-.empty_tags_text {
-  font-size: 12px;
-  color: #adb5bd;
-  font-style: italic;
-}
-
-/* Админ-блоки управления */
-.admin_control_block {
-  margin-top: 14px;
-  background-color: #f8f9fa;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #e9ecef;
-  box-sizing: border-box; /* Гарантирует, что падинги не раздувают блок наружу */
-}
-
-.control_label_title {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: #212529;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-/* Исправленный ряд действий: на мелких экранах кнопка уйдет вниз, а не вылезет за поля */
-.control_action_row {
-  display: flex;
-  gap: 8px;
-  margin-top: 6px;
-  flex-wrap: wrap; /* Позволяет кнопке переноситься на новую строку при нехватке места */
-}
-
-.admin_select_input {
-  flex: 1;
-  min-width: 180px; /* Защита селектора от чрезмерного сжатия */
-  height: 38px;
+.modal_tab_btn {
+  border: none;
+  background: transparent;
+  padding: 8px 4px;
   border-radius: 8px;
-  border: 1px solid #ced4da;
-  padding: 0 8px;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modal_tab_active {
   background-color: #ffffff;
-  outline: none;
-  box-sizing: border-box;
+  color: #0f172a;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-.action_submit_btn {
-  padding: 0 20px;
-  height: 38px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
+.loading_hint {
+  text-align: center;
+  padding: 32px 12px;
   font-size: 13px;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  flex-grow: 1; /* Кнопка растянется на всю ширину, если перенесется вниз */
-  min-width: 90px; /* Кнопка сохранит читаемость текста */
-  box-sizing: border-box;
-}
-
-.premium_revoke_full_btn {
-  width: 100%;
-  height: 38px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-  margin-top: 4px;
-  box-sizing: border-box;
-}
-
-.btn_grant {
-  background-color: #28a745;
-  color: #ffffff;
-}
-
-.btn_revoke {
-  background-color: #dc3545;
-  color: #ffffff;
-}
-
-.btn_course_add {
-  background-color: #007bff;
-  color: #ffffff;
-}
-
-.action_submit_btn:hover, .premium_revoke_full_btn:hover {
-  opacity: 0.9;
-}
-.delete_action_btn {
-  width: 100%;
-  padding: 10px;
-  background: none;
-  border: 1px solid #dc3545;
-  color: #dc3545;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 12px;
-  cursor: pointer;
-  margin-top: 16px;
-  transition: background 0.2s;
-}
-
-.delete_action_btn:hover {
-  background: #fdf2f2;
+  color: #64748b;
 }
 
 @keyframes slide_up {

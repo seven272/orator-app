@@ -22,6 +22,9 @@ import feedRoutes from './routes/feedRouter.js'
 import vkRoutes from './routes/vkRoutes.js'
 import paymentRoutes from './routes/paymentRoutes.js'
 import rankRoutes from './routes/rankRoutes.js'
+import knowledgeRoutes from './routes/knowledgeRoutes.js'
+import eventRoutes from './routes/eventRoutes.js'
+import paymentPolicyRoutes from './routes/paymentPolicyRoutes.js'
 
 dotenv.config()
 
@@ -56,6 +59,10 @@ app.use('/api/feed', feedRoutes)
 app.use('/api/vk', vkRoutes)
 app.use('/api/pay', paymentRoutes)
 app.use('/api/rank', rankRoutes)
+app.use('/api/knowledge', knowledgeRoutes)
+app.use('/api/events', eventRoutes)
+app.use('/api/payment-policy', paymentPolicyRoutes)
+
 
 const start = async () => {
   try {

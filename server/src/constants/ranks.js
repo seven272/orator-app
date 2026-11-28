@@ -52,13 +52,18 @@ const RANKS = [
           title: 'Мастер дубляжа',
           minScore: 75,
         },
+        {
+          alias: 'ai-toast-critic',
+          title: 'Банкетный критик',
+          minScore: 75,
+        },
       ],
       exam: {
         alias: 'exam-pro',
         title: 'Экзамен: Адвокат идеи',
         description:
           'Защитите спорный тезис в убедительном монологе: приведите сильные аргументы и заранее закройте главное возражение.',
-        minScore: 80,
+        minScore: 75,
       },
 
       realWorldTask: {
@@ -80,17 +85,17 @@ const RANKS = [
         {
           alias: 'ai-interview',
           title: 'Стресс-интервью',
-          minScore: 80,
+          minScore: 75,
         },
         {
           alias: 'ai-poem-tongue',
           title: 'Тяжелая дикция',
-          minScore: 80,
+          minScore: 75,
         },
         {
           alias: 'ai-tribune',
           title: 'Трибуна',
-          minScore: 80,
+          minScore: 75,
         },
       ],
       exam: {
@@ -98,7 +103,7 @@ const RANKS = [
         title: 'Экзамен: Антикризисное обращение',
         description:
           'Выступите перед недовольной аудиторией в острой ситуации, сохранив спокойствие и органично вплетя 3 обязательных факта.',
-        minScore: 80,
+        minScore: 75,
       },
 
       realWorldTask: {
@@ -118,32 +123,38 @@ const RANKS = [
       requiredXp: 200000,
       exercises: [
         {
-          alias: 'ai-tribune',
-          title: 'Трибуна',
-          minScore: 90,
+          alias: 'ai-commercial-pitch',
+          title: 'Инвестор Эдуард',
+          minScore: 80,
         },
         {
-          alias: 'ai-debate',
-          title: 'Дебат-клуб',
-          minScore: 90,
+          alias: 'ai-association-master',
+          title: 'Мост смыслов',
+          minScore: 80,
         },
         {
           alias: 'ai-radio-host',
           title: 'Радиоведущий',
-          minScore: 90,
+          minScore: 80,
         },
         {
-          alias: 'ai-toast-critic',
-          title: 'Банкетный критик',
-          minScore: 90,
+          alias: 'ai-bargain',
+          title: 'Торг уместен',
+          minScore: 80,
         },
+          {
+          alias: 'ai-nesmeyana',
+          title: 'Несмеяна',
+          minScore: 80,
+        },
+        
       ],
       exam: {
         alias: 'exam-legend',
-        title: 'Экзамен: Главная сцена TED',
+        title: 'Экзамен: Главная сцена',
         description:
           'Произнесите вдохновляющую речь уровня TED: объедините историю-крючок, сквозную метафору и сильный манифест.',
-        minScore: 90,
+        minScore: 85,
       },
       realWorldTask: {
         title: 'Живое выступление перед аудиторией',

@@ -1,10 +1,11 @@
 import { createHashRouter } from 'react-router-dom'
-
+import { Navigate } from 'react-router-dom' 
 // 📌 Импортируем архитектурные макеты из папки layouts
 import AppLayout from '../layouts/AppLayout'
 import MainBaseLayout from '../layouts/main-base-layout/MainBaseLayout'
 import ExercisesLayout from '../layouts/exercises-layout/ExercisesLayout'
 import SecondaryLayout from '../layouts/secondary-layout/SecondaryLayout'
+import EducationHubLayout from '../layouts/education-hub-layout/EducationHubLayout'
 
 // 📌 Импортируем ваши страницы (панели)
 import MainPage from '../panels/main-page/MainPage'
@@ -29,6 +30,10 @@ import ProtectedRoute from '../components/protected-route/ProtectedRoute'
 import OfferPage from '../panels/offer-page/OfferPage'
 import ExercisePremiumPreviewPage from '../panels/exercise-premium-preview-page/ExercisePremiumPreviewPage'
 import RankExamPage from '../panels/rank-exam-page/RankExamPage'
+import KnowledgePage from '../panels/knowledge-page/KnowledgePage'
+import KnowledgeDetailPage from '../panels/knowledge-detail-page/KnowledgeDetailPage'
+import EventsPage from '../panels/events-page/EventsPage'
+import EventDetailPage from '../panels/event-detail-page/EventDetailPage'
 
 const router = createHashRouter([
   {
@@ -99,12 +104,23 @@ const router = createHashRouter([
               },
             ],
           },
-          // 🔒 СТРАНИЦА ОШИБКИ 403: Явный роут
+           {
+            path: 'hub',
+            element: <EducationHubLayout />,
+            children: [
+              { index: true, element: <Navigate to="knowledge" replace /> },
+              { path: 'knowledge', element: <KnowledgePage /> },
+              { path: 'knowledge/:slug', element: <KnowledgeDetailPage /> },
+              { path: 'events', element: <EventsPage /> },
+              { path: 'events/:id', element: <EventDetailPage /> },
+            ],
+          },
+          // СТРАНИЦА ОШИБКИ 403: Явный роут
           {
             path: 'forbidden',
             element: <ForbiddenPage />,
           },
-          // 🎯 ТАКТИЧЕСКИЙ ПЕРЕХВАТ 404:
+          //  ТАКТИЧЕСКИЙ ПЕРЕХВАТ 404:
           {
             path: '*',
             element: <NotFoundPage />,

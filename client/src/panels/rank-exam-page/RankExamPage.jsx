@@ -21,21 +21,21 @@ import styles from './RankExamPage.module.css'
 const EXAM_TITLES_MAP = {
   'exam-confident': {
     title: 'Экзамен: Идеальный питч',
-    descr: 'Ранг «Уверенный» • Порог сдачи: > 80 баллов',
+    descr: 'Ранг «Уверенный» • Порог сдачи: > 70 баллов',
     defaultTime: 60,
   },
   'exam-pro': {
     title: 'Экзамен: Адвокат идеи',
-    descr: 'Ранг «Профи» • Порог сдачи: > 80 баллов',
-    defaultTime: 75,
+    descr: 'Ранг «Профи» • Порог сдачи: > 75 баллов',
+    defaultTime: 60,
   },
   'exam-master': {
     title: 'Экзамен: Антикризисное обращение',
-    descr: 'Ранг «Мастер» • Порог сдачи: > 80 баллов',
+    descr: 'Ранг «Мастер» • Порог сдачи: > 75 баллов',
     defaultTime: 90,
   },
   'exam-legend': {
-    title: 'Экзамен: Главная сцена TED',
+    title: 'Экзамен: Главная сцена',
     descr: 'Ранг «Легенда» • Порог сдачи: > 80 баллов',
     defaultTime: 120,
   },

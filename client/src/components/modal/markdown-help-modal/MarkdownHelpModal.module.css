@@ -1,0 +1,134 @@
+.modal_overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background-color: rgba(18, 18, 18, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  animation: fade_in 0.16s ease-out;
+}
+
+@keyframes fade_in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal_content {
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  background-color: var(--color-white);
+  border-radius: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.modal_title {
+  margin: 0;
+  font-family: var(--font-family-title);
+  font-size: 18px;
+  color: var(--color-text-dark);
+}
+
+.close_icon_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.close_icon_btn:hover {
+  color: var(--color-text-dark);
+}
+
+.intro_text {
+  margin: 0;
+  font-family: var(--font-family-regular);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-text-secondary);
+}
+
+.examples_list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.example_card {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background-color: var(--color-bg-light);
+  border: 1px solid var(--color-grey-light);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.example_header {
+  font-family: var(--font-family-subtitle);
+  font-size: 13px;
+  color: var(--color-text-dark);
+}
+
+.syntax_box {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background-color: var(--color-white);
+  border: 1px dashed var(--color-secondary);
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 17px;
+  color: var(--color-blue-dark);
+  white-space: pre-wrap;
+}
+
+.example_hint {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.close_modal_btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-family-title);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.close_modal_btn:hover {
+  background-color: var(--color-blue-dark);
+}
